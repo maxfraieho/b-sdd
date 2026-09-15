@@ -11,10 +11,12 @@ cd "$SCRIPT_DIR"
 
 # Defaults
 AGENT_HARNESS="${AGENT_HARNESS:-auto}"
-SESSION_ID="${AGY_CONVERSATION_ID:-5eb693e8-b86f-40fc-a2c5-20a08128c6c6}"
+SESSION_ID="${SESSION_ID:-}"
+CONTINUE_SESSION=false
 DO_DISTILL=false
 RUN_FITNESS=true
 RUN_COMPILE=true
+PRINT_MODE=false
 USER_PROMPT=""
 
 # Usage help
@@ -24,7 +26,10 @@ Usage: ./run_b_sdd.sh [OPTIONS] [PROMPT...]
 
 Options:
   --agent <name>       AI harness: 'agy', 'claude', 'codex', or 'auto' (default: auto)
-  --session <id>       Session conversation ID for distillation or agy continuation
+  --new-session        Start a completely new clean session (default behavior)
+  --session <id>       Resume a specific conversation ID
+  --continue, -c       Resume the most recent conversation
+  --print, -p          Run non-interactively and print response
   --distill            Run session distillation before invoking the agent
   --skip-fitness       Skip pre-flight architecture fitness tests
   --skip-compile       Skip pre-flight active rule compilation
@@ -32,9 +37,14 @@ Options:
   -h, --help           Show this help message
 
 Examples:
-  ./run_b_sdd.sh --agent agy --prompt "Implement ADR-021 tasks"
-  ./run_b_sdd.sh --distill --agent auto "Align Telegram bot buttons with TMA"
-  ./run_b_sdd.sh "Run pre-flight check and continue development"
+  # Start a fresh new session with B-SDD compiled invariants:
+  ./run_b_sdd.sh "Розпочати Milestone 1: Синхронізувати фронтенд та оновити бота"
+
+  # Run non-interactively (print mode):
+  ./run_b_sdd.sh --print "Перевірити стан модулів"
+
+  # Resume a specific session:
+  ./run_b_sdd.sh --session 5eb693e8-b86f-40fc-a2c5-20a08128c6c6 "Продовжити розробку"
 EOF
     exit 0
 }
@@ -50,6 +60,19 @@ while [[ $# -gt 0 ]]; do
         --session)
             SESSION_ID="$2"
             shift 2
+            ;;
+        --continue|-c)
+            CONTINUE_SESSION=true
+            shift
+            ;;
+        --new-session)
+            SESSION_ID=""
+            CONTINUE_SESSION=false
+            shift
+            ;;
+        --print|-p)
+            PRINT_MODE=true
+            shift
             ;;
         --distill)
             DO_DISTILL=true
@@ -93,12 +116,9 @@ fi
 
 # 2. Session Distillation
 if [[ "$DO_DISTILL" = true ]]; then
-    if [[ -n "$SESSION_ID" ]]; then
-        echo "📜 Distilling session '$SESSION_ID'..."
-        python3 -m src.cli.main distill --session "$SESSION_ID" --json
-    else
-        echo "⚠ Warning: --distill requested but no session ID provided. Skipping."
-    fi
+    DISTILL_ID="${SESSION_ID:-${AGY_CONVERSATION_ID:-5eb693e8-b86f-40fc-a2c5-20a08128c6c6}}"
+    echo "📜 Distilling session '$DISTILL_ID'..."
+    python3 -m src.cli.main distill --session "$DISTILL_ID" --json
 fi
 
 # 3. Architecture Fitness Gate
@@ -150,19 +170,33 @@ case "$AGENT_HARNESS" in
         AGY_CMD=("agy")
         if [[ -n "$SESSION_ID" ]]; then
             AGY_CMD+=("--conversation=$SESSION_ID")
+        elif [[ "$CONTINUE_SESSION" = true ]]; then
+            AGY_CMD+=("--continue")
         fi
+
         if [[ -n "$FINAL_PROMPT" ]]; then
-            AGY_CMD+=("$FINAL_PROMPT")
+            if [[ "$PRINT_MODE" = true ]]; then
+                AGY_CMD+=("-p" "$FINAL_PROMPT")
+            else
+                AGY_CMD+=("-i" "$FINAL_PROMPT")
+            fi
         fi
         exec "${AGY_CMD[@]}"
         ;;
     claude)
         echo "🚀 Launching Claude Code CLI..."
-        if [[ -n "$FINAL_PROMPT" ]]; then
-            exec claude -p "$FINAL_PROMPT"
-        else
-            exec claude
+        CLAUDE_CMD=("claude")
+        if [[ "$CONTINUE_SESSION" = true ]]; then
+            CLAUDE_CMD+=("-c")
         fi
+        if [[ -n "$FINAL_PROMPT" ]]; then
+            if [[ "$PRINT_MODE" = true ]]; then
+                CLAUDE_CMD+=("-p" "$FINAL_PROMPT")
+            else
+                CLAUDE_CMD+=("$FINAL_PROMPT")
+            fi
+        fi
+        exec "${CLAUDE_CMD[@]}"
         ;;
     codex)
         echo "🚀 Launching OpenAI Codex CLI..."
