@@ -4,12 +4,15 @@ Command line interface for compiling architectural rules, syncing bitemporal int
 running fitness tests, and scaffolding new specifications and ADRs.
 Operates using 100% Pure Python Standard Library.
 """
+import os
 import sys
+import json
 import argparse
 import subprocess
 from pathlib import Path
 from src.core.compiler import BSDDCompiler
 from src.adapters.utopia_db import UtopiaDBAdapter
+from src.core.session_distiller import SessionDistiller
 
 
 def cmd_compile(args):
@@ -56,6 +59,36 @@ def cmd_fitness(args):
     print("Running B-SDD architectural fitness tests (pytest)...")
     res = subprocess.run(["pytest", "-v", "tests/test_architecture_fitness.py"])
     sys.exit(res.returncode)
+
+
+def cmd_distill(args):
+    """Distills long-running session transcript into compact B-SDD intelligence."""
+    distiller = SessionDistiller()
+    session_id = args.session or os.environ.get("AGY_CONVERSATION_ID")
+    if not session_id:
+        print("❌ Error: --session argument or AGY_CONVERSATION_ID environment variable required.")
+        sys.exit(1)
+
+    print(f"Distilling agent session '{session_id}'...")
+    try:
+        data = distiller.distill_agy_session(session_id)
+    except Exception as e:
+        print(f"❌ Error during distillation: {e}")
+        sys.exit(1)
+
+    md_content = distiller.render_distilled_markdown(data)
+
+    out_path = Path(args.output).resolve() if args.output else Path.cwd() / ".context" / "session_distillation.md"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(md_content, encoding="utf-8")
+
+    if args.json:
+        json_path = Path(args.json).resolve() if isinstance(args.json, str) and args.json != "True" else out_path.with_suffix(".json")
+        json_path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"✓ Saved raw JSON metrics to {json_path}")
+
+    words = len(md_content.split())
+    print(f"✓ Session distillation complete: {data['total_steps']} steps -> {out_path} ({words} words)")
 
 
 def cmd_init(args):
@@ -146,6 +179,12 @@ def main():
     # fitness
     subparsers.add_parser("fitness", help="Run architectural fitness tests")
 
+    # distill
+    p_dist = subparsers.add_parser("distill", help="Distill session transcript into compact B-SDD intelligence")
+    p_dist.add_argument("--session", help="Session / conversation ID (defaults to AGY_CONVERSATION_ID)")
+    p_dist.add_argument("--output", help="Output markdown path (default: .context/session_distillation.md)")
+    p_dist.add_argument("--json", nargs="?", const="True", help="Save raw structured JSON metrics")
+
     # init
     p_init = subparsers.add_parser("init", help="Initialize B-SDD in repo")
     p_init.add_argument("--name", help="Project name")
@@ -165,6 +204,8 @@ def main():
         cmd_sync(args)
     elif args.command == "fitness":
         cmd_fitness(args)
+    elif args.command == "distill":
+        cmd_distill(args)
     elif args.command == "init":
         cmd_init(args)
     elif args.command == "adr" and getattr(args, "adr_command", None) == "new":
