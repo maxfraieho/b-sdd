@@ -1,0 +1,14 @@
+{
+  "project_name": "B-SDD Framework",
+  "word_budget": 500,
+  "utopia_kb_id": "01a08474-0000-7000-8000-000000000001",
+  "domain_skill_map": {
+    "core": ["b-sdd", "architecture-designer", "safe-refactor"],
+    "adapters": ["b-sdd", "safe-refactor"],
+    "gateway": ["b-sdd", "safe-refactor"],
+    "cli": ["cli-developer", "safe-refactor"],
+    "specs": ["writing-plans", "executing-plans"],
+    "docs": ["code-documenter", "doc-indexer"],
+    "global": ["skill-creator", "find-skills", "architecture-designer"]
+  }
+}

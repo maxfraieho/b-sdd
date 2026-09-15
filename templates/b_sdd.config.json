@@ -1,0 +1,15 @@
+{
+  "project_name": "My Project",
+  "word_budget": 500,
+  "utopia_kb_id": "01a08474-0000-7000-8000-000000000001",
+  "domain_skill_map": {
+    "core": ["architecture-designer", "intent-continuity", "safe-refactor"],
+    "api": ["api-designer", "intent-continuity", "safe-refactor"],
+    "web": ["frontend-design", "make-interfaces-feel-better"],
+    "database": ["intent-continuity", "safe-refactor"],
+    "specs": ["writing-plans", "executing-plans"],
+    "docs": ["code-documenter", "doc-indexer"],
+    "security": ["security-reviewer", "defense-in-depth"],
+    "global": ["skill-creator", "find-skills", "architecture-designer"]
+  }
+}
