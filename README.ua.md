@@ -1,6 +1,7 @@
 # B-SDD: Bitemporal Spec-Driven Development (Українська версія)
 
 [![Фітнес-тести](https://img.shields.io/badge/Архітектурні%20тести-5%2F5%20Пройдено-brightgreen)](tests/test_architecture_fitness.py)
+[![Ліцензія](https://img.shields.io/badge/Ліцензія-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Без сторонніх залежностей](https://img.shields.io/badge/Залежності-100%25%20Python%20Stdlib-blue)](src/)
 [![Швидкість компіляції](https://img.shields.io/badge/Затримка-%3C20%20мс-orange)](src/core/compiler.py)
 [![Щільність правил](https://img.shields.io/badge/Ліміт%20промпту-%3C500%20слів-purple)](.context/active_rules.md)
@@ -118,5 +119,8 @@ python3 -m src.cli.main adr new "WebSocket Protocol" --component core --supersed
 
 ---
 
-## 📜 Ліцензія
-MIT License. Автор: [@maxfraieho](https://github.com/maxfraieho).
+## 📜 Ліцензія та авторські права
+- **Виконуваний код та інструменти:** Розповсюджуються за ліцензією [Apache License, Version 2.0](LICENSE).  
+  Авторські права (c) 2026 **Арсен Коваленко** ([@maxfraieho](https://github.com/maxfraieho)).
+- **Специфікація та методологія:** Захищені ліцензією [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+

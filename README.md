@@ -1,6 +1,7 @@
 # B-SDD: Bitemporal Spec-Driven Development
 
 [![Fitness Tests](https://img.shields.io/badge/Architecture%20Fitness-5%2F5%20Passing-brightgreen)](tests/test_architecture_fitness.py)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Zero Dependencies](https://img.shields.io/badge/Dependencies-100%25%20Python%20Stdlib-blue)](src/)
 [![Latency](https://img.shields.io/badge/Compile%20Latency-%3C20ms-orange)](src/core/compiler.py)
 [![Prompt Density](https://img.shields.io/badge/Prompt%20Ceiling-%3C500%20words-purple)](.context/active_rules.md)
@@ -153,5 +154,8 @@ b-sdd/
 
 ---
 
-## 📜 License
-MIT License. Created by [@maxfraieho](https://github.com/maxfraieho).
+## 📜 License & Authorship
+- **Code & Tooling:** Licensed under the [Apache License, Version 2.0](LICENSE).  
+  Copyright (c) 2026 **Arsen Kovalenko** ([@maxfraieho](https://github.com/maxfraieho)).
+- **Methodology & Specifications:** Licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
+
