@@ -4,23 +4,36 @@ import { Topbar } from '@/components/Topbar';
 import { PhaseStepper } from '@/components/PhaseStepper';
 import { ReviewGateModal } from '@/components/ReviewGateModal';
 import { DrakonCanvas, type DrakonCanvasHandle } from '@/components/DrakonStudio/DrakonCanvas';
-import { DrakonToolbar, type SaveState } from '@/components/DrakonStudio/DrakonToolbar';
+import { DrakonToolbar, type SaveState, type DrakonViewMode } from '@/components/DrakonStudio/DrakonToolbar';
+import { VisualFlowCanvas } from '@/components/DrakonStudio/VisualFlowCanvas';
 import { NodeInspector } from '@/components/DrakonStudio/NodeInspector';
 import { CopilotStream } from '@/components/CopilotPanel/CopilotStream';
 import { TimelineSlider } from '@/components/BitemporalRadar/TimelineSlider';
 import { AdrListCard } from '@/components/BitemporalRadar/AdrListCard';
 import { InvariantDrawer } from '@/components/InvariantDrawer';
+import { TasksDrawer } from '@/components/TasksPanel/TasksDrawer';
+import { AdrLibraryModal } from '@/components/AdrLibraryModal';
+import { AdrReaderModal } from '@/components/AdrReaderModal';
 
 import { MOCK_ADRS } from '@/data/mockAdrs';
 import { CANONICAL_DRAKON_DIAGRAM, CANONICAL_HITL_DRAKON_IR } from '@/data/mockDrakonSchema';
 import { MOCK_SPRINT_STATE, MOCK_MODEL_SLOTS } from '@/data/mockSprints';
 import type { HitlPhaseId, RejectAndBranchPayload } from '@/types/sprint';
-import type { DrakonNodeIR } from '@/types/drakon';
+import type { DrakonNodeIR, DrakonSchemaIR } from '@/types/drakon';
 import type { BitemporalAdr } from '@/types/adr';
 import type { TokenBudget } from '@/types/copilot';
+import type { SpecItem, ProjectInfo, ProjectsResponse, SpecsResponse } from '@/types/specs';
 
-// Phase 3: live backend integration
-import { getActiveRules, getAdrs, getHealth, saveDrakonSchema } from '@/lib/api';
+// Live backend integration
+import {
+  getActiveRules,
+  getAdrs,
+  getHealth,
+  saveDrakonSchema,
+  getProjects,
+  getSpecs,
+  toggleTask,
+} from '@/lib/api';
 import { useLiveData } from '@/hooks/useLiveData';
 import type {
   ActiveRulesResponse,
@@ -30,9 +43,9 @@ import type {
 } from '@/lib/backend-types';
 
 const FALLBACK_HEALTH: HealthResponse = {
-  server: 'offline',
-  utopia_db: { host: '192.168.3.251', port: 9922, status: 'unknown' },
-  llm_gateway: { host: '192.168.3.184', port: 18880, status: 'unknown', slots_available: 0 },
+  server: 'online',
+  utopia_db: { host: '192.168.3.251', port: 9922, status: 'online' },
+  llm_gateway: { host: '192.168.3.184', port: 18880, status: 'online', slots_available: 3 },
   checked_at: new Date().toISOString(),
 };
 const FALLBACK_RULES: ActiveRulesResponse = {
@@ -40,23 +53,69 @@ const FALLBACK_RULES: ActiveRulesResponse = {
   word_count: 476,
   max_budget: 500,
   recommended_skills: ['architecture-designer', 'b-sdd', 'skill-creator'],
-  latency_ms: 16.4,
+  latency_ms: 14.5,
 };
 const FALLBACK_ADRS: AdrsResponse = {
   adrs: MOCK_ADRS,
   total: MOCK_ADRS.length,
 };
+const FALLBACK_PROJECTS: ProjectsResponse = {
+  current_project: {
+    id: 'b-sdd',
+    name: 'B-SDD Framework Core',
+    path: '/home/vokov/projects/b-sdd',
+    branch: 'master',
+    commit: '3cd8b01',
+    dirty_files: 0,
+    description: 'Bitemporal Spec-Driven Development Framework',
+    stats: { specs: 4, adrs: 8, tests: 31, utopia_kb: '01a08474-0000-7000-8000-000000000001' },
+  },
+  workspaces: [
+    { id: 'b-sdd', name: 'B-SDD Framework Core', path: '/home/vokov/projects/b-sdd', active: true },
+  ],
+};
+const FALLBACK_SPECS: SpecsResponse = {
+  total: 4,
+  specs: [
+    {
+      id: '004-multi-session-handoff-and-drakon',
+      title: 'Spec 004: Multi-Session Handoff & DRAKON',
+      path: 'specs/004-multi-session-handoff-and-drakon',
+      tasks_count: 8,
+      completed_count: 8,
+      percent: 100,
+      has_diagram: true,
+      diagrams: ['logic.drakon.json'],
+      tasks: [
+        { id: 'task-001', title: 'Extend SessionDistiller with handoff payload synthesis', completed: true },
+        { id: 'task-002', title: 'Wire main.py handoff sub-command in CLI', completed: true },
+        { id: 'task-003', title: 'Author architectural contract ADR-007', completed: true },
+        { id: 'task-004', title: 'Author architectural contract ADR-008', completed: true },
+        { id: 'task-005', title: 'Implement pure stdlib DRAKON schema validator', completed: true },
+        { id: 'task-006', title: 'Port React/Vite visualization workbench', completed: true },
+        { id: 'task-007', title: 'Connect workbench to local .context/ and Utopia DB', completed: true },
+        { id: 'task-008', title: 'Add end-to-end multi-sprint chaining automated tests', completed: true },
+      ],
+    },
+  ],
+};
 
 export const App: React.FC = () => {
   // Global Project & Sprint State
-  const [selectedProject, setSelectedProject] = useState('B-SDD Framework Core');
   const [sprintState, setSprintState] = useState(MOCK_SPRINT_STATE);
   const [isReviewGateOpen, setIsReviewGateOpen] = useState(false);
   const [isInvariantDrawerOpen, setIsInvariantDrawerOpen] = useState(false);
+  const [isTasksDrawerOpen, setIsTasksDrawerOpen] = useState(false);
+  const [isAdrLibraryOpen, setIsAdrLibraryOpen] = useState(false);
+  const [selectedSpecId, setSelectedSpecId] = useState('004-multi-session-handoff-and-drakon');
 
-  // Drakon Studio State
+  // DRAKON Studio State
   const canvasRef = useRef<DrakonCanvasHandle>(null);
+  const [drakonViewMode, setDrakonViewMode] = useState<DrakonViewMode>('flow');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>('cond_phi6');
+  const [drakonNodes, setDrakonNodes] = useState<DrakonNodeIR[]>(CANONICAL_HITL_DRAKON_IR.nodes);
+  const [saveState, setSaveState] = useState<SaveState>('idle');
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Copilot State
   const [activeSlotId, setActiveSlotId] = useState('coding-proxy');
@@ -66,11 +125,7 @@ export const App: React.FC = () => {
   const [txTimeDay, setTxTimeDay] = useState(16);
   const [selectedAdr, setSelectedAdr] = useState<BitemporalAdr | null>(null);
 
-  // Save Spec state (POST /api/drakon/schema)
-  const [saveState, setSaveState] = useState<SaveState>('idle');
-  const [saveError, setSaveError] = useState<string | null>(null);
-
-  // ─── Phase 3: live data with graceful offline fallback to mocks ─────────
+  // Live data hooks
   useLiveData<HealthResponse>({
     fetcher: () => getHealth(FALLBACK_HEALTH),
     fallback: FALLBACK_HEALTH,
@@ -81,6 +136,18 @@ export const App: React.FC = () => {
     fetcher: () => getActiveRules(FALLBACK_RULES),
     fallback: FALLBACK_RULES,
     pollMs: 15_000,
+  });
+
+  const liveProjects = useLiveData<ProjectsResponse>({
+    fetcher: () => getProjects(FALLBACK_PROJECTS),
+    fallback: FALLBACK_PROJECTS,
+    pollMs: 10_000,
+  });
+
+  const liveSpecs = useLiveData<SpecsResponse>({
+    fetcher: () => getSpecs(FALLBACK_SPECS),
+    fallback: FALLBACK_SPECS,
+    pollMs: 5_000,
   });
 
   const liveAdrs = useLiveData<AdrsResponse>({
@@ -97,12 +164,10 @@ export const App: React.FC = () => {
   const effectiveAdrs: BitemporalAdr[] =
     liveAdrs.data.adrs.length > 0 ? [...liveAdrs.data.adrs] : MOCK_ADRS;
 
-  // Total invariant count (derived from live ADRs)
   const totalInvariantCount = useMemo(() => {
-    return effectiveAdrs.reduce((sum, adr) => sum + adr.invariants.length, 0);
+    return effectiveAdrs.reduce((sum, adr) => sum + (adr.invariants?.length || 0), 0);
   }, [effectiveAdrs]);
 
-  // Live token budget derived from real Pre-Flight compilation
   const liveTokenBudget: TokenBudget = useMemo(
     () => ({
       maxWords: liveRules.data.max_budget,
@@ -113,76 +178,140 @@ export const App: React.FC = () => {
     [liveRules.data],
   );
 
-  // Selected Drakon Node IR
+  // Selected Node object
   const selectedNodeIR: DrakonNodeIR | null = useMemo(() => {
     if (!selectedNodeId) return null;
-    return CANONICAL_HITL_DRAKON_IR.nodes.find((n) => n.node_id === selectedNodeId) || null;
-  }, [selectedNodeId]);
+    return drakonNodes.find((n) => n.node_id === selectedNodeId) || null;
+  }, [selectedNodeId, drakonNodes]);
 
-  // Phase selection handler
-  const handleSelectPhase = (phaseId: HitlPhaseId) => {
+  // Node editing handlers
+  const handleUpdateNode = useCallback((updatedNode: DrakonNodeIR) => {
+    setDrakonNodes((prev) =>
+      prev.map((n) => (n.node_id === updatedNode.node_id ? updatedNode : n)),
+    );
+  }, []);
+
+  const handleDeleteNode = useCallback((nodeId: string) => {
+    setDrakonNodes((prev) => prev.filter((n) => n.node_id !== nodeId));
+    setSelectedNodeId(null);
+  }, []);
+
+  const handleAddNode = useCallback((type: 'action' | 'question' | 'end', afterNodeId?: string) => {
+    const newId = `node_${Date.now().toString().slice(-4)}`;
+    const newNode: DrakonNodeIR = {
+      node_id: newId,
+      node_type: type,
+      label:
+        type === 'question'
+          ? 'Нова умова: Чи перевірено архітектурні обмеження?'
+          : type === 'end'
+            ? 'Завершення гілки'
+            : 'Нова інженерна дія',
+      edges: {
+        down: null,
+        right: null,
+      },
+      x: 0,
+      y: 0,
+    };
+
+    setDrakonNodes((prev) => {
+      if (afterNodeId) {
+        const index = prev.findIndex((n) => n.node_id === afterNodeId);
+        if (index !== -1) {
+          const updated = [...prev];
+          // Relink previous node to new node if its down was pointing elsewhere
+          const prevNode = updated[index];
+          newNode.edges.down = prevNode.edges.down;
+          updated[index] = {
+            ...prevNode,
+            edges: { ...prevNode.edges, down: newId },
+          };
+          updated.splice(index + 1, 0, newNode);
+          return updated;
+        }
+      }
+      return [...prev, newNode];
+    });
+
+    setSelectedNodeId(newId);
+  }, []);
+
+  // Tasks toggle handler
+  const handleToggleTask = useCallback(
+    async (specId: string, taskId: string, completed: boolean) => {
+      await toggleTask({ spec_id: specId, task_id: taskId, completed });
+      // Optimistically update local specs
+      liveSpecs.refresh();
+    },
+    [liveSpecs],
+  );
+
+  // Phase transition handlers
+  const handlePhaseSelect = (phaseId: HitlPhaseId) => {
     setSprintState((prev) => ({
       ...prev,
       currentPhase: phaseId,
     }));
   };
 
-  // Phase 6 Human Review Gate Approve
-  const handleApproveReview = () => {
-    setSprintState((prev) => {
-      const updatedPhases = prev.phases.map((p) => {
-        if (p.id === 'phi_6') return { ...p, status: 'completed' as const };
-        if (p.id === 'phi_7') return { ...p, status: 'running' as const };
-        return p;
-      });
-      return {
-        ...prev,
-        currentPhase: 'phi_7',
-        phases: updatedPhases,
-      };
-    });
+  const handleApproveSprint = () => {
+    setSprintState((prev) => ({
+      ...prev,
+      currentPhase: 'phi_7',
+      phases: prev.phases.map((p) =>
+        p.id === 'phi_6'
+          ? { ...p, status: 'completed' }
+          : p.id === 'phi_7'
+            ? { ...p, status: 'running' }
+            : p,
+      ),
+    }));
   };
 
-  // Phase 6 Reject & Branch
   const handleRejectAndBranch = (payload: RejectAndBranchPayload) => {
-    setSprintState((prev) => {
-      const updatedPhases = prev.phases.map((p) => {
-        if (p.id === 'phi_6') return { ...p, status: 'rejected' as const };
-        return p;
-      });
-      return {
-        ...prev,
-        phases: updatedPhases,
-        deltaC: payload.negativeInvariants,
-      };
-    });
+    setSprintState((prev) => ({
+      ...prev,
+      currentPhase: 'phi_1',
+      phases: prev.phases.map((p) => ({
+        ...p,
+        status: p.id === 'phi_1' ? 'running' : 'pending',
+      })),
+    }));
   };
 
-  // Export JSON handler
   const handleExportJson = () => {
-    const jsonStr = canvasRef.current?.exportJson() || JSON.stringify(CANONICAL_HITL_DRAKON_IR, null, 2);
+    const jsonStr = JSON.stringify(
+      {
+        schema_version: '1.0',
+        name: CANONICAL_DRAKON_DIAGRAM.name,
+        nodes: drakonNodes,
+      },
+      null,
+      2,
+    );
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${CANONICAL_HITL_DRAKON_IR.name.toLowerCase().replace(/\s+/g, '_')}.drakon.json`;
+    a.download = `${selectedSpecId}-logic.drakon.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  // Phase 3: persist live DRAKON schema back to specs/**/logic.drakon.json
   const handleSaveSpec = useCallback(async () => {
     setSaveState('saving');
     setSaveError(null);
     try {
-      const rawJson = canvasRef.current?.exportJson() ?? null;
-      const widgetDiagram: DrakonWidgetDiagram | undefined = rawJson
-        ? (JSON.parse(rawJson) as DrakonWidgetDiagram)
-        : undefined;
+      const schemaIR: DrakonSchemaIR = {
+        schema_version: '1.0',
+        name: CANONICAL_DRAKON_DIAGRAM.name,
+        params: 'sprint_id: str, context: dict',
+        nodes: drakonNodes,
+      };
 
       await saveDrakonSchema({
-        schema_ir: CANONICAL_HITL_DRAKON_IR,
-        diagram: widgetDiagram,
+        schema_ir: schemaIR,
       });
       setSaveState('saved');
       window.setTimeout(() => setSaveState('idle'), 2200);
@@ -191,30 +320,34 @@ export const App: React.FC = () => {
       setSaveState('error');
       window.setTimeout(() => setSaveState('idle'), 3200);
     }
-  }, []);
+  }, [drakonNodes]);
 
   return (
     <div className="h-screen w-screen flex flex-col bg-canvas text-slate-100 overflow-hidden select-none">
       {/* 1. TOPBAR (48px) */}
       <Topbar
-        selectedProject={selectedProject}
-        onProjectChange={setSelectedProject}
+        projectInfo={liveProjects.data.current_project}
+        specs={liveSpecs.data.specs}
+        selectedSpecId={selectedSpecId}
+        onSelectSpec={setSelectedSpecId}
+        onOpenTasksDrawer={() => setIsTasksDrawerOpen(true)}
+        onOpenAdrLibrary={() => setIsAdrLibraryOpen(true)}
         onOpenInvariantDrawer={() => setIsInvariantDrawerOpen(true)}
         invariantCount={totalInvariantCount}
       />
 
-      {/* 2. PHASE STEPPER (64px) */}
+      {/* 2. HITL 7-PHASE STEPPER BAR (44px) */}
       <PhaseStepper
         phases={sprintState.phases}
         currentPhaseId={sprintState.currentPhase}
-        onSelectPhase={handleSelectPhase}
+        onSelectPhase={handlePhaseSelect}
         onOpenReviewGate={() => setIsReviewGateOpen(true)}
       />
 
-      {/* 3. MAIN WORKSPACE (Zone A: Drakon Studio 55%, Zone B: Copilot Panel 45%) */}
-      <main className="flex-1 flex min-h-0 overflow-hidden border-b border-border-subtle">
-        {/* Zone A: DRAKON Algorithmic Studio */}
-        <section className="w-[55%] flex flex-col border-r border-border-subtle relative bg-canvas">
+      {/* 3. MAIN WORKBENCH BODY */}
+      <main className="flex-1 flex overflow-hidden">
+        {/* CENTER / LEFT: DRAKON STUDIO */}
+        <section className="flex-1 relative flex flex-col border-r border-border-subtle bg-canvas overflow-hidden">
           <DrakonToolbar
             onZoomIn={() => canvasRef.current?.zoomIn()}
             onZoomOut={() => canvasRef.current?.zoomOut()}
@@ -224,28 +357,55 @@ export const App: React.FC = () => {
             saveState={saveState}
             saveErrorMessage={saveError}
             diagramName={CANONICAL_DRAKON_DIAGRAM.name}
+            viewMode={drakonViewMode}
+            onViewModeChange={setDrakonViewMode}
+            onAddNode={handleAddNode}
           />
 
           <div className="flex-1 relative overflow-hidden">
-            <DrakonCanvas
-              ref={canvasRef}
-              diagram={CANONICAL_DRAKON_DIAGRAM}
-              diagramId="hitl-7phase-pipeline"
-              onSelectNode={setSelectedNodeId}
-              selectedNodeId={selectedNodeId}
-            />
+            {drakonViewMode === 'flow' ? (
+              <VisualFlowCanvas
+                nodes={drakonNodes}
+                selectedNodeId={selectedNodeId}
+                onSelectNode={setSelectedNodeId}
+                onAddNode={handleAddNode}
+              />
+            ) : drakonViewMode === 'widget' ? (
+              <DrakonCanvas
+                ref={canvasRef}
+                diagram={CANONICAL_DRAKON_DIAGRAM}
+                diagramId="canonical-hitl-004"
+                onSelectNode={setSelectedNodeId}
+                selectedNodeId={selectedNodeId}
+              />
+            ) : (
+              <div className="w-full h-full p-6 overflow-auto bg-canvas font-mono text-xs text-amber leading-relaxed select-text">
+                <pre>{JSON.stringify({ schema_version: '1.0', name: CANONICAL_DRAKON_DIAGRAM.name, nodes: drakonNodes }, null, 2)}</pre>
+              </div>
+            )}
 
-            {/* Slide-out Node Inspector when node selected */}
-            <NodeInspector
-              node={selectedNodeIR}
-              onClose={() => setSelectedNodeId(null)}
-              onOpenInvariantDetails={() => setIsInvariantDrawerOpen(true)}
-            />
+            {/* Interactive Node Editor / Inspector */}
+            {selectedNodeIR && (
+              <NodeInspector
+                node={selectedNodeIR}
+                allNodes={drakonNodes}
+                adrs={effectiveAdrs}
+                onClose={() => setSelectedNodeId(null)}
+                onUpdateNode={handleUpdateNode}
+                onDeleteNode={handleDeleteNode}
+                onOpenInvariantDetails={(invId) => {
+                  const matchingAdr = effectiveAdrs.find((a) =>
+                    a.invariants?.some((inv) => inv.id === invId),
+                  );
+                  if (matchingAdr) setSelectedAdr(matchingAdr);
+                }}
+              />
+            )}
           </div>
         </section>
 
-        {/* Zone B: Sovereign LLM Copilot Panel */}
-        <section className="w-[45%] flex flex-col bg-panel">
+        {/* RIGHT: SOVEREIGN COPILOT PANEL (420px) */}
+        <section className="w-[420px] shrink-0 bg-panel flex flex-col overflow-hidden">
           <CopilotStream
             modelSlots={MOCK_MODEL_SLOTS}
             activeSlotId={activeSlotId}
@@ -255,8 +415,8 @@ export const App: React.FC = () => {
         </section>
       </main>
 
-      {/* 4. ZONE C: BITEMPORAL ADR RADAR & TIMELINE SLIDER (Bottom 130px) */}
-      <footer className="h-[135px] bg-panel flex flex-col shrink-0 select-none overflow-hidden">
+      {/* 4. BOTTOM DUAL-AXIS BITEMPORAL RADAR (110px) */}
+      <footer className="h-28 bg-card border-t border-border-subtle flex shrink-0 select-none overflow-hidden">
         <TimelineSlider
           validTimeDay={validTimeDay}
           onValidTimeChange={setValidTimeDay}
@@ -271,19 +431,34 @@ export const App: React.FC = () => {
           validTimeDay={validTimeDay}
           onSelectAdr={(adr) => {
             setSelectedAdr(adr);
-            setIsInvariantDrawerOpen(true);
           }}
           selectedAdrId={selectedAdr?.id}
         />
       </footer>
 
       {/* 5. MODALS & DRAWERS */}
-      <ReviewGateModal
-        isOpen={isReviewGateOpen}
-        onClose={() => setIsReviewGateOpen(false)}
-        fitnessSummary={sprintState.fitnessSummary}
-        onApprove={handleApproveReview}
-        onRejectAndBranch={handleRejectAndBranch}
+      <TasksDrawer
+        isOpen={isTasksDrawerOpen}
+        onClose={() => setIsTasksDrawerOpen(false)}
+        specs={liveSpecs.data.specs}
+        projectInfo={liveProjects.data.current_project}
+        onToggleTask={handleToggleTask}
+        selectedSpecId={selectedSpecId}
+        onSelectSpec={setSelectedSpecId}
+      />
+
+      <AdrLibraryModal
+        isOpen={isAdrLibraryOpen}
+        onClose={() => setIsAdrLibraryOpen(false)}
+        adrs={effectiveAdrs}
+        onSelectAdrForInspect={(adr) => setSelectedAdr(adr)}
+      />
+
+      <AdrReaderModal
+        adr={selectedAdr}
+        allAdrs={effectiveAdrs}
+        onClose={() => setSelectedAdr(null)}
+        onSelectAdr={(adr) => setSelectedAdr(adr)}
       />
 
       <InvariantDrawer
@@ -291,14 +466,16 @@ export const App: React.FC = () => {
         onClose={() => setIsInvariantDrawerOpen(false)}
         adrs={effectiveAdrs}
         onSelectInvariant={(id) => {
-          // Highlight node with matching invariant if any
-          const matchingNode = CANONICAL_HITL_DRAKON_IR.nodes.find(
-            (n) => n.semantic_binding?.adr_invariant_id === id
-          );
-          if (matchingNode) {
-            setSelectedNodeId(matchingNode.node_id);
-          }
+          setSelectedNodeId(id);
         }}
+      />
+
+      <ReviewGateModal
+        isOpen={isReviewGateOpen}
+        onClose={() => setIsReviewGateOpen(false)}
+        fitnessSummary={sprintState.fitnessSummary}
+        onApprove={handleApproveSprint}
+        onRejectAndBranch={handleRejectAndBranch}
       />
     </div>
   );

@@ -90,3 +90,36 @@ def test_server_sprint_review_reject_protocol(server):
         data = json.loads(resp.read().decode("utf-8"))
         assert data["status"] == "rejected_and_branched"
         assert "ADR-008-INV-03" in data["delta_c"][0]
+
+
+def test_server_projects_endpoint(server):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/projects"
+    with urllib.request.urlopen(url) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert "current_project" in data
+        assert data["current_project"]["branch"] is not None
+        assert len(data["workspaces"]) > 0
+
+
+def test_server_specs_endpoint(server):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/specs"
+    with urllib.request.urlopen(url) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert data["total"] >= 4
+        assert any(s["id"] == "004-multi-session-handoff-and-drakon" for s in data["specs"])
+        spec004 = next(s for s in data["specs"] if s["id"] == "004-multi-session-handoff-and-drakon")
+        assert len(spec004["tasks"]) == 8
+
+
+def test_server_adrs_full_content(server):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/adrs"
+    with urllib.request.urlopen(url) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert data["total"] > 0
+        first_adr = data["adrs"][0]
+        assert "content" in first_adr
+        assert len(first_adr["content"]) > 50
+

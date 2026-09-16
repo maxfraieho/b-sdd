@@ -23,6 +23,8 @@ export interface BitemporalAdr {
   invariants: AdrInvariant[];
   context: string;
   decision_outcome: string;
+  content?: string;
+  file_path?: string;
 }
 
 export interface BitemporalFilter {

@@ -194,3 +194,19 @@ export function getSprintState(fallback: SprintStateResponse) {
 export function submitSprintReview(payload: SprintReviewPayload) {
   return postJson<SprintReviewResponse, SprintReviewPayload>('/api/sprint/review', payload);
 }
+
+export function getProjects(fallback: import('@/types/specs').ProjectsResponse) {
+  return fetchWithFallback<import('@/types/specs').ProjectsResponse>('/api/projects', fallback);
+}
+
+export function getSpecs(fallback: import('@/types/specs').SpecsResponse) {
+  return fetchWithFallback<import('@/types/specs').SpecsResponse>('/api/specs', fallback);
+}
+
+export function toggleTask(payload: { spec_id: string; task_id: string; completed?: boolean }) {
+  return postJson<{ success: boolean; spec_id: string; task_id: string; completed: boolean }>(
+    '/api/tasks/toggle',
+    payload,
+  );
+}
+

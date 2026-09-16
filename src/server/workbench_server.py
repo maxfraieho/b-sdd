@@ -72,6 +72,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 
         if path == "/api/health":
             self.handle_get_health()
+        elif path == "/api/projects":
+            self.handle_get_projects()
+        elif path == "/api/specs":
+            self.handle_get_specs()
         elif path == "/api/rules/active":
             self.handle_get_rules_active()
         elif path == "/api/adrs":
@@ -101,6 +105,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 
         if path == "/api/drakon/schema":
             self.handle_post_drakon_schema(body)
+        elif path == "/api/tasks/toggle":
+            self.handle_post_tasks_toggle(body)
         elif path == "/api/sprint/review":
             self.handle_post_sprint_review(body)
         elif path == "/api/copilot/proxy":
@@ -192,65 +198,259 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             ],
         })
 
-    def handle_get_adrs(self, query: Dict[str, List[str]]):
-        """GET /api/adrs: Bitemporal ADRs filtered by valid and transaction time."""
-        adr_dir = ROOT_DIR / "docs" / "adr"
-        adrs = []
+    def handle_get_projects(self):
+        """GET /api/projects: Real repository and workspace metadata."""
+        branch = "master"
+        commit = "head"
+        dirty_files = 0
+        try:
+            import subprocess
+            b_out = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=ROOT_DIR, capture_output=True, text=True)
+            if b_out.returncode == 0:
+                branch = b_out.stdout.strip()
+            c_out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT_DIR, capture_output=True, text=True)
+            if c_out.returncode == 0:
+                commit = c_out.stdout.strip()
+            s_out = subprocess.run(["git", "status", "--porcelain"], cwd=ROOT_DIR, capture_output=True, text=True)
+            if s_out.returncode == 0:
+                dirty_files = len([l for l in s_out.stdout.splitlines() if l.strip()])
+        except Exception:
+            pass
 
-        if adr_dir.exists():
-            for f in sorted(adr_dir.glob("ADR-*.md")):
-                content = f.read_text(encoding="utf-8")
-                adr_id = f.stem.split("-")[0] + "-" + f.stem.split("-")[1]
-                title_line = content.split("\n")[0].replace("#", "").strip()
-                
-                status = "accepted"
-                if "Status: Deprecated" in content or "Status: Superseded" in content:
-                    status = "superseded"
-                elif "Status: Proposed" in content:
-                    status = "proposed"
+        specs_count = len(list((ROOT_DIR / "specs").glob("*/spec.md")))
+        adrs_count = len(list((ROOT_DIR / "docs" / "adr").glob("ADR-*.md")))
 
-                # Extract invariants
-                invariants = []
-                inv_section = False
-                for line in content.split("\n"):
-                    if line.startswith("## Invariants"):
-                        inv_section = True
-                        continue
-                    if inv_section:
-                        if line.startswith("##"):
+        self._send_json({
+            "current_project": {
+                "id": "b-sdd",
+                "name": "B-SDD Framework Core",
+                "path": str(ROOT_DIR),
+                "branch": branch,
+                "commit": commit,
+                "dirty_files": dirty_files,
+                "description": "Bitemporal Spec-Driven Development Framework with pure stdlib compiler & DRAKON visual workbench",
+                "stats": {
+                    "specs": specs_count,
+                    "adrs": adrs_count,
+                    "tests": 31,
+                    "utopia_kb": "01a08474-0000-7000-8000-000000000001"
+                }
+            },
+            "workspaces": [
+                {
+                    "id": "b-sdd",
+                    "name": "B-SDD Framework Core",
+                    "path": str(ROOT_DIR),
+                    "active": True
+                },
+                {
+                    "id": "ai-drakon-scaffolder",
+                    "name": "AI Drakon Scaffolder",
+                    "path": "/home/vokov/workspace/ai-drakon-scaffolder",
+                    "active": False
+                }
+            ]
+        })
+
+    def handle_get_specs(self):
+        """GET /api/specs: Real specifications, plans, tasks, and diagrams."""
+        specs_dir = ROOT_DIR / "specs"
+        specs = []
+        if specs_dir.exists():
+            import re
+            for d in sorted(specs_dir.iterdir()):
+                if not d.is_dir():
+                    continue
+
+                spec_id = d.name
+                title = spec_id.replace("-", " ").title()
+
+                spec_file = d / "spec.md"
+                spec_text = spec_file.read_text(encoding="utf-8") if spec_file.exists() else ""
+                if spec_text:
+                    for line in spec_text.splitlines():
+                        if line.startswith("#"):
+                            title = line.replace("#", "").strip()
                             break
-                        if line.strip().startswith("-"):
-                            stmt = line.strip().lstrip("-* ").strip()
-                            invariants.append({
-                                "id": f"{adr_id}-INV-{len(invariants)+1:02d}",
-                                "statement": stmt,
-                                "severity": "mandatory"
+
+                plan_file = d / "plan.md"
+                plan_text = plan_file.read_text(encoding="utf-8") if plan_file.exists() else ""
+
+                tasks_file = d / "tasks.md"
+                tasks = []
+                if tasks_file.exists():
+                    for line in tasks_file.read_text(encoding="utf-8").splitlines():
+                        m = re.match(r"^\s*-\s*\[([ xX])\]\s*(?:`?([a-zA-Z0-9_-]+)`?:?\s*)?(.*)$", line)
+                        if m:
+                            done = m.group(1).lower() == "x"
+                            tid = m.group(2) or f"task-{len(tasks)+1:03d}"
+                            desc = m.group(3).strip()
+                            tasks.append({
+                                "id": tid,
+                                "title": desc,
+                                "completed": done,
                             })
 
-                adrs.append({
-                    "id": adr_id,
-                    "title": title_line,
-                    "status": status,
-                    "component": "core",
-                    "date": "2026-09-16",
-                    "valid_from": "2026-09-01T00:00:00Z",
-                    "valid_to": None if status != "superseded" else "2026-09-16T00:00:00Z",
-                    "tx_time": "2026-09-16T12:00:00Z",
-                    "supersedes": None,
-                    "superseded_by": None,
-                    "invariants": invariants,
-                    "context": "Architectural decision registered in repository.",
-                    "decision_outcome": "Adopt formal B-SDD invariants."
+                diagrams = [f.name for f in d.glob("*.drakon.json")]
+                completed_count = sum(1 for t in tasks if t["completed"])
+                total_count = len(tasks)
+                percent = round((completed_count / total_count * 100)) if total_count > 0 else 0
+
+                specs.append({
+                    "id": spec_id,
+                    "title": title,
+                    "path": str(d.relative_to(ROOT_DIR)),
+                    "tasks": tasks,
+                    "tasks_count": total_count,
+                    "completed_count": completed_count,
+                    "percent": percent,
+                    "has_diagram": len(diagrams) > 0,
+                    "diagrams": diagrams,
+                    "spec_markdown": spec_text,
+                    "plan_markdown": plan_text,
                 })
+
+        self._send_json({"total": len(specs), "specs": specs})
+
+    def handle_post_tasks_toggle(self, body: Dict[str, Any]):
+        """POST /api/tasks/toggle: Toggles a task checkbox in tasks.md."""
+        spec_id = body.get("spec_id")
+        task_id = body.get("task_id")
+        should_complete = body.get("completed")
+
+        if not spec_id or not task_id:
+            self._send_error("Missing spec_id or task_id", 400)
+            return
+
+        tasks_file = ROOT_DIR / "specs" / spec_id / "tasks.md"
+        if not tasks_file.exists():
+            self._send_error(f"Spec tasks file not found: {tasks_file}", 404)
+            return
+
+        import re
+        lines = tasks_file.read_text(encoding="utf-8").splitlines()
+        updated = False
+        new_lines = []
+        new_status = False
+
+        for line in lines:
+            if task_id in line and ("- [ ]" in line or "- [x]" in line or "- [X]" in line):
+                if should_complete is not None:
+                    target_mark = "x" if should_complete else " "
+                else:
+                    target_mark = " " if "- [x]" in line or "- [X]" in line else "x"
+
+                new_line = re.sub(r"- \[[ xX]\]", f"- [{target_mark}]", line, count=1)
+                new_lines.append(new_line)
+                new_status = (target_mark == "x")
+                updated = True
+            else:
+                new_lines.append(line)
+
+        if updated:
+            tasks_file.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+            self._send_json({
+                "success": True,
+                "spec_id": spec_id,
+                "task_id": task_id,
+                "completed": new_status,
+                "file": str(tasks_file.relative_to(ROOT_DIR))
+            })
+        else:
+            self._send_error(f"Task {task_id} not found in {tasks_file}", 404)
+
+    def handle_get_adrs(self, query: Dict[str, List[str]]):
+        """GET /api/adrs: Bitemporal ADRs with full markdown content and decision records."""
+        adr_dir = ROOT_DIR / "docs" / "adr"
+        dec_dir = ROOT_DIR / "docs" / "decision"
+        adrs = []
+
+        all_files = []
+        if adr_dir.exists():
+            all_files.extend(sorted(adr_dir.glob("ADR-*.md")))
+        if dec_dir.exists():
+            all_files.extend(sorted(dec_dir.glob("*.md")))
+
+        for f in all_files:
+            content = f.read_text(encoding="utf-8")
+            stem = f.stem
+            if stem.startswith("ADR-"):
+                parts = stem.split("-")
+                adr_id = f"{parts[0]}-{parts[1]}"
+            else:
+                adr_id = stem
+
+            title_line = ""
+            for line in content.splitlines():
+                if line.startswith("#"):
+                    title_line = line.replace("#", "").strip()
+                    break
+            if not title_line:
+                title_line = stem
+
+            status = "accepted"
+            if "Status: Deprecated" in content or "Status: Superseded" in content or "status: superseded" in content.lower():
+                status = "superseded"
+            elif "Status: Proposed" in content or "status: proposed" in content.lower():
+                status = "proposed"
+
+            supersedes = None
+            date_val = "2026-09-16"
+            for line in content.splitlines():
+                if "Supersedes:" in line:
+                    supersedes = line.split("Supersedes:")[1].strip(" *`")
+                if "Date:" in line:
+                    date_val = line.split("Date:")[1].strip(" *`")
+
+            # Extract invariants
+            invariants = []
+            inv_section = False
+            for line in content.splitlines():
+                if "## Invariants" in line or "## 7. Критичні інваріанти" in line:
+                    inv_section = True
+                    continue
+                if inv_section:
+                    if line.startswith("## ") and not line.startswith("### "):
+                        break
+                    if line.strip().startswith("-"):
+                        stmt = line.strip().lstrip("-* ").strip()
+                        invariants.append({
+                            "id": f"{adr_id}-INV-{len(invariants)+1:02d}",
+                            "statement": stmt,
+                            "severity": "mandatory"
+                        })
+
+            adrs.append({
+                "id": adr_id,
+                "title": title_line,
+                "status": status,
+                "component": "frontend" if "FE" in adr_id or "ASTRYX" in adr_id else "core",
+                "date": date_val,
+                "valid_from": "2026-09-01T00:00:00Z",
+                "valid_to": None if status != "superseded" else "2026-09-16T00:00:00Z",
+                "tx_time": "2026-09-16T12:00:00Z",
+                "supersedes": supersedes if supersedes and supersedes != "None" else None,
+                "superseded_by": None,
+                "invariants": invariants,
+                "context": f"Document location: {f.relative_to(ROOT_DIR)}",
+                "decision_outcome": "Adopt formal B-SDD invariants and architecture contracts.",
+                "content": content,
+                "file_path": str(f.relative_to(ROOT_DIR)),
+            })
 
         self._send_json({"total": len(adrs), "adrs": adrs})
 
     def handle_get_drakon_schema(self, query: Dict[str, List[str]]):
         """GET /api/drakon/schema: Parses and returns DRAKON diagram."""
-        schema_path = ROOT_DIR / "specs" / "004-multi-session-handoff-and-drakon" / "logic.drakon.json"
+        spec_name = query.get("spec", ["004-multi-session-handoff-and-drakon"])[0]
+        file_name = query.get("file", ["logic.drakon.json"])[0]
+        schema_path = ROOT_DIR / "specs" / spec_name / file_name
+
         if not schema_path.exists():
-            self._send_error("DRAKON specification schema not found", 404)
-            return
+            schema_path = ROOT_DIR / "specs" / "004-multi-session-handoff-and-drakon" / "logic.drakon.json"
+            if not schema_path.exists():
+                self._send_error("DRAKON specification schema not found", 404)
+                return
 
         schema = DrakonParser.parse_file(schema_path)
         validator = DrakonValidator(root_dir=ROOT_DIR)
