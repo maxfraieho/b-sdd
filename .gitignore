@@ -15,3 +15,8 @@ env/
 venv/
 .DS_Store
 .context/*.json
+node_modules/
+b-sdd-ui/dist/
+b-sdd-ui/node_modules
+*.tsbuildinfo
+
