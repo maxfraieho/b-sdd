@@ -13,8 +13,9 @@
 - Generate deterministic prompt constraints from DRAKON flows.
 
 ## Phase 3: Developer Workbench Integration
-- Port visual graph components from `ai-drakon-scaffolder`.
+- Port visual graph components from `ai-drakon-scaffolder` leveraging the canonical `stepan-mitkin/drakonwidget` engine (`public/libs/drakonwidget.js`).
+- Integrate `drakonwidget` React adapter (`loadDrakonWidget`, `createWidget`) and TypeScript definitions (`drakonwidget.d.ts`).
 - Build lightweight local web dashboard (`b-sdd-ui`) displaying:
   - Temporal ADR Knowledge Graph.
-  - Interactive DRAKON flowchart viewer.
+  - Interactive DRAKON flowchart studio powered by `drakonwidget` with Swiss Dark theme.
   - Multi-sprint cockpit with one-click session launcher.
