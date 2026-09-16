@@ -5,16 +5,23 @@ import {
   ZoomOut,
   Home,
   Download,
-  Share2,
   CheckCircle2,
+  Save,
+  Loader2,
+  AlertTriangle,
 } from 'lucide-react';
+
+export type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
 interface DrakonToolbarProps {
   onZoomIn: () => void;
   onZoomOut: () => void;
   onGoHome: () => void;
   onExportJson: () => void;
+  onSaveSpec?: () => void;
   diagramName: string;
+  saveState?: SaveState;
+  saveErrorMessage?: string | null;
 }
 
 export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
@@ -22,8 +29,40 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
   onZoomOut,
   onGoHome,
   onExportJson,
+  onSaveSpec,
   diagramName,
+  saveState = 'idle',
+  saveErrorMessage,
 }) => {
+  const saveIcon =
+    saveState === 'saving' ? (
+      <Loader2 className="w-3 h-3 animate-spin" />
+    ) : saveState === 'saved' ? (
+      <CheckCircle2 className="w-3 h-3" />
+    ) : saveState === 'error' ? (
+      <AlertTriangle className="w-3 h-3" />
+    ) : (
+      <Save className="w-3 h-3" />
+    );
+
+  const saveClasses =
+    saveState === 'saved'
+      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40'
+      : saveState === 'error'
+        ? 'bg-rose-500/15 text-rose-300 border-rose-500/40'
+        : saveState === 'saving'
+          ? 'bg-amber/15 text-amber border-amber/40 cursor-wait'
+          : 'bg-panel text-slate-300 border-border-subtle hover:text-amber';
+
+  const saveLabel =
+    saveState === 'saving'
+      ? 'Saving…'
+      : saveState === 'saved'
+        ? 'Saved'
+        : saveState === 'error'
+          ? 'Retry Save'
+          : 'Save Spec';
+
   return (
     <div className="h-10 bg-card/90 border-b border-border-subtle px-3 flex items-center justify-between shrink-0 select-none text-xs">
       <div className="flex items-center gap-2">
@@ -62,11 +101,27 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
         <button
           onClick={onExportJson}
           className="flex items-center gap-1 px-2 py-1 rounded bg-panel hover:bg-slate-800 text-slate-300 border border-border-subtle hover:text-amber transition-colors text-[11px] font-mono"
-          title="Export DRAKON Schema JSON"
+          title="Download DRAKON schema as .drakon.json"
         >
           <Download className="w-3 h-3" />
           <span>Export IR</span>
         </button>
+
+        {onSaveSpec && (
+          <button
+            onClick={onSaveSpec}
+            disabled={saveState === 'saving'}
+            className={`flex items-center gap-1 px-2 py-1 rounded border transition-colors text-[11px] font-mono ${saveClasses}`}
+            title={
+              saveState === 'error' && saveErrorMessage
+                ? `POST /api/drakon/schema failed: ${saveErrorMessage}`
+                : 'POST /api/drakon/schema — persist IR + widget diagram to specs/'
+            }
+          >
+            {saveIcon}
+            <span>{saveLabel}</span>
+          </button>
+        )}
       </div>
     </div>
   );

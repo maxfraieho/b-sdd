@@ -297,6 +297,9 @@ def main():
     p_drk_parse = drakon_sub.add_parser("parse", help="Parse and output canonical DRAKON-IR")
     p_drk_parse.add_argument("file", help="Path to DRAKON diagram file (.json or .drn)")
 
+    p_drk_prompt = drakon_sub.add_parser("prompt", help="Generate prompt constraints from DRAKON diagram")
+    p_drk_prompt.add_argument("file", help="Path to DRAKON diagram file (.json or .drn)")
+
     # serve
     p_serve = subparsers.add_parser("serve", help="Start local B-SDD workbench server & bridge gateway (ADR-008)")
     p_serve.add_argument("--port", type=int, default=8765, help="Port to listen on (default: 8765)")

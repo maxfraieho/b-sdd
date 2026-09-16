@@ -1,45 +1,37 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-f8da1c0c-1789577151`
-- **Source Session:** `f8da1c0c-fe2b-48f0-a535-ffccec7bede9`
-- **Timestamp:** `2026-09-16T16:45:51.068169+00:00`
+- **Handoff ID:** `handoff-session-1789582904`
+- **Source Session:** `unspecified`
+- **Timestamp:** `2026-09-16T18:21:44.215006+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `master`, commit `5c22419`
+- **Git Status:** branch `master`, commit `cc5abc0`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
 ```
-"/home/vokov/projects/b-sdd/.gitignore"
-"/home/vokov/projects/b-sdd/b-sdd-ui/index.html"
-"/home/vokov/projects/b-sdd/b-sdd-ui/package.json"
-"/home/vokov/projects/b-sdd/b-sdd-ui/postcss.config.js"
-"/home/vokov/projects/b-sdd/b-sdd-ui/public/_headers"
-"/home/vokov/projects/b-sdd/b-sdd-ui/public/_redirects"
-"/home/vokov/projects/b-sdd/b-sdd-ui/public/favicon.svg"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/App.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/BitemporalRadar/AdrListCard.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/BitemporalRadar/TimelineSlider.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/ContextBadges.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/TokenGauge.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonCanvas.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonToolbar.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/NodeInspector.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/InvariantDrawer.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/PhaseStepper.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/ReviewGateModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/Topbar.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/data/mockAdrs.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/data/mockDrakonSchema.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/data/mockSprints.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/index.css"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/drakon/adapter.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/drakon/ir-bridge.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/drakon/themeAdapter.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/utils.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/main.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/types/adr.ts"
-... and 17 more files
+.context/next_sprint.md
+b-sdd-ui/.env.example
+b-sdd-ui/PHASE3_INTEGRATION.md
+b-sdd-ui/public/_headers
+b-sdd-ui/public/_redirects
+b-sdd-ui/src/App.tsx
+b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx
+b-sdd-ui/src/components/DrakonStudio/DrakonToolbar.tsx
+b-sdd-ui/src/components/ReviewGateModal.tsx
+b-sdd-ui/src/hooks/
+b-sdd-ui/src/lib/api.ts
+b-sdd-ui/src/lib/backend-types.ts
+b-sdd-ui/src/lib/sse.ts
+b-sdd-ui/src/vite-env.d.ts
+docs/decision/ADR-FE-001-cockpit-architecture.md
+docs/decision/DELTA_C_ASTRYX_OMISSION.md
+docs/decision/HANDOFF_BACKEND.md
+docs/decision/PROMPT_BACKEND_AGENT.md
+docs/decision/PROMPT_FRONTEND_MIGRATION.md
+docs/dewsign/
+specs/004-multi-session-handoff-and-drakon/logic.drakon.json
+src/cli/main.py
+src/server/workbench_server.py
 ```
 
 ### Completed Tasks
