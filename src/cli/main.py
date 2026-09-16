@@ -297,12 +297,17 @@ def main():
     p_drk_parse = drakon_sub.add_parser("parse", help="Parse and output canonical DRAKON-IR")
     p_drk_parse.add_argument("file", help="Path to DRAKON diagram file (.json or .drn)")
 
-    p_drk_prompt = drakon_sub.add_parser("prompt", help="Generate prompt execution constraints from DRAKON flow")
-    p_drk_prompt.add_argument("file", help="Path to DRAKON diagram file (.json or .drn)")
+    # serve
+    p_serve = subparsers.add_parser("serve", help="Start local B-SDD workbench server & bridge gateway (ADR-008)")
+    p_serve.add_argument("--port", type=int, default=8765, help="Port to listen on (default: 8765)")
+    p_serve.add_argument("--host", default="0.0.0.0", help="Host to bind (default: 0.0.0.0)")
 
     args = parser.parse_args()
     if args.command == "compile":
         cmd_compile(args)
+    elif args.command == "serve":
+        from src.server.workbench_server import WorkbenchServer
+        WorkbenchServer(host=args.host, port=args.port).start()
     elif args.command == "sync":
         cmd_sync(args)
     elif args.command == "fitness":

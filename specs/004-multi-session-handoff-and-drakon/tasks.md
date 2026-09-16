@@ -6,5 +6,5 @@
 - [x] `task-004`: Author architectural contract `docs/adr/ADR-008-drakon-visual-logic-and-developer-workbench.md`.
 - [x] `task-005`: Implement pure stdlib DRAKON schema validator in `src/drakon/`.
 - [x] `task-006`: Port React/Vite visualization workbench from `ai-drakon-scaffolder` leveraging `stepan-mitkin/drakonwidget`.
-- [ ] `task-007`: Connect workbench to local `.context/` and Utopia DB on `.251`.
+- [x] `task-007`: Connect workbench to local `.context/` and Utopia DB on `.251`.
 - [x] `task-008`: Add end-to-end multi-sprint chaining automated tests.

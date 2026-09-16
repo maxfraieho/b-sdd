@@ -114,9 +114,19 @@ case "$MODE" in
         cd "$WORKBENCH_DIR"
         npm run preview
         ;;
+    --backend)
+        log_info "Starting standalone B-SDD Backend Gateway on http://localhost:8765 ..."
+        exec python3 -m src.cli.main serve --port 8765
+        ;;
     dev|--dev|*)
+        log_info "Starting B-SDD Backend Gateway on http://localhost:8765 ..."
+        python3 -m src.cli.main serve --port 8765 &
+        SERVER_PID=$!
+        trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT INT TERM
+
         log_info "Starting Vite interactive developer workbench on http://localhost:5173 ..."
         cd "$WORKBENCH_DIR"
-        exec npm run dev -- --host
+        npm run dev -- --host
         ;;
 esac
+
