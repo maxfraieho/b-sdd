@@ -1,0 +1,183 @@
+{
+  "schema_version": "1.0",
+  "name": "HITL 7-Phase Execution and Handoff Pipeline",
+  "params": "sprint_id: str, context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Phase 1: Intent Framing (MADR formulation)",
+      "edges": {
+        "down": "step_phi2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-001",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_phi2",
+      "node_type": "action",
+      "label": "Phase 2: Algorithmic Specification (DRAKON-as-Spec modeling)",
+      "edges": {
+        "down": "cond_phi3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "cond_phi3",
+      "node_type": "question",
+      "label": "Phase 3: Pre-Flight Gate (<500 words, <50ms)?",
+      "edges": {
+        "down": "step_phi4",
+        "right": "err_phi3_abort"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-002",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "err_phi3_abort",
+      "node_type": "action",
+      "label": "Compilation failure: Abort sprint and refine ADR token budget",
+      "edges": {
+        "down": "end_fail",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-002",
+        "severity": "fatal"
+      },
+      "x": 4.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "step_phi4",
+      "node_type": "action",
+      "label": "Phase 4: Phased Code Execution (Leaf action bodies synthesis)",
+      "edges": {
+        "down": "cond_phi5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "cond_phi5",
+      "node_type": "question",
+      "label": "Phase 5: Fitness Gate (Pytest suite passes 100%)?",
+      "edges": {
+        "down": "cond_phi6",
+        "right": "err_phi5_retry"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-007",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "err_phi5_retry",
+      "node_type": "action",
+      "label": "Fitness failure: Inject negative invariant vector ΔC and retry",
+      "edges": {
+        "down": "end_fail",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-007",
+        "severity": "error"
+      },
+      "x": 4.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "cond_phi6",
+      "node_type": "question",
+      "label": "Phase 6: Human Review Gate (Approved by operator)?",
+      "edges": {
+        "down": "step_phi7",
+        "right": "err_phi6_reject"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "err_phi6_reject",
+      "node_type": "action",
+      "label": "Operator rejection: Trigger Reject & Branch protocol (COW snapshot)",
+      "edges": {
+        "down": "end_fail",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008",
+        "severity": "degraded"
+      },
+      "x": 4.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "step_phi7",
+      "node_type": "action",
+      "label": "Phase 7: Distill session into sprint_handoff.json & next_sprint.md",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-007",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Sprint completed successfully. Handoff dispatched.",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "x": 0.0,
+      "y": 14.0
+    },
+    {
+      "node_id": "end_fail",
+      "node_type": "end",
+      "label": "Sprint terminated with failure or branch divergence.",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "x": 4.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "author": "B-SDD Architect",
+    "component": "specs"
+  }
+}

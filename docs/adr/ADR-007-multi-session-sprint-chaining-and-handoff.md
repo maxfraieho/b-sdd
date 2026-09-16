@@ -1,6 +1,6 @@
 # ADR-007: Multi-Session Sprint Chaining and Dynamic Handoff Protocol
 
-* **Status:** Proposed
+* **Status:** Accepted
 * **Date:** 2026-09-15
 * **Component:** core
 * **Supersedes:** None
@@ -13,6 +13,7 @@ Complex software engineering projects require multiple sequential AI agent sessi
 * Eliminate human cognitive overhead in formulating the next prompt.
 * Guarantee that Sprint N+1 is strictly grounded in the actual codebase state left by Sprint N.
 * Enforce automated pre-flight fitness verification at every session boundary.
+* Maintain 100% pure Python Standard Library runtime in core modules.
 
 ## Considered Options
 1. Static multi-sprint prompt lists (Waterfall, brittle to implementation changes).
@@ -27,11 +28,16 @@ Chosen option: **Dynamic Handoff Protocol** (Option 3).
      b) `main.py distill` (updates transcript intelligence).
      c) `main.py handoff` (generates `.context/next_sprint.md` and machine-readable `sprint_handoff.json`).
 2. **Next Sprint Prompt Generation:**
-   - The handoff engine introspects git changes, passing tests, and project roadmap to assemble the exact, executable command for the next sprint (`./run_b_sdd.sh "<refined_prompt>"`).
-3. **Optional Auto-Chaining:**
-   - Support `--auto-chain` in `run_b_sdd.sh` to allow automated dispatch to the next session without human copy-pasting when running in unattended/CI modes.
+   - The handoff engine introspects git status, passing tests, and project roadmap (`specs/**/tasks.md`) to assemble the exact executable command for the next sprint (`./run_b_sdd.sh "<refined_prompt>"`).
+3. **Machine-Readable & Human Handoff Artifacts:**
+   - `.context/sprint_handoff.json`: contains structured metadata (schema version, session ID, timestamp, git branch/commit, modified files, fitness gate status, completed/pending tasks, next sprint prompt and run command).
+   - `.context/next_sprint.md`: concise briefing document summarizing upstream accomplishments and downstream objectives.
+4. **Auto-Chaining Execution (`run_b_sdd.sh --auto-chain`):**
+   - Support `--auto-chain [N]` in `run_b_sdd.sh` to automatically loop across successive sprints with fresh session contexts until all tasks complete or max sprints reached.
 
 ## Invariants
-- A session cannot generate a handoff artifact if architectural fitness tests are failing.
-- Handoff prompts must explicitly cite created class names, file paths, and target ADR invariants.
-- Handoff state must be committed to git alongside session code changes.
+- Downstream sprints cannot generate a handoff artifact if upstream architectural fitness tests are failing.
+- Handoff prompts must deterministically prefix active rules and explicitly cite target task and modified seams.
+- Handoff artifacts must be emitted in both machine-readable JSON (`sprint_handoff.json`) and human-readable Markdown (`next_sprint.md`).
+- Core handoff synthesis in `src/` must strictly use 100% pure Python Standard Library.
+- Auto-chain runner must verify zero invariant deviation before launching subsequent fresh sessions.

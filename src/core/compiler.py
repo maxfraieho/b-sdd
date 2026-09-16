@@ -33,6 +33,7 @@ DEFAULT_FILE_DOMAIN_RULES = [
     (re.compile(r"^src/adapters/"), "core"),
     (re.compile(r"^src/api/|^api/"), "api"),
     (re.compile(r"^src/gateway/"), "core"),
+    (re.compile(r"^src/drakon/"), "specs"),
     (re.compile(r"^web/|^frontend/|^ui/|styles\.css|\.html$"), "web"),
     (re.compile(r"^specs/"), "specs"),
     (re.compile(r"^docs/"), "docs"),
