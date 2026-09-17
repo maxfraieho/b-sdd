@@ -4,7 +4,7 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), camera=(), microphone=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:8765 http://127.0.0.1:8765 https://192.168.3.184:18880 https://192.168.3.251:9922 https://192.168.3.184:4747 wss:; frame-ancestors 'none';
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:8765 http://127.0.0.1:8765 https://bsdd.exodus.pp.ua https://*.exodus.pp.ua https://192.168.3.184:18880 https://192.168.3.251:9922 https://192.168.3.184:4747 wss:; frame-ancestors 'none';
 
 # Aggressively cache the DrakonWidget bundle (1.4 MB, immutable).
 /libs/*
