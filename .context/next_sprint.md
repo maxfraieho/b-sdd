@@ -58,15 +58,24 @@ src/server/workbench_server.py
 - [GLOBAL] **Static Code Intelligence Graph (GitNexus):** Modified files are mapped to architectural domains and components via Abstract Syntax Tree (AST) impact analysis. (Ref: .specify/constitution.md)
 - [GLOBAL] **Zero-Dependency Pure Runtime:** All core compiler and adapter components in `src/` must strictly use the Python Standard Library to ensure universal zero-setup portability across dev servers, containers, and bare-metal nodes. (Ref: .specify/constitution.md)
 
-## 3. Downstream Target (Sprint N+1)
-- **Target Task:** `Finalize and verify all specifications`
-- **Prompt:**
-> [B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task All tasks completed; run final architecture verification and report project status.
+## 3. Downstream Target (Sprint N+2: Astryx Migration)
+- **Target Goal:** `Refactor b-sdd-ui using Meta Astryx design system while preserving canonical DrakonWidget engine and live backend APIs`
+- **Genspark Designer Prompt:** `docs/PROMPT_GENSPARK_ASTRYX_WORKBENCH_REDESIGN.md`
+- **Git Branch:** `main` (synchronized with `origin/main`)
+
+### Cross-Component Directives (ADR-007-INV-04)
+1. **Design System:** Use Meta Astryx (`facebook/astryx`) with `@astryxdesign/core`, `@astryxdesign/theme-neutral`, and `@astryxdesign/cli`.
+2. **CSS Cascade Order:** Must declare `@layer reset, astryx-base, utilities;` in `index.css`.
+3. **Canonical DRAKON Invariant:** NEVER overwrite `public/libs/drakonwidget.js` or `public/libs/drakongen.js`. Canvas must be wrapped in `ClientOnly` boundary with `access: 'write'` and root branch `b0`.
+4. **Backend Contracts:** All 12 REST/SSE endpoints (`/api/health`, `/api/rules/active`, `/api/adrs`, `/api/adrs/save`, `/api/sync/utopia`, `/api/drakon/schema`, `/api/sprint/review`, etc.) must remain bound.
 
 ### Executable Dispatch Command
 ```bash
-./run_b_sdd.sh --new-session "[B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task All tasks completed; run final architecture verification and report project status."
+./run_next_sprint.sh [path_to_genspark_output]
 ```
 
 ## 4. Pending Tasks Backlog
-- All specification tasks completed! Ready for final acceptance.
+- [ ] Task N2-01: Apply Genspark Astryx design output via `./run_next_sprint.sh <path>`.
+- [ ] Task N2-02: Verify Astryx CSS cascade layer safety (`reset`, `astryx-base`, `utilities`).
+- [ ] Task N2-03: Verify interactive DrakonWidget operations (socket insertions, double-click text editing, context menu, pseudocode export).
+- [ ] Task N2-04: Run full architectural fitness gate (`pytest -v`) and pre-flight compilation (<50ms, <500 words).
