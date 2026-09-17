@@ -1,9 +1,11 @@
 // src/components/CopilotPanel/CopilotStream.tsx
+// Astryx-native LLM Copilot Streaming Terminal (ADR-008, ADR-009)
 import React, { useState, useRef, useEffect } from 'react';
 import type { ModelSlot, ModelSlotId, CopilotLogMessage, TokenBudget } from '@/types/copilot';
 import { TokenGauge } from './TokenGauge';
 import { ContextBadges } from './ContextBadges';
 import { useCopilotStream } from '@/hooks/useCopilotStream';
+import { Button, Badge, Banner, Dot } from '@/components/astryx/primitives';
 import {
   Send,
   Cpu,
@@ -47,8 +49,6 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
 
   const activeSlot = modelSlots.find((s) => s.id === activeSlotId) || modelSlots[0];
 
-  // Phase 3: live SSE from POST /api/copilot/proxy on localhost:8765.
-  // The hook exposes streamingText + isStreaming + error and manages fetch abort.
   const {
     streamingText,
     isStreaming,
@@ -58,58 +58,34 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     abort: abortStream,
   } = useCopilotStream();
 
-  // Merge the live stream chunk into the last assistant bubble as it grows.
-  useEffect(() => {
-    const id = pendingMessageIdRef.current;
-    if (!id) return;
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === id
-          ? {
-              ...m,
-              content: streamingText || m.content,
-              tokensUsed: totalTokens > 0 ? totalTokens : m.tokensUsed,
-            }
-          : m,
-      ),
-    );
-  }, [streamingText, totalTokens]);
-
-  // Once streaming ends, clear the pending pointer so future messages append.
-  useEffect(() => {
-    if (!isStreaming) pendingMessageIdRef.current = null;
-  }, [isStreaming]);
-
-  // If the sovereign gateway rejected our call, surface the reason inline.
-  useEffect(() => {
-    if (!streamError) return;
-    const id = pendingMessageIdRef.current;
-    if (!id) return;
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.id === id
-          ? {
-              ...m,
-              content:
-                (streamingText || m.content) +
-                `\n\n[⚠ offline fallback] ${streamError.message}\n` +
-                'Backend workbench_server.py unreachable — using local simulated response.',
-            }
-          : m,
-      ),
-    );
-    pendingMessageIdRef.current = null;
-  }, [streamError, streamingText]);
-
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, streamingText]);
 
-  const handleToggleAttach = (type: string) => {
+  useEffect(() => {
+    if (isStreaming && pendingMessageIdRef.current) {
+      const targetId = pendingMessageIdRef.current;
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === targetId ? { ...m, content: streamingText } : m
+        )
+      );
+    }
+  }, [streamingText, isStreaming]);
+
+  useEffect(() => {
+    if (!isStreaming && pendingMessageIdRef.current) {
+      pendingMessageIdRef.current = null;
+    }
+  }, [isStreaming]);
+
+  const handleToggleAttach = (contextType: string) => {
     setAttachedContexts((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+      prev.includes(contextType)
+        ? prev.filter((c) => c !== contextType)
+        : [...prev, contextType]
     );
   };
 
@@ -117,13 +93,13 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     if (!inputPrompt.trim() || isStreaming) return;
 
     const userMsg: CopilotLogMessage = {
-      id: String(Date.now()),
+      id: `u_${Date.now()}`,
       timestamp: new Date().toLocaleTimeString(),
       role: 'user',
       content: inputPrompt,
     };
 
-    const assistantId = String(Date.now() + 1);
+    const assistantId = `a_${Date.now()}`;
     const assistantSeed: CopilotLogMessage = {
       id: assistantId,
       timestamp: new Date().toLocaleTimeString(),
@@ -137,9 +113,6 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     const prompt = inputPrompt;
     setInputPrompt('');
 
-    // Phase 3: dispatch to real POST /api/copilot/proxy SSE stream.
-    // The hook automatically falls back into error mode if the sovereign
-    // gateway is offline — we then attach a local simulated response above.
     startStream({
       prompt,
       slot: activeSlot.id as ModelSlotId,
@@ -153,9 +126,9 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
   };
 
   return (
-    <div className="h-full flex flex-col bg-panel text-slate-100 select-none">
+    <div className="h-full flex flex-col bg-[#0d121c] text-slate-100 select-none">
       {/* Top: Model Slots Selector */}
-      <div className="p-3 border-b border-border-subtle bg-card/60 flex flex-col gap-2">
+      <div className="p-3 border-b border-[#1e293b] bg-[#141b27]/60 flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Cpu className="w-4 h-4 text-amber" />
@@ -164,7 +137,7 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
             </span>
           </div>
           <span className="text-[10px] font-mono text-slate-400">
-            Avg Latency: <span className="text-emerald-400">{activeSlot.latencyAvg}</span>
+            Avg Latency: <span className="text-emerald">{activeSlot.latencyAvg}</span>
           </span>
         </div>
 
@@ -177,15 +150,15 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
               <button
                 key={slot.id}
                 onClick={() => onSelectSlot(slot.id)}
-                className={`p-2 rounded border text-left flex flex-col transition-all ${
+                className={`p-2 rounded border text-left flex flex-col transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-amber/15 border-amber text-amber font-semibold shadow-sm'
-                    : 'bg-card hover:bg-slate-800 border-border-subtle text-slate-300'
+                    ? 'bg-[#1a2233] border-amber text-amber font-semibold shadow-xs'
+                    : 'bg-[#141b27] hover:bg-[#1a2233] border-[#1e293b] text-slate-300'
                 }`}
               >
                 <div className="flex items-center justify-between text-[11px] font-mono">
                   <span>{slot.name}</span>
-                  {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-amber" />}
+                  {isSelected && <Dot tone="amber" />}
                 </div>
                 <span className="text-[9px] text-slate-400 font-sans truncate mt-0.5">
                   {slot.model.split('/')[1] || slot.model}
@@ -202,20 +175,20 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
       {/* Center: Realtime Streaming Log Terminal */}
       <div
         ref={scrollRef}
-        className="flex-1 p-3 overflow-y-auto font-mono text-xs space-y-3 bg-canvas/60"
+        className="flex-1 p-3 overflow-y-auto font-mono text-xs space-y-3 bg-[#090d13]/60"
       >
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`p-2.5 rounded-md border text-xs leading-relaxed ${
+            className={`p-2.5 rounded border text-xs leading-relaxed ${
               msg.role === 'system'
-                ? 'bg-blue-950/20 border-blue-900/40 text-blue-300'
+                ? 'bg-cyan/10 border-cyan/30 text-cyan-200'
                 : msg.role === 'user'
-                ? 'bg-slate-800 border-border-subtle text-slate-200'
-                : 'bg-card border-border-subtle text-slate-100'
+                ? 'bg-[#1a2233] border-[#1e293b] text-slate-200'
+                : 'bg-[#141b27] border-[#1e293b] text-slate-100'
             }`}
           >
-            <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1 border-b border-border-subtle/50 pb-1">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1 border-b border-[#1e293b]/50 pb-1">
               <span className="uppercase font-bold tracking-wider text-slate-400">
                 {msg.role === 'assistant' ? `🤖 ${msg.slot || 'LLM Gateway'}` : msg.role}
               </span>
@@ -226,32 +199,33 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
         ))}
 
         {isStreaming && (
-          <div className="p-2.5 rounded-md border border-amber/30 bg-amber/5 text-amber text-xs font-mono flex items-center gap-2">
+          <div className="p-2.5 rounded border border-amber/30 bg-amber/5 text-amber text-xs font-mono flex items-center gap-2">
             <Sparkles className="w-4 h-4 animate-spin text-amber" />
             <span className="flex-1 animate-pulse">
               SSE stream from <span className="font-bold">{activeSlot.name}</span>
               {totalTokens > 0 && <span className="text-slate-400"> · {totalTokens} tok</span>}
             </span>
-            <button
+            <Button
+              variant="destructive"
+              size="sm"
+              icon={<Square className="w-3 h-3" />}
               onClick={handleKillStream}
-              className="px-2 py-1 rounded border border-rose-500/50 text-rose-300 hover:bg-rose-500/20 flex items-center gap-1 text-[10px] font-mono transition-colors"
               title="Kill sovereign SSE stream and rollback partial tokens"
             >
-              <Square className="w-3 h-3" />
               Kill Stream
-            </button>
+            </Button>
           </div>
         )}
+
         {!isStreaming && streamError && (
-          <div className="p-2.5 rounded-md border border-rose-500/30 bg-rose-950/20 text-rose-300 text-xs font-mono flex items-center gap-2">
-            <WifiOff className="w-4 h-4" />
+          <Banner tone="error" icon={<WifiOff className="w-4 h-4" />}>
             <span>Sovereign gateway offline — next prompt will use fallback simulation.</span>
-          </div>
+          </Banner>
         )}
       </div>
 
       {/* Bottom: Context Attachments & Input Bar */}
-      <div className="p-3 border-t border-border-subtle bg-card/70 flex flex-col gap-2">
+      <div className="p-3 border-t border-[#1e293b] bg-[#141b27]/70 flex flex-col gap-2">
         <ContextBadges
           attachedContexts={attachedContexts}
           onAttach={handleToggleAttach}
@@ -265,18 +239,18 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
             onChange={(e) => setInputPrompt(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendPrompt()}
             disabled={isStreaming}
-            className="flex-1 bg-canvas border border-border-subtle rounded-md px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber font-mono"
+            className="flex-1 bg-[#090d13] border border-[#1e293b] rounded px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber font-mono"
           />
 
-          <button
+          <Button
+            variant="primary"
+            size="md"
+            icon={<Send className="w-3.5 h-3.5" />}
             onClick={handleSendPrompt}
             disabled={isStreaming || !inputPrompt.trim()}
-            className="px-3 py-2 rounded-md bg-amber hover:bg-amber-600 disabled:opacity-40 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-colors shadow"
-            title="Dispatch Prompt"
           >
-            <Send className="w-3.5 h-3.5" />
-            <span>Send</span>
-          </button>
+            Send
+          </Button>
         </div>
       </div>
     </div>

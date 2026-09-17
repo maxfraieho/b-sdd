@@ -1,13 +1,12 @@
 // src/components/AdrReaderModal.tsx
-import React, { useEffect, useState, useCallback } from 'react';
+// Astryx-native ADR Reader & Editor Dialog (ADR-009, ADR-010)
+import React, { useEffect, useState } from 'react';
 import type { BitemporalAdr } from '@/types/adr';
 import { saveAdr } from '@/lib/api';
+import { Dialog, Button, Badge, Segmented, Banner } from './astryx/primitives';
 import {
-  X,
-  FileText,
   Shield,
   Clock,
-  ArrowRight,
   Copy,
   Check,
   Calendar,
@@ -17,8 +16,6 @@ import {
   Eye,
   Save,
   Loader2,
-  CheckCircle2,
-  AlertCircle,
   Undo2,
 } from 'lucide-react';
 
@@ -38,7 +35,7 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
   onAdrSaved,
 }) => {
   const [copiedInvId, setCopiedInvId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'preview' | 'edit'>('preview');
+  const [viewMode, setViewMode] = useState<string>('preview');
   const [editedContent, setEditedContent] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveFeedback, setSaveFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -107,12 +104,12 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
     }
   };
 
-  const statusColor =
+  const statusTone =
     adr.status === 'accepted'
-      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+      ? 'emerald'
       : adr.status === 'superseded'
-        ? 'bg-rose-500/15 text-rose-400 border-rose-500/30 line-through'
-        : 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+        ? 'rose'
+        : 'cyan';
 
   // Count words and invariants in edited text
   const wordCount = editedContent.trim().split(/\s+/).filter(Boolean).length;
@@ -125,7 +122,7 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
     return lines.map((line, idx) => {
       if (line.startsWith('# ')) {
         return (
-          <h1 key={idx} className="text-xl font-bold text-slate-100 mt-2 mb-3 pb-2 border-b border-border-subtle">
+          <h1 key={idx} className="text-xl font-bold text-slate-100 mt-2 mb-3 pb-2 border-b border-[#1e293b]">
             {line.substring(2)}
           </h1>
         );
@@ -171,75 +168,112 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-150">
-      <div className="w-full max-w-5xl max-h-[92vh] bg-panel border border-border-subtle rounded-xl shadow-2xl flex flex-col overflow-hidden text-slate-100">
-        {/* Header */}
-        <div className="px-6 py-3.5 bg-card border-b border-border-subtle flex items-center justify-between shrink-0">
+    <Dialog
+      isOpen={Boolean(adr)}
+      onClose={onClose}
+      maxWidth="max-w-5xl"
+      title={
+        <div className="flex items-center justify-between w-full pr-6">
           <div className="flex items-center gap-3">
-            <span className="font-mono text-xs font-bold text-amber px-2 py-0.5 rounded bg-amber/10 border border-amber/30">
+            <Badge tone="amber" outline>
               {adr.id}
-            </span>
-            <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded border ${statusColor}`}>
+            </Badge>
+            <Badge tone={statusTone} outline>
               {adr.status}
-            </span>
+            </Badge>
             <span className="text-xs text-slate-400 font-mono flex items-center gap-1">
               <Layers className="w-3.5 h-3.5" />
               {adr.component}
             </span>
             {adr.file_path && (
-              <span className="text-[11px] font-mono text-slate-400 bg-canvas px-2 py-0.5 rounded border border-border-subtle">
+              <span className="text-[11px] font-mono text-slate-400 bg-[#090d13] px-2 py-0.5 rounded border border-[#1e293b]">
                 {adr.file_path}
               </span>
             )}
           </div>
 
+          <Segmented
+            value={viewMode}
+            onChange={(val) => setViewMode(val)}
+            options={[
+              {
+                value: 'preview',
+                label: (
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Читання</span>
+                  </span>
+                ),
+              },
+              {
+                value: 'edit',
+                label: (
+                  <span className="flex items-center gap-1">
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>Редагування</span>
+                    {isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber animate-pulse"></span>}
+                  </span>
+                ),
+              },
+            ]}
+          />
+        </div>
+      }
+      footer={
+        <div className="flex items-center justify-between w-full text-xs font-mono">
           <div className="flex items-center gap-2">
-            {/* View Mode Switcher */}
-            <div className="flex items-center rounded-lg bg-canvas p-0.5 border border-border-subtle text-xs font-mono">
-              <button
-                onClick={() => setViewMode('preview')}
-                className={`flex items-center gap-1 px-3 py-1 rounded transition-colors ${
-                  viewMode === 'preview'
-                    ? 'bg-amber text-slate-950 font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>Читання</span>
-              </button>
-              <button
-                onClick={() => setViewMode('edit')}
-                className={`flex items-center gap-1 px-3 py-1 rounded transition-colors ${
-                  viewMode === 'edit'
-                    ? 'bg-amber text-slate-950 font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Редагування</span>
-                {isDirty && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>}
-              </button>
-            </div>
+            {saveFeedback ? (
+              <span className={saveFeedback.type === 'success' ? 'text-emerald-400' : 'text-rose-400'}>
+                {saveFeedback.message}
+              </span>
+            ) : (
+              <span className="text-slate-500 text-[11px]">
+                {isDirty ? 'Є незбережені зміни' : 'Файл синхронізовано з диском'}
+              </span>
+            )}
+          </div>
 
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
-              title="Закрити (Esc)"
-            >
-              <X className="w-5 h-5" />
-            </button>
+          <div className="flex items-center gap-2">
+            {viewMode === 'edit' && isDirty && (
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<Undo2 className="w-3.5 h-3.5" />}
+                onClick={() => setEditedContent(adr.content || '')}
+              >
+                Скинути
+              </Button>
+            )}
+
+            {viewMode === 'edit' && (
+              <Button
+                variant="success"
+                size="sm"
+                icon={isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                Зберегти на диск
+              </Button>
+            )}
+
+            <Button variant="secondary" size="sm" onClick={onClose}>
+              Закрити
+            </Button>
           </div>
         </div>
-
+      }
+    >
+      <div className="-m-4 flex flex-col h-[75vh] overflow-hidden">
         {/* Bitemporal & DAG Metadata Bar */}
-        <div className="px-6 py-2 bg-canvas/90 border-b border-border-subtle flex items-center justify-between text-xs font-mono text-slate-400">
+        <div className="px-6 py-2 bg-[#090d13] border-b border-[#1e293b] flex items-center justify-between text-xs font-mono text-slate-400 shrink-0">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-amber" />
               <span>Date: {adr.date}</span>
             </span>
             <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-cyan-400" />
+              <Clock className="w-3.5 h-3.5 text-cyan" />
               <span>Valid: {adr.valid_from.split('T')[0]} → {adr.valid_to ? adr.valid_to.split('T')[0] : 'PRESENT'}</span>
             </span>
           </div>
@@ -248,32 +282,34 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
             {adr.supersedes && (
               <div className="flex items-center gap-1 text-[11px]">
                 <span className="text-slate-500">Supersedes:</span>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => {
                     const target = allAdrs.find((a) => a.id === adr.supersedes);
                     if (target) onSelectAdr(target);
                   }}
-                  className="px-2 py-0.5 rounded bg-card hover:bg-slate-800 text-amber border border-border-subtle flex items-center gap-1"
+                  iconRight={<ExternalLink className="w-2.5 h-2.5" />}
                 >
-                  <span>{adr.supersedes}</span>
-                  <ExternalLink className="w-2.5 h-2.5" />
-                </button>
+                  {adr.supersedes}
+                </Button>
               </div>
             )}
 
             {adr.superseded_by && (
               <div className="flex items-center gap-1 text-[11px]">
                 <span className="text-rose-400">Superseded by:</span>
-                <button
+                <Button
+                  variant="destructive"
+                  size="sm"
                   onClick={() => {
                     const target = allAdrs.find((a) => a.id === adr.superseded_by);
                     if (target) onSelectAdr(target);
                   }}
-                  className="px-2 py-0.5 rounded bg-card hover:bg-slate-800 text-rose-400 border border-border-subtle flex items-center gap-1"
+                  iconRight={<ExternalLink className="w-2.5 h-2.5" />}
                 >
-                  <span>{adr.superseded_by}</span>
-                  <ExternalLink className="w-2.5 h-2.5" />
-                </button>
+                  {adr.superseded_by}
+                </Button>
               </div>
             )}
           </div>
@@ -282,12 +318,12 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
         {/* Modal Body */}
         <div className="flex-1 overflow-hidden flex flex-col">
           {viewMode === 'preview' ? (
-            <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 select-text bg-panel">
+            <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 select-text bg-[#0d121c]">
               {/* Invariants Summary Section */}
               {adr.invariants && adr.invariants.length > 0 && (
-                <div className="p-4 rounded-xl bg-card/80 border border-amber/30 space-y-3">
+                <div className="p-4 rounded-xl bg-[#141b27] border border-amber/30 space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs font-semibold text-amber">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-amber font-mono">
                       <Shield className="w-4 h-4 text-amber" />
                       <span>Архітектурні інваріанти рішення ({adr.invariants.length})</span>
                     </div>
@@ -298,18 +334,18 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
                     {adr.invariants.map((inv) => (
                       <div
                         key={inv.id}
-                        className="p-3 rounded-lg bg-canvas border border-border-subtle flex flex-col justify-between gap-2 text-xs hover:border-amber/50 transition-colors"
+                        className="p-3 rounded-lg bg-[#090d13] border border-[#1e293b] flex flex-col justify-between gap-2 text-xs hover:border-amber/50 transition-colors"
                       >
                         <div className="flex items-center justify-between">
                           <span className="font-mono font-bold text-amber text-[11px]">{inv.id}</span>
-                          <span className="px-1.5 py-0.2 rounded bg-amber/10 text-amber text-[9px] uppercase font-mono border border-amber/20">
+                          <Badge tone="amber" outline>
                             {inv.severity || 'mandatory'}
-                          </span>
+                          </Badge>
                         </div>
                         <p className="text-slate-300 font-sans leading-relaxed">{inv.statement}</p>
                         <button
                           onClick={() => handleCopyInvariant(inv.id)}
-                          className="self-end text-[10px] font-mono text-slate-400 hover:text-amber flex items-center gap-1 mt-1"
+                          className="self-end text-[10px] font-mono text-slate-400 hover:text-amber flex items-center gap-1 mt-1 cursor-pointer"
                         >
                           {copiedInvId === inv.id ? (
                             <>
@@ -330,14 +366,14 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
               )}
 
               {/* Formatted Markdown Body */}
-              <div className="p-6 rounded-xl bg-canvas border border-border-subtle space-y-2">
+              <div className="p-6 rounded-xl bg-[#090d13] border border-[#1e293b] space-y-2">
                 {renderFormattedMarkdown(editedContent || adr.content || '')}
               </div>
             </div>
           ) : (
             /* Live Markdown Editor */
-            <div className="flex-1 flex flex-col bg-canvas overflow-hidden">
-              <div className="px-4 py-2 bg-card/60 border-b border-border-subtle flex items-center justify-between text-xs font-mono text-slate-400">
+            <div className="flex-1 flex flex-col bg-[#090d13] overflow-hidden">
+              <div className="px-4 py-2 bg-[#0d121c] border-b border-[#1e293b] flex items-center justify-between text-xs font-mono text-slate-400">
                 <div className="flex items-center gap-4">
                   <span>Слів: <strong className="text-slate-200">{wordCount}</strong></span>
                   <span>Символів: <strong className="text-slate-200">{editedContent.length}</strong></span>
@@ -351,69 +387,15 @@ export const AdrReaderModal: React.FC<AdrReaderModalProps> = ({
               <textarea
                 value={editedContent}
                 onChange={(e) => setEditedContent(e.target.value)}
-                className="flex-1 w-full p-6 bg-transparent text-slate-200 font-mono text-xs leading-relaxed resize-none focus:outline-hidden selection:bg-amber/30"
+                className="flex-1 w-full p-6 bg-transparent text-slate-200 font-mono text-xs leading-relaxed resize-none focus:outline-none selection:bg-amber/30"
                 placeholder="Введіть повний Markdown текст архітектурного рішення..."
                 spellCheck={false}
               />
             </div>
           )}
         </div>
-
-        {/* Footer */}
-        <div className="px-6 py-3 bg-card border-t border-border-subtle flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            {saveFeedback ? (
-              <div
-                className={`flex items-center gap-1.5 font-mono text-xs ${
-                  saveFeedback.type === 'success' ? 'text-emerald-400' : 'text-rose-400'
-                }`}
-              >
-                {saveFeedback.type === 'success' ? (
-                  <CheckCircle2 className="w-4 h-4" />
-                ) : (
-                  <AlertCircle className="w-4 h-4" />
-                )}
-                <span>{saveFeedback.message}</span>
-              </div>
-            ) : (
-              <span className="text-slate-500 font-mono text-[11px]">
-                {isDirty ? 'Є незбережені зміни' : 'Файл синхронізовано з диском'}
-              </span>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
-            {viewMode === 'edit' && isDirty && (
-              <button
-                onClick={() => setEditedContent(adr.content || '')}
-                className="px-3 py-1.5 rounded-lg border border-border-subtle hover:bg-slate-800 text-slate-400 hover:text-slate-200 flex items-center gap-1.5 transition-colors"
-              >
-                <Undo2 className="w-3.5 h-3.5" />
-                <span>Скинути</span>
-              </button>
-            )}
-
-            {viewMode === 'edit' && (
-              <button
-                onClick={handleSave}
-                disabled={isSaving}
-                className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold flex items-center gap-1.5 transition-all shadow-md disabled:opacity-50"
-              >
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                <span>Зберегти на диск</span>
-              </button>
-            )}
-
-            <button
-              onClick={onClose}
-              className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition-colors"
-            >
-              Закрити
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

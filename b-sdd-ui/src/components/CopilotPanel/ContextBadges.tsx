@@ -1,6 +1,8 @@
 // src/components/CopilotPanel/ContextBadges.tsx
+// Astryx-native Context Badges (ADR-009)
 import React from 'react';
 import { Plus, FileText, Network, CheckSquare, GitPullRequest } from 'lucide-react';
+import { Badge } from '@/components/astryx/primitives';
 
 interface ContextBadgesProps {
   onAttach: (contextType: string) => void;
@@ -28,15 +30,17 @@ export const ContextBadges: React.FC<ContextBadgesProps> = ({
           <button
             key={badge.id}
             onClick={() => onAttach(badge.id)}
-            className={`flex items-center gap-1 px-2 py-1 rounded text-[11px] font-mono transition-colors border ${
-              isAttached
-                ? 'bg-amber/15 border-amber/40 text-amber font-semibold'
-                : 'bg-card hover:bg-slate-800 border-border-subtle text-slate-300'
-            }`}
+            className="cursor-pointer"
           >
-            <Plus className={`w-2.5 h-2.5 ${isAttached ? 'rotate-45 text-amber' : 'text-slate-400'}`} />
-            {badge.icon}
-            <span>{badge.label}</span>
+            <Badge
+              tone={isAttached ? 'amber' : 'neutral'}
+              outline={!isAttached}
+              className="gap-1.5 px-2 py-1 text-[11px] transition-colors hover:border-amber/50"
+            >
+              <Plus className={`w-2.5 h-2.5 ${isAttached ? 'rotate-45 text-amber' : 'text-slate-400'}`} />
+              {badge.icon}
+              <span>{badge.label}</span>
+            </Badge>
           </button>
         );
       })}

@@ -1,6 +1,7 @@
 // src/components/MobileNavigation.tsx
-// Astryx Mobile Navigation Bar for High-Density Cockpit
+// Astryx Mobile Navigation Bar for High-Density Cockpit (ADR-009)
 import React from 'react';
+import { Dot, IconButton } from './astryx/primitives';
 import {
   Workflow,
   Bot,
@@ -31,7 +32,6 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   isReviewGatePending = false,
   onOpenTasksDrawer,
   onOpenInvariantDrawer,
-  onOpenAdrLibrary,
   onOpenProjectSwitcher,
 }) => {
   return (
@@ -42,7 +42,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
       {/* 1. DRAKON Studio */}
       <button
         onClick={() => onSelectTab('drakon')}
-        className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative ${
+        className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative cursor-pointer ${
           activeTab === 'drakon'
             ? 'text-amber font-semibold'
             : 'text-slate-400 hover:text-slate-200'
@@ -58,7 +58,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
       {/* 2. Copilot */}
       <button
         onClick={() => onSelectTab('copilot')}
-        className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative ${
+        className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative cursor-pointer ${
           activeTab === 'copilot'
             ? 'text-amber font-semibold'
             : 'text-slate-400 hover:text-slate-200'
@@ -74,7 +74,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
       {/* 3. Bitemporal Radar */}
       <button
         onClick={() => onSelectTab('radar')}
-        className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative ${
+        className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative cursor-pointer ${
           activeTab === 'radar'
             ? 'text-amber font-semibold'
             : 'text-slate-400 hover:text-slate-200'
@@ -90,7 +90,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
       {/* 4. HITL Phases & Review Gate */}
       <button
         onClick={() => onSelectTab('phases')}
-        className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative ${
+        className={`flex flex-col items-center justify-center flex-1 py-1 transition-colors relative cursor-pointer ${
           activeTab === 'phases'
             ? 'text-amber font-semibold'
             : 'text-slate-400 hover:text-slate-200'
@@ -99,10 +99,9 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
         <div className="relative">
           <ShieldCheck className="w-5 h-5 mb-0.5" />
           {isReviewGatePending && (
-            <span className="absolute -top-1 -right-1.5 w-2.5 h-2.5 bg-rose rounded-full animate-ping" />
-          )}
-          {isReviewGatePending && (
-            <span className="absolute -top-1 -right-1.5 w-2.5 h-2.5 bg-rose rounded-full" />
+            <span className="absolute -top-1 -right-1.5">
+              <Dot tone="rose" pulse />
+            </span>
           )}
         </div>
         <span className="text-[10px] tracking-tight font-mono">
@@ -116,31 +115,28 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
       {/* 5. Drawers / Project Action Menu */}
       <div className="flex items-center gap-1 pl-1 border-l border-[#1e293b]/60">
         {onOpenProjectSwitcher && (
-          <button
-            onClick={onOpenProjectSwitcher}
+          <IconButton
             title="Проєкти та GitHub"
-            aria-label="Проєкти"
-            className="p-1.5 text-slate-400 hover:text-slate-100 rounded active:bg-[#1a2233]"
+            size="sm"
+            onClick={onOpenProjectSwitcher}
           >
             <FolderGit2 className="w-4 h-4 text-cyan" />
-          </button>
+          </IconButton>
         )}
-        <button
-          onClick={onOpenTasksDrawer}
+        <IconButton
           title="Завдання"
-          aria-label="Завдання"
-          className="p-1.5 text-slate-400 hover:text-slate-100 rounded active:bg-[#1a2233]"
+          size="sm"
+          onClick={onOpenTasksDrawer}
         >
           <ListTodo className="w-4 h-4" />
-        </button>
-        <button
-          onClick={onOpenInvariantDrawer}
+        </IconButton>
+        <IconButton
           title="Інваріанти"
-          aria-label="Інваріанти"
-          className="p-1.5 text-slate-400 hover:text-slate-100 rounded active:bg-[#1a2233]"
+          size="sm"
+          onClick={onOpenInvariantDrawer}
         >
           <Layers className="w-4 h-4" />
-        </button>
+        </IconButton>
       </div>
     </nav>
   );

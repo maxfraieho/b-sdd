@@ -1,6 +1,8 @@
 // src/components/MobilePhaseView.tsx
+// Astryx-native Mobile Phase Cockpit (ADR-009)
 import React from 'react';
 import type { HitlPhase, HitlPhaseId } from '@/types/sprint';
+import { Button, Badge, Dot } from './astryx/primitives';
 import {
   CheckCircle2,
   Clock,
@@ -8,7 +10,6 @@ import {
   AlertTriangle,
   Play,
   ArrowRight,
-  Sparkles,
 } from 'lucide-react';
 
 interface MobilePhaseViewProps {
@@ -28,14 +29,14 @@ export const MobilePhaseView: React.FC<MobilePhaseViewProps> = ({
   const isReviewGate = currentPhaseId === 'phi_6';
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-canvas text-slate-100 pb-20">
+    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#090d13] text-slate-100 pb-20">
       {/* Current Phase Highlight Banner */}
-      <div className="bg-panel border border-border-subtle rounded-xl p-4 shadow-lg">
+      <div className="bg-[#0d121c] border border-[#1e293b] rounded-xl p-4 shadow-lg">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold uppercase text-amber bg-amber/10 px-2 py-0.5 rounded border border-amber/20">
+            <Badge tone="amber" outline>
               Поточна фаза
-            </span>
+            </Badge>
             <span className="text-xs font-mono text-slate-400">
               {currentPhase.hitlLevel}
             </span>
@@ -45,24 +46,26 @@ export const MobilePhaseView: React.FC<MobilePhaseViewProps> = ({
           </span>
         </div>
 
-        <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+        <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 font-mono">
           {currentPhase.name}
         </h2>
-        <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+        <p className="text-xs text-slate-400 mt-1 leading-relaxed font-sans">
           {currentPhase.description ||
             'Автоматизований цикл перевірки архітектурних інваріантів та синхронізації бітемпоральних намірів.'}
         </p>
 
         {isReviewGate && (
-          <div className="mt-4 pt-3 border-t border-border-subtle">
-            <button
+          <div className="mt-4 pt-3 border-t border-[#1e293b]">
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full justify-between"
+              icon={<ShieldAlert className="w-4 h-4" />}
+              iconRight={<ArrowRight className="w-3.5 h-3.5" />}
               onClick={onOpenReviewGate}
-              className="w-full py-2.5 px-4 bg-violet-600 hover:bg-violet-500 text-white rounded-lg font-bold text-xs flex items-center justify-center gap-2 shadow-lg animate-pulse transition-colors"
             >
-              <ShieldAlert className="w-4 h-4" />
-              <span>Відкрити Human Review Gate (Затвердити / Відхилити)</span>
-              <ArrowRight className="w-3.5 h-3.5 ml-auto" />
-            </button>
+              Відкрити Human Review Gate
+            </Button>
           </div>
         )}
       </div>
@@ -70,40 +73,40 @@ export const MobilePhaseView: React.FC<MobilePhaseViewProps> = ({
       {/* 7-Phase Pipeline List */}
       <div className="space-y-2">
         <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 px-1">
-          Конвеєр фаз B-SDD (HITL $\Phi_1 - \Phi_7$)
+          Конвеєр фаз B-SDD (HITL Φ1 - Φ7)
         </div>
 
-        {phases.map((phase, idx) => {
+        {phases.map((phase) => {
           const isSelected = phase.id === currentPhaseId;
           const isPhaseReviewGate = phase.id === 'phi_6';
 
-          let statusBg = 'bg-card/70 border-border-subtle text-slate-300';
+          let statusBg = 'bg-[#141b27]/70 border-[#1e293b] text-slate-300';
           let statusBadge = (
-            <span className="text-[10px] font-mono text-slate-500 flex items-center gap-1">
+            <Badge tone="neutral" outline>
               <Clock className="w-3 h-3" /> Очікує
-            </span>
+            </Badge>
           );
 
           if (phase.status === 'completed') {
-            statusBg = 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200';
+            statusBg = 'bg-emerald/10 border-emerald/30 text-emerald-200';
             statusBadge = (
-              <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+              <Badge tone="emerald" outline>
                 <CheckCircle2 className="w-3 h-3" /> Завершено
-              </span>
+              </Badge>
             );
           } else if (phase.status === 'running') {
-            statusBg = 'bg-blue-950/30 border-blue-500 text-blue-100 ring-1 ring-blue-500';
+            statusBg = 'bg-cyan/15 border-cyan text-cyan-100 ring-1 ring-cyan';
             statusBadge = (
-              <span className="text-[10px] font-mono text-blue-400 flex items-center gap-1 font-bold animate-pulse">
-                <Play className="w-3 h-3" /> В процесі
-              </span>
+              <Badge tone="cyan" outline>
+                <Dot tone="cyan" pulse /> В процесі
+              </Badge>
             );
           } else if (phase.status === 'rejected') {
-            statusBg = 'bg-rose-950/30 border-rose-500 text-rose-200';
+            statusBg = 'bg-rose/20 border-rose text-rose-200';
             statusBadge = (
-              <span className="text-[10px] font-mono text-rose-400 flex items-center gap-1">
+              <Badge tone="rose" outline>
                 <AlertTriangle className="w-3 h-3" /> Відхилено
-              </span>
+              </Badge>
             );
           }
 
@@ -116,12 +119,12 @@ export const MobilePhaseView: React.FC<MobilePhaseViewProps> = ({
                   onOpenReviewGate();
                 }
               }}
-              className={`p-3 rounded-lg border flex items-center justify-between cursor-pointer transition-all ${statusBg} ${
-                isSelected ? 'ring-2 ring-amber ring-offset-1 ring-offset-canvas' : ''
+              className={`p-3 rounded border flex items-center justify-between cursor-pointer transition-all ${statusBg} ${
+                isSelected ? 'ring-1 ring-amber border-amber shadow-md' : 'hover:border-slate-600'
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-md bg-canvas/80 border border-border-subtle flex items-center justify-center font-mono font-bold text-amber text-xs">
+                <div className="w-8 h-8 rounded bg-[#090d13] border border-[#1e293b] flex items-center justify-center font-mono font-bold text-amber text-xs">
                   {phase.symbol}
                 </div>
                 <div>
