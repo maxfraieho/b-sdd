@@ -177,17 +177,40 @@ export const DrakonCanvas = forwardRef<DrakonCanvasHandle, DrakonCanvasProps>(({
         const element = widget.render(rect.width || 800, rect.height || 600, config);
         container.appendChild(element);
 
-        // Always guarantee write access and root branch so socket insertions and edits work
-        const items = { ...(diagram.items || {}) };
+        // Guarantee write access, valid flow types, and connected branch root
+        const items: Record<string, any> = {};
+        for (const [id, rawItem] of Object.entries(diagram.items || {})) {
+          if (!rawItem) continue;
+          const item = { ...rawItem };
+          // DrakonWidget reserves 'header' for global title block; flow items must be 'action'
+          if (item.type === 'header' || item.type === 'headline') {
+            item.type = 'action';
+          }
+          items[id] = item;
+        }
+
+        // Prune dangling links pointing to non-existent nodes
+        for (const [id, item] of Object.entries(items)) {
+          if (item.one && !items[item.one]) item.one = undefined;
+          if (item.two && !items[item.two]) item.two = undefined;
+        }
+
         const hasBranch = Object.values(items).some((it: any) => it?.type === 'branch');
         if (!hasBranch && Object.keys(items).length > 0) {
-          const firstKey = Object.keys(items)[0];
+          const firstKey = Object.keys(items).find((k) => items[k]?.type !== 'branch') || Object.keys(items)[0];
           items['b0'] = {
             type: 'branch',
             branchId: 0,
             content: diagram.name || 'Головна гілка',
             one: firstKey,
           };
+        } else if (hasBranch) {
+          // If a branch points to a missing item, re-point to first valid node
+          for (const item of Object.values(items)) {
+            if (item.type === 'branch' && item.one && !items[item.one]) {
+              item.one = Object.keys(items).find((k) => items[k]?.type !== 'branch' && k !== item.id);
+            }
+          }
         }
 
         const diagramToLoad = {

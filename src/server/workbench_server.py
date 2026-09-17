@@ -864,16 +864,16 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 
         for node in schema.nodes.values():
             item_type = node.normalized_type
-            if item_type == "headline":
-                item_type = "header"
+            if item_type in ("headline", "header"):
+                item_type = "action"
             elif item_type == "silhouette_route":
                 item_type = "address"
 
             items[node.node_id] = {
                 "type": item_type,
                 "content": node.label,
-                "one": node.edges.down,
-                "two": node.edges.right,
+                "one": node.edges.down if node.edges.down in schema.nodes else None,
+                "two": node.edges.right if node.edges.right in schema.nodes else None,
             }
             if node.semantic_binding and node.semantic_binding.adr_invariant_id:
                 items[node.node_id]["secondary"] = f"[{node.semantic_binding.adr_invariant_id}]"

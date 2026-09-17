@@ -9733,6 +9733,9 @@ function createDrakonWidget() {
             while (true) {
                 switch (__state) {
                 case '2':
+                    if (!node) {
+                        return false;
+                    }
                     _var2 = node.type;
                     if (_var2 === 'loopbegin') {
                         depth--;
@@ -18400,6 +18403,10 @@ function createDrakonWidget() {
                     }
                     break;
                 case '5':
+                    if (!node) {
+                        __state = '4';
+                        break;
+                    }
                     if (node === finish) {
                         if (node.type === 'question') {
                             linkSkewers(visuals, node.skewer, skewer, node.w + boundary + metre);
@@ -20278,7 +20285,7 @@ function createDrakonWidget() {
             }
         }
         function getDown(node) {
-            return node.down.tail;
+            return (node && node.down) ? node.down.tail : undefined;
         }
         function createNode(visuals, itemId, type, content, id) {
             var node, _var2, _var3;
@@ -21857,6 +21864,10 @@ function createDrakonWidget() {
                     if (nextItemId) {
                         visuals = context.visuals;
                         node2 = getNodeForItem(visuals, nextItemId);
+                        if (!node2) {
+                            __state = '1';
+                            break;
+                        }
                         if (node2.type == 'branch') {
                             address = utils.last(context.addresses);
                             if (address) {

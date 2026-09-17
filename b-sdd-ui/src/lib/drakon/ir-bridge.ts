@@ -9,7 +9,7 @@ export function mapIrTypeToWidgetType(irType: DrakonNodeType): string {
   switch (irType) {
     case 'headline':
     case 'header':
-      return 'header';
+      return 'action';
     case 'branch':
       return 'branch';
     case 'question':
@@ -39,6 +39,18 @@ export function mapIrTypeToWidgetType(irType: DrakonNodeType): string {
  */
 export function convertIrToDrakonDiagram(schema: DrakonSchemaIR): DrakonDiagram {
   const items: Record<string, DrakonItem> = {};
+  const validNodeIds = new Set(schema.nodes.map((n) => n.node_id));
+
+  // If no branch node exists, create root branch b0 pointing to the first node
+  const hasBranch = schema.nodes.some((n) => n.node_type === 'branch');
+  if (!hasBranch && schema.nodes.length > 0) {
+    items['b0'] = {
+      type: 'branch',
+      branchId: 0,
+      content: schema.name || 'Головна гілка',
+      one: schema.nodes[0].node_id,
+    };
+  }
 
   for (const node of schema.nodes) {
     const itemType = mapIrTypeToWidgetType(node.node_type);
@@ -46,8 +58,8 @@ export function convertIrToDrakonDiagram(schema: DrakonSchemaIR): DrakonDiagram 
     const item: DrakonItem = {
       type: itemType,
       content: node.label,
-      one: node.edges.down ?? undefined,
-      two: node.edges.right ?? undefined,
+      one: node.edges.down && validNodeIds.has(node.edges.down) ? node.edges.down : undefined,
+      two: node.edges.right && validNodeIds.has(node.edges.right) ? node.edges.right : undefined,
       branchId: node.branch_id,
     };
 
