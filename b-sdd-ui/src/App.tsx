@@ -31,6 +31,7 @@ import {
   getActiveRules,
   getAdrs,
   getHealth,
+  getDrakonSchema,
   saveDrakonSchema,
   getProjects,
   getSpecs,
@@ -42,6 +43,7 @@ import type {
   ActiveRulesResponse,
   AdrsResponse,
   HealthResponse,
+  DrakonSchemaResponse,
 } from '@/lib/backend-types';
 
 const FALLBACK_HEALTH: HealthResponse = {
@@ -49,6 +51,11 @@ const FALLBACK_HEALTH: HealthResponse = {
   utopia_db: { host: '192.168.3.251', port: 9922, status: 'online' },
   llm_gateway: { host: '192.168.3.184', port: 18880, status: 'online', slots_available: 3 },
   checked_at: new Date().toISOString(),
+};
+const FALLBACK_DRAKON: DrakonSchemaResponse = {
+  schema_ir: CANONICAL_HITL_DRAKON_IR,
+  diagram: CANONICAL_DRAKON_DIAGRAM,
+  validation: { is_valid: true, errors: [] },
 };
 const FALLBACK_RULES: ActiveRulesResponse = {
   compiled_snapshot: '',
@@ -165,6 +172,22 @@ export const App: React.FC = () => {
     pollMs: 0,
     deps: [validTimeDay, txTimeDay],
   });
+
+  const liveDrakon = useLiveData<DrakonSchemaResponse>({
+    fetcher: () => getDrakonSchema(FALLBACK_DRAKON, selectedSpecId),
+    fallback: FALLBACK_DRAKON,
+    pollMs: 0,
+    deps: [selectedSpecId],
+  });
+
+  const currentDiagram = liveDrakon.data.diagram || CANONICAL_DRAKON_DIAGRAM;
+
+  // Synchronize IR nodes from backend specification when loaded
+  React.useEffect(() => {
+    if (liveDrakon.data.schema_ir?.nodes && liveDrakon.data.schema_ir.nodes.length > 0) {
+      setDrakonNodes(liveDrakon.data.schema_ir.nodes);
+    }
+  }, [liveDrakon.data.schema_ir]);
 
   const effectiveAdrs: BitemporalAdr[] =
     liveAdrs.data.adrs.length > 0 ? [...liveAdrs.data.adrs] : MOCK_ADRS;
@@ -392,7 +415,7 @@ export const App: React.FC = () => {
             onRedo={() => canvasRef.current?.redo()}
             saveState={saveState}
             saveErrorMessage={saveError}
-            diagramName={CANONICAL_DRAKON_DIAGRAM.name}
+            diagramName={currentDiagram.name}
             viewMode={drakonViewMode}
             onViewModeChange={setDrakonViewMode}
             onAddNode={handleAddNode}
@@ -410,7 +433,7 @@ export const App: React.FC = () => {
             {drakonViewMode === 'widget' ? (
               <DrakonCanvas
                 ref={canvasRef}
-                diagram={CANONICAL_DRAKON_DIAGRAM}
+                diagram={currentDiagram}
                 diagramId={selectedSpecId}
                 onSelectNode={setSelectedNodeId}
                 selectedNodeId={selectedNodeId}

@@ -50,9 +50,11 @@ export interface AdrsResponse {
   readonly total: number;
 }
 
+import type { DrakonDiagram } from '@/types/drakonwidget';
+
 // ---- DRAKON schema --------------------------------------------------------
 
-export type DrakonWidgetDiagram = Record<string, unknown>; // widget-native format
+export type DrakonWidgetDiagram = DrakonDiagram;
 
 export interface DrakonSchemaResponse {
   readonly schema_ir: DrakonSchemaIR;
@@ -62,6 +64,7 @@ export interface DrakonSchemaResponse {
     readonly violations?: readonly string[];
     readonly crossings?: number;
     readonly planar?: boolean;
+    readonly errors?: readonly string[];
   };
   readonly source_path?: string;
 }

@@ -175,11 +175,17 @@ export const CANONICAL_HITL_DRAKON_IR: DrakonSchemaIR = {
  */
 export const CANONICAL_DRAKON_DIAGRAM: DrakonDiagram = {
   name: 'HITL 7-Phase Execution and Handoff Pipeline',
-  access: 'read',
-  params: 'sprint_id: str, context: dict',
+  access: 'write',
+  params: 'sprint_id, context',
   items: {
-    start: {
-      type: 'header',
+    b0: {
+      type: 'branch',
+      branchId: 0,
+      content: 'HITL Pipeline',
+      one: 'step_phi1',
+    },
+    step_phi1: {
+      type: 'action',
       content: 'Phase 1: Intent Framing (MADR formulation)',
       secondary: '[ADR-001-INV-01]',
       one: 'step_phi2',
@@ -201,7 +207,7 @@ export const CANONICAL_DRAKON_DIAGRAM: DrakonDiagram = {
       type: 'action',
       content: 'Compilation failure: Abort sprint and refine ADR budget',
       secondary: '[ADR-002-INV-01]',
-      one: 'end_fail',
+      one: 'end',
     },
     step_phi4: {
       type: 'action',
@@ -220,7 +226,7 @@ export const CANONICAL_DRAKON_DIAGRAM: DrakonDiagram = {
       type: 'action',
       content: 'Fitness failure: Inject negative invariant vector ΔC and retry',
       secondary: '[ADR-007-INV-01]',
-      one: 'end_fail',
+      one: 'end',
     },
     cond_phi6: {
       type: 'question',
@@ -233,21 +239,17 @@ export const CANONICAL_DRAKON_DIAGRAM: DrakonDiagram = {
       type: 'action',
       content: 'Operator rejection: Trigger Reject & Branch protocol (COW snapshot)',
       secondary: '[ADR-008-INV-03]',
-      one: 'end_fail',
+      one: 'end',
     },
     step_phi7: {
       type: 'action',
       content: 'Phase 7: Distill session into sprint_handoff.json & next_sprint.md',
       secondary: '[ADR-007-INV-02]',
-      one: 'end_success',
+      one: 'end',
     },
-    end_success: {
+    end: {
       type: 'end',
-      content: 'Sprint completed successfully. Handoff dispatched.',
-    },
-    end_fail: {
-      type: 'end',
-      content: 'Sprint terminated with failure or branch divergence.',
+      content: 'Кінець процедури',
     },
   },
 };

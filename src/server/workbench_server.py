@@ -540,6 +540,16 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 
         # Convert to drakonwidget items format
         items: Dict[str, Any] = {}
+        has_branch = any(n.normalized_type == "branch" for n in schema.nodes.values())
+        if not has_branch and schema.nodes:
+            first_node_id = next(iter(schema.nodes.keys()))
+            items["b0"] = {
+                "type": "branch",
+                "branchId": 0,
+                "content": schema.name,
+                "one": first_node_id,
+            }
+
         for node in schema.nodes.values():
             item_type = node.normalized_type
             if item_type == "headline":
@@ -561,6 +571,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             "diagram": {
                 "name": schema.name,
                 "params": schema.params,
+                "access": "write",
                 "items": items,
             },
             "validation": val_result.to_dict()

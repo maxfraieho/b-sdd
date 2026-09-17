@@ -176,8 +176,9 @@ export function getAdrs(
   return fetchWithFallback<AdrsResponse>(`/api/adrs${qs ? `?${qs}` : ''}`, fallback);
 }
 
-export function getDrakonSchema(fallback: DrakonSchemaResponse) {
-  return fetchWithFallback<DrakonSchemaResponse>('/api/drakon/schema', fallback);
+export function getDrakonSchema(fallback: DrakonSchemaResponse, specId?: string) {
+  const url = specId ? `/api/drakon/schema?spec=${encodeURIComponent(specId)}` : '/api/drakon/schema';
+  return fetchWithFallback<DrakonSchemaResponse>(url, fallback);
 }
 
 export function saveDrakonSchema(payload: DrakonSchemaSavePayload) {
