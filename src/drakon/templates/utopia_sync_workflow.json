@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "name": "Bitemporal Intent Sync & Utopia DB Knowledge Graph",
+  "category": "bsdd_pipeline",
+  "description": "Транзакційна синхронізація намірів ADR з базою знань Utopia DB та побудова графу зв'язків",
+  "params": "kb_id: str, host: str, port: int",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Синхронізація бітемпоральних намірів з Utopia DB",
+      "edges": { "down": "step_test_conn", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_test_conn",
+      "node_type": "action",
+      "label": "TCP ping та перевірка доступності вузла Utopia DB (.251:9922)",
+      "edges": { "down": "cond_conn_ok", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_conn_ok",
+      "node_type": "question",
+      "label": "З'єднання з Utopia DB активне?",
+      "edges": { "down": "step_sync_intents", "right": "err_offline_fallback" },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "err_offline_fallback",
+      "node_type": "action",
+      "label": "Автономний режим: зберегти наміри в локальний SQLite intent_store",
+      "edges": { "down": "end_offline_ok", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-01", "severity": "degraded" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_sync_intents",
+      "node_type": "action",
+      "label": "Транзакційний пуш рішень у таблицю intent_store",
+      "edges": { "down": "step_sync_kg", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_sync_kg",
+      "node_type": "action",
+      "label": "Синхронізація сутностей і фактів у Граф Знань (Knowledge Graph)",
+      "edges": { "down": "end_sync_ok", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "end_sync_ok",
+      "node_type": "end",
+      "label": "Синхронізацію завершено: суверенний граф оновлено",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end_offline_ok",
+      "node_type": "end",
+      "label": "Локальний кеш збережено (синхронізація відбудеться після відновлення мережі)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-01", "severity": "mild" },
+      "x": 4.0, "y": 10.0
+    }
+  ]
+}

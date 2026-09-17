@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "name": "TDD Red-Green-Refactor & Fitness Gate",
+  "category": "bsdd_pipeline",
+  "description": "Автоматизований інженерний цикл TDD з перевіркою 100% архітектурної відповідності",
+  "params": "spec_id: str, test_file: str",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок циклу TDD",
+      "edges": { "down": "step_write_test", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_write_test",
+      "node_type": "action",
+      "label": "Написання падаючого тесту (Red phase) на основі специфікації",
+      "edges": { "down": "cond_test_fails", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_test_fails",
+      "node_type": "question",
+      "label": "Тест падає очікуваним чином (Red)?",
+      "edges": { "down": "step_write_code", "right": "err_tautology" },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "err_tautology",
+      "node_type": "action",
+      "label": "Тест проходить без коду: виправити твердження (assert)",
+      "edges": { "down": "step_write_test", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "severe" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_write_code",
+      "node_type": "action",
+      "label": "Мінімальна реалізація функціоналу (Green phase, Pure Stdlib)",
+      "edges": { "down": "cond_tests_pass", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-03", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "cond_tests_pass",
+      "node_type": "question",
+      "label": "Усі тести проходять (100% Green)?",
+      "edges": { "down": "step_refactor", "right": "step_diagnose" },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_diagnose",
+      "node_type": "action",
+      "label": "Діагностика: синтезувати вектор порушення ΔC та усунути дефект",
+      "edges": { "down": "step_write_code", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007-INV-01", "severity": "degraded" },
+      "x": 4.0, "y": 8.0
+    },
+    {
+      "node_id": "step_refactor",
+      "node_type": "action",
+      "label": "Рефакторинг без зміни поведінки (чистота коду та типів)",
+      "edges": { "down": "end_done", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end_done",
+      "node_type": "end",
+      "label": "Фітнес-бар'єр пройдено, код готовий до коміту",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}

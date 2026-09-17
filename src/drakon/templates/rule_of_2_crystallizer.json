@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "name": "Rule of 2 Skill Crystallization Workflow",
+  "category": "bsdd_pipeline",
+  "description": "Автономне перетворення повторюваних інженерних патернів у стійкі навички агентів",
+  "params": "workflow_name: str, observation_count: int",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Моніторинг повторюваних операцій (Правило двох)",
+      "edges": { "down": "step_observe", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_observe",
+      "node_type": "action",
+      "label": "Фіксація сигнатури викликів та кроків у сесії",
+      "edges": { "down": "cond_repeats", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_repeats",
+      "node_type": "question",
+      "label": "Операція повторюється >= 2 разів без навички?",
+      "edges": { "down": "step_halt_and_propose", "right": "step_adhoc" },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_adhoc",
+      "node_type": "action",
+      "label": "Перше виконання: виконати ad-hoc без кристалізації",
+      "edges": { "down": "end_adhoc", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-01", "severity": "mild" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_halt_and_propose",
+      "node_type": "action",
+      "label": "Зупинити хід та запропонувати кристалізацію навички",
+      "edges": { "down": "step_scaffold", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_scaffold",
+      "node_type": "action",
+      "label": "Створити .agents/skills/<name>/SKILL.md за канонічним форматом",
+      "edges": { "down": "step_test_skill", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_test_skill",
+      "node_type": "action",
+      "label": "Тестування навички в ізольованому субагенті",
+      "edges": { "down": "step_register", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "step_register",
+      "node_type": "action",
+      "label": "Реєстрація навички у списку процедурних навичок компілятора",
+      "edges": { "down": "end_crystallized", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    },
+    {
+      "node_id": "end_crystallized",
+      "node_type": "end",
+      "label": "Навичку кристалізовано та додано до постійного арсеналу",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 14.0
+    },
+    {
+      "node_id": "end_adhoc",
+      "node_type": "end",
+      "label": "Продовження ходу (перший прецедент зафіксовано)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-01", "severity": "normal" },
+      "x": 4.0, "y": 14.0
+    }
+  ]
+}

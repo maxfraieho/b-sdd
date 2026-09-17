@@ -1,4 +1,5 @@
 // src/components/MobileNavigation.tsx
+// Astryx Mobile Navigation Bar for High-Density Cockpit
 import React from 'react';
 import {
   Workflow,
@@ -7,7 +8,7 @@ import {
   ShieldCheck,
   ListTodo,
   Layers,
-  Menu,
+  FolderGit2,
 } from 'lucide-react';
 
 export type MobileTabId = 'drakon' | 'copilot' | 'radar' | 'phases';
@@ -20,6 +21,7 @@ interface MobileNavigationProps {
   onOpenTasksDrawer: () => void;
   onOpenInvariantDrawer: () => void;
   onOpenAdrLibrary: () => void;
+  onOpenProjectSwitcher?: () => void;
 }
 
 export const MobileNavigation: React.FC<MobileNavigationProps> = ({
@@ -30,11 +32,12 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   onOpenTasksDrawer,
   onOpenInvariantDrawer,
   onOpenAdrLibrary,
+  onOpenProjectSwitcher,
 }) => {
   return (
     <nav
       aria-label="Mobile Navigation"
-      className="md:hidden h-14 bg-[#0d121c] border-t border-[#1e293b] flex items-center justify-around px-2 shrink-0 z-40 select-none pb-safe"
+      className="h-14 bg-[#0d121c] border-t border-[#1e293b] flex items-center justify-around px-2 shrink-0 z-40 select-none"
     >
       {/* 1. DRAKON Studio */}
       <button
@@ -96,10 +99,10 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
         <div className="relative">
           <ShieldCheck className="w-5 h-5 mb-0.5" />
           {isReviewGatePending && (
-            <span className="absolute -top-1 -right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping" />
+            <span className="absolute -top-1 -right-1.5 w-2.5 h-2.5 bg-rose rounded-full animate-ping" />
           )}
           {isReviewGatePending && (
-            <span className="absolute -top-1 -right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full" />
+            <span className="absolute -top-1 -right-1.5 w-2.5 h-2.5 bg-rose rounded-full" />
           )}
         </div>
         <span className="text-[10px] tracking-tight font-mono">
@@ -110,13 +113,23 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
         )}
       </button>
 
-      {/* 5. More Drawers Action Menu */}
+      {/* 5. Drawers / Project Action Menu */}
       <div className="flex items-center gap-1 pl-1 border-l border-[#1e293b]/60">
+        {onOpenProjectSwitcher && (
+          <button
+            onClick={onOpenProjectSwitcher}
+            title="Проєкти та GitHub"
+            aria-label="Проєкти"
+            className="p-1.5 text-slate-400 hover:text-slate-100 rounded active:bg-[#1a2233]"
+          >
+            <FolderGit2 className="w-4 h-4 text-cyan" />
+          </button>
+        )}
         <button
           onClick={onOpenTasksDrawer}
           title="Завдання"
           aria-label="Завдання"
-          className="p-1.5 text-slate-400 hover:text-slate-100 rounded active:bg-slate-800"
+          className="p-1.5 text-slate-400 hover:text-slate-100 rounded active:bg-[#1a2233]"
         >
           <ListTodo className="w-4 h-4" />
         </button>
@@ -124,7 +137,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
           onClick={onOpenInvariantDrawer}
           title="Інваріанти"
           aria-label="Інваріанти"
-          className="p-1.5 text-slate-400 hover:text-slate-100 rounded active:bg-slate-800"
+          className="p-1.5 text-slate-400 hover:text-slate-100 rounded active:bg-[#1a2233]"
         >
           <Layers className="w-4 h-4" />
         </button>

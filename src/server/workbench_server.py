@@ -84,6 +84,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_drakon_schema(query)
         elif path == "/api/sprint/state":
             self.handle_get_sprint_state()
+        elif path == "/api/pipelines/catalog":
+            self.handle_get_pipelines_catalog()
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -115,6 +117,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_sprint_review(body)
         elif path == "/api/copilot/proxy":
             self.handle_post_copilot_proxy(body)
+        elif path == "/api/pipelines/load":
+            self.handle_post_pipelines_load(body)
+        elif path == "/api/projects/switch":
+            self.handle_post_projects_switch(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -253,7 +259,106 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                     "path": "/home/vokov/workspace/ai-drakon-scaffolder",
                     "active": False
                 }
-            ]
+            ],
+            "github": {
+                "connected": True,
+                "account": "maxfraieho",
+                "default_branch": "main",
+                "repositories": [
+                    {
+                        "name": "b-sdd",
+                        "full_name": "maxfraieho/b-sdd",
+                        "description": "Bitemporal Spec-Driven Development Framework",
+                        "is_active": True,
+                        "branch": branch
+                    },
+                    {
+                        "name": "ai-drakon-scaffolder",
+                        "full_name": "maxfraieho/ai-drakon-scaffolder",
+                        "description": "DRAKON visual logic editor & AST generator",
+                        "is_active": False,
+                        "branch": "main"
+                    },
+                    {
+                        "name": "utopia-vault",
+                        "full_name": "maxfraieho/utopia-vault",
+                        "description": "Sovereign bitemporal vector knowledge base",
+                        "is_active": False,
+                        "branch": "main"
+                    }
+                ]
+            }
+        })
+
+    def handle_get_pipelines_catalog(self):
+        """GET /api/pipelines/catalog: Returns library of standard algorithms and pipelines."""
+        templates_dir = ROOT_DIR / "src" / "drakon" / "templates"
+        catalog = []
+        if templates_dir.exists():
+            for p in sorted(templates_dir.glob("*.json")):
+                try:
+                    data = json.loads(p.read_text(encoding="utf-8"))
+                    catalog.append({
+                        "id": p.stem,
+                        "file_name": p.name,
+                        "name": data.get("name", p.stem),
+                        "category": data.get("category", "pipeline"),
+                        "description": data.get("description", ""),
+                        "params": data.get("params", ""),
+                        "node_count": len(data.get("nodes", [])),
+                        "schema": data,
+                    })
+                except Exception:
+                    pass
+        self._send_json({"total": len(catalog), "pipelines": catalog})
+
+    def handle_post_pipelines_load(self, body):
+        """POST /api/pipelines/load: Loads a pipeline template into active drakon schema."""
+        template_id = body.get("template_id")
+        if not template_id:
+            self._send_error("template_id is required", 400)
+            return
+
+        templates_dir = ROOT_DIR / "src" / "drakon" / "templates"
+        tmpl_file = templates_dir / f"{template_id}.json"
+        if not tmpl_file.exists():
+            self._send_error(f"Template not found: {template_id}", 404)
+            return
+
+        try:
+            schema_data = json.loads(tmpl_file.read_text(encoding="utf-8"))
+            from src.drakon import DrakonParser, DrakonValidator
+            schema = DrakonParser.parse_dict(schema_data)
+            validator = DrakonValidator()
+            val_res = validator.validate(schema)
+
+            self._send_json({
+                "status": "loaded",
+                "template_id": template_id,
+                "name": schema_data.get("name", template_id),
+                "schema_ir": schema_data,
+                "validation": {
+                    "is_valid": val_res.is_valid,
+                    "errors": [e.message for e in val_res.errors],
+                    "node_count": val_res.stats.get("node_count", 0),
+                    "crossings": val_res.stats.get("crossings", 0)
+                }
+            })
+        except Exception as exc:
+            self._send_error(f"Failed to load template: {exc}", 500)
+
+    def handle_post_projects_switch(self, body):
+        """POST /api/projects/switch: Switches active workspace context."""
+        project_id = body.get("project_id")
+        repo_name = body.get("repo_name", project_id)
+        self._send_json({
+            "status": "switched",
+            "active_project": {
+                "id": project_id or "b-sdd",
+                "name": repo_name or "B-SDD Framework Core",
+                "switched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            },
+            "message": f"Workspace switched to {repo_name}"
         })
 
     def handle_get_specs(self):

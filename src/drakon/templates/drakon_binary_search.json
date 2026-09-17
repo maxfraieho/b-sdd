@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "name": "ДРАКОН: Канонічний двійковий пошук (Binary Search)",
+  "category": "algorithm",
+  "description": "Класичний алгоритм бінарного пошуку в упорядкованому масиві за правилами ергономіки ДРАКОН",
+  "params": "arr: list, target: any",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок бінарного пошуку: low = 0, high = len(arr)-1",
+      "edges": { "down": "cond_bounds", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "cond_bounds",
+      "node_type": "question",
+      "label": "low <= high?",
+      "edges": { "down": "step_mid", "right": "end_not_found" },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "end_not_found",
+      "node_type": "end",
+      "label": "Елемент відсутній (повернути -1)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 4.0, "y": 2.0
+    },
+    {
+      "node_id": "step_mid",
+      "node_type": "action",
+      "label": "Обчислити mid = (low + high) // 2",
+      "edges": { "down": "cond_found", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "cond_found",
+      "node_type": "question",
+      "label": "arr[mid] == target?",
+      "edges": { "down": "end_found", "right": "cond_less" },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "end_found",
+      "node_type": "end",
+      "label": "Елемент знайдено (повернути mid)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "cond_less",
+      "node_type": "question",
+      "label": "arr[mid] < target?",
+      "edges": { "down": "step_shift_low", "right": "step_shift_high" },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 4.0, "y": 6.0
+    },
+    {
+      "node_id": "step_shift_low",
+      "node_type": "action",
+      "label": "Шукати праворуч: low = mid + 1",
+      "edges": { "down": "cond_bounds", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 4.0, "y": 8.0
+    },
+    {
+      "node_id": "step_shift_high",
+      "node_type": "action",
+      "label": "Шукати ліворуч: high = mid - 1",
+      "edges": { "down": "cond_bounds", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 8.0, "y": 6.0
+    }
+  ]
+}

@@ -50,4 +50,16 @@ export interface ProjectsResponse {
     path: string;
     active: boolean;
   }>;
+  github?: {
+    connected: boolean;
+    account: string;
+    default_branch: string;
+    repositories: Array<{
+      name: string;
+      full_name: string;
+      description: string;
+      is_active: boolean;
+      branch: string;
+    }>;
+  };
 }

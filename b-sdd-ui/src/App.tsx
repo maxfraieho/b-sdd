@@ -20,6 +20,9 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 import { MobileNavigation, type MobileTabId } from '@/components/MobileNavigation';
 import { MobilePhaseView } from '@/components/MobilePhaseView';
 import { MobileRadarView } from '@/components/MobileRadarView';
+import { ProjectSwitcherModal } from '@/components/ProjectSwitcherModal';
+import { PipelineCatalogModal, type PipelineTemplateItem } from '@/components/PipelineCatalogModal';
+import { AppShell } from '@/components/astryx/primitives';
 
 import { MOCK_ADRS } from '@/data/mockAdrs';
 import { CANONICAL_DRAKON_DIAGRAM, CANONICAL_HITL_DRAKON_IR } from '@/data/mockDrakonSchema';
@@ -123,8 +126,36 @@ export const App: React.FC = () => {
   const [isPseudocodeOpen, setIsPseudocodeOpen] = useState(false);
   const [isSyncingUtopia, setIsSyncingUtopia] = useState(false);
   const [selectedSpecId, setSelectedSpecId] = useState('004-multi-session-handoff-and-drakon');
+  const [isProjectSwitcherOpen, setIsProjectSwitcherOpen] = useState(false);
+  const [isPipelineCatalogOpen, setIsPipelineCatalogOpen] = useState(false);
+  const [manualMobileMode, setManualMobileMode] = useState<boolean | null>(null);
   const isMobile = useIsMobile(768);
+  const effectiveIsMobile = manualMobileMode !== null ? manualMobileMode : isMobile;
   const [activeMobileTab, setActiveMobileTab] = useState<MobileTabId>('drakon');
+
+  const handleToggleMobileMode = () => {
+    setManualMobileMode((prev) => (prev === null ? !isMobile : !prev));
+  };
+
+  const handleLoadPipelineTemplate = (tmpl: PipelineTemplateItem) => {
+    if (tmpl.schema && tmpl.schema.nodes && tmpl.schema.nodes.length > 0) {
+      setDrakonNodes(tmpl.schema.nodes);
+      setSelectedNodeId(tmpl.schema.nodes[0]?.node_id || null);
+    }
+  };
+
+  const handleSwitchProject = async (projectId: string, name?: string) => {
+    try {
+      await fetch('/api/projects/switch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id: projectId, repo_name: name }),
+      });
+      await liveProjects.refresh();
+    } catch (e) {
+      console.warn('Switch project fallback:', e);
+    }
+  };
 
   // DRAKON Studio State — default to full 'widget' editor
   const canvasRef = useRef<DrakonCanvasHandle>(null);
@@ -381,7 +412,7 @@ export const App: React.FC = () => {
   }, [drakonNodes]);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-canvas text-slate-100 overflow-hidden select-none">
+    <AppShell>
       {/* 1. TOPBAR (48px) */}
       <Topbar
         projectInfo={liveProjects.data.current_project}
@@ -396,9 +427,13 @@ export const App: React.FC = () => {
         llmOnline={liveHealth.data?.llm_gateway?.status === 'online'}
         onSyncUtopia={handleSyncUtopia}
         isSyncingUtopia={isSyncingUtopia}
+        onOpenProjectSwitcher={() => setIsProjectSwitcherOpen(true)}
+        onOpenPipelineCatalog={() => setIsPipelineCatalogOpen(true)}
+        isMobileMode={effectiveIsMobile}
+        onToggleMobileMode={handleToggleMobileMode}
       />
 
-      {isMobile ? (
+      {effectiveIsMobile ? (
         <>
           {/* MOBILE MAIN CONTENT */}
           <main className="flex-1 flex flex-col overflow-hidden relative">
@@ -517,6 +552,7 @@ export const App: React.FC = () => {
             onOpenTasksDrawer={() => setIsTasksDrawerOpen(true)}
             onOpenInvariantDrawer={() => setIsInvariantDrawerOpen(true)}
             onOpenAdrLibrary={() => setIsAdrLibraryOpen(true)}
+            onOpenProjectSwitcher={() => setIsProjectSwitcherOpen(true)}
           />
         </>
       ) : (
@@ -686,7 +722,22 @@ export const App: React.FC = () => {
         onApprove={handleApproveSprint}
         onRejectAndBranch={handleRejectAndBranch}
       />
-    </div>
+
+      <ProjectSwitcherModal
+        isOpen={isProjectSwitcherOpen}
+        onClose={() => setIsProjectSwitcherOpen(false)}
+        currentProject={liveProjects.data.current_project}
+        workspaces={liveProjects.data.workspaces}
+        githubRepos={liveProjects.data.github?.repositories}
+        onSwitchProject={handleSwitchProject}
+      />
+
+      <PipelineCatalogModal
+        isOpen={isPipelineCatalogOpen}
+        onClose={() => setIsPipelineCatalogOpen(false)}
+        onLoadTemplate={handleLoadPipelineTemplate}
+      />
+    </AppShell>
   );
 };
 

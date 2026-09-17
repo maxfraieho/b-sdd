@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "name": "B-SDD Pre-Flight Active Rules Compiler",
+  "category": "bsdd_pipeline",
+  "description": "Детерміністична компіляція активних архітектурних інваріантів під жорсткий бюджет (<50ms, <500 слів)",
+  "params": "root_dir: str, target_domains: list",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація pre-flight компілятора",
+      "edges": { "down": "step_scan_adrs", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_scan_adrs",
+      "node_type": "action",
+      "label": "Сканування docs/adr/*.md та .specify/constitution.md",
+      "edges": { "down": "step_filter_bitemporal", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "step_filter_bitemporal",
+      "node_type": "action",
+      "label": "Математичне відсікання застарілих рішень (valid_to < NOW)",
+      "edges": { "down": "cond_latency", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "cond_latency",
+      "node_type": "question",
+      "label": "Латентність компіляції < 50ms?",
+      "edges": { "down": "cond_words", "right": "err_latency" },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "err_latency",
+      "node_type": "action",
+      "label": "Холодний кеш: перебудувати SQLite intent_cache",
+      "edges": { "down": "end_fail", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-01", "severity": "degraded" },
+      "x": 4.0, "y": 6.0
+    },
+    {
+      "node_id": "cond_words",
+      "node_type": "question",
+      "label": "Розмір знімку правил <= 500 слів?",
+      "edges": { "down": "step_append_skills", "right": "step_truncate" },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_truncate",
+      "node_type": "action",
+      "label": "Пріоритетне обрізання: скинути правила з найнижчим пріоритетом",
+      "edges": { "down": "step_append_skills", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-02", "severity": "mild" },
+      "x": 4.0, "y": 8.0
+    },
+    {
+      "node_id": "step_append_skills",
+      "node_type": "action",
+      "label": "Додати блок RECOMMENDED PROCEDURAL SKILLS",
+      "edges": { "down": "step_write_file", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-003-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "step_write_file",
+      "node_type": "action",
+      "label": "Атомарний запис у .context/active_rules.md",
+      "edges": { "down": "end_success", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Pre-flight snapshot валідовано та готовий до ходу",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 14.0
+    },
+    {
+      "node_id": "end_fail",
+      "node_type": "end",
+      "label": "Pre-flight перервано через деградацію продуктивності",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002-INV-01", "severity": "fatal" },
+      "x": 4.0, "y": 14.0
+    }
+  ]
+}

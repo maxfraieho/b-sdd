@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "name": "ДРАКОН: Скінченний автомат життєвого циклу (FSM Lifecycle)",
+  "category": "algorithm",
+  "description": "Патерн обробки станів та переходів за каноном ДРАКОН-силует",
+  "params": "current_state: str, event: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Обробник події життєвого циклу FSM",
+      "edges": { "down": "step_inspect_event", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_inspect_event",
+      "node_type": "action",
+      "label": "Валідація типу події та прав доступу оператора",
+      "edges": { "down": "cond_state_active", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_state_active",
+      "node_type": "question",
+      "label": "current_state == 'ACTIVE'?",
+      "edges": { "down": "step_handle_active", "right": "cond_state_paused" },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_handle_active",
+      "node_type": "action",
+      "label": "Обробка в активному режимі: оновлення бітемпорального контексту",
+      "edges": { "down": "end_transition_ok", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "cond_state_paused",
+      "node_type": "question",
+      "label": "current_state == 'PAUSED'?",
+      "edges": { "down": "step_handle_paused", "right": "cond_state_failed" },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_handle_paused",
+      "node_type": "action",
+      "label": "Очікування розблокування або аварійного завершення",
+      "edges": { "down": "end_transition_ok", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "mild" },
+      "x": 4.0, "y": 6.0
+    },
+    {
+      "node_id": "cond_state_failed",
+      "node_type": "question",
+      "label": "current_state == 'FAILED'?",
+      "edges": { "down": "step_handle_failed", "right": "err_invalid_state" },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 8.0, "y": 4.0
+    },
+    {
+      "node_id": "step_handle_failed",
+      "node_type": "action",
+      "label": "Генерація COW-знімка гілки та перехід у безпечний режим",
+      "edges": { "down": "end_transition_ok", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007-INV-01", "severity": "severe" },
+      "x": 8.0, "y": 6.0
+    },
+    {
+      "node_id": "err_invalid_state",
+      "node_type": "action",
+      "label": "Невідомий стан: аварійне скидання автомата у SAFE_INIT",
+      "edges": { "down": "end_transition_abort", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "fatal" },
+      "x": 12.0, "y": 4.0
+    },
+    {
+      "node_id": "end_transition_ok",
+      "node_type": "end",
+      "label": "Перехід стану успішно зафіксовано в журналі",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "end_transition_abort",
+      "node_type": "end",
+      "label": "Аварійний вихід з відновленням інваріантів",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008-INV-01", "severity": "fatal" },
+      "x": 12.0, "y": 8.0
+    }
+  ]
+}
