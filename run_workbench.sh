@@ -119,6 +119,7 @@ case "$MODE" in
         exec python3 -m src.cli.main serve --port 8765
         ;;
     dev|--dev|*)
+        fuser -k 8765/tcp 5173/tcp 2>/dev/null || true
         log_info "Starting B-SDD Backend Gateway on http://localhost:8765 ..."
         python3 -m src.cli.main serve --port 8765 &
         SERVER_PID=$!
