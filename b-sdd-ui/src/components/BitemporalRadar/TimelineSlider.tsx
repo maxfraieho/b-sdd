@@ -3,12 +3,14 @@ import React from 'react';
 import { Calendar, History, RotateCcw, Play, Pause } from 'lucide-react';
 
 interface TimelineSliderProps {
-  validTimeDay: number; // 1 to 16 (representing Sept 1 - Sept 16, 2026)
+  validTimeDay: number;
   onValidTimeChange: (day: number) => void;
   txTimeDay: number;
   onTxTimeChange: (day: number) => void;
   activeAdrCount: number;
   supersededCount: number;
+  minDay?: number;
+  maxDay?: number;
 }
 
 export const TimelineSlider: React.FC<TimelineSliderProps> = ({
@@ -18,16 +20,20 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
   onTxTimeChange,
   activeAdrCount,
   supersededCount,
+  minDay = 1,
+  maxDay,
 }) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
+  const maxLimit = maxDay || Math.max(17, new Date().getUTCDate());
+  const minLimit = minDay;
 
   React.useEffect(() => {
     if (!isPlaying) return;
     const timer = setInterval(() => {
-      onValidTimeChange(validTimeDay >= 16 ? 1 : validTimeDay + 1);
+      onValidTimeChange(validTimeDay >= maxLimit ? minLimit : validTimeDay + 1);
     }, 1000);
     return () => clearInterval(timer);
-  }, [isPlaying, validTimeDay, onValidTimeChange]);
+  }, [isPlaying, validTimeDay, onValidTimeChange, maxLimit, minLimit]);
 
   const validDateFormatted = `2026-09-${String(validTimeDay).padStart(2, '0')} 18:00 UTC`;
   const txDateFormatted = `2026-09-${String(txTimeDay).padStart(2, '0')} 18:00 UTC`;
@@ -47,8 +53,8 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
         <button
           onClick={() => {
             setIsPlaying(false);
-            onValidTimeChange(16);
-            onTxTimeChange(16);
+            onValidTimeChange(maxLimit);
+            onTxTimeChange(maxLimit);
           }}
           className="p-2 rounded bg-card hover:bg-slate-800 border border-border-subtle text-slate-400 hover:text-slate-200 transition-colors"
           title="Reset to NOW (Live State)"
@@ -82,8 +88,8 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
           <input
             type="range"
-            min={1}
-            max={16}
+            min={minLimit}
+            max={maxLimit}
             value={validTimeDay}
             onChange={(e) => onValidTimeChange(Number(e.target.value))}
             className="w-full accent-emerald-400 cursor-pointer h-1.5 bg-canvas rounded-lg appearance-none"
@@ -91,7 +97,7 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
           <div className="flex justify-between text-[9px] text-slate-500 font-mono">
             <span>2026-09-01 (Genesis)</span>
-            <span>2026-09-16 (NOW)</span>
+            <span>{`2026-09-${String(maxLimit).padStart(2, '0')} (NOW)`}</span>
           </div>
         </div>
 
@@ -107,8 +113,8 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
 
           <input
             type="range"
-            min={1}
-            max={16}
+            min={minLimit}
+            max={maxLimit}
             value={txTimeDay}
             onChange={(e) => onTxTimeChange(Number(e.target.value))}
             className="w-full accent-blue-400 cursor-pointer h-1.5 bg-canvas rounded-lg appearance-none"

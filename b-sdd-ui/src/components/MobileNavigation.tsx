@@ -10,6 +10,7 @@ import {
   ListTodo,
   Layers,
   FolderGit2,
+  BookOpen,
 } from 'lucide-react';
 
 export type MobileTabId = 'drakon' | 'copilot' | 'radar' | 'phases';
@@ -32,12 +33,13 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
   isReviewGatePending = false,
   onOpenTasksDrawer,
   onOpenInvariantDrawer,
+  onOpenAdrLibrary,
   onOpenProjectSwitcher,
 }) => {
   return (
     <nav
       aria-label="Mobile Navigation"
-      className="h-14 bg-[#0d121c] border-t border-[#1e293b] flex items-center justify-around px-2 shrink-0 z-40 select-none"
+      className="h-14 bg-panel border-t border-border-subtle flex items-center justify-around px-2 shrink-0 z-40 select-none"
     >
       {/* 1. DRAKON Studio */}
       <button
@@ -129,6 +131,13 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
           onClick={onOpenTasksDrawer}
         >
           <ListTodo className="w-4 h-4" />
+        </IconButton>
+        <IconButton
+          title="ADR Бібліотека"
+          size="sm"
+          onClick={onOpenAdrLibrary}
+        >
+          <BookOpen className="w-4 h-4 text-emerald-400" />
         </IconButton>
         <IconButton
           title="Інваріанти"

@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "name": "Astryx Ergonomics & Responsive Mobile Parity Pipeline",
+  "category": "bsdd_pipeline",
+  "description": "Верифікація семантичних токенів Astryx, усунення паразитних скролів та мобільний паритет інтерфейсу",
+  "params": "verify_mobile: bool, verify_astryx_tokens: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація аудиту ергономіки та мобільного паритету",
+      "edges": { "down": "step_check_tokens", "right": null },
+      "semantic_binding": { "adr_invariant_id": "FE-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_check_tokens",
+      "node_type": "action",
+      "label": "Сканування компонентів на наявність чистих токенів var(--astryx-*)",
+      "edges": { "down": "cond_hex_absent", "right": null },
+      "semantic_binding": { "adr_invariant_id": "FE-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_hex_absent",
+      "node_type": "question",
+      "label": "Жорсткі hex-кольори відсутні в оновлених компонентах?",
+      "edges": { "down": "step_verify_mobile_nav", "right": "step_fix_tokens" },
+      "semantic_binding": { "adr_invariant_id": "FE-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_fix_tokens",
+      "node_type": "action",
+      "label": "Заміна залишкових hex-значень на семантичні утиліти bg-card / border-border-subtle",
+      "edges": { "down": "step_verify_mobile_nav", "right": null },
+      "semantic_binding": { "adr_invariant_id": "FE-INV-02", "severity": "warning" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_verify_mobile_nav",
+      "node_type": "action",
+      "label": "Перевірка доступу до бібліотеки ADR через кнопку в MobileNavigation",
+      "edges": { "down": "step_build_production", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-FE-001", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_build_production",
+      "node_type": "action",
+      "label": "Збирання оптимізованого бандла (npm run build) та запуск фінального тесту",
+      "edges": { "down": "end_ergonomics", "right": null },
+      "semantic_binding": { "adr_invariant_id": "FE-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "end_ergonomics",
+      "node_type": "end",
+      "label": "Усі спринти (007..010) успішно завершені та готові до WORM-фіксації",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "FE-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    }
+  ]
+}

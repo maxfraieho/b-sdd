@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "name": "Cryptographic HITL Gate & Git COW Branching Pipeline",
+  "category": "bsdd_pipeline",
+  "description": "Верифікація операторського підпису Ed25519/HMAC-SHA256, WORM-фіксація або атомарне створення COW-гілки в Git",
+  "params": "action: str, operator_id: str, signature: str",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація шлюзу операторського контролю (Phase Φ6)",
+      "edges": { "down": "step_verify_sig", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_verify_sig",
+      "node_type": "action",
+      "label": "Криптографічна валідація невідкличного операторського підпису",
+      "edges": { "down": "cond_action_approve", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_action_approve",
+      "node_type": "question",
+      "label": "Рішення оператора: Схвалити спринт (action == approve)?",
+      "edges": { "down": "step_approve_worm", "right": "step_reject_cow_branch" },
+      "semantic_binding": { "adr_invariant_id": "ADR-007-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_reject_cow_branch",
+      "node_type": "action",
+      "label": "Створення COW-гілки через git branch cow-branch-* та відкат до Φ1",
+      "edges": { "down": "end_hitl", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007-INV-01", "severity": "warning" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_approve_worm",
+      "node_type": "action",
+      "label": "Запис у WORM леджер, перехід до Φ7 та запуск ланцюжка",
+      "edges": { "down": "end_hitl", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "end_hitl",
+      "node_type": "end",
+      "label": "Шлюз завершено, стан синхронізовано з клієнтом",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    }
+  ]
+}

@@ -25,6 +25,7 @@ import { PipelineCatalogModal, type PipelineTemplateItem } from '@/components/Pi
 import { TelemetryDrawer } from '@/components/TelemetryDrawer';
 import { useTelemetryRealtime } from '@/hooks/useTelemetryRealtime';
 import { AppShell } from '@/components/astryx/primitives';
+import { AstryxZoneBoundary } from '@/components/boundaries/AstryxZoneBoundary';
 
 import { MOCK_ADRS } from '@/data/mockAdrs';
 import { CANONICAL_DRAKON_DIAGRAM, CANONICAL_HITL_DRAKON_IR } from '@/data/mockDrakonSchema';
@@ -652,29 +653,31 @@ export const App: React.FC = () => {
               )}
 
               <div className="flex-1 relative overflow-hidden">
-                {drakonViewMode === 'widget' ? (
-                  <DrakonCanvas
-                    ref={canvasRef}
-                    diagram={currentDiagram}
-                    diagramId={selectedSpecId}
-                    onSelectNode={setSelectedNodeId}
-                    selectedNodeId={selectedNodeId}
-                    onDiagramChange={(newDiag) => {
-                      console.log('[Workbench] Diagram edited:', newDiag.name);
-                    }}
-                  />
-                ) : drakonViewMode === 'flow' ? (
-                  <VisualFlowCanvas
-                    nodes={drakonNodes}
-                    selectedNodeId={selectedNodeId}
-                    onSelectNode={setSelectedNodeId}
-                    onAddNode={handleAddNode}
-                  />
-                ) : (
-                  <div className="w-full h-full p-6 overflow-auto bg-canvas font-mono text-xs text-amber leading-relaxed select-text">
-                    <pre>{JSON.stringify({ schema_version: '1.0', name: CANONICAL_DRAKON_DIAGRAM.name, nodes: drakonNodes }, null, 2)}</pre>
-                  </div>
-                )}
+                <AstryxZoneBoundary zoneName="Zone 2: DRAKON Canvas" fallbackMessage="DRAKON Canvas rendering encountered a type error. Click Recover to reinitialize the visual view.">
+                  {drakonViewMode === 'widget' ? (
+                    <DrakonCanvas
+                      ref={canvasRef}
+                      diagram={currentDiagram}
+                      diagramId={selectedSpecId}
+                      onSelectNode={setSelectedNodeId}
+                      selectedNodeId={selectedNodeId}
+                      onDiagramChange={(newDiag) => {
+                        console.log('[Workbench] Diagram edited:', newDiag.name);
+                      }}
+                    />
+                  ) : drakonViewMode === 'flow' ? (
+                    <VisualFlowCanvas
+                      nodes={drakonNodes}
+                      selectedNodeId={selectedNodeId}
+                      onSelectNode={setSelectedNodeId}
+                      onAddNode={handleAddNode}
+                    />
+                  ) : (
+                    <div className="w-full h-full p-6 overflow-auto bg-canvas font-mono text-xs text-amber leading-relaxed select-text">
+                      <pre>{JSON.stringify({ schema_version: '1.0', name: CANONICAL_DRAKON_DIAGRAM.name, nodes: drakonNodes }, null, 2)}</pre>
+                    </div>
+                  )}
+                </AstryxZoneBoundary>
 
                 {/* Interactive Node Editor / Inspector */}
                 {selectedNodeIR && (

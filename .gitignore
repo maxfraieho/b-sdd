@@ -19,4 +19,6 @@ node_modules/
 b-sdd-ui/dist/
 b-sdd-ui/node_modules
 *.tsbuildinfo
+*.log
+.gitnexus/
 

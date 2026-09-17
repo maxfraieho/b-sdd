@@ -1,47 +1,59 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-a4b2c13f-1789657071`
-- **Source Session:** `a4b2c13f-7244-42a8-b3f5-66e3b44e2e68`
-- **Timestamp:** `2026-09-17T14:57:51.128105+00:00`
+- **Handoff ID:** `handoff-session-1789666739`
+- **Source Session:** `unspecified`
+- **Timestamp:** `2026-09-17T17:38:59.342997+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `main`, commit `06cba4b`
+- **Git Status:** branch `main`, commit `6ee5d9e`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
 ```
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/AdrLibraryModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/AdrReaderModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/ContextBadges.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/TokenGauge.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonToolbar.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/PseudocodeModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/InvariantDrawer.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/MobileNavigation.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/MobilePhaseView.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/MobileRadarView.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/PhaseStepper.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/ReviewGateModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/TasksPanel/TasksDrawer.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/TelemetryDrawer.tsx"
+.context/next_sprint.md
+.gitignore
+.gitnexusignore
+b-sdd-ui/src/App.tsx
+b-sdd-ui/src/components/BitemporalRadar/TimelineSlider.tsx
+b-sdd-ui/src/components/CopilotPanel/TokenGauge.tsx
+b-sdd-ui/src/components/MobileNavigation.tsx
+b-sdd-ui/src/components/ReviewGateModal.tsx
+b-sdd-ui/src/components/boundaries/
+b-sdd-ui/src/lib/crypto/
+run_sprint_007.sh
+run_sprint_008.sh
+run_sprint_009.sh
+run_sprint_010.sh
+specs/007-drakon-state-bridge-and-catalog/
+specs/008-sovereign-copilot-and-gateway/
+specs/009-cryptographic-hitl-and-cow-branch/
+specs/010-astryx-ergonomics-and-mobile-parity/
+specs/REMEDIATION_SPRINT_PLAN_B_SDD.md
+src/drakon/templates/astryx_ergonomics_and_mobile.json
+src/drakon/templates/cryptographic_hitl_and_cow.json
+src/drakon/templates/sovereign_copilot_and_gateway.json
+src/server/workbench_server.py
+tests/test_astryx_ergonomics_and_mobile.py
+tests/test_crypto_hitl_and_cow.py
+tests/test_drakon_bridge_and_catalog.py
+tests/test_sovereign_gateway_and_timeline.py
 ```
 
 ### Completed Tasks
-- [x] task-002: Implement `src/adapters/appwrite_client.py` (pure stdlib Appwrite client & Ed25519 signature verification).
-- [x] task-003: Add Realtime SSE broadcaster and phase management endpoints to `src/server/workbench_server.py`.
-- [x] task-004: Wire GitHub endpoints `GET /api/github/repos` and `POST /api/github/sync` into `src/server/workbench_server.py`.
-- [x] task-005: Create planar DRAKON algorithm `specs/005-github-api-and-appwrite-realtime/logic.drakon.json` and catalog template.
-- [x] task-006: Extend frontend `b-sdd-ui` with GitHub sync, Appwrite Realtime phase sync, and Topbar health badges.
-- [x] task-007: Add automated tests for GitHub sync and Appwrite Realtime phase sync.
-- [x] task-008: Execute architecture fitness tests, verify zero 3rd-party dependencies, sub-50ms compile latency, and build frontend.
-- [x] task-001: Implement `src/adapters/telemetry.py` (pure standard library, latency quantiles, Prometheus exporter, sub-1ms overhead).
-- [x] task-002: Integrate telemetry, `/api/telemetry`, `/api/metrics`, `/api/realtime/telemetry`, and graceful shutdown into `src/server/workbench_server.py`.
-- [x] task-003: Create production deployment suite (`scripts/deploy_production.sh`, `scripts/verify_production_health.sh`, `deploy/systemd/b-sdd-workbench.service`, `deploy/tunnel/bsdd-tunnel.yml`).
-- [x] task-004: Create planar DRAKON algorithm `specs/006-production-deployment-and-telemetry/logic.drakon.json` and catalog template `src/drakon/templates/production_deployment_and_telemetry.json`.
-- [x] task-005: Extend frontend `b-sdd-ui` with telemetry types, API methods, `useTelemetryRealtime` hook, `TelemetryDrawer`, and `Topbar` telemetry trigger.
-- [x] task-006: Implement unit and integration tests in `tests/test_telemetry.py` and `tests/test_production_deployment.py`.
-- [x] task-007: Verify architecture fitness gates (compile latency < 50ms, context words < 500, zero 3rd-party dependencies in `src/`, clean frontend build).
-- [x] task-008: Synchronize with Utopia DB and synthesize Sprint N+5 handoff artifacts.
+- [x] task-043: Create test suite `tests/test_sovereign_gateway_and_timeline.py` verifying `/api/temporal/timeline` and `/api/copilot/proxy` upstream routing.
+- [x] task-044: Implement dynamic git timeline extraction `GET /api/temporal/timeline` in `src/server/workbench_server.py`.
+- [x] task-045: Upgrade `handle_post_copilot_proxy` in `src/server/workbench_server.py` with real upstream streaming proxy to `SOVEREIGN_LLM_URL` using pure `urllib.request`.
+- [x] task-046: Update `b-sdd-ui/src/components/BitemporalRadar/TimelineSlider.tsx` to dynamically support variable date ranges and NOW timestamp.
+- [x] task-047: Verify all tests in `tests/` pass 100%, compile latency <50ms, and execute `./run_sprint_008.sh`.
+- [x] task-048: Create test suite `tests/test_crypto_hitl_and_cow.py` testing COW branch creation, dynamic signature generation, and zone boundary isolation.
+- [x] task-049: Implement `git branch` execution on reject in `handle_post_sprint_review` in `src/server/workbench_server.py`.
+- [x] task-050: Create WebCrypto signature generator `b-sdd-ui/src/lib/crypto/signer.ts` and integrate into `ReviewGateModal.tsx`.
+- [x] task-051: Create `b-sdd-ui/src/components/boundaries/AstryxZoneBoundary.tsx` and isolate DRAKON Canvas in `App.tsx`.
+- [x] task-052: Verify all tests in `tests/` pass 100%, compile latency <50ms, and execute `./run_sprint_009.sh`.
+- [x] task-053: Create test suite `tests/test_astryx_ergonomics_and_mobile.py` verifying hex color elimination, mobile nav buttons, and token gauge word metrics.
+- [x] task-054: Update `b-sdd-ui/src/components/MobileNavigation.tsx` to destructure and render `onOpenAdrLibrary` with Astryx styling.
+- [x] task-055: Update `b-sdd-ui/src/components/CopilotPanel/TokenGauge.tsx` to use semantic Astryx tokens and distinguish words from tokens.
+- [x] task-056: Compile production frontend `npm run build` in `b-sdd-ui`.
+- [x] task-057: Execute `./run_sprint_010.sh` to finalize remediation pipeline and pass 100% of architectural tests.
 
 ## 2. Active Architectural Constraints
 - [GLOBAL] **Bitemporal Architectural Invariants:** System architecture is governed by declarative Architectural Decision Records (ADRs) with bitemporal valid-time horizons (`valid_from` / `valid_to`) and explicit DAG supersession edges. Superseded decisions are mathematically pruned from agent context. (Ref: .specify/constitution.md)
@@ -51,14 +63,18 @@
 - [GLOBAL] **Zero-Dependency Pure Runtime:** All core compiler and adapter components in `src/` must strictly use the Python Standard Library to ensure universal zero-setup portability across dev servers, containers, and bare-metal nodes. (Ref: .specify/constitution.md)
 
 ## 3. Downstream Target (Sprint N+1)
-- **Target Task:** `Finalize and verify all specifications`
+- **Target Task:** `task-038: **task-001 (TDD Test Suite):**`
 - **Prompt:**
-> [B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task All tasks completed; run final architecture verification and report project status.
+> [B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task task-038: **task-001 (TDD Test Suite):** --spec specs/007-drakon-state-bridge-and-catalog/tasks.md --rules .context/active_rules.md
 
 ### Executable Dispatch Command
 ```bash
-./run_b_sdd.sh --new-session "[B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task All tasks completed; run final architecture verification and report project status."
+./run_b_sdd.sh --new-session "[B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task task-038: **task-001 (TDD Test Suite):** --spec specs/007-drakon-state-bridge-and-catalog/tasks.md --rules .context/active_rules.md"
 ```
 
 ## 4. Pending Tasks Backlog
-- All specification tasks completed! Ready for final acceptance.
+- [ ] task-038: **task-001 (TDD Test Suite):**
+- [ ] task-039: **task-002 (Catalog Schema Population):**
+- [ ] task-040: **task-003 (DrakonStateBridge Engine):**
+- [ ] task-041: **task-004 (App.tsx Reactive Binding):**
+- [ ] task-042: **task-005 (Automated Fitness Gate & Chaining):**

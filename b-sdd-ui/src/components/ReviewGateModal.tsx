@@ -17,6 +17,8 @@ import {
   Terminal,
 } from 'lucide-react';
 
+import { generateOperatorSignature } from '@/lib/crypto/signer';
+
 interface ReviewGateModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -36,9 +38,17 @@ export const ReviewGateModal: React.FC<ReviewGateModalProps> = ({
   const [rollbackDepth, setRollbackDepth] = useState(1);
   const [negativeInvariants, setNegativeInvariants] = useState('ADR-007-INV-01: Branch mutation detected');
   const [rationale, setRationale] = useState('');
-  const [operatorSignature] = useState(
+  const [operatorSignature, setOperatorSignature] = useState(
     'ed25519:e4f3a2b109876543210fedcba9876543210fedcba9876543210fedcba98765430123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
   );
+
+  React.useEffect(() => {
+    if (isOpen) {
+      generateOperatorSignature('Head Architect', isRejecting ? 'reject' : 'approve').then(sig => {
+        setOperatorSignature(sig.signature);
+      });
+    }
+  }, [isOpen, isRejecting]);
 
   // Phase 3: live backend review status
   const [isSubmitting, setIsSubmitting] = useState(false);

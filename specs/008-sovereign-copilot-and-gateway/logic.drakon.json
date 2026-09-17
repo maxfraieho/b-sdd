@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "name": "Sovereign Copilot Streaming & Dynamic Timeline Pipeline",
+  "category": "bsdd_pipeline",
+  "description": "Маршрутизація SSE запитів до суверенного LLM Gateway (192.168.3.184:18880) та динамічна екстракція бітемпоральної шкали Git",
+  "params": "prompt: str, stream: bool, timeout_sec: int",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація суверенного Copilot проксі",
+      "edges": { "down": "step_inject_context", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_inject_context",
+      "node_type": "action",
+      "label": "Ін'єкція архітектурних правил [ADR], [DRAKON], [RULES] у системний промпт",
+      "edges": { "down": "cond_gateway_reachable", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_gateway_reachable",
+      "node_type": "question",
+      "label": "Суверенний LLM Gateway доступний (192.168.3.184:18880)?",
+      "edges": { "down": "step_stream_upstream", "right": "step_fallback_stream" },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_fallback_stream",
+      "node_type": "action",
+      "label": "Увімкнення автономного fallback стрімінгу з повідомленням про деградацію",
+      "edges": { "down": "end_copilot", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-03", "severity": "warning" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_stream_upstream",
+      "node_type": "action",
+      "label": "Стрімінг SSE чанків від апстріму клієнту через чанк-буфер",
+      "edges": { "down": "step_git_timeline_extract", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_git_timeline_extract",
+      "node_type": "action",
+      "label": "Синхронізація бітемпоральної шкали (/api/temporal/timeline) з git log",
+      "edges": { "down": "end_copilot", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-004-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "end_copilot",
+      "node_type": "end",
+      "label": "Завершення сесії суверенного стрімінгу та оновлення шкали",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    }
+  ]
+}

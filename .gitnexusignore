@@ -1,0 +1,8 @@
+*.log
+*.sqlite
+*.sqlite3
+node_modules/
+dist/
+build/
+.context/*.json
+.pytest_cache/
