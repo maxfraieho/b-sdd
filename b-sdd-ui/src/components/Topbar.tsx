@@ -11,6 +11,8 @@ import {
   BookOpen,
   ChevronDown,
   FolderGit2,
+  RefreshCw,
+  Loader2,
 } from 'lucide-react';
 
 interface TopbarProps {
@@ -22,6 +24,10 @@ interface TopbarProps {
   onOpenAdrLibrary: () => void;
   onOpenInvariantDrawer: () => void;
   invariantCount: number;
+  utopiaOnline?: boolean;
+  llmOnline?: boolean;
+  onSyncUtopia?: () => Promise<void>;
+  isSyncingUtopia?: boolean;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -33,6 +39,10 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenAdrLibrary,
   onOpenInvariantDrawer,
   invariantCount,
+  utopiaOnline = true,
+  llmOnline = true,
+  onSyncUtopia,
+  isSyncingUtopia = false,
 }) => {
   const currentSpec = specs.find((s) => s.id === selectedSpecId) || specs[0] || null;
   const totalTasks = specs.reduce((sum, s) => sum + s.tasks_count, 0);
@@ -105,20 +115,41 @@ export const Topbar: React.FC<TopbarProps> = ({
         )}
       </div>
 
-      {/* Middle: Sovereign Infrastructure Health */}
-      <div className="hidden lg:flex items-center gap-4 text-[11px] font-mono">
-        <div className="flex items-center gap-1.5 text-slate-300">
-          <Database className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Utopia DB</span>
-          <span className="text-[10px] text-slate-500">.251:9922</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+      {/* Middle: Sovereign Infrastructure Health & On-Demand Sync */}
+      <div className="hidden lg:flex items-center gap-3 text-[11px] font-mono">
+        <div className="flex items-center gap-2 bg-card border border-border-subtle px-2.5 py-1 rounded-lg">
+          <div className="flex items-center gap-1.5 text-slate-300">
+            <Database className={`w-3.5 h-3.5 ${utopiaOnline ? 'text-emerald-400' : 'text-rose-400'}`} />
+            <span>Utopia DB</span>
+            <span className="text-[10px] text-slate-500">.251:9922</span>
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                utopiaOnline ? 'bg-emerald-400' : 'bg-rose-400 animate-pulse'
+              }`}
+            />
+          </div>
+          {onSyncUtopia && (
+            <button
+              onClick={() => void onSyncUtopia()}
+              disabled={isSyncingUtopia}
+              className="text-[10px] text-amber hover:underline flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber/10 hover:bg-amber/20 border border-amber/30 transition-colors disabled:opacity-50"
+              title="Запустити синхронізацію активних інваріантів з Utopia DB"
+            >
+              {isSyncingUtopia ? <Loader2 className="w-2.5 h-2.5 animate-spin" /> : <RefreshCw className="w-2.5 h-2.5" />}
+              <span>{isSyncingUtopia ? 'Синхронізація…' : 'Синхронізувати'}</span>
+            </button>
+          )}
         </div>
 
-        <div className="flex items-center gap-1.5 text-slate-300">
-          <Cpu className="w-3.5 h-3.5 text-blue-400" />
+        <div className="flex items-center gap-1.5 bg-card border border-border-subtle px-2.5 py-1 rounded-lg text-slate-300">
+          <Cpu className={`w-3.5 h-3.5 ${llmOnline ? 'text-blue-400' : 'text-rose-400'}`} />
           <span>LLM Gateway</span>
           <span className="text-[10px] text-slate-500">.184:18880</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${
+              llmOnline ? 'bg-emerald-400' : 'bg-rose-400 animate-pulse'
+            }`}
+          />
         </div>
       </div>
 
@@ -160,3 +191,5 @@ export const Topbar: React.FC<TopbarProps> = ({
     </header>
   );
 };
+
+export default Topbar;

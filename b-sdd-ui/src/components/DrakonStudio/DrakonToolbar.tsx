@@ -13,10 +13,13 @@ import {
   Code2,
   Workflow,
   Plus,
+  FileCode2,
+  Undo2,
+  Redo2,
 } from 'lucide-react';
 
 export type SaveState = 'idle' | 'saving' | 'saved' | 'error';
-export type DrakonViewMode = 'flow' | 'widget' | 'json';
+export type DrakonViewMode = 'widget' | 'flow' | 'json';
 
 interface DrakonToolbarProps {
   onZoomIn: () => void;
@@ -24,6 +27,9 @@ interface DrakonToolbarProps {
   onGoHome: () => void;
   onExportJson: () => void;
   onSaveSpec?: () => void;
+  onOpenPseudocode?: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
   diagramName: string;
   saveState?: SaveState;
   saveErrorMessage?: string | null;
@@ -38,6 +44,9 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
   onGoHome,
   onExportJson,
   onSaveSpec,
+  onOpenPseudocode,
+  onUndo,
+  onRedo,
   diagramName,
   saveState = 'idle',
   saveErrorMessage,
@@ -85,29 +94,29 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
         {/* View Mode Toggle */}
         <div className="flex items-center bg-panel border border-border-subtle rounded-lg p-0.5 text-[11px] font-mono">
           <button
-            onClick={() => onViewModeChange('flow')}
-            className={`px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
-              viewMode === 'flow'
-                ? 'bg-amber/15 text-amber font-bold shadow-xs'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-            title="Інтерактивний візуальний редактор вузлів"
-          >
-            <Workflow className="w-3 h-3" />
-            <span>Редактор</span>
-          </button>
-
-          <button
             onClick={() => onViewModeChange('widget')}
             className={`px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
               viewMode === 'widget'
                 ? 'bg-amber/15 text-amber font-bold shadow-xs'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
-            title="Канонічний рендер drakonwidget.js"
+            title="Канонічний інтерактивний редактор drakonwidget.js із палітрою ікон"
           >
             <Layers className="w-3 h-3" />
-            <span>Віджет</span>
+            <span>ДРАКОН Рушій</span>
+          </button>
+
+          <button
+            onClick={() => onViewModeChange('flow')}
+            className={`px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
+              viewMode === 'flow'
+                ? 'bg-amber/15 text-amber font-bold shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+            title="Спрощений вузловий огляд"
+          >
+            <Workflow className="w-3 h-3" />
+            <span>Шампур</span>
           </button>
 
           <button
@@ -132,7 +141,27 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
 
       {/* Right: Quick actions & Zoom */}
       <div className="flex items-center gap-1.5">
-        {onAddNode && (
+        {onUndo && (
+          <button
+            onClick={onUndo}
+            className="p-1 rounded bg-panel hover:bg-slate-800 text-slate-300 border border-border-subtle hover:text-slate-100 transition-colors"
+            title="Відмінити (Undo)"
+          >
+            <Undo2 className="w-3.5 h-3.5" />
+          </button>
+        )}
+
+        {onRedo && (
+          <button
+            onClick={onRedo}
+            className="p-1 rounded bg-panel hover:bg-slate-800 text-slate-300 border border-border-subtle hover:text-slate-100 transition-colors"
+            title="Повторити (Redo)"
+          >
+            <Redo2 className="w-3.5 h-3.5" />
+          </button>
+        )}
+
+        {onAddNode && viewMode === 'flow' && (
           <div className="flex items-center gap-1 mr-2">
             <button
               onClick={() => onAddNode('action')}
@@ -180,13 +209,24 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
           </>
         )}
 
+        {onOpenPseudocode && (
+          <button
+            onClick={onOpenPseudocode}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber/10 hover:bg-amber/20 text-amber border border-amber/30 transition-colors text-[11px] font-mono font-medium"
+            title="Експорт схеми в алгоритмічний псевдокод або структурні правила"
+          >
+            <FileCode2 className="w-3.5 h-3.5 text-amber" />
+            <span>Псевдокод & Правила</span>
+          </button>
+        )}
+
         <button
           onClick={onExportJson}
           className="flex items-center gap-1 px-2 py-1 rounded bg-panel hover:bg-slate-800 text-slate-300 border border-border-subtle hover:text-amber transition-colors text-[11px] font-mono"
           title="Завантажити схему як .drakon.json"
         >
           <Download className="w-3 h-3" />
-          <span>Експорт</span>
+          <span>JSON</span>
         </button>
 
         {onSaveSpec && (
@@ -208,3 +248,5 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
     </div>
   );
 };
+
+export default DrakonToolbar;

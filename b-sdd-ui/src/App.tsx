@@ -5,6 +5,8 @@ import { PhaseStepper } from '@/components/PhaseStepper';
 import { ReviewGateModal } from '@/components/ReviewGateModal';
 import { DrakonCanvas, type DrakonCanvasHandle } from '@/components/DrakonStudio/DrakonCanvas';
 import { DrakonToolbar, type SaveState, type DrakonViewMode } from '@/components/DrakonStudio/DrakonToolbar';
+import { DrakonIconPalette } from '@/components/DrakonStudio/DrakonIconPalette';
+import { PseudocodeModal } from '@/components/DrakonStudio/PseudocodeModal';
 import { VisualFlowCanvas } from '@/components/DrakonStudio/VisualFlowCanvas';
 import { NodeInspector } from '@/components/DrakonStudio/NodeInspector';
 import { CopilotStream } from '@/components/CopilotPanel/CopilotStream';
@@ -33,12 +35,12 @@ import {
   getProjects,
   getSpecs,
   toggleTask,
+  syncUtopia,
 } from '@/lib/api';
 import { useLiveData } from '@/hooks/useLiveData';
 import type {
   ActiveRulesResponse,
   AdrsResponse,
-  DrakonWidgetDiagram,
   HealthResponse,
 } from '@/lib/backend-types';
 
@@ -65,10 +67,10 @@ const FALLBACK_PROJECTS: ProjectsResponse = {
     name: 'B-SDD Framework Core',
     path: '/home/vokov/projects/b-sdd',
     branch: 'master',
-    commit: '3cd8b01',
+    commit: 'bffae39',
     dirty_files: 0,
     description: 'Bitemporal Spec-Driven Development Framework',
-    stats: { specs: 4, adrs: 8, tests: 31, utopia_kb: '01a08474-0000-7000-8000-000000000001' },
+    stats: { specs: 4, adrs: 8, tests: 36, utopia_kb: '01a08474-0000-7000-8000-000000000001' },
   },
   workspaces: [
     { id: 'b-sdd', name: 'B-SDD Framework Core', path: '/home/vokov/projects/b-sdd', active: true },
@@ -107,13 +109,16 @@ export const App: React.FC = () => {
   const [isInvariantDrawerOpen, setIsInvariantDrawerOpen] = useState(false);
   const [isTasksDrawerOpen, setIsTasksDrawerOpen] = useState(false);
   const [isAdrLibraryOpen, setIsAdrLibraryOpen] = useState(false);
+  const [isPseudocodeOpen, setIsPseudocodeOpen] = useState(false);
+  const [isSyncingUtopia, setIsSyncingUtopia] = useState(false);
   const [selectedSpecId, setSelectedSpecId] = useState('004-multi-session-handoff-and-drakon');
 
-  // DRAKON Studio State
+  // DRAKON Studio State — default to full 'widget' editor
   const canvasRef = useRef<DrakonCanvasHandle>(null);
-  const [drakonViewMode, setDrakonViewMode] = useState<DrakonViewMode>('flow');
+  const [drakonViewMode, setDrakonViewMode] = useState<DrakonViewMode>('widget');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>('cond_phi6');
   const [drakonNodes, setDrakonNodes] = useState<DrakonNodeIR[]>(CANONICAL_HITL_DRAKON_IR.nodes);
+  const [activeSocketType, setActiveSocketType] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -126,7 +131,7 @@ export const App: React.FC = () => {
   const [selectedAdr, setSelectedAdr] = useState<BitemporalAdr | null>(null);
 
   // Live data hooks
-  useLiveData<HealthResponse>({
+  const liveHealth = useLiveData<HealthResponse>({
     fetcher: () => getHealth(FALLBACK_HEALTH),
     fallback: FALLBACK_HEALTH,
     pollMs: 5_000,
@@ -189,11 +194,14 @@ export const App: React.FC = () => {
     setDrakonNodes((prev) =>
       prev.map((n) => (n.node_id === updatedNode.node_id ? updatedNode : n)),
     );
+    // Also update label on visual widget canvas if available
+    canvasRef.current?.setContent(updatedNode.node_id, updatedNode.label);
   }, []);
 
   const handleDeleteNode = useCallback((nodeId: string) => {
     setDrakonNodes((prev) => prev.filter((n) => n.node_id !== nodeId));
     setSelectedNodeId(null);
+    canvasRef.current?.deleteSelection();
   }, []);
 
   const handleAddNode = useCallback((type: 'action' | 'question' | 'end', afterNodeId?: string) => {
@@ -220,7 +228,6 @@ export const App: React.FC = () => {
         const index = prev.findIndex((n) => n.node_id === afterNodeId);
         if (index !== -1) {
           const updated = [...prev];
-          // Relink previous node to new node if its down was pointing elsewhere
           const prevNode = updated[index];
           newNode.edges.down = prevNode.edges.down;
           updated[index] = {
@@ -237,15 +244,33 @@ export const App: React.FC = () => {
     setSelectedNodeId(newId);
   }, []);
 
+  const handleInsertIconFromPalette = useCallback((type: string) => {
+    setActiveSocketType(type);
+    canvasRef.current?.showInsertionSockets(type);
+  }, []);
+
   // Tasks toggle handler
   const handleToggleTask = useCallback(
     async (specId: string, taskId: string, completed: boolean) => {
       await toggleTask({ spec_id: specId, task_id: taskId, completed });
-      // Optimistically update local specs
       liveSpecs.refresh();
     },
     [liveSpecs],
   );
+
+  // Utopia DB On-Demand Sync
+  const handleSyncUtopia = useCallback(async () => {
+    setIsSyncingUtopia(true);
+    try {
+      await syncUtopia();
+      liveHealth.refresh();
+      liveAdrs.refresh();
+    } catch (err) {
+      console.error('Failed to sync Utopia DB:', err);
+    } finally {
+      setIsSyncingUtopia(false);
+    }
+  }, [liveHealth, liveAdrs]);
 
   // Phase transition handlers
   const handlePhaseSelect = (phaseId: HitlPhaseId) => {
@@ -281,21 +306,25 @@ export const App: React.FC = () => {
   };
 
   const handleExportJson = () => {
-    const jsonStr = JSON.stringify(
-      {
-        schema_version: '1.0',
-        name: CANONICAL_DRAKON_DIAGRAM.name,
-        nodes: drakonNodes,
-      },
-      null,
-      2,
-    );
+    const jsonStr =
+      canvasRef.current?.exportJson() ||
+      JSON.stringify(
+        {
+          schema_version: '1.0',
+          name: CANONICAL_DRAKON_DIAGRAM.name,
+          nodes: drakonNodes,
+        },
+        null,
+        2,
+      );
     const blob = new Blob([jsonStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = `${selectedSpecId}-logic.drakon.json`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
@@ -334,6 +363,10 @@ export const App: React.FC = () => {
         onOpenAdrLibrary={() => setIsAdrLibraryOpen(true)}
         onOpenInvariantDrawer={() => setIsInvariantDrawerOpen(true)}
         invariantCount={totalInvariantCount}
+        utopiaOnline={liveHealth.data?.utopia_db?.status === 'online'}
+        llmOnline={liveHealth.data?.llm_gateway?.status === 'online'}
+        onSyncUtopia={handleSyncUtopia}
+        isSyncingUtopia={isSyncingUtopia}
       />
 
       {/* 2. HITL 7-PHASE STEPPER BAR (44px) */}
@@ -354,6 +387,9 @@ export const App: React.FC = () => {
             onGoHome={() => canvasRef.current?.goHome()}
             onExportJson={handleExportJson}
             onSaveSpec={handleSaveSpec}
+            onOpenPseudocode={() => setIsPseudocodeOpen(true)}
+            onUndo={() => canvasRef.current?.undo()}
+            onRedo={() => canvasRef.current?.redo()}
             saveState={saveState}
             saveErrorMessage={saveError}
             diagramName={CANONICAL_DRAKON_DIAGRAM.name}
@@ -362,21 +398,32 @@ export const App: React.FC = () => {
             onAddNode={handleAddNode}
           />
 
+          {/* Icon Palette when in DrakonWidget view */}
+          {drakonViewMode === 'widget' && (
+            <DrakonIconPalette
+              onInsertIcon={handleInsertIconFromPalette}
+              activeSocketType={activeSocketType}
+            />
+          )}
+
           <div className="flex-1 relative overflow-hidden">
-            {drakonViewMode === 'flow' ? (
+            {drakonViewMode === 'widget' ? (
+              <DrakonCanvas
+                ref={canvasRef}
+                diagram={CANONICAL_DRAKON_DIAGRAM}
+                diagramId={selectedSpecId}
+                onSelectNode={setSelectedNodeId}
+                selectedNodeId={selectedNodeId}
+                onDiagramChange={(newDiag) => {
+                  console.log('[Workbench] Diagram edited:', newDiag.name);
+                }}
+              />
+            ) : drakonViewMode === 'flow' ? (
               <VisualFlowCanvas
                 nodes={drakonNodes}
                 selectedNodeId={selectedNodeId}
                 onSelectNode={setSelectedNodeId}
                 onAddNode={handleAddNode}
-              />
-            ) : drakonViewMode === 'widget' ? (
-              <DrakonCanvas
-                ref={canvasRef}
-                diagram={CANONICAL_DRAKON_DIAGRAM}
-                diagramId="canonical-hitl-004"
-                onSelectNode={setSelectedNodeId}
-                selectedNodeId={selectedNodeId}
               />
             ) : (
               <div className="w-full h-full p-6 overflow-auto bg-canvas font-mono text-xs text-amber leading-relaxed select-text">
@@ -459,6 +506,14 @@ export const App: React.FC = () => {
         allAdrs={effectiveAdrs}
         onClose={() => setSelectedAdr(null)}
         onSelectAdr={(adr) => setSelectedAdr(adr)}
+        onAdrSaved={() => liveAdrs.refresh()}
+      />
+
+      <PseudocodeModal
+        isOpen={isPseudocodeOpen}
+        onClose={() => setIsPseudocodeOpen(false)}
+        diagramJson={CANONICAL_DRAKON_DIAGRAM}
+        diagramName={CANONICAL_DRAKON_DIAGRAM.name}
       />
 
       <InvariantDrawer

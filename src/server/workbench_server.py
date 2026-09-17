@@ -56,8 +56,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         self._send_json({"error": message, "status": status}, status)
 
     @staticmethod
-    def _check_socket(host: str, port: int, timeout: float = 0.15) -> bool:
-        """Checks if a TCP socket is reachable within a strict sub-second timeout."""
+    def _check_socket(host: str, port: int, timeout: float = 1.5) -> bool:
+        """Checks if a TCP socket is reachable within a strict timeout."""
         try:
             with socket.create_connection((host, port), timeout=timeout):
                 return True
@@ -107,6 +107,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_drakon_schema(body)
         elif path == "/api/tasks/toggle":
             self.handle_post_tasks_toggle(body)
+        elif path == "/api/adrs/save":
+            self.handle_post_adrs_save(body)
+        elif path == "/api/sync/utopia":
+            self.handle_post_sync_utopia(body)
         elif path == "/api/sprint/review":
             self.handle_post_sprint_review(body)
         elif path == "/api/copilot/proxy":
@@ -439,6 +443,84 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             })
 
         self._send_json({"total": len(adrs), "adrs": adrs})
+
+    def handle_post_adrs_save(self, body: Dict[str, Any]):
+        """POST /api/adrs/save: Persist modified ADR markdown to disk and recompile active rules."""
+        file_path = body.get("file_path")
+        content = body.get("content")
+        adr_id = body.get("id", "ADR")
+
+        if not file_path or content is None:
+            self._send_error("Missing 'file_path' or 'content' in payload", 400)
+            return
+
+        target_file = (ROOT_DIR / file_path).resolve()
+        # Security check: target must reside within docs/
+        docs_dir = (ROOT_DIR / "docs").resolve()
+        try:
+            target_file.relative_to(docs_dir)
+        except ValueError:
+            self._send_error("Target file must reside within docs/ directory", 403)
+            return
+
+        target_file.parent.mkdir(parents=True, exist_ok=True)
+        target_file.write_text(content, encoding="utf-8")
+
+        # Automatically re-compile active rules
+        recompiled = False
+        try:
+            from src.core.compiler import BSDDCompiler
+            compiler = BSDDCompiler()
+            compiler.compile()
+            recompiled = True
+        except Exception:
+            pass
+
+        self._send_json({
+            "success": True,
+            "id": adr_id,
+            "file_path": str(target_file.relative_to(ROOT_DIR)),
+            "bytes_written": len(content.encode("utf-8")),
+            "recompiled_rules": recompiled,
+            "saved_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        })
+
+    def handle_post_sync_utopia(self, body: Dict[str, Any]):
+        """POST /api/sync/utopia: Trigger on-demand sync with Utopia DB."""
+        kb_id = body.get("kb_id", "01a08474-0000-7000-8000-000000000001")
+        try:
+            from src.core.compiler import BSDDCompiler
+            from src.adapters.utopia_db import UtopiaDBAdapter
+            compiler = BSDDCompiler()
+            intents = compiler.scan_and_sync_intents()
+
+            adapter = UtopiaDBAdapter(kb_id=kb_id)
+            if not adapter.test_connection():
+                self._send_json({
+                    "success": False,
+                    "error": f"Failed to connect to Utopia DB on {adapter.host}:{adapter.ssh_port}",
+                    "synced_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                }, 503)
+                return
+
+            intent_res = adapter.sync_all_intents(intents)
+            kg_res = adapter.sync_to_knowledge_graph(intents)
+
+            self._send_json({
+                "success": True,
+                "intents_registered": intent_res.get("registered", 0),
+                "intents_total": intent_res.get("total", 0),
+                "supersessions": intent_res.get("supersessions", 0),
+                "kg_entities": kg_res.get("entities", 0),
+                "kg_facts": kg_res.get("facts", 0),
+                "synced_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            })
+        except Exception as e:
+            self._send_json({
+                "success": False,
+                "error": str(e),
+                "synced_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            }, 500)
 
     def handle_get_drakon_schema(self, query: Dict[str, List[str]]):
         """GET /api/drakon/schema: Parses and returns DRAKON diagram."""

@@ -11,6 +11,13 @@ export interface DrakonCanvasHandle {
   goHome: () => void;
   exportJson: () => string | null;
   exportCanvas: () => HTMLCanvasElement | null;
+  showInsertionSockets: (type: string) => void;
+  undo: () => void;
+  redo: () => void;
+  deleteSelection: () => void;
+  swapYesNo: (id: string) => void;
+  setContent: (itemId: string, content: string) => void;
+  toggleSilhouette: () => void;
 }
 
 interface DrakonCanvasProps {
@@ -18,6 +25,7 @@ interface DrakonCanvasProps {
   diagramId: string;
   onSelectNode: (nodeId: string | null) => void;
   selectedNodeId: string | null;
+  onDiagramChange?: (newDiagram: DrakonDiagram) => void;
 }
 
 const ZOOM_STEP = 2000;
@@ -29,6 +37,7 @@ export const DrakonCanvas = forwardRef<DrakonCanvasHandle, DrakonCanvasProps>(({
   diagramId,
   onSelectNode,
   selectedNodeId,
+  onDiagramChange,
 }, ref) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<DrakonWidget | null>(null);
@@ -37,9 +46,21 @@ export const DrakonCanvas = forwardRef<DrakonCanvasHandle, DrakonCanvasProps>(({
   const [error, setError] = useState<string | null>(null);
   const [zoom, setZoom] = useState(4000);
 
-  // Read-only edit sender for workbench inspection
+  // Edit sender that propagates mutations to parent React state
   const editSenderRef = useRef<DrakonEditSender>({
-    pushEdit: () => {},
+    pushEdit: (edit) => {
+      if (widgetRef.current && onDiagramChange) {
+        try {
+          const jsonStr = widgetRef.current.exportJson();
+          if (jsonStr) {
+            const parsed = JSON.parse(jsonStr) as DrakonDiagram;
+            onDiagramChange(parsed);
+          }
+        } catch (e) {
+          console.error('Failed to sync diagram on edit:', e);
+        }
+      }
+    },
     stop: () => {},
   });
 
@@ -65,7 +86,7 @@ export const DrakonCanvas = forwardRef<DrakonCanvasHandle, DrakonCanvasProps>(({
     onZoomChanged: (newZoom) => setZoom(newZoom),
   }), [onSelectNode]);
 
-  // Imperative handle for parent toolbar
+  // Imperative handle for parent toolbar and icon palette
   useImperativeHandle(ref, () => ({
     zoomIn: () => {
       const newZoom = Math.min(zoom + ZOOM_STEP, MAX_ZOOM);
@@ -91,6 +112,28 @@ export const DrakonCanvas = forwardRef<DrakonCanvasHandle, DrakonCanvasProps>(({
         return widgetRef.current.exportCanvas(100);
       }
       return null;
+    },
+    showInsertionSockets: (type: string) => {
+      widgetRef.current?.showInsertionSockets(type);
+    },
+    undo: () => {
+      widgetRef.current?.undo();
+    },
+    redo: () => {
+      widgetRef.current?.redo();
+    },
+    deleteSelection: () => {
+      widgetRef.current?.deleteSelection();
+    },
+    swapYesNo: (id: string) => {
+      widgetRef.current?.swapYesNo(id);
+    },
+    setContent: (itemId: string, content: string) => {
+      widgetRef.current?.setContent(itemId, content);
+      widgetRef.current?.redraw();
+    },
+    toggleSilhouette: () => {
+      widgetRef.current?.toggleSilhouette();
     },
   }), [zoom, diagram]);
 
@@ -207,3 +250,5 @@ export const DrakonCanvas = forwardRef<DrakonCanvasHandle, DrakonCanvasProps>(({
     </div>
   );
 });
+
+export default DrakonCanvas;

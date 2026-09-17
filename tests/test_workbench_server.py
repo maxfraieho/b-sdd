@@ -13,6 +13,7 @@ import pytest
 from src.server.workbench_server import ThreadedHTTPServer, WorkbenchRequestHandler
 
 TEST_PORT = 8769
+ROOT_DIR = Path(__file__).resolve().parent.parent
 
 
 @pytest.fixture(scope="module")
@@ -122,4 +123,43 @@ def test_server_adrs_full_content(server):
         first_adr = data["adrs"][0]
         assert "content" in first_adr
         assert len(first_adr["content"]) > 50
+
+
+def test_server_adr_save_endpoint(server, tmp_path):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/adrs/save"
+    # Read existing ADR-001 content to preserve it
+    adr_path = ROOT_DIR / "docs" / "adr" / "ADR-001-bitemporal-intent-graph.md"
+    orig_content = adr_path.read_text(encoding="utf-8")
+
+    payload = json.dumps({
+        "id": "ADR-001",
+        "file_path": "docs/adr/ADR-001-bitemporal-intent-graph.md",
+        "content": orig_content + "\n<!-- test save -->\n"
+    }).encode("utf-8")
+
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req) as resp:
+            assert resp.status == 200
+            data = json.loads(resp.read().decode("utf-8"))
+            assert data["success"] is True
+            assert "saved_at" in data
+    finally:
+        # Restore original content
+        adr_path.write_text(orig_content, encoding="utf-8")
+
+
+def test_server_utopia_sync_endpoint(server):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/sync/utopia"
+    payload = json.dumps({}).encode("utf-8")
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            assert "synced_at" in data
+    except urllib.error.HTTPError as e:
+        # If Utopia node is temporarily unreachable, 503 is returned with error
+        data = json.loads(e.read().decode("utf-8"))
+        assert "synced_at" in data
+
 

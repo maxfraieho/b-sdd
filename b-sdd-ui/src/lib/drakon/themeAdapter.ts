@@ -1,66 +1,41 @@
 // src/lib/drakon/themeAdapter.ts
+
 import type { DrakonConfigTheme } from '@/types/drakonwidget';
 
 /**
- * Maps Swiss High-Tech Dark / Light palettes to DrakonWidget canvas theme.
- * Swiss Dark:
- * - Canvas Background: #070B12 (Deep black graphite)
- * - Icons Background: #162035 (Slate card fill)
- * - Icon Border: #24324D (Subtle border)
- * - Text color: #F8FAFC (Slate 50)
- * - Skewer & connectors: #3B82F6 / #10B981
+ * Maps garden-bloom theme (dark/light) to DrakonWidget theme
  */
-export function getSwissDrakonTheme(isDark = true): DrakonConfigTheme {
+export function getGardenDrakonTheme(isDark: boolean): DrakonConfigTheme {
   if (isDark) {
     return {
-      background: '#070B12',
-      iconBack: '#162035',
-      iconBorder: '#24324D',
-      color: '#F8FAFC',
-      lines: '#3B82F6', // Skewer blue
-      lineWidth: 2,
-      shadowColor: 'rgba(0, 0, 0, 0.6)',
-      shadowBlur: 8,
-      scrollBar: 'rgba(255, 255, 255, 0.15)',
-      scrollBarHover: 'rgba(245, 158, 11, 0.4)', // Amber hover
-      backText: '#94A3B8',
-      icons: {
-        header: {
-          iconBack: '#1E293B',
-          iconBorder: '#3B82F6',
-          color: '#38BDF8',
-        },
-        action: {
-          iconBack: '#162035',
-          iconBorder: '#24324D',
-          color: '#F8FAFC',
-        },
-        question: {
-          iconBack: '#291805',
-          iconBorder: '#F59E0B',
-          color: '#FCD34D',
-        },
-        end: {
-          iconBack: '#064E3B',
-          iconBorder: '#10B981',
-          color: '#6EE7B7',
-        },
-      },
+      background: '#1e293b',
+      iconBack: '#334155',
+      iconBorder: '#64748b',
+      color: '#f1f5f9',
+      lines: '#94a3b8',
+      lineWidth: 1,
+      shadowColor: 'rgba(0, 0, 0, 0.4)',
+      shadowBlur: 4,
+      scrollBar: 'rgba(255, 255, 255, 0.2)',
+      scrollBarHover: 'rgba(255, 255, 255, 0.5)',
+      backText: '#cbd5e1',
     };
   }
 
-  // High-contrast clean light fallback
+  // Light theme — higher contrast: gray canvas, white blocks, dark borders/lines
   return {
-    background: '#F1F5F9',
-    iconBack: '#FFFFFF',
-    iconBorder: '#CBD5E1',
-    color: '#0F172A',
-    lines: '#2563EB',
+    background: '#dde3ea',
+    iconBack: '#ffffff',
+    iconBorder: '#5b6e82',
+    color: '#1a2535',
+    lines: '#2d3f52',
     lineWidth: 1.5,
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowBlur: 4,
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
+    shadowBlur: 6,
     scrollBar: 'rgba(0, 0, 0, 0.2)',
-    scrollBarHover: 'rgba(0, 0, 0, 0.4)',
-    backText: '#64748B',
+    scrollBarHover: 'rgba(0, 0, 0, 0.45)',
+    backText: '#3a4e63',
   };
 }
+
+export const getSwissDrakonTheme = getGardenDrakonTheme;

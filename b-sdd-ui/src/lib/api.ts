@@ -210,3 +210,27 @@ export function toggleTask(payload: { spec_id: string; task_id: string; complete
   );
 }
 
+export function saveAdr(payload: { id: string; file_path: string; content: string }) {
+  return postJson<{
+    success: boolean;
+    id: string;
+    file_path: string;
+    bytes_written: number;
+    recompiled_rules: boolean;
+    saved_at: string;
+  }>('/api/adrs/save', payload);
+}
+
+export function syncUtopia(kbId?: string) {
+  return postJson<{
+    success: boolean;
+    intents_registered?: number;
+    intents_total?: number;
+    supersessions?: number;
+    kg_entities?: number;
+    kg_facts?: number;
+    synced_at: string;
+    error?: string;
+  }>('/api/sync/utopia', { kb_id: kbId });
+}
+
