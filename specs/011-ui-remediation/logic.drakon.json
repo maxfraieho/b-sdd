@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 011: UI Remediation & Ergonomic Simplification",
+  "category": "bsdd_pipeline",
+  "description": "Автономна обробка результатів голосової ремедіації інтерфейсу з Gemini, усунення кнопок-заглушок та спрощення палітри ДРАКОН",
+  "params": "remediation_notes_ready: bool, prune_no_ops: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 011 (Ремедіація інтерфейсу)",
+      "edges": { "down": "step_parse_intake", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_parse_intake",
+      "node_type": "action",
+      "label": "Зчитування результатів аудиту з docs/ui_remediation/remediation_input.md",
+      "edges": { "down": "cond_noop_detected", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-011-03", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_noop_detected",
+      "node_type": "question",
+      "label": "Виявлено кнопки-заглушки або дублюючі контролі в Topbar?",
+      "edges": { "down": "step_prune_palette", "right": "step_remove_noops" },
+      "semantic_binding": { "adr_invariant_id": "INV-011-03", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_remove_noops",
+      "node_type": "action",
+      "label": "Видалення зайвих кнопок та перенесення системних налаштувань у меню",
+      "edges": { "down": "step_prune_palette", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-011-03", "severity": "warning" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_prune_palette",
+      "node_type": "action",
+      "label": "Спрощення палітри ДРАКОН до 5 базових планарних фігур (ADR-008)",
+      "edges": { "down": "step_run_fitness", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-011-04", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_run_fitness",
+      "node_type": "action",
+      "label": "Запуск фітнес-тестів (pytest tests/test_sprint_011_ui_remediation.py)",
+      "edges": { "down": "cond_fitness_pass", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "critical" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "cond_fitness_pass",
+      "node_type": "question",
+      "label": "100% тестів успішні та компіляція < 50мс?",
+      "edges": { "down": "step_build_bundle", "right": "step_fix_regressions" },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "critical" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "step_fix_regressions",
+      "node_type": "action",
+      "label": "Локалізація та усунення регресій за межами AstryxZoneBoundary",
+      "edges": { "down": "step_build_bundle", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-011-05", "severity": "critical" },
+      "x": 4.0, "y": 10.0
+    },
+    {
+      "node_id": "step_build_bundle",
+      "node_type": "action",
+      "label": "Збирання продуктивного клієнта Vite (npm run build)",
+      "edges": { "down": "end_sprint_011", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    },
+    {
+      "node_id": "end_sprint_011",
+      "node_type": "end",
+      "label": "Спринт 011 завершено: UI очищено, протестовано та готове до релізу",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007", "severity": "normal" },
+      "x": 0.0, "y": 14.0
+    }
+  ]
+}
