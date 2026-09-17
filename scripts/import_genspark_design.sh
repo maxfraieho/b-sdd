@@ -35,22 +35,64 @@ fi
 
 INPUT_DIR="$1"
 
+# Check if path exists locally, or if on remote host 192.168.3.184
 if [ ! -d "${INPUT_DIR}" ]; then
-  echo -e "${RED}[ERROR] Provided path does not exist or is not a directory: ${INPUT_DIR}${NC}"
-  exit 1
+  if ssh -o BatchMode=yes -o ConnectTimeout=2 192.168.3.184 "[ -d '${INPUT_DIR}' ]" 2>/dev/null; then
+    echo -e "${YELLOW}» Path not found locally, but found on remote host 192.168.3.184!${NC}"
+    echo -e "${YELLOW}» Fetching via rsync from 192.168.3.184:${INPUT_DIR} ...${NC}"
+    LOCAL_SYNC_DIR="${ROOT_DIR}/docs/design_handoff_bsdd_workbench_astryx"
+    mkdir -p "${LOCAL_SYNC_DIR}"
+    rsync -avz "192.168.3.184:${INPUT_DIR}/" "${LOCAL_SYNC_DIR}/"
+    INPUT_DIR="${LOCAL_SYNC_DIR}"
+    echo -e "${GREEN}[✓] Successfully synchronized from 192.168.3.184 into ${INPUT_DIR}${NC}"
+  else
+    echo -e "${RED}[ERROR] Provided path does not exist locally or on 192.168.3.184: ${INPUT_DIR}${NC}"
+    exit 1
+  fi
 fi
 
 echo -e "${YELLOW}» Analyzing input directory: ${INPUT_DIR} ...${NC}"
 
-# Detect if input has nested b-sdd-ui/ or direct src/
+# Read and display handoff README briefing if present
+if [ -f "${INPUT_DIR}/README.md" ]; then
+  echo -e "\n${CYAN}════════════════════════════════════════════════════════════════${NC}"
+  echo -e "${CYAN}  GENSPARK ASTRYX DESIGN HANDOFF BRIEFING (READING README.md)  ${NC}"
+  echo -e "${CYAN}════════════════════════════════════════════════════════════════${NC}"
+  head -n 42 "${INPUT_DIR}/README.md"
+  echo -e "${CYAN}════════════════════════════════════════════════════════════════${NC}\n"
+fi
+
+# Detect format: Case A (buildable src tree) vs Case B (design prototype package)
 SRC_SOURCE=""
+IS_PROTOTYPE=false
+
 if [ -d "${INPUT_DIR}/b-sdd-ui/src" ]; then
   SRC_SOURCE="${INPUT_DIR}/b-sdd-ui"
 elif [ -d "${INPUT_DIR}/src" ]; then
   SRC_SOURCE="${INPUT_DIR}"
-else
-  echo -e "${RED}[ERROR] Could not find 'src/' in ${INPUT_DIR} or ${INPUT_DIR}/b-sdd-ui.${NC}"
-  exit 1
+elif [ -d "${INPUT_DIR}/components" ] || [ -f "${INPUT_DIR}/B-SDD Workbench Astryx.html" ]; then
+  IS_PROTOTYPE=true
+  echo -e "${CYAN}[ℹ] Detected Astryx Design Prototype package (HTML/JSX reference).${NC}"
+  # Stash prototype files to docs/design_handoff_bsdd_workbench_astryx/ for developer reference
+  TARGET_HANDOFF_DOCS="${ROOT_DIR}/docs/design_handoff_bsdd_workbench_astryx"
+  mkdir -p "${TARGET_HANDOFF_DOCS}"
+  if [ "${INPUT_DIR}" != "${TARGET_HANDOFF_DOCS}" ]; then
+    rsync -av "${INPUT_DIR}/" "${TARGET_HANDOFF_DOCS}/"
+  fi
+  echo -e "${GREEN}[✓] Prototype reference secured in docs/design_handoff_bsdd_workbench_astryx/${NC}"
+fi
+
+if [ "${IS_PROTOTYPE}" = true ]; then
+  echo -e "${YELLOW}» Running verification of active codebase and compiling active rules...${NC}"
+  PYTHONPATH="${ROOT_DIR}" python3 "${ROOT_DIR}/src/cli/main.py" compile
+  pytest -v
+  echo -e "\n${GREEN}════════════════════════════════════════════════════════════════${NC}"
+  echo -e "${GREEN}[✓ SUCCESS] Astryx Design Handoff successfully registered & read!${NC}"
+  echo -e "${GREEN}  - Handoff README: ${ROOT_DIR}/docs/design_handoff_bsdd_workbench_astryx/README.md${NC}"
+  echo -e "${GREEN}  - Interactive Prototype: ${ROOT_DIR}/docs/design_handoff_bsdd_workbench_astryx/B-SDD Workbench Astryx.html${NC}"
+  echo -e "${GREEN}  - System ready for Genspark Code or TypeScript migration in b-sdd-ui/src/${NC}"
+  echo -e "${GREEN}════════════════════════════════════════════════════════════════${NC}"
+  exit 0
 fi
 
 echo -e "${GREEN}[✓] Detected frontend root at: ${SRC_SOURCE}${NC}"
@@ -146,7 +188,7 @@ fi
 
 # 8. Recompile active rules
 echo -e "${YELLOW}» Recompiling active architectural rules ...${NC}"
-python3 "${ROOT_DIR}/src/cli/main.py" compile
+PYTHONPATH="${ROOT_DIR}" python3 "${ROOT_DIR}/src/cli/main.py" compile
 
 echo -e "\n${GREEN}════════════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}[✓ SUCCESS] Genspark design successfully imported & verified!${NC}"

@@ -59,7 +59,7 @@ fi
 
 # Step 2: Pre-Flight Rule Compilation Gate
 echo -e "\n${CYAN}» Step 2: Running Deterministic Pre-Flight Rule Compilation...${NC}"
-python3 "${SCRIPT_DIR}/src/cli/main.py" compile
+PYTHONPATH="${SCRIPT_DIR}" python3 "${SCRIPT_DIR}/src/cli/main.py" compile
 
 # Step 3: Architectural Fitness Gate
 echo -e "\n${CYAN}» Step 3: Executing B-SDD Architectural Invariants Gate (pytest)...${NC}"
