@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0",
+  "name": "Production Deployment & Telemetry Verification Pipeline",
+  "category": "bsdd_pipeline",
+  "description": "Автоматизоване розгортання B-SDD у продакшн, верифікація шлюзу та ініціалізація потоку телеметрії",
+  "params": "target_env: str, runner_host: str, verify_sla: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація продакшн-конвеєра та телеметрії",
+      "edges": { "down": "step_preflight_fitness", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_preflight_fitness",
+      "node_type": "action",
+      "label": "Виконання передпольотної компіляції та архітектурних фітнес-тестів",
+      "edges": { "down": "cond_fitness_pass", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_fitness_pass",
+      "node_type": "question",
+      "label": "Фітнес-гейти пройдені на 100% (SLA < 50ms, budget <= 500w)?",
+      "edges": { "down": "step_build_frontend", "right": "step_abort_fitness" },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_abort_fitness",
+      "node_type": "end",
+      "label": "Зупинка: деградація архітектурних інваріантів",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-02", "severity": "critical" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_build_frontend",
+      "node_type": "action",
+      "label": "Збирання оптимізованого продакшн-бандла b-sdd-ui (Vite build)",
+      "edges": { "down": "cond_build_pass", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-04", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "cond_build_pass",
+      "node_type": "question",
+      "label": "Пакет зібрано успішно без помилок типізації?",
+      "edges": { "down": "step_deploy_cf_pages", "right": "step_abort_build" },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-04", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_abort_build",
+      "node_type": "end",
+      "label": "Зупинка: помилка компіляції фронтенду",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-04", "severity": "critical" },
+      "x": 4.0, "y": 8.0
+    },
+    {
+      "node_id": "step_deploy_cf_pages",
+      "node_type": "action",
+      "label": "Атомарна публікація дистрибутиву в Cloudflare Pages (b-sdd-ui.pages.dev)",
+      "edges": { "down": "step_deploy_backend_service", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-04", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "step_deploy_backend_service",
+      "node_type": "action",
+      "label": "Синхронізація демона systemd b-sdd-workbench на суверенному хості 192.168.3.184",
+      "edges": { "down": "step_probe_health", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-04", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    },
+    {
+      "node_id": "step_probe_health",
+      "node_type": "action",
+      "label": "Запит діагностичних зондів https://bsdd.exodus.pp.ua/api/health та /api/telemetry",
+      "edges": { "down": "cond_health_ok", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-04", "severity": "normal" },
+      "x": 0.0, "y": 14.0
+    },
+    {
+      "node_id": "cond_health_ok",
+      "node_type": "question",
+      "label": "Шлюз та телеметрія відповідають зі статусом 200 та затримкою < 50ms?",
+      "edges": { "down": "step_stream_telemetry", "right": "step_rollback_service" },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-03", "severity": "normal" },
+      "x": 0.0, "y": 16.0
+    },
+    {
+      "node_id": "step_rollback_service",
+      "node_type": "end",
+      "label": "Відкат: помилка зонду здоров'я продакшн-шлюзу",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-04", "severity": "critical" },
+      "x": 4.0, "y": 16.0
+    },
+    {
+      "node_id": "step_stream_telemetry",
+      "node_type": "action",
+      "label": "Активація Realtime SSE трансляції метрик для Astryx Cockpit (/api/realtime/telemetry)",
+      "edges": { "down": "end_success", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-05", "severity": "normal" },
+      "x": 0.0, "y": 18.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Продакшн розгорнуто: шлюз активний, телеметрія підключена",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012-INV-05", "severity": "normal" },
+      "x": 0.0, "y": 20.0
+    }
+  ]
+}

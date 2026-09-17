@@ -10,6 +10,7 @@ import json
 import time
 import socket
 import queue
+import signal
 import threading
 import urllib.request
 import urllib.parse
@@ -29,6 +30,7 @@ from src.drakon.validator import DrakonValidator
 from src.core.session_distiller import SessionDistiller
 from src.adapters.github_sync import GitHubSyncAdapter
 from src.adapters.appwrite_client import AppwriteClient
+from src.adapters.telemetry import TELEMETRY
 
 
 class PhaseEventBroadcaster:
@@ -151,17 +153,28 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", content_type)
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Requested-With")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
         self.end_headers()
 
     def do_OPTIONS(self):
         """Handle CORS pre-flight requests."""
         self._set_headers(204)
 
+    def _send_text(self, text: str, status: int = 200, content_type: str = "text/plain; version=0.0.4; charset=utf-8"):
+        body = text.encode("utf-8")
+        self._set_headers(status, content_type)
+        self.wfile.write(body)
+        elapsed_ms = (time.perf_counter() - getattr(self, "_req_start", time.perf_counter())) * 1000.0
+        TELEMETRY.record_request(self.command, self.path, status, elapsed_ms)
+
     def _send_json(self, data: Any, status: int = 200):
         body = json.dumps(data, indent=2).encode("utf-8")
         self._set_headers(status, "application/json")
         self.wfile.write(body)
+        elapsed_ms = (time.perf_counter() - getattr(self, "_req_start", time.perf_counter())) * 1000.0
+        TELEMETRY.record_request(self.command, self.path, status, elapsed_ms)
 
     def _send_error(self, message: str, status: int = 400):
         self._send_json({"error": message, "status": status}, status)
@@ -177,12 +190,19 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         """Dispatch GET requests."""
+        self._req_start = time.perf_counter()
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path.rstrip("/")
         query = urllib.parse.parse_qs(parsed.query)
 
         if path == "/api/health":
             self.handle_get_health()
+        elif path == "/api/telemetry":
+            self.handle_get_telemetry()
+        elif path == "/api/metrics":
+            self.handle_get_metrics()
+        elif path in ("/api/realtime/telemetry", "/api/telemetry/realtime"):
+            self.handle_get_realtime_telemetry()
         elif path == "/api/projects":
             self.handle_get_projects()
         elif path == "/api/specs":
@@ -206,6 +226,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """Dispatch POST requests."""
+        self._req_start = time.perf_counter()
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path.rstrip("/")
 
@@ -248,7 +269,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
     # --------------------------------------------------------------------------
 
     def handle_get_health(self):
-        """GET /api/health: Check sovereign nodes, BaaS plane, and local files."""
+        """GET /api/health: Check sovereign nodes, BaaS plane, local files, and telemetry."""
         utopia_ok = self._check_socket("192.168.3.251", 9922)
         llm_ok = self._check_socket("192.168.3.184", 18880)
         gitnexus_ok = self._check_socket("192.168.3.184", 4747)
@@ -265,6 +286,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             "server": "online",
             "offline_parity": True,
             "checked_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "telemetry": TELEMETRY.get_summary(),
             "utopia_db": {
                 "host": "192.168.3.251",
                 "port": 9922,
@@ -322,6 +344,42 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             },
         })
 
+    def handle_get_telemetry(self):
+        """GET /api/telemetry: Returns structured telemetry snapshot (ADR-012)."""
+        self._send_json(TELEMETRY.get_summary())
+
+    def handle_get_metrics(self):
+        """GET /api/metrics: Returns Prometheus exposition metrics (ADR-012)."""
+        self._send_text(TELEMETRY.get_prometheus_metrics())
+
+    def handle_get_realtime_telemetry(self):
+        """GET /api/realtime/telemetry: Realtime SSE telemetry stream (ADR-012)."""
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "keep-alive")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+
+        TELEMETRY.record_sse_connect()
+        try:
+            # Emit initial snapshot
+            init_data = TELEMETRY.get_summary()
+            self.wfile.write(f"data: {json.dumps(init_data)}\n\n".encode("utf-8"))
+            self.wfile.flush()
+            TELEMETRY.record_sse_broadcast()
+
+            while True:
+                time.sleep(2.0)
+                summary = TELEMETRY.get_summary()
+                self.wfile.write(f"data: {json.dumps(summary)}\n\n".encode("utf-8"))
+                self.wfile.flush()
+                TELEMETRY.record_sse_broadcast()
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            pass
+        finally:
+            TELEMETRY.record_sse_disconnect()
+
     def handle_get_rules_active(self):
         """GET /api/rules/active: Pre-flight compilation and word count."""
         t0 = time.perf_counter()
@@ -329,6 +387,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         snapshot = compiler.compile()
         latency_ms = (time.perf_counter() - t0) * 1000
         words = len(snapshot.split())
+        TELEMETRY.record_compile(duration_ms=latency_ms, word_count=words, success=True, budget=500)
 
         self._send_json({
             "compiled_snapshot": snapshot,
@@ -837,7 +896,9 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             schema_dict = body.get("schema_ir", body)
             parsed_schema = DrakonParser.parse_dict(schema_dict)
             validator = DrakonValidator(root_dir=ROOT_DIR)
+            t_val = time.perf_counter()
             res = validator.validate(parsed_schema)
+            TELEMETRY.record_drakon_validation((time.perf_counter() - t_val) * 1000.0, is_valid=res.is_valid)
             if not res.is_valid:
                 self._send_json({
                     "status": "validation_failed",
@@ -1127,29 +1188,45 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 class WorkbenchServer:
     """Server manager for the B-SDD developer workbench bridge."""
 
-    def __init__(self, host: str = "0.0.0.0", port: int = 8765):
-        self.host = host
-        self.port = port
+    def __init__(self, host: Optional[str] = None, port: Optional[int] = None):
+        self.host = host or os.environ.get("BSDD_HOST", "0.0.0.0")
+        self.port = port or int(os.environ.get("BSDD_PORT", "8765"))
         self.server: Optional[ThreadedHTTPServer] = None
 
     def start(self):
         self.server = ThreadedHTTPServer((self.host, self.port), WorkbenchRequestHandler)
         print(f"✓ B-SDD Workbench Server running at http://{self.host}:{self.port}")
-        print("  - Health API : http://localhost:8765/api/health")
-        print("  - Rules API  : http://localhost:8765/api/rules/active")
-        print("  - DRAKON API : http://localhost:8765/api/drakon/schema")
-        print("  - Press Ctrl+C to terminate.")
+        print("  - Health API    : /api/health")
+        print("  - Telemetry API : /api/telemetry")
+        print("  - Metrics API   : /api/metrics")
+        print("  - Rules API     : /api/rules/active")
+        print("  - DRAKON API    : /api/drakon/schema")
+        print("  - Realtime SSE  : /api/realtime/phases & /api/realtime/telemetry")
+        print("  - Press Ctrl+C or send SIGTERM to terminate.")
+
+        def shutdown_handler(signum, frame):
+            print(f"\n[B-SDD] Received signal {signum}, gracefully terminating workbench server...")
+            if self.server:
+                threading.Thread(target=self.server.shutdown, daemon=True).start()
+
+        signal.signal(signal.SIGINT, shutdown_handler)
+        if hasattr(signal, "SIGTERM"):
+            signal.signal(signal.SIGTERM, shutdown_handler)
+
         try:
             self.server.serve_forever()
         except KeyboardInterrupt:
-            print("\nShutting down B-SDD Workbench Server...")
+            pass
         finally:
-            self.server.server_close()
+            if self.server:
+                self.server.server_close()
+            print("✓ B-SDD Workbench Server stopped cleanly.")
 
 
 if __name__ == "__main__":
-    port = 8765
+    port = int(os.environ.get("BSDD_PORT", "8765"))
+    host = os.environ.get("BSDD_HOST", "0.0.0.0")
     if len(sys.argv) > 1 and sys.argv[1].isdigit():
         port = int(sys.argv[1])
-    server = WorkbenchServer(port=port)
+    server = WorkbenchServer(host=host, port=port)
     server.start()

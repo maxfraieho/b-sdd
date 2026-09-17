@@ -21,6 +21,7 @@ import type {
   SprintStateResponse,
   GithubSyncResponse,
   PhaseTransitionEvent,
+  TelemetrySummaryResponse,
 } from './backend-types';
 
 // ---------------------------------------------------------------------------
@@ -304,4 +305,119 @@ export function subscribeRealtimePhases(
     es?.close();
   };
 }
+
+// ---------------------------------------------------------------------------
+// Telemetry & Observability (ADR-012)
+// ---------------------------------------------------------------------------
+
+const MOCK_TELEMETRY: TelemetrySummaryResponse = {
+  status: 'healthy',
+  timestamp: new Date().toISOString(),
+  uptime_seconds: 3600,
+  memory_rss_mb: 42.5,
+  compiler: {
+    last_compile_ms: 14.5,
+    compile_count: 12,
+    failed_compiles: 0,
+    word_count: 476,
+    max_budget: 500,
+    sla_target_ms: 50.0,
+    sla_passed: true,
+    sla_violations: 0,
+    quantiles: { count: 12, min: 11.2, max: 24.1, avg: 14.5, p50: 13.8, p90: 18.2, p95: 21.0, p99: 24.1 },
+  },
+  http: {
+    total_requests: 142,
+    requests_per_sec: 2.4,
+    status_codes: { '200': 140, '304': 2 },
+    top_endpoints: { 'GET /api/health': 60, 'GET /api/rules/active': 40, 'GET /api/telemetry': 20 },
+    active_sse_connections: 1,
+    sse_events_broadcast: 48,
+    quantiles: { count: 142, min: 0.8, max: 12.4, avg: 2.1, p50: 1.8, p90: 3.5, p95: 5.2, p99: 10.1 },
+  },
+  cache: {
+    github: { hits: 18, misses: 2, hit_ratio: 0.9 },
+    utopia: { hits: 34, misses: 1, hit_ratio: 0.97 },
+  },
+  deployment: {
+    environment: 'production',
+    cf_pages_url: 'https://b-sdd-ui.pages.dev',
+    gateway_url: 'https://bsdd.exodus.pp.ua',
+    systemd_service: 'b-sdd-workbench.service',
+    systemd_status: 'running',
+  },
+};
+
+/**
+ * Fetches structured telemetry and metrics summary from the backend (ADR-012).
+ */
+export async function getTelemetry(
+  fallback: TelemetrySummaryResponse = MOCK_TELEMETRY,
+): Promise<TelemetrySummaryResponse> {
+  const result = await fetchWithFallback<TelemetrySummaryResponse>('/api/telemetry', fallback);
+  return result.data;
+}
+
+/**
+ * Fetches standard Prometheus text metrics exposition (ADR-012).
+ */
+export async function getMetrics(): Promise<string> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/metrics`, {
+      headers: { Accept: 'text/plain' },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.text();
+  } catch {
+    return '# Prometheus metrics fallback (server offline)';
+  }
+}
+
+/**
+ * Subscribes to Realtime SSE telemetry vitals stream (ADR-012).
+ */
+export function subscribeRealtimeTelemetry(
+  onData: (data: TelemetrySummaryResponse) => void,
+  onError?: (err: any) => void,
+): () => void {
+  if (typeof window === 'undefined' || typeof EventSource === 'undefined') {
+    return () => {};
+  }
+
+  const url = `${API_BASE_URL}/api/realtime/telemetry`;
+  let es: EventSource | null = null;
+  let isClosed = false;
+
+  const connect = () => {
+    if (isClosed) return;
+    try {
+      es = new EventSource(url);
+      es.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          onData(data);
+        } catch {
+          // ignore parsing error
+        }
+      };
+      es.onerror = (err) => {
+        if (onError) onError(err);
+        es?.close();
+        if (!isClosed) {
+          setTimeout(connect, 5000);
+        }
+      };
+    } catch (e) {
+      if (onError) onError(e);
+    }
+  };
+
+  connect();
+
+  return () => {
+    isClosed = true;
+    es?.close();
+  };
+}
+
 

@@ -1,0 +1,31 @@
+[Unit]
+Description=B-SDD Sovereign Operator Workbench Gateway & Telemetry Daemon
+Documentation=https://github.com/maxfraieho/b-sdd
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=vokov
+Group=vokov
+WorkingDirectory=/home/vokov/projects/b-sdd
+Environment=PYTHONPATH=/home/vokov/projects/b-sdd
+Environment=BSDD_HOST=0.0.0.0
+Environment=BSDD_PORT=8765
+Environment=BSDD_ENV=production
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 -m src.server.workbench_server
+Restart=always
+RestartSec=3
+KillMode=mixed
+TimeoutStopSec=10
+LimitNOFILE=65536
+
+# Sandboxing & Security
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/vokov/projects/b-sdd/.context /home/vokov/projects/b-sdd/docs /home/vokov/projects/b-sdd/specs
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

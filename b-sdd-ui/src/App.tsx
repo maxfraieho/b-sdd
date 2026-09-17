@@ -22,6 +22,8 @@ import { MobilePhaseView } from '@/components/MobilePhaseView';
 import { MobileRadarView } from '@/components/MobileRadarView';
 import { ProjectSwitcherModal } from '@/components/ProjectSwitcherModal';
 import { PipelineCatalogModal, type PipelineTemplateItem } from '@/components/PipelineCatalogModal';
+import { TelemetryDrawer } from '@/components/TelemetryDrawer';
+import { useTelemetryRealtime } from '@/hooks/useTelemetryRealtime';
 import { AppShell } from '@/components/astryx/primitives';
 
 import { MOCK_ADRS } from '@/data/mockAdrs';
@@ -134,6 +136,10 @@ export const App: React.FC = () => {
   const isMobile = useIsMobile(768);
   const effectiveIsMobile = manualMobileMode !== null ? manualMobileMode : isMobile;
   const [activeMobileTab, setActiveMobileTab] = useState<MobileTabId>('drakon');
+
+  // Production Telemetry & SLA (ADR-012)
+  const [isTelemetryDrawerOpen, setIsTelemetryDrawerOpen] = useState(false);
+  const { telemetry: realtimeTelemetry, isLive: isTelemetryLive, refresh: refreshTelemetry } = useTelemetryRealtime();
 
   const handleToggleMobileMode = () => {
     setManualMobileMode((prev) => (prev === null ? !isMobile : !prev));
@@ -479,6 +485,9 @@ export const App: React.FC = () => {
         onOpenPipelineCatalog={() => setIsPipelineCatalogOpen(true)}
         isMobileMode={effectiveIsMobile}
         onToggleMobileMode={handleToggleMobileMode}
+        onOpenTelemetryDrawer={() => setIsTelemetryDrawerOpen(true)}
+        telemetryLatency={realtimeTelemetry?.compiler?.last_compile_ms ?? liveRules.data?.latency_ms ?? 14.5}
+        telemetrySlaOk={realtimeTelemetry?.compiler?.sla_passed ?? true}
       />
 
       {effectiveIsMobile ? (
@@ -788,6 +797,14 @@ export const App: React.FC = () => {
         isOpen={isPipelineCatalogOpen}
         onClose={() => setIsPipelineCatalogOpen(false)}
         onLoadTemplate={handleLoadPipelineTemplate}
+      />
+
+      <TelemetryDrawer
+        isOpen={isTelemetryDrawerOpen}
+        onClose={() => setIsTelemetryDrawerOpen(false)}
+        telemetry={realtimeTelemetry}
+        isLive={isTelemetryLive}
+        onRefresh={refreshTelemetry}
       />
     </AppShell>
   );

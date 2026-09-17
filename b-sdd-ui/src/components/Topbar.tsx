@@ -18,6 +18,7 @@ import {
   Smartphone,
   Monitor,
   Github,
+  Activity,
 } from 'lucide-react';
 import { Button, IconButton, Badge, Dot } from './astryx/primitives';
 
@@ -42,6 +43,9 @@ interface TopbarProps {
   onOpenPipelineCatalog?: () => void;
   isMobileMode?: boolean;
   onToggleMobileMode?: () => void;
+  onOpenTelemetryDrawer?: () => void;
+  telemetryLatency?: number;
+  telemetrySlaOk?: boolean;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -65,6 +69,9 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenPipelineCatalog,
   isMobileMode = false,
   onToggleMobileMode,
+  onOpenTelemetryDrawer,
+  telemetryLatency,
+  telemetrySlaOk = true,
 }) => {
   const currentSpec = specs.find((s) => s.id === selectedSpecId) || specs[0] || null;
   const totalTasks = specs.reduce((sum, s) => sum + s.tasks_count, 0);
@@ -228,6 +235,24 @@ export const Topbar: React.FC<TopbarProps> = ({
             title="Каталог алгоритмів ДРАКОН"
           >
             <Workflow className="w-3.5 h-3.5" />
+          </button>
+        )}
+
+        {/* Telemetry & SLA Drawer Button (ADR-012) */}
+        {onOpenTelemetryDrawer && (
+          <button
+            onClick={onOpenTelemetryDrawer}
+            className={`flex items-center gap-1 px-2 py-1 rounded text-xs border transition-colors shadow-xs ${
+              telemetrySlaOk
+                ? 'bg-[#141b27] hover:bg-[#1a2233] text-slate-200 border-[#1e293b] hover:border-cyan/50'
+                : 'bg-rose-950/40 text-rose-300 border-rose-800 hover:border-rose-600'
+            }`}
+            title="Відкрити дашборд продакшн-телеметрії та SLA компілятора (ADR-012)"
+          >
+            <Activity className={`w-3.5 h-3.5 ${telemetrySlaOk ? 'text-cyan' : 'text-rose-400 animate-pulse'}`} />
+            <span className="hidden sm:inline text-[10px] font-bold">
+              {telemetryLatency != null ? `${telemetryLatency}ms` : 'SLA'}
+            </span>
           </button>
         )}
 

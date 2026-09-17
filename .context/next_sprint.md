@@ -1,49 +1,34 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-cfa747ef-1789649887`
-- **Source Session:** `cfa747ef-4c34-4859-a449-4dcf1e22cf92`
-- **Timestamp:** `2026-09-17T12:58:07.924087+00:00`
+- **Handoff ID:** `handoff-session-1789655598`
+- **Source Session:** `unspecified`
+- **Timestamp:** `2026-09-17T14:33:18.046135+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `main`, commit `f48b1d9`
+- **Git Status:** branch `main`, commit `1ed217d`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
 ```
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/App.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/ProjectSwitcherModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/ReviewGateModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/Topbar.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/hooks/usePhaseRealtime.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/api.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/backend-types.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/types/specs.ts"
-"/home/vokov/projects/b-sdd/docs/adr/ADR-011-live-github-api-sync-and-appwrite-realtime-phase-sync.md"
-"/home/vokov/projects/b-sdd/specs/005-github-api-and-appwrite-realtime/logic.drakon.json"
-"/home/vokov/projects/b-sdd/specs/005-github-api-and-appwrite-realtime/plan.md"
-"/home/vokov/projects/b-sdd/specs/005-github-api-and-appwrite-realtime/spec.md"
-"/home/vokov/projects/b-sdd/specs/005-github-api-and-appwrite-realtime/tasks.md"
-"/home/vokov/projects/b-sdd/src/adapters/appwrite_client.py"
-"/home/vokov/projects/b-sdd/src/adapters/github_sync.py"
-"/home/vokov/projects/b-sdd/src/cli/main.py"
-"/home/vokov/projects/b-sdd/src/drakon/templates/github_appwrite_sync.json"
-"/home/vokov/projects/b-sdd/src/server/workbench_server.py"
-"/home/vokov/projects/b-sdd/tests/test_appwrite_realtime.py"
-"/home/vokov/projects/b-sdd/tests/test_astryx_and_catalog.py"
-"/home/vokov/projects/b-sdd/tests/test_github_sync.py"
-"/home/vokov/projects/b-sdd/tests/test_workbench_server.py"
 .context/next_sprint.md
 b-sdd-ui/src/App.tsx
-b-sdd-ui/src/components/ProjectSwitcherModal.tsx
-b-sdd-ui/src/components/ReviewGateModal.tsx
+b-sdd-ui/src/components/TelemetryDrawer.tsx
 b-sdd-ui/src/components/Topbar.tsx
-b-sdd-ui/src/hooks/usePhaseRealtime.ts
+b-sdd-ui/src/hooks/useTelemetryRealtime.ts
 b-sdd-ui/src/lib/api.ts
 b-sdd-ui/src/lib/backend-types.ts
-... and 12 more files
+deploy/
+docs/adr/ADR-012-production-deployment-and-telemetry-instrumentation.md
+scripts/deploy_production.sh
+scripts/verify_production_health.sh
+specs/006-production-deployment-and-telemetry/
+src/adapters/telemetry.py
+src/drakon/templates/production_deployment_and_telemetry.json
+src/server/workbench_server.py
+tests/test_production_deployment.py
+tests/test_telemetry.py
 ```
 
 ### Completed Tasks
-- [x] task-001: Implement `src/adapters/github_sync.py` (pure standard library, disk cache, offline fallback).
 - [x] task-002: Implement `src/adapters/appwrite_client.py` (pure stdlib Appwrite client & Ed25519 signature verification).
 - [x] task-003: Add Realtime SSE broadcaster and phase management endpoints to `src/server/workbench_server.py`.
 - [x] task-004: Wire GitHub endpoints `GET /api/github/repos` and `POST /api/github/sync` into `src/server/workbench_server.py`.
@@ -51,6 +36,14 @@ b-sdd-ui/src/lib/backend-types.ts
 - [x] task-006: Extend frontend `b-sdd-ui` with GitHub sync, Appwrite Realtime phase sync, and Topbar health badges.
 - [x] task-007: Add automated tests for GitHub sync and Appwrite Realtime phase sync.
 - [x] task-008: Execute architecture fitness tests, verify zero 3rd-party dependencies, sub-50ms compile latency, and build frontend.
+- [x] task-001: Implement `src/adapters/telemetry.py` (pure standard library, latency quantiles, Prometheus exporter, sub-1ms overhead).
+- [x] task-002: Integrate telemetry, `/api/telemetry`, `/api/metrics`, `/api/realtime/telemetry`, and graceful shutdown into `src/server/workbench_server.py`.
+- [x] task-003: Create production deployment suite (`scripts/deploy_production.sh`, `scripts/verify_production_health.sh`, `deploy/systemd/b-sdd-workbench.service`, `deploy/tunnel/bsdd-tunnel.yml`).
+- [x] task-004: Create planar DRAKON algorithm `specs/006-production-deployment-and-telemetry/logic.drakon.json` and catalog template `src/drakon/templates/production_deployment_and_telemetry.json`.
+- [x] task-005: Extend frontend `b-sdd-ui` with telemetry types, API methods, `useTelemetryRealtime` hook, `TelemetryDrawer`, and `Topbar` telemetry trigger.
+- [x] task-006: Implement unit and integration tests in `tests/test_telemetry.py` and `tests/test_production_deployment.py`.
+- [x] task-007: Verify architecture fitness gates (compile latency < 50ms, context words < 500, zero 3rd-party dependencies in `src/`, clean frontend build).
+- [x] task-008: Synchronize with Utopia DB and synthesize Sprint N+5 handoff artifacts.
 
 ## 2. Active Architectural Constraints
 - [GLOBAL] **Bitemporal Architectural Invariants:** System architecture is governed by declarative Architectural Decision Records (ADRs) with bitemporal valid-time horizons (`valid_from` / `valid_to`) and explicit DAG supersession edges. Superseded decisions are mathematically pruned from agent context. (Ref: .specify/constitution.md)
@@ -60,13 +53,13 @@ b-sdd-ui/src/lib/backend-types.ts
 - [GLOBAL] **Zero-Dependency Pure Runtime:** All core compiler and adapter components in `src/` must strictly use the Python Standard Library to ensure universal zero-setup portability across dev servers, containers, and bare-metal nodes. (Ref: .specify/constitution.md)
 
 ## 3. Downstream Target (Sprint N+1)
-- **Target Task:** `Sprint N+4: Production Deployment & Telemetry Instrumentation`
+- **Target Task:** `Finalize and verify all specifications`
 - **Prompt:**
-> [B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task Sprint N+4: Production Deployment & Telemetry Instrumentation
+> [B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task All tasks completed; run final architecture verification and report project status.
 
 ### Executable Dispatch Command
 ```bash
-./run_b_sdd.sh --new-session "[B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task Sprint N+4: Production Deployment & Telemetry Instrumentation"
+./run_b_sdd.sh --new-session "[B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task All tasks completed; run final architecture verification and report project status."
 ```
 
 ## 4. Pending Tasks Backlog

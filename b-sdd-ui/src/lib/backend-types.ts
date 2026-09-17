@@ -194,3 +194,80 @@ export interface PhaseTransitionEvent {
   readonly record_id?: string;
   readonly appwrite_synced?: boolean;
 }
+
+// ---- Telemetry & Production Observability (ADR-012) -----------------------
+
+export interface LatencyQuantiles {
+  readonly count: number;
+  readonly min: number;
+  readonly max: number;
+  readonly avg: number;
+  readonly p50: number;
+  readonly p90: number;
+  readonly p95: number;
+  readonly p99: number;
+}
+
+export interface CompilerTelemetry {
+  readonly last_compile_ms: number;
+  readonly compile_count: number;
+  readonly failed_compiles: number;
+  readonly word_count: number;
+  readonly max_budget: number;
+  readonly sla_target_ms: number;
+  readonly sla_passed: boolean;
+  readonly sla_violations: number;
+  readonly quantiles: LatencyQuantiles;
+}
+
+export interface HttpTelemetry {
+  readonly total_requests: number;
+  readonly requests_per_sec: number;
+  readonly status_codes: Record<string, number>;
+  readonly top_endpoints: Record<string, number>;
+  readonly active_sse_connections: number;
+  readonly sse_events_broadcast: number;
+  readonly quantiles: LatencyQuantiles;
+}
+
+export interface CacheTelemetry {
+  readonly github: {
+    readonly hits: number;
+    readonly misses: number;
+    readonly hit_ratio: number;
+  };
+  readonly utopia: {
+    readonly hits: number;
+    readonly misses: number;
+    readonly hit_ratio: number;
+  };
+}
+
+export interface DeploymentTelemetry {
+  readonly environment: string;
+  readonly cf_pages_url: string;
+  readonly gateway_url: string;
+  readonly systemd_service: string;
+  readonly systemd_status: string;
+}
+
+export interface TelemetrySummaryResponse {
+  readonly status: 'healthy' | 'degraded' | 'critical';
+  readonly timestamp: string;
+  readonly uptime_seconds: number;
+  readonly memory_rss_mb: number;
+  readonly compiler: CompilerTelemetry;
+  readonly http: HttpTelemetry;
+  readonly drakon?: {
+    readonly validations_total: number;
+    readonly invalid_count: number;
+    readonly quantiles: LatencyQuantiles;
+  };
+  readonly cache: CacheTelemetry;
+  readonly invariants?: {
+    readonly checks_total: number;
+    readonly violations: number;
+  };
+  readonly deployment: DeploymentTelemetry;
+}
+
