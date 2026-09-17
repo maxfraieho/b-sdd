@@ -1,37 +1,45 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-session-1789582904`
-- **Source Session:** `unspecified`
-- **Timestamp:** `2026-09-16T18:21:44.215006+00:00`
+- **Handoff ID:** `handoff-f8da1c0c-1789637317`
+- **Source Session:** `f8da1c0c-fe2b-48f0-a535-ffccec7bede9`
+- **Timestamp:** `2026-09-17T09:28:37.771782+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `master`, commit `cc5abc0`
+- **Git Status:** branch `main`, commit `cdda9c9`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
 ```
-.context/next_sprint.md
-b-sdd-ui/.env.example
-b-sdd-ui/PHASE3_INTEGRATION.md
-b-sdd-ui/public/_headers
-b-sdd-ui/public/_redirects
-b-sdd-ui/src/App.tsx
-b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx
-b-sdd-ui/src/components/DrakonStudio/DrakonToolbar.tsx
-b-sdd-ui/src/components/ReviewGateModal.tsx
-b-sdd-ui/src/hooks/
-b-sdd-ui/src/lib/api.ts
-b-sdd-ui/src/lib/backend-types.ts
-b-sdd-ui/src/lib/sse.ts
-b-sdd-ui/src/vite-env.d.ts
-docs/decision/ADR-FE-001-cockpit-architecture.md
-docs/decision/DELTA_C_ASTRYX_OMISSION.md
-docs/decision/HANDOFF_BACKEND.md
-docs/decision/PROMPT_BACKEND_AGENT.md
-docs/decision/PROMPT_FRONTEND_MIGRATION.md
-docs/dewsign/
-specs/004-multi-session-handoff-and-drakon/logic.drakon.json
-src/cli/main.py
-src/server/workbench_server.py
+"/home/vokov/.gemini/antigravity-cli/brain/f8da1c0c-fe2b-48f0-a535-ffccec7bede9/scratch/test_live_endpoints.py"
+"/home/vokov/projects/b-sdd/.context/next_sprint.md"
+"/home/vokov/projects/b-sdd/.gitignore"
+"/home/vokov/projects/b-sdd/b-sdd-ui/.env.production"
+"/home/vokov/projects/b-sdd/b-sdd-ui/index.html"
+"/home/vokov/projects/b-sdd/b-sdd-ui/package.json"
+"/home/vokov/projects/b-sdd/b-sdd-ui/postcss.config.js"
+"/home/vokov/projects/b-sdd/b-sdd-ui/public/_headers"
+"/home/vokov/projects/b-sdd/b-sdd-ui/public/_redirects"
+"/home/vokov/projects/b-sdd/b-sdd-ui/public/favicon.svg"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/App.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/AdrLibraryModal.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/AdrReaderModal.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/BitemporalRadar/AdrListCard.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/BitemporalRadar/TimelineSlider.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/ContextBadges.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/TokenGauge.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonCanvas.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonIconPalette.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonToolbar.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/NodeInspector.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/PseudocodeModal.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/VisualFlowCanvas.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/InvariantDrawer.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/PhaseStepper.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/ReviewGateModal.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/TasksPanel/TasksDrawer.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/Topbar.tsx"
+"/home/vokov/projects/b-sdd/b-sdd-ui/src/data/mockAdrs.ts"
+... and 34 more files
 ```
 
 ### Completed Tasks
@@ -58,24 +66,15 @@ src/server/workbench_server.py
 - [GLOBAL] **Static Code Intelligence Graph (GitNexus):** Modified files are mapped to architectural domains and components via Abstract Syntax Tree (AST) impact analysis. (Ref: .specify/constitution.md)
 - [GLOBAL] **Zero-Dependency Pure Runtime:** All core compiler and adapter components in `src/` must strictly use the Python Standard Library to ensure universal zero-setup portability across dev servers, containers, and bare-metal nodes. (Ref: .specify/constitution.md)
 
-## 3. Downstream Target (Sprint N+2: Astryx Migration)
-- **Target Goal:** `Refactor b-sdd-ui using Meta Astryx design system while preserving canonical DrakonWidget engine and live backend APIs`
-- **Genspark Designer Prompt:** `docs/PROMPT_GENSPARK_ASTRYX_WORKBENCH_REDESIGN.md`
-- **Git Branch:** `main` (synchronized with `origin/main`)
-
-### Cross-Component Directives (ADR-007-INV-04)
-1. **Design System:** Use Meta Astryx (`facebook/astryx`) with `@astryxdesign/core`, `@astryxdesign/theme-neutral`, and `@astryxdesign/cli`.
-2. **CSS Cascade Order:** Must declare `@layer reset, astryx-base, utilities;` in `index.css`.
-3. **Canonical DRAKON Invariant:** NEVER overwrite `public/libs/drakonwidget.js` or `public/libs/drakongen.js`. Canvas must be wrapped in `ClientOnly` boundary with `access: 'write'` and root branch `b0`.
-4. **Backend Contracts:** All 12 REST/SSE endpoints (`/api/health`, `/api/rules/active`, `/api/adrs`, `/api/adrs/save`, `/api/sync/utopia`, `/api/drakon/schema`, `/api/sprint/review`, etc.) must remain bound.
+## 3. Downstream Target (Sprint N+1)
+- **Target Task:** `Phase 4: Astryx Edition Full UI Migration & Live DRAKON/LLM Sovereign Loop Integ`
+- **Prompt:**
+> [B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task Phase 4: Astryx Edition Full UI Migration & Live DRAKON/LLM Sovereign Loop Integration. Port Astryx components from docs/design_handoff_bsdd_workbench_astryx/ to b-sdd-ui/src/, wire live DRAKON-to-Pseudocode exporter, and verify live bidirectional editing over https://bsdd.exodus.pp.ua and https://b-sdd-ui.pages.dev
 
 ### Executable Dispatch Command
 ```bash
-./run_next_sprint.sh [path_to_genspark_output]
+./run_b_sdd.sh --new-session "[B-SDD Invariants: Consult .context/active_rules.md for active architecture constraints] --mode continuous --task Phase 4: Astryx Edition Full UI Migration & Live DRAKON/LLM Sovereign Loop Integration. Port Astryx components from docs/design_handoff_bsdd_workbench_astryx/ to b-sdd-ui/src/, wire live DRAKON-to-Pseudocode exporter, and verify live bidirectional editing over https://bsdd.exodus.pp.ua and https://b-sdd-ui.pages.dev"
 ```
 
 ## 4. Pending Tasks Backlog
-- [ ] Task N2-01: Apply Genspark Astryx design output via `./run_next_sprint.sh <path>`.
-- [ ] Task N2-02: Verify Astryx CSS cascade layer safety (`reset`, `astryx-base`, `utilities`).
-- [ ] Task N2-03: Verify interactive DrakonWidget operations (socket insertions, double-click text editing, context menu, pseudocode export).
-- [ ] Task N2-04: Run full architectural fitness gate (`pytest -v`) and pre-flight compilation (<50ms, <500 words).
+- All specification tasks completed! Ready for final acceptance.
