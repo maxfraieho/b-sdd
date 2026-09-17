@@ -9,6 +9,8 @@ import sys
 import json
 import time
 import socket
+import queue
+import threading
 import urllib.request
 import urllib.parse
 from pathlib import Path
@@ -25,6 +27,115 @@ from src.core.compiler import BSDDCompiler
 from src.drakon.parser import DrakonParser
 from src.drakon.validator import DrakonValidator
 from src.core.session_distiller import SessionDistiller
+from src.adapters.github_sync import GitHubSyncAdapter
+from src.adapters.appwrite_client import AppwriteClient
+
+
+class PhaseEventBroadcaster:
+    """Thread-safe event broadcaster for real-time sprint phase events via SSE (ADR-011)."""
+
+    def __init__(self):
+        self._subscribers: List[queue.Queue] = []
+        self._lock = threading.Lock()
+
+    def subscribe(self) -> queue.Queue:
+        q = queue.Queue(maxsize=100)
+        with self._lock:
+            self._subscribers.append(q)
+        return q
+
+    def unsubscribe(self, q: queue.Queue) -> None:
+        with self._lock:
+            if q in self._subscribers:
+                self._subscribers.remove(q)
+
+    def broadcast(self, event_data: Dict[str, Any]) -> None:
+        with self._lock:
+            for q in list(self._subscribers):
+                try:
+                    q.put_nowait(event_data)
+                except Exception:
+                    pass
+
+
+DEFAULT_SPRINT_PHASES = [
+    {"id": "phi_1", "name": "Φ1 · Framing", "label": "Framing", "status": "completed"},
+    {"id": "phi_2", "name": "Φ2 · Algorithmic Spec", "label": "Algo Spec", "status": "completed"},
+    {"id": "phi_3", "name": "Φ3 · Pre-Flight", "label": "Pre-Flight", "status": "completed"},
+    {"id": "phi_4", "name": "Φ4 · Execution", "label": "Execution", "status": "completed"},
+    {"id": "phi_5", "name": "Φ5 · Fitness Gates", "label": "Fitness Gates", "status": "completed"},
+    {"id": "phi_6", "name": "Φ6 · Human Review", "label": "Human Review", "status": "running"},
+    {"id": "phi_7", "name": "Φ7 · Distillation", "label": "Distillation", "status": "pending"},
+]
+
+
+class SprintPhaseManager:
+    """Manages active HITL phases, WORM ledger, and Appwrite sync."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self.current_phase = "phi_6"
+        self.phases = [dict(p) for p in DEFAULT_SPRINT_PHASES]
+        self.broadcaster = PhaseEventBroadcaster()
+        self.appwrite_client = AppwriteClient(root_dir=ROOT_DIR)
+
+    def set_phase(
+        self,
+        phase_id: str,
+        operator_id: str = "Head Architect",
+        signature: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        with self._lock:
+            valid_ids = [p["id"] for p in self.phases]
+            if phase_id not in valid_ids:
+                raise ValueError(f"Invalid phase: {phase_id}")
+
+            target_idx = valid_ids.index(phase_id)
+            for i, p in enumerate(self.phases):
+                if i < target_idx:
+                    p["status"] = "completed"
+                elif i == target_idx:
+                    p["status"] = "running"
+                else:
+                    p["status"] = "pending"
+
+            old_phase = self.current_phase
+            self.current_phase = phase_id
+
+            # Appwrite sync & WORM ledger
+            record = self.appwrite_client.record_phase_transition(
+                sprint_id="sprint-live",
+                from_phase=old_phase,
+                to_phase=phase_id,
+                operator_id=operator_id,
+                operator_signature=signature,
+                metadata=metadata,
+            )
+
+            event = {
+                "event": "phase_transition",
+                "current_phase": self.current_phase,
+                "from_phase": old_phase,
+                "to_phase": phase_id,
+                "phases": self.phases,
+                "operator": operator_id,
+                "signature": signature,
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "record_id": record.get("record_id"),
+                "appwrite_synced": record.get("appwrite_synced", False),
+            }
+            self.broadcaster.broadcast(event)
+            return event
+
+    def reset(self):
+        """Resets sprint phase manager state to default phi_6."""
+        with self._lock:
+            self.current_phase = "phi_6"
+            self.phases = [dict(p) for p in DEFAULT_SPRINT_PHASES]
+
+
+SPRINT_PHASE_MANAGER = SprintPhaseManager()
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
@@ -86,6 +197,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_sprint_state()
         elif path == "/api/pipelines/catalog":
             self.handle_get_pipelines_catalog()
+        elif path in ("/api/realtime/phases", "/api/sprint/realtime"):
+            self.handle_get_realtime_phases()
+        elif path == "/api/github/repos":
+            self.handle_get_github_repos()
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -115,6 +230,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_sync_utopia(body)
         elif path == "/api/sprint/review":
             self.handle_post_sprint_review(body)
+        elif path == "/api/sprint/phase":
+            self.handle_post_sprint_phase(body)
+        elif path == "/api/github/sync":
+            self.handle_post_github_sync(body)
         elif path == "/api/copilot/proxy":
             self.handle_post_copilot_proxy(body)
         elif path == "/api/pipelines/load":
@@ -129,11 +248,17 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
     # --------------------------------------------------------------------------
 
     def handle_get_health(self):
-        """GET /api/health: Check sovereign nodes and local files."""
+        """GET /api/health: Check sovereign nodes, BaaS plane, and local files."""
         utopia_ok = self._check_socket("192.168.3.251", 9922)
         llm_ok = self._check_socket("192.168.3.184", 18880)
         gitnexus_ok = self._check_socket("192.168.3.184", 4747)
         rules_file_exists = (ROOT_DIR / ".context" / "active_rules.md").exists()
+
+        # Check Appwrite and GitHub
+        appwrite_client = SPRINT_PHASE_MANAGER.appwrite_client
+        appwrite_health = appwrite_client.test_connection()
+        gh_adapter = GitHubSyncAdapter(root_dir=ROOT_DIR)
+        gh_health = gh_adapter.test_connection()
 
         self._send_json({
             "status": "healthy",
@@ -157,6 +282,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 "endpoint": "192.168.3.184:18880",
                 "reachable": llm_ok,
             },
+            "appwrite": appwrite_health,
+            "github": gh_health,
             "nodes": {
                 "utopia_db": {
                     "endpoint": "192.168.3.251:9922",
@@ -174,11 +301,24 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                     "status": "online" if gitnexus_ok else "simulated_offline",
                     "reachable": gitnexus_ok,
                 },
+                "appwrite_rt": {
+                    "endpoint": appwrite_client.endpoint,
+                    "status": "online" if appwrite_health.get("reachable") else "offline",
+                    "reachable": appwrite_health.get("reachable", False),
+                    "latency_ms": appwrite_health.get("latency_ms"),
+                },
+                "github_api": {
+                    "endpoint": "https://api.github.com",
+                    "status": "online" if gh_health.get("reachable") else "offline",
+                    "reachable": gh_health.get("reachable", False),
+                },
             },
             "local_artifacts": {
                 "active_rules_file": rules_file_exists,
                 "intents_cache": (ROOT_DIR / ".context" / "intents_cache.sqlite").exists(),
                 "handoff_file": (ROOT_DIR / ".context" / "sprint_handoff.json").exists(),
+                "github_cache": (ROOT_DIR / ".context" / "github_cache.json").exists(),
+                "appwrite_ledger": (ROOT_DIR / ".context" / "appwrite_cycles_ledger.json").exists(),
             },
         })
 
@@ -230,6 +370,26 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         specs_count = len(list((ROOT_DIR / "specs").glob("*/spec.md")))
         adrs_count = len(list((ROOT_DIR / "docs" / "adr").glob("ADR-*.md")))
 
+        gh_adapter = GitHubSyncAdapter(root_dir=ROOT_DIR, account="maxfraieho")
+        gh_data = gh_adapter.fetch_user_repositories()
+        gh_repos = []
+        for r in gh_data.get("repositories", []):
+            is_active = r.get("name") == "b-sdd"
+            gh_repos.append({
+                "name": r.get("name"),
+                "full_name": r.get("full_name"),
+                "description": r.get("description", ""),
+                "is_active": is_active,
+                "branch": branch if is_active else r.get("branch", "main"),
+                "stars": r.get("stars", 0),
+                "forks": r.get("forks", 0),
+                "open_issues": r.get("open_issues", 0),
+                "updated_at": r.get("updated_at"),
+                "html_url": r.get("html_url"),
+            })
+        if not gh_repos:
+            gh_repos = GitHubSyncAdapter.DEFAULT_FALLBACK_REPOS
+
         self._send_json({
             "current_project": {
                 "id": "b-sdd",
@@ -261,32 +421,14 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 }
             ],
             "github": {
-                "connected": True,
-                "account": "maxfraieho",
+                "connected": gh_data.get("connected", True),
+                "live": gh_data.get("live", False),
+                "source": gh_data.get("source", "cache"),
+                "account": gh_data.get("account", "maxfraieho"),
                 "default_branch": "main",
-                "repositories": [
-                    {
-                        "name": "b-sdd",
-                        "full_name": "maxfraieho/b-sdd",
-                        "description": "Bitemporal Spec-Driven Development Framework",
-                        "is_active": True,
-                        "branch": branch
-                    },
-                    {
-                        "name": "ai-drakon-scaffolder",
-                        "full_name": "maxfraieho/ai-drakon-scaffolder",
-                        "description": "DRAKON visual logic editor & AST generator",
-                        "is_active": False,
-                        "branch": "main"
-                    },
-                    {
-                        "name": "utopia-vault",
-                        "full_name": "maxfraieho/utopia-vault",
-                        "description": "Sovereign bitemporal vector knowledge base",
-                        "is_active": False,
-                        "branch": "main"
-                    }
-                ]
+                "synced_at": gh_data.get("synced_at"),
+                "total": len(gh_repos),
+                "repositories": gh_repos,
             }
         })
 
@@ -744,7 +886,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 pass
 
         self._send_json({
-            "current_phase": "phi_6",
+            "current_phase": SPRINT_PHASE_MANAGER.current_phase,
+            "phases": SPRINT_PHASE_MANAGER.phases,
             "sprint_id": handoff_data.get("handoff_id", "sprint-live"),
             "can_approve": True,
             "can_reject": True,
@@ -763,10 +906,30 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         })
 
     def handle_post_sprint_review(self, body: Dict[str, Any]):
-        """POST /api/sprint/review: Operator approval or Reject & Branch."""
+        """POST /api/sprint/review: Operator approval or Reject & Branch with Ed25519 verification (ADR-011)."""
         action = body.get("action", "approve")
+        operator_id = body.get("operator_id", "Head Architect")
+        operator_signature = body.get("operator_signature") or body.get("signature")
+        public_key = body.get("public_key")
+
+        # Cryptographic verification
+        sig_verif = None
+        if operator_signature:
+            sig_verif = SPRINT_PHASE_MANAGER.appwrite_client.verify_operator_signature(
+                signature=operator_signature,
+                payload_data={"action": action, "sprint_id": "sprint-live"},
+                public_key=public_key,
+            )
 
         if action == "approve":
+            # Advance phase to phi_7 (Distillation) and broadcast real-time transition
+            transition_event = SPRINT_PHASE_MANAGER.set_phase(
+                phase_id="phi_7",
+                operator_id=operator_id,
+                signature=operator_signature,
+                metadata={"action": "approve", "sig_verif": sig_verif},
+            )
+
             # Generate atomic handoff
             distiller = SessionDistiller(root_dir=ROOT_DIR)
             handoff_path = ROOT_DIR / ".context" / "sprint_handoff.json"
@@ -787,12 +950,25 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 "handoff_path": str(handoff_path.relative_to(ROOT_DIR)),
                 "next_phase": "phi_7",
                 "handoff_id": handoff_id,
+                "operator_signature": operator_signature,
+                "signature_verified": sig_verif.get("verified", False) if sig_verif else False,
+                "signature_details": sig_verif,
+                "appwrite_synced": transition_event.get("appwrite_synced", False),
+                "record_id": transition_event.get("record_id"),
                 "message": "Sprint approved by human architect. Handoff generated atomically."
             })
         else:
-            # Reject & Branch
+            # Reject & Branch -> Reset to phi_1 (Framing) and broadcast real-time transition
             delta_c = body.get("negative_invariants", ["ADR-008-INV-03: Human review rejected"])
             branch_name = f"cow-branch-{int(time.time())}"
+
+            transition_event = SPRINT_PHASE_MANAGER.set_phase(
+                phase_id="phi_1",
+                operator_id=operator_id,
+                signature=operator_signature,
+                metadata={"action": "reject", "delta_c": delta_c, "branch": branch_name},
+            )
+
             self._send_json({
                 "status": "rejected_and_branched",
                 "action": "reject",
@@ -802,8 +978,94 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 "delta_c": delta_c,
                 "rollback_depth": body.get("rollback_depth", 1),
                 "cow_snapshot_timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "appwrite_synced": transition_event.get("appwrite_synced", False),
+                "record_id": transition_event.get("record_id"),
                 "message": "Copy-on-write branch snapshot recorded. Rejected branch closed (V_end = NOW)."
             })
+
+    def handle_get_realtime_phases(self):
+        """GET /api/realtime/phases: Realtime SSE event stream for HITL phase sync (ADR-011)."""
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "keep-alive")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+
+        # Send initial state event
+        init_event = {
+            "event": "init",
+            "current_phase": SPRINT_PHASE_MANAGER.current_phase,
+            "phases": SPRINT_PHASE_MANAGER.phases,
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+        self.wfile.write(f"data: {json.dumps(init_event)}\n\n".encode("utf-8"))
+        self.wfile.flush()
+
+        q = SPRINT_PHASE_MANAGER.broadcaster.subscribe()
+        try:
+            while True:
+                try:
+                    event_data = q.get(timeout=10.0)
+                    self.wfile.write(f"data: {json.dumps(event_data)}\n\n".encode("utf-8"))
+                    self.wfile.flush()
+                except queue.Empty:
+                    # Heartbeat comment to keep SSE connection alive
+                    self.wfile.write(b": ping\n\n")
+                    self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            pass
+        finally:
+            SPRINT_PHASE_MANAGER.broadcaster.unsubscribe(q)
+
+    def handle_post_sprint_phase(self, body: Dict[str, Any]):
+        """POST /api/sprint/phase: Sets active sprint phase and broadcasts via Realtime SSE."""
+        phase_id = body.get("phase_id")
+        operator_id = body.get("operator_id", "Head Architect")
+        signature = body.get("operator_signature") or body.get("signature")
+
+        if not phase_id:
+            self._send_error("phase_id is required", 400)
+            return
+
+        try:
+            event = SPRINT_PHASE_MANAGER.set_phase(
+                phase_id=phase_id,
+                operator_id=operator_id,
+                signature=signature
+            )
+            self._send_json({
+                "status": "updated",
+                "current_phase": event["current_phase"],
+                "from_phase": event["from_phase"],
+                "phases": event["phases"],
+                "record_id": event.get("record_id"),
+                "appwrite_synced": event.get("appwrite_synced", False),
+                "timestamp": event["timestamp"],
+            })
+        except Exception as e:
+            self._send_error(str(e), 400)
+
+    def handle_get_github_repos(self):
+        """GET /api/github/repos: Live repositories with offline disk cache fallback (ADR-011)."""
+        adapter = GitHubSyncAdapter(root_dir=ROOT_DIR, account="maxfraieho")
+        data = adapter.fetch_user_repositories()
+        self._send_json(data)
+
+    def handle_post_github_sync(self, body: Dict[str, Any]):
+        """POST /api/github/sync: Forces fresh live sync against GitHub API."""
+        username = body.get("username") or "maxfraieho"
+        adapter = GitHubSyncAdapter(root_dir=ROOT_DIR, account=username)
+        data = adapter.sync_repositories(username=username)
+        self._send_json({
+            "status": "synced",
+            "live": data.get("live", False),
+            "source": data.get("source"),
+            "total": data.get("total", 0),
+            "synced_at": data.get("synced_at"),
+            "account": data.get("account"),
+            "repositories": data.get("repositories", []),
+        })
 
     def handle_post_copilot_proxy(self, body: Dict[str, Any]):
         """POST /api/copilot/proxy: SSE streaming proxy for LLM tokens."""

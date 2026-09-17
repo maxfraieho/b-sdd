@@ -10,7 +10,7 @@ import urllib.request
 from pathlib import Path
 import pytest
 
-from src.server.workbench_server import ThreadedHTTPServer, WorkbenchRequestHandler
+from src.server.workbench_server import ThreadedHTTPServer, WorkbenchRequestHandler, SPRINT_PHASE_MANAGER
 
 TEST_PORT = 8769
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -18,6 +18,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 
 @pytest.fixture(scope="module")
 def server():
+    SPRINT_PHASE_MANAGER.reset()
     srv = ThreadedHTTPServer(("127.0.0.1", TEST_PORT), WorkbenchRequestHandler)
     thread = threading.Thread(target=srv.serve_forever, daemon=True)
     thread.start()
@@ -25,6 +26,7 @@ def server():
     yield srv
     srv.shutdown()
     srv.server_close()
+    SPRINT_PHASE_MANAGER.reset()
 
 
 def test_server_health_endpoint(server):

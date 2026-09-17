@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "name": "Live GitHub & Appwrite Realtime Sync Pipeline",
+  "category": "bsdd_pipeline",
+  "description": "Синхронізація репозиторіїв GitHub з локальним кешем та трансляція фаз HITL через Appwrite Realtime SSE",
+  "params": "account: str, phase_id: str, operator_sig: str",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація GitHub & Appwrite шлюзу",
+      "edges": { "down": "step_check_cache", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_check_cache",
+      "node_type": "action",
+      "label": "Перевірка локального кешу .context/github_cache.json",
+      "edges": { "down": "cond_gh_online", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_gh_online",
+      "node_type": "question",
+      "label": "GitHub API доступний та ліміти в нормі?",
+      "edges": { "down": "step_sync_gh", "right": "step_gh_fallback" },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_gh_fallback",
+      "node_type": "action",
+      "label": "Застосувати локальний знімок репозиторіїв (offline parity)",
+      "edges": { "down": "step_connect_appwrite", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-01", "severity": "degraded" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_sync_gh",
+      "node_type": "action",
+      "label": "Отримати свіжі репозиторії через REST API та оновити диск",
+      "edges": { "down": "step_connect_appwrite", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-01", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_connect_appwrite",
+      "node_type": "action",
+      "label": "Підключення до Appwrite BaaS та ініціалізація Realtime SSE",
+      "edges": { "down": "cond_phase_event", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "cond_phase_event",
+      "node_type": "question",
+      "label": "Отримано запит на перехід фази або review approval?",
+      "edges": { "down": "cond_verify_sig", "right": "step_keepalive" },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "step_keepalive",
+      "node_type": "action",
+      "label": "Транслювати SSE heartbeat ping підписникам",
+      "edges": { "down": "end_success", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-02", "severity": "normal" },
+      "x": 4.0, "y": 10.0
+    },
+    {
+      "node_id": "cond_verify_sig",
+      "node_type": "question",
+      "label": "Крипто-підпис оператора Ed25519 валідний?",
+      "edges": { "down": "step_broadcast_phase", "right": "step_reject_unverified" },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-03", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    },
+    {
+      "node_id": "step_reject_unverified",
+      "node_type": "action",
+      "label": "Заблокувати перехід: відсутній або невалідний підпис",
+      "edges": { "down": "end_fail", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-03", "severity": "critical" },
+      "x": 4.0, "y": 12.0
+    },
+    {
+      "node_id": "step_broadcast_phase",
+      "node_type": "action",
+      "label": "Записати у WORM-лог, оновити Appwrite та транслювати SSE",
+      "edges": { "down": "end_success", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 14.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Фазу успішно синхронізовано в реальному часі",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-02", "severity": "normal" },
+      "x": 0.0, "y": 16.0
+    },
+    {
+      "node_id": "end_fail",
+      "node_type": "end",
+      "label": "Помилка крипто-перевірки або блокування переходу",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011-INV-03", "severity": "critical" },
+      "x": 4.0, "y": 16.0
+    }
+  ]
+}

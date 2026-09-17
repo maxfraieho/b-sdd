@@ -287,6 +287,7 @@ def main():
     p_adr_new = adr_sub.add_parser("new", help="Create new ADR")
     p_adr_new.add_argument("title", help="ADR title")
     p_adr_new.add_argument("--component", default="core", help="Target component")
+    p_adr_new.add_argument("--supersedes", default="None", help="Superseded ADR ID")
     # drakon
     p_drakon = subparsers.add_parser("drakon", help="DRAKON algorithmic diagram commands (ADR-008)")
     drakon_sub = p_drakon.add_subparsers(dest="drakon_command")

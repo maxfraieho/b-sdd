@@ -19,6 +19,8 @@ import type {
   SprintReviewPayload,
   SprintReviewResponse,
   SprintStateResponse,
+  GithubSyncResponse,
+  PhaseTransitionEvent,
 } from './backend-types';
 
 // ---------------------------------------------------------------------------
@@ -233,5 +235,73 @@ export function syncUtopia(kbId?: string) {
     synced_at: string;
     error?: string;
   }>('/api/sync/utopia', { kb_id: kbId });
+}
+
+export function getGithubRepos(fallback: GithubSyncResponse) {
+  return fetchWithFallback<GithubSyncResponse>('/api/github/repos', fallback);
+}
+
+export function syncGithubRepos(username?: string) {
+  return postJson<GithubSyncResponse>('/api/github/sync', { username });
+}
+
+export function setSprintPhase(phaseId: string, operatorSignature?: string) {
+  return postJson<{
+    status: string;
+    current_phase: string;
+    from_phase: string;
+    phases: any[];
+    record_id?: string;
+    appwrite_synced?: boolean;
+    timestamp: string;
+  }>('/api/sprint/phase', { phase_id: phaseId, operator_signature: operatorSignature });
+}
+
+/**
+ * Subscribes to live Appwrite/B-SDD Realtime phase event stream via SSE (ADR-011).
+ */
+export function subscribeRealtimePhases(
+  onEvent: (e: PhaseTransitionEvent) => void,
+  onError?: (err: any) => void,
+): () => void {
+  if (typeof window === 'undefined' || typeof EventSource === 'undefined') {
+    return () => {};
+  }
+
+  const url = `${API_BASE_URL}/api/realtime/phases`;
+  let es: EventSource | null = null;
+  let isClosed = false;
+
+  const connect = () => {
+    if (isClosed) return;
+    try {
+      es = new EventSource(url);
+      es.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          onEvent(data);
+        } catch {
+          // ignore keep-alive or ping
+        }
+      };
+      es.onerror = (err) => {
+        if (onError) onError(err);
+        es?.close();
+        // Retry connection after 5 seconds
+        if (!isClosed) {
+          setTimeout(connect, 5000);
+        }
+      };
+    } catch (e) {
+      if (onError) onError(e);
+    }
+  };
+
+  connect();
+
+  return () => {
+    isClosed = true;
+    es?.close();
+  };
 }
 

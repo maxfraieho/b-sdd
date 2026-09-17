@@ -27,6 +27,16 @@ export interface HealthResponse {
   readonly llm_gateway: HealthNode & {
     readonly slots_available?: number;
   };
+  readonly appwrite?: {
+    readonly reachable: boolean;
+    readonly status: NodeStatus;
+    readonly latency_ms?: number;
+    readonly endpoint?: string;
+  };
+  readonly github?: {
+    readonly reachable: boolean;
+    readonly status: NodeStatus;
+  };
   readonly checked_at: string;
 }
 
@@ -138,3 +148,49 @@ export type CopilotSseEvent =
   | { readonly type: 'meta'; readonly slot: ModelSlotId; readonly latency_ms?: number }
   | { readonly type: 'done'; readonly total_tokens?: number; readonly reason?: string }
   | { readonly type: 'error'; readonly message: string };
+
+// ---- GitHub Sync (ADR-011) ------------------------------------------------
+
+export interface GithubRepoSyncItem {
+  readonly name: string;
+  readonly full_name: string;
+  readonly description: string;
+  readonly branch: string;
+  readonly stars?: number;
+  readonly forks?: number;
+  readonly open_issues?: number;
+  readonly updated_at?: string;
+  readonly html_url?: string;
+  readonly is_active?: boolean;
+}
+
+export interface GithubSyncResponse {
+  readonly status?: string;
+  readonly live: boolean;
+  readonly connected?: boolean;
+  readonly source: 'api' | 'cache' | 'offline_cache' | 'fallback';
+  readonly account: string;
+  readonly synced_at: string;
+  readonly total: number;
+  readonly repositories: readonly GithubRepoSyncItem[];
+}
+
+// ---- Appwrite Realtime Phase Sync (ADR-011) -------------------------------
+
+export interface PhaseTransitionEvent {
+  readonly event: 'init' | 'phase_transition';
+  readonly current_phase: string;
+  readonly from_phase?: string;
+  readonly to_phase?: string;
+  readonly phases?: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly label: string;
+    readonly status: 'completed' | 'running' | 'pending';
+  }[];
+  readonly operator?: string;
+  readonly signature?: string;
+  readonly timestamp: string;
+  readonly record_id?: string;
+  readonly appwrite_synced?: boolean;
+}

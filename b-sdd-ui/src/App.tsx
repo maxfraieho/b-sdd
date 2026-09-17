@@ -44,8 +44,10 @@ import {
   getSpecs,
   toggleTask,
   syncUtopia,
+  syncGithubRepos,
 } from '@/lib/api';
 import { useLiveData } from '@/hooks/useLiveData';
+import { usePhaseRealtime } from '@/hooks/usePhaseRealtime';
 import type {
   ActiveRulesResponse,
   AdrsResponse,
@@ -156,6 +158,47 @@ export const App: React.FC = () => {
       console.warn('Switch project fallback:', e);
     }
   };
+
+  // GitHub Live Sync (ADR-011)
+  const [isSyncingGithub, setIsSyncingGithub] = useState(false);
+  const handleSyncGithub = async () => {
+    setIsSyncingGithub(true);
+    try {
+      await syncGithubRepos();
+      await liveProjects.refresh();
+      await liveHealth.refresh();
+    } catch (err) {
+      console.warn('Failed to sync GitHub:', err);
+    } finally {
+      setIsSyncingGithub(false);
+    }
+  };
+
+  // Appwrite Realtime Phase Sync (ADR-011)
+  const { isConnected: isRealtimeConnected, advancePhase } = usePhaseRealtime({
+    onTransition: (event) => {
+      if (event.current_phase) {
+        setSprintState((prev) => {
+          const nextPhaseId = event.current_phase as HitlPhaseId;
+          const updatedPhases = prev.phases.map((phase) => {
+            const serverPhase = event.phases?.find((p) => p.id === phase.id);
+            if (serverPhase) {
+              return { ...phase, status: serverPhase.status as any };
+            }
+            if (phase.id === nextPhaseId) {
+              return { ...phase, status: 'running' as const };
+            }
+            return phase;
+          });
+          return {
+            ...prev,
+            currentPhase: nextPhaseId,
+            phases: updatedPhases,
+          };
+        });
+      }
+    },
+  });
 
   // DRAKON Studio State — default to full 'widget' editor
   const canvasRef = useRef<DrakonCanvasHandle>(null);
@@ -338,6 +381,7 @@ export const App: React.FC = () => {
       ...prev,
       currentPhase: phaseId,
     }));
+    void advancePhase(phaseId);
   };
 
   const handleApproveSprint = () => {
@@ -425,6 +469,10 @@ export const App: React.FC = () => {
         invariantCount={totalInvariantCount}
         utopiaOnline={liveHealth.data?.utopia_db?.status === 'online'}
         llmOnline={liveHealth.data?.llm_gateway?.status === 'online'}
+        appwriteOnline={liveHealth.data?.appwrite?.reachable ?? isRealtimeConnected}
+        appwriteLatency={liveHealth.data?.appwrite?.latency_ms ?? 22}
+        githubOnline={liveHealth.data?.github?.reachable ?? true}
+        githubLive={liveProjects.data?.github?.live ?? true}
         onSyncUtopia={handleSyncUtopia}
         isSyncingUtopia={isSyncingUtopia}
         onOpenProjectSwitcher={() => setIsProjectSwitcherOpen(true)}
@@ -730,6 +778,10 @@ export const App: React.FC = () => {
         workspaces={liveProjects.data.workspaces}
         githubRepos={liveProjects.data.github?.repositories}
         onSwitchProject={handleSwitchProject}
+        onSyncGithub={handleSyncGithub}
+        isSyncingGithub={isSyncingGithub}
+        githubSyncedAt={liveProjects.data.github?.synced_at}
+        githubIsLive={liveProjects.data.github?.live}
       />
 
       <PipelineCatalogModal

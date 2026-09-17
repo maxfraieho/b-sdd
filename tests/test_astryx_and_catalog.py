@@ -39,6 +39,7 @@ def test_catalog_templates_planarity_and_invariants():
         "utopia_sync_workflow.json",
         "drakon_binary_search.json",
         "drakon_state_machine.json",
+        "github_appwrite_sync.json",
     }
     actual_files = {p.name for p in templates_dir.glob("*.json")}
     assert expected_templates.issubset(actual_files)

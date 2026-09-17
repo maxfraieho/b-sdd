@@ -17,6 +17,7 @@ import {
   Workflow,
   Smartphone,
   Monitor,
+  Github,
 } from 'lucide-react';
 import { Button, IconButton, Badge, Dot } from './astryx/primitives';
 
@@ -31,6 +32,10 @@ interface TopbarProps {
   invariantCount: number;
   utopiaOnline?: boolean;
   llmOnline?: boolean;
+  appwriteOnline?: boolean;
+  appwriteLatency?: number | null;
+  githubOnline?: boolean;
+  githubLive?: boolean;
   onSyncUtopia?: () => Promise<void>;
   isSyncingUtopia?: boolean;
   onOpenProjectSwitcher?: () => void;
@@ -50,6 +55,10 @@ export const Topbar: React.FC<TopbarProps> = ({
   invariantCount,
   utopiaOnline = true,
   llmOnline = true,
+  appwriteOnline = true,
+  appwriteLatency = 22,
+  githubOnline = true,
+  githubLive = true,
   onSyncUtopia,
   isSyncingUtopia = false,
   onOpenProjectSwitcher,
@@ -148,7 +157,23 @@ export const Topbar: React.FC<TopbarProps> = ({
       </div>
 
       {/* Middle: Sovereign Infrastructure Status & Utopia Sync */}
-      <div className="hidden xl:flex items-center gap-3 text-[11px]">
+      <div className="hidden xl:flex items-center gap-2.5 text-[11px]">
+        {/* Appwrite RT Status Chip (ADR-011) */}
+        <div className="flex items-center gap-1.5 bg-[#141b27] border border-[#1e293b] px-2 py-1 rounded text-slate-300">
+          <Workflow className={`w-3.5 h-3.5 ${appwriteOnline ? 'text-emerald' : 'text-slate-400'}`} />
+          <span>Appwrite RT</span>
+          <span className="text-[10px] text-slate-500">{appwriteLatency ? `${appwriteLatency}ms` : 'Connected'}</span>
+          <Dot tone={appwriteOnline ? 'emerald' : 'amber'} pulse={!appwriteOnline} />
+        </div>
+
+        {/* GitHub API Live Sync Chip (ADR-011) */}
+        <div className="flex items-center gap-1.5 bg-[#141b27] border border-[#1e293b] px-2 py-1 rounded text-slate-300">
+          <Github className={`w-3.5 h-3.5 ${githubOnline ? 'text-cyan' : 'text-slate-400'}`} />
+          <span>GitHub</span>
+          <span className="text-[10px] text-slate-500">{githubLive ? 'Live Sync' : 'Cached'}</span>
+          <Dot tone={githubOnline ? 'emerald' : 'cyan'} />
+        </div>
+
         <div className="flex items-center gap-2 bg-[#141b27] border border-[#1e293b] px-2.5 py-1 rounded">
           <div className="flex items-center gap-1.5 text-slate-300">
             <Database className={`w-3.5 h-3.5 ${utopiaOnline ? 'text-emerald' : 'text-rose'}`} />

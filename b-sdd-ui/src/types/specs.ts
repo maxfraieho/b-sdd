@@ -52,14 +52,23 @@ export interface ProjectsResponse {
   }>;
   github?: {
     connected: boolean;
+    live?: boolean;
+    source?: string;
     account: string;
     default_branch: string;
+    synced_at?: string;
+    total?: number;
     repositories: Array<{
       name: string;
       full_name: string;
       description: string;
       is_active: boolean;
       branch: string;
+      stars?: number;
+      forks?: number;
+      open_issues?: number;
+      updated_at?: string;
+      html_url?: string;
     }>;
   };
 }

@@ -18,6 +18,11 @@ export interface GithubRepoItem {
   description: string;
   is_active?: boolean;
   branch: string;
+  stars?: number;
+  forks?: number;
+  open_issues?: number;
+  updated_at?: string;
+  html_url?: string;
 }
 
 interface ProjectSwitcherModalProps {
@@ -27,6 +32,10 @@ interface ProjectSwitcherModalProps {
   workspaces?: WorkspaceItem[];
   githubRepos?: GithubRepoItem[];
   onSwitchProject: (projectId: string, name?: string) => Promise<void>;
+  onSyncGithub?: () => Promise<void>;
+  isSyncingGithub?: boolean;
+  githubSyncedAt?: string;
+  githubIsLive?: boolean;
 }
 
 export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
@@ -58,6 +67,10 @@ export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
     },
   ],
   onSwitchProject,
+  onSyncGithub,
+  isSyncingGithub = false,
+  githubSyncedAt,
+  githubIsLive = true,
 }) => {
   const [activeTab, setActiveTab] = useState<'local' | 'github' | 'add'>('github');
   const [customRepoUrl, setCustomRepoUrl] = useState('');
@@ -163,8 +176,31 @@ export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
         {/* Tab 1: GitHub Repositories */}
         {activeTab === 'github' && (
           <div className="space-y-2">
-            <div className="text-[11px] text-slate-400 font-mono">
-              Репозиторії облікового запису GitHub (`maxfraieho`):
+            <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+              <div className="flex items-center gap-1.5">
+                <span>Репозиторії GitHub (`maxfraieho`):</span>
+                {githubIsLive ? (
+                  <Badge tone="emerald" outline>Live API</Badge>
+                ) : (
+                  <Badge tone="cyan" outline>Offline Cache</Badge>
+                )}
+                {githubSyncedAt && (
+                  <span className="text-[10px] text-slate-500">
+                    Оновлено: {githubSyncedAt.slice(11, 19)}
+                  </span>
+                )}
+              </div>
+              {onSyncGithub && (
+                <button
+                  onClick={() => void onSyncGithub()}
+                  disabled={isSyncingGithub}
+                  className="flex items-center gap-1 text-[11px] text-amber hover:text-amber-light transition-colors px-2 py-0.5 rounded bg-amber/10 hover:bg-amber/20 border border-amber/30 disabled:opacity-50"
+                  title="Отримати свіжий список репозиторіїв з GitHub API"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isSyncingGithub ? 'animate-spin' : ''}`} />
+                  <span>{isSyncingGithub ? 'Синхронізація…' : 'Синхронізувати'}</span>
+                </button>
+              )}
             </div>
             <div className="grid gap-2">
               {githubRepos.map((repo) => {
@@ -191,6 +227,16 @@ export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
                           <Badge tone="cyan" outline>
                             {repo.branch}
                           </Badge>
+                        )}
+                        {repo.stars !== undefined && repo.stars > 0 && (
+                          <span className="text-[10px] text-amber flex items-center gap-0.5">
+                            ★ {repo.stars}
+                          </span>
+                        )}
+                        {repo.forks !== undefined && repo.forks > 0 && (
+                          <span className="text-[10px] text-slate-400">
+                            ⑂ {repo.forks}
+                          </span>
                         )}
                       </div>
                       <p className="text-[11px] text-slate-400">{repo.description}</p>

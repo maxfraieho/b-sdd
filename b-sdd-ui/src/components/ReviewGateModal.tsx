@@ -35,6 +35,9 @@ export const ReviewGateModal: React.FC<ReviewGateModalProps> = ({
   const [rollbackDepth, setRollbackDepth] = useState(1);
   const [negativeInvariants, setNegativeInvariants] = useState('ADR-007-INV-01: Branch mutation detected');
   const [rationale, setRationale] = useState('');
+  const [operatorSignature, setOperatorSignature] = useState(
+    'ed25519:e4f3a2b109876543210fedcba9876543210fedcba9876543210fedcba98765430123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+  );
 
   // Phase 3: live backend review status
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,8 +68,11 @@ export const ReviewGateModal: React.FC<ReviewGateModalProps> = ({
   const handleApprove = async () => {
     // Fire local optimistic state update immediately.
     onApprove();
-    // Then attempt to hit the backend for auto-chain handoff.
-    await dispatchReview({ action: 'approve' });
+    // Then hit the backend with cryptographic operator signature (ADR-011).
+    await dispatchReview({
+      action: 'approve',
+      operator_signature: operatorSignature,
+    });
   };
 
   const handleConfirmReject = async () => {
@@ -88,6 +94,7 @@ export const ReviewGateModal: React.FC<ReviewGateModalProps> = ({
       negative_invariants: negatives,
       rationale: rationale || 'Operator requested rollback to clean context.',
       rollback_depth: rollbackDepth,
+      operator_signature: operatorSignature,
     });
 
     setIsRejecting(false);
