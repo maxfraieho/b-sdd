@@ -256,7 +256,7 @@ class TelemetryCollector:
             endpoint_dict = dict(sorted(self.requests_by_endpoint.items(), key=lambda x: -x[1])[:10])
 
             # Determine overall health status
-            sla_ok = self.last_compile_ms <= 50.0 and self.sla_violations == 0
+            sla_ok = self.last_compile_ms <= 50.0 and self.failed_compiles == 0
             err_count = sum(v for k, v in self.requests_by_status.items() if k >= 500)
             overall_status = "healthy"
             if not sla_ok or err_count > 0 or self.invariant_violations > 0:

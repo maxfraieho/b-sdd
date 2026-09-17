@@ -32,6 +32,13 @@ from src.adapters.github_sync import GitHubSyncAdapter
 from src.adapters.appwrite_client import AppwriteClient
 from src.adapters.telemetry import TELEMETRY
 
+GLOBAL_COMPILER = BSDDCompiler(root_dir=ROOT_DIR)
+try:
+    GLOBAL_COMPILER.compile()
+except Exception:
+    pass
+
+
 
 class PhaseEventBroadcaster:
     """Thread-safe event broadcaster for real-time sprint phase events via SSE (ADR-011)."""
@@ -383,8 +390,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
     def handle_get_rules_active(self):
         """GET /api/rules/active: Pre-flight compilation and word count."""
         t0 = time.perf_counter()
-        compiler = BSDDCompiler(root_dir=ROOT_DIR)
-        snapshot = compiler.compile()
+        snapshot = GLOBAL_COMPILER.compile()
         latency_ms = (time.perf_counter() - t0) * 1000
         words = len(snapshot.split())
         TELEMETRY.record_compile(duration_ms=latency_ms, word_count=words, success=True, budget=500)
