@@ -49,34 +49,34 @@ export const Topbar: React.FC<TopbarProps> = ({
   const completedTasks = specs.reduce((sum, s) => sum + s.completed_count, 0);
 
   return (
-    <header className="h-12 bg-panel border-b border-border-subtle px-4 flex items-center justify-between shrink-0 select-none z-30">
+    <header className="h-12 bg-panel border-b border-border-subtle px-3 md:px-4 flex items-center justify-between shrink-0 select-none z-30">
       {/* Left: Brand & Real Workspace Context */}
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-card border border-border-subtle flex items-center justify-center text-amber shadow-sm">
+      <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-1.5 md:gap-2">
+          <div className="w-7 h-7 rounded-lg bg-card border border-border-subtle flex items-center justify-center text-amber shadow-sm shrink-0">
             <Layers className="w-4 h-4" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs font-bold tracking-wider uppercase text-slate-100 font-mono">
-              B-SDD COCKPIT
+              B-SDD
             </span>
-            <span className="text-[10px] text-slate-400 font-mono">Operator Workbench · v1.0</span>
+            <span className="hidden sm:inline text-[10px] text-slate-400 font-mono">Cockpit · v1.0</span>
           </div>
         </div>
 
-        <div className="h-4 w-px bg-border-subtle mx-1" />
+        <div className="hidden sm:block h-4 w-px bg-border-subtle mx-0.5 md:mx-1" />
 
-        {/* Real Workspace & Branch */}
-        <div className="flex items-center gap-2 bg-card border border-border-subtle px-2.5 py-1 rounded-lg text-xs font-mono">
-          <FolderGit2 className="w-3.5 h-3.5 text-cyan-400" />
-          <span className="text-slate-200 font-semibold">{projectInfo?.name || 'b-sdd'}</span>
+        {/* Real Workspace & Branch (hidden on very small screens) */}
+        <div className="hidden sm:flex items-center gap-1.5 md:gap-2 bg-card border border-border-subtle px-2 md:px-2.5 py-1 rounded-lg text-xs font-mono">
+          <FolderGit2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+          <span className="text-slate-200 font-semibold truncate max-w-[80px] md:max-w-none">{projectInfo?.name || 'b-sdd'}</span>
           <span className="text-slate-500">·</span>
           <span className="text-emerald-400 flex items-center gap-1">
-            <GitBranch className="w-3 h-3" />
-            {projectInfo?.branch || 'master'}
+            <GitBranch className="w-3 h-3 shrink-0" />
+            <span className="truncate max-w-[60px] md:max-w-none">{projectInfo?.branch || 'master'}</span>
           </span>
           {projectInfo?.commit && (
-            <span className="text-slate-500 text-[10px]">({projectInfo.commit})</span>
+            <span className="hidden lg:inline text-slate-500 text-[10px]">({projectInfo.commit})</span>
           )}
         </div>
 
@@ -154,15 +154,21 @@ export const Topbar: React.FC<TopbarProps> = ({
       </div>
 
       {/* Right: Tasks & ADR Action Buttons */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 md:gap-2">
+        {/* Compact Node Status Dots for Mobile */}
+        <div className="flex lg:hidden items-center gap-1.5 px-2 py-1 bg-card border border-border-subtle rounded-lg text-[10px] font-mono">
+          <span title="Utopia DB Status" className={`w-2 h-2 rounded-full ${utopiaOnline ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+          <span title="LLM Gateway Status" className={`w-2 h-2 rounded-full ${llmOnline ? 'bg-blue-400' : 'bg-rose-400'}`} />
+        </div>
+
         {/* Tasks & Stages Button */}
         <button
           onClick={onOpenTasksDrawer}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-card hover:bg-slate-800 text-slate-200 border border-border-subtle hover:border-amber transition-colors text-xs font-mono shadow-xs"
+          className="flex items-center gap-1 px-2 md:px-3 py-1.5 rounded-lg bg-card hover:bg-slate-800 text-slate-200 border border-border-subtle hover:border-amber transition-colors text-xs font-mono shadow-xs"
           title="Відкрити перелік задач та етапів розробки (specs/)"
         >
           <ListTodo className="w-3.5 h-3.5 text-amber" />
-          <span>Задачі</span>
+          <span className="hidden sm:inline">Задачі</span>
           <span className="px-1.5 py-0.2 rounded bg-amber/15 text-amber text-[10px] font-bold">
             {completedTasks}/{totalTasks}
           </span>
@@ -171,21 +177,21 @@ export const Topbar: React.FC<TopbarProps> = ({
         {/* ADR Library Button */}
         <button
           onClick={onOpenAdrLibrary}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-card hover:bg-slate-800 text-slate-200 border border-border-subtle hover:border-emerald-500 transition-colors text-xs font-mono shadow-xs"
+          className="flex items-center gap-1 px-2 md:px-3 py-1.5 rounded-lg bg-card hover:bg-slate-800 text-slate-200 border border-border-subtle hover:border-emerald-500 transition-colors text-xs font-mono shadow-xs"
           title="Відкрити бібліотеку рішень ADR з повним текстом"
         >
           <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Читати ADR</span>
+          <span className="hidden sm:inline">Читати ADR</span>
         </button>
 
         {/* Invariant Drawer Button */}
         <button
           onClick={onOpenInvariantDrawer}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-card hover:bg-slate-800 text-slate-200 border border-border-subtle hover:border-violet-400 transition-colors text-xs font-mono shadow-xs"
+          className="flex items-center gap-1 px-2 md:px-2.5 py-1.5 rounded-lg bg-card hover:bg-slate-800 text-slate-200 border border-border-subtle hover:border-violet-400 transition-colors text-xs font-mono shadow-xs"
           title="Інспектор інваріантів"
         >
           <ShieldCheck className="w-3.5 h-3.5 text-violet-400" />
-          <span>{invariantCount}</span>
+          <span className="text-[11px] font-bold">{invariantCount}</span>
         </button>
       </div>
     </header>

@@ -16,6 +16,10 @@ import { InvariantDrawer } from '@/components/InvariantDrawer';
 import { TasksDrawer } from '@/components/TasksPanel/TasksDrawer';
 import { AdrLibraryModal } from '@/components/AdrLibraryModal';
 import { AdrReaderModal } from '@/components/AdrReaderModal';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import { MobileNavigation, type MobileTabId } from '@/components/MobileNavigation';
+import { MobilePhaseView } from '@/components/MobilePhaseView';
+import { MobileRadarView } from '@/components/MobileRadarView';
 
 import { MOCK_ADRS } from '@/data/mockAdrs';
 import { CANONICAL_DRAKON_DIAGRAM, CANONICAL_HITL_DRAKON_IR } from '@/data/mockDrakonSchema';
@@ -119,6 +123,8 @@ export const App: React.FC = () => {
   const [isPseudocodeOpen, setIsPseudocodeOpen] = useState(false);
   const [isSyncingUtopia, setIsSyncingUtopia] = useState(false);
   const [selectedSpecId, setSelectedSpecId] = useState('004-multi-session-handoff-and-drakon');
+  const isMobile = useIsMobile(768);
+  const [activeMobileTab, setActiveMobileTab] = useState<MobileTabId>('drakon');
 
   // DRAKON Studio State — default to full 'widget' editor
   const canvasRef = useRef<DrakonCanvasHandle>(null);
@@ -392,119 +398,244 @@ export const App: React.FC = () => {
         isSyncingUtopia={isSyncingUtopia}
       />
 
-      {/* 2. HITL 7-PHASE STEPPER BAR (44px) */}
-      <PhaseStepper
-        phases={sprintState.phases}
-        currentPhaseId={sprintState.currentPhase}
-        onSelectPhase={handlePhaseSelect}
-        onOpenReviewGate={() => setIsReviewGateOpen(true)}
-      />
+      {isMobile ? (
+        <>
+          {/* MOBILE MAIN CONTENT */}
+          <main className="flex-1 flex flex-col overflow-hidden relative">
+            {activeMobileTab === 'drakon' && (
+              <div className="flex-1 relative flex flex-col bg-canvas overflow-hidden">
+                <DrakonToolbar
+                  onZoomIn={() => canvasRef.current?.zoomIn()}
+                  onZoomOut={() => canvasRef.current?.zoomOut()}
+                  onGoHome={() => canvasRef.current?.goHome()}
+                  onExportJson={handleExportJson}
+                  onSaveSpec={handleSaveSpec}
+                  onOpenPseudocode={() => setIsPseudocodeOpen(true)}
+                  onUndo={() => canvasRef.current?.undo()}
+                  onRedo={() => canvasRef.current?.redo()}
+                  saveState={saveState}
+                  saveErrorMessage={saveError}
+                  diagramName={currentDiagram.name}
+                  viewMode={drakonViewMode}
+                  onViewModeChange={setDrakonViewMode}
+                  onAddNode={handleAddNode}
+                />
 
-      {/* 3. MAIN WORKBENCH BODY */}
-      <main className="flex-1 flex overflow-hidden">
-        {/* CENTER / LEFT: DRAKON STUDIO */}
-        <section className="flex-1 relative flex flex-col border-r border-border-subtle bg-canvas overflow-hidden">
-          <DrakonToolbar
-            onZoomIn={() => canvasRef.current?.zoomIn()}
-            onZoomOut={() => canvasRef.current?.zoomOut()}
-            onGoHome={() => canvasRef.current?.goHome()}
-            onExportJson={handleExportJson}
-            onSaveSpec={handleSaveSpec}
-            onOpenPseudocode={() => setIsPseudocodeOpen(true)}
-            onUndo={() => canvasRef.current?.undo()}
-            onRedo={() => canvasRef.current?.redo()}
-            saveState={saveState}
-            saveErrorMessage={saveError}
-            diagramName={currentDiagram.name}
-            viewMode={drakonViewMode}
-            onViewModeChange={setDrakonViewMode}
-            onAddNode={handleAddNode}
-          />
+                {drakonViewMode === 'widget' && (
+                  <DrakonIconPalette
+                    onInsertIcon={handleInsertIconFromPalette}
+                    activeSocketType={activeSocketType}
+                  />
+                )}
 
-          {/* Icon Palette when in DrakonWidget view */}
-          {drakonViewMode === 'widget' && (
-            <DrakonIconPalette
-              onInsertIcon={handleInsertIconFromPalette}
-              activeSocketType={activeSocketType}
-            />
-          )}
+                <div className="flex-1 relative overflow-hidden">
+                  {drakonViewMode === 'widget' ? (
+                    <DrakonCanvas
+                      ref={canvasRef}
+                      diagram={currentDiagram}
+                      diagramId={selectedSpecId}
+                      onSelectNode={setSelectedNodeId}
+                      selectedNodeId={selectedNodeId}
+                      onDiagramChange={(newDiag) => {
+                        console.log('[Workbench] Diagram edited:', newDiag.name);
+                      }}
+                    />
+                  ) : drakonViewMode === 'flow' ? (
+                    <VisualFlowCanvas
+                      nodes={drakonNodes}
+                      selectedNodeId={selectedNodeId}
+                      onSelectNode={setSelectedNodeId}
+                      onAddNode={handleAddNode}
+                    />
+                  ) : (
+                    <div className="w-full h-full p-4 overflow-auto bg-canvas font-mono text-xs text-amber leading-relaxed select-text">
+                      <pre>{JSON.stringify({ schema_version: '1.0', name: CANONICAL_DRAKON_DIAGRAM.name, nodes: drakonNodes }, null, 2)}</pre>
+                    </div>
+                  )}
 
-          <div className="flex-1 relative overflow-hidden">
-            {drakonViewMode === 'widget' ? (
-              <DrakonCanvas
-                ref={canvasRef}
-                diagram={currentDiagram}
-                diagramId={selectedSpecId}
-                onSelectNode={setSelectedNodeId}
-                selectedNodeId={selectedNodeId}
-                onDiagramChange={(newDiag) => {
-                  console.log('[Workbench] Diagram edited:', newDiag.name);
-                }}
-              />
-            ) : drakonViewMode === 'flow' ? (
-              <VisualFlowCanvas
-                nodes={drakonNodes}
-                selectedNodeId={selectedNodeId}
-                onSelectNode={setSelectedNodeId}
-                onAddNode={handleAddNode}
-              />
-            ) : (
-              <div className="w-full h-full p-6 overflow-auto bg-canvas font-mono text-xs text-amber leading-relaxed select-text">
-                <pre>{JSON.stringify({ schema_version: '1.0', name: CANONICAL_DRAKON_DIAGRAM.name, nodes: drakonNodes }, null, 2)}</pre>
+                  {/* Interactive Node Editor / Inspector */}
+                  {selectedNodeIR && (
+                    <NodeInspector
+                      node={selectedNodeIR}
+                      allNodes={drakonNodes}
+                      adrs={effectiveAdrs}
+                      onClose={() => setSelectedNodeId(null)}
+                      onUpdateNode={handleUpdateNode}
+                      onDeleteNode={handleDeleteNode}
+                      onOpenInvariantDetails={(invId) => {
+                        const matchingAdr = effectiveAdrs.find((a) =>
+                          a.invariants?.some((inv) => inv.id === invId),
+                        );
+                        if (matchingAdr) setSelectedAdr(matchingAdr);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             )}
 
-            {/* Interactive Node Editor / Inspector */}
-            {selectedNodeIR && (
-              <NodeInspector
-                node={selectedNodeIR}
-                allNodes={drakonNodes}
+            {activeMobileTab === 'copilot' && (
+              <div className="flex-1 bg-panel flex flex-col overflow-hidden">
+                <CopilotStream
+                  modelSlots={MOCK_MODEL_SLOTS}
+                  activeSlotId={activeSlotId}
+                  onSelectSlot={setActiveSlotId}
+                  tokenBudget={liveTokenBudget}
+                />
+              </div>
+            )}
+
+            {activeMobileTab === 'radar' && (
+              <MobileRadarView
                 adrs={effectiveAdrs}
-                onClose={() => setSelectedNodeId(null)}
-                onUpdateNode={handleUpdateNode}
-                onDeleteNode={handleDeleteNode}
-                onOpenInvariantDetails={(invId) => {
-                  const matchingAdr = effectiveAdrs.find((a) =>
-                    a.invariants?.some((inv) => inv.id === invId),
-                  );
-                  if (matchingAdr) setSelectedAdr(matchingAdr);
-                }}
+                validTimeDay={validTimeDay}
+                onValidTimeChange={setValidTimeDay}
+                txTimeDay={txTimeDay}
+                onTxTimeChange={setTxTimeDay}
+                selectedAdrId={selectedAdr?.id}
+                onSelectAdr={(adr) => setSelectedAdr(adr)}
+                onOpenAdrLibrary={() => setIsAdrLibraryOpen(true)}
               />
             )}
-          </div>
-        </section>
 
-        {/* RIGHT: SOVEREIGN COPILOT PANEL (420px) */}
-        <section className="w-[420px] shrink-0 bg-panel flex flex-col overflow-hidden">
-          <CopilotStream
-            modelSlots={MOCK_MODEL_SLOTS}
-            activeSlotId={activeSlotId}
-            onSelectSlot={setActiveSlotId}
-            tokenBudget={liveTokenBudget}
+            {activeMobileTab === 'phases' && (
+              <MobilePhaseView
+                phases={sprintState.phases}
+                currentPhaseId={sprintState.currentPhase}
+                onSelectPhase={handlePhaseSelect}
+                onOpenReviewGate={() => setIsReviewGateOpen(true)}
+              />
+            )}
+          </main>
+
+          {/* MOBILE BOTTOM NAVIGATION (56px) */}
+          <MobileNavigation
+            activeTab={activeMobileTab}
+            onSelectTab={setActiveMobileTab}
+            currentPhaseId={sprintState.currentPhase}
+            isReviewGatePending={sprintState.currentPhase === 'phi_6'}
+            onOpenTasksDrawer={() => setIsTasksDrawerOpen(true)}
+            onOpenInvariantDrawer={() => setIsInvariantDrawerOpen(true)}
+            onOpenAdrLibrary={() => setIsAdrLibraryOpen(true)}
           />
-        </section>
-      </main>
+        </>
+      ) : (
+        <>
+          {/* 2. HITL 7-PHASE STEPPER BAR (44px) */}
+          <PhaseStepper
+            phases={sprintState.phases}
+            currentPhaseId={sprintState.currentPhase}
+            onSelectPhase={handlePhaseSelect}
+            onOpenReviewGate={() => setIsReviewGateOpen(true)}
+          />
 
-      {/* 4. BOTTOM DUAL-AXIS BITEMPORAL RADAR (110px) */}
-      <footer className="h-28 bg-card border-t border-border-subtle flex shrink-0 select-none overflow-hidden">
-        <TimelineSlider
-          validTimeDay={validTimeDay}
-          onValidTimeChange={setValidTimeDay}
-          txTimeDay={txTimeDay}
-          onTxTimeChange={setTxTimeDay}
-          activeAdrCount={effectiveAdrs.length}
-          supersededCount={effectiveAdrs.filter((a) => a.status === 'superseded').length}
-        />
+          {/* 3. MAIN WORKBENCH BODY */}
+          <main className="flex-1 flex overflow-hidden">
+            {/* CENTER / LEFT: DRAKON STUDIO */}
+            <section className="flex-1 relative flex flex-col border-r border-border-subtle bg-canvas overflow-hidden">
+              <DrakonToolbar
+                onZoomIn={() => canvasRef.current?.zoomIn()}
+                onZoomOut={() => canvasRef.current?.zoomOut()}
+                onGoHome={() => canvasRef.current?.goHome()}
+                onExportJson={handleExportJson}
+                onSaveSpec={handleSaveSpec}
+                onOpenPseudocode={() => setIsPseudocodeOpen(true)}
+                onUndo={() => canvasRef.current?.undo()}
+                onRedo={() => canvasRef.current?.redo()}
+                saveState={saveState}
+                saveErrorMessage={saveError}
+                diagramName={currentDiagram.name}
+                viewMode={drakonViewMode}
+                onViewModeChange={setDrakonViewMode}
+                onAddNode={handleAddNode}
+              />
 
-        <AdrListCard
-          adrs={effectiveAdrs}
-          validTimeDay={validTimeDay}
-          onSelectAdr={(adr) => {
-            setSelectedAdr(adr);
-          }}
-          selectedAdrId={selectedAdr?.id}
-        />
-      </footer>
+              {/* Icon Palette when in DrakonWidget view */}
+              {drakonViewMode === 'widget' && (
+                <DrakonIconPalette
+                  onInsertIcon={handleInsertIconFromPalette}
+                  activeSocketType={activeSocketType}
+                />
+              )}
+
+              <div className="flex-1 relative overflow-hidden">
+                {drakonViewMode === 'widget' ? (
+                  <DrakonCanvas
+                    ref={canvasRef}
+                    diagram={currentDiagram}
+                    diagramId={selectedSpecId}
+                    onSelectNode={setSelectedNodeId}
+                    selectedNodeId={selectedNodeId}
+                    onDiagramChange={(newDiag) => {
+                      console.log('[Workbench] Diagram edited:', newDiag.name);
+                    }}
+                  />
+                ) : drakonViewMode === 'flow' ? (
+                  <VisualFlowCanvas
+                    nodes={drakonNodes}
+                    selectedNodeId={selectedNodeId}
+                    onSelectNode={setSelectedNodeId}
+                    onAddNode={handleAddNode}
+                  />
+                ) : (
+                  <div className="w-full h-full p-6 overflow-auto bg-canvas font-mono text-xs text-amber leading-relaxed select-text">
+                    <pre>{JSON.stringify({ schema_version: '1.0', name: CANONICAL_DRAKON_DIAGRAM.name, nodes: drakonNodes }, null, 2)}</pre>
+                  </div>
+                )}
+
+                {/* Interactive Node Editor / Inspector */}
+                {selectedNodeIR && (
+                  <NodeInspector
+                    node={selectedNodeIR}
+                    allNodes={drakonNodes}
+                    adrs={effectiveAdrs}
+                    onClose={() => setSelectedNodeId(null)}
+                    onUpdateNode={handleUpdateNode}
+                    onDeleteNode={handleDeleteNode}
+                    onOpenInvariantDetails={(invId) => {
+                      const matchingAdr = effectiveAdrs.find((a) =>
+                        a.invariants?.some((inv) => inv.id === invId),
+                      );
+                      if (matchingAdr) setSelectedAdr(matchingAdr);
+                    }}
+                  />
+                )}
+              </div>
+            </section>
+
+            {/* RIGHT: SOVEREIGN COPILOT PANEL (420px) */}
+            <section className="w-[420px] shrink-0 bg-panel flex flex-col overflow-hidden">
+              <CopilotStream
+                modelSlots={MOCK_MODEL_SLOTS}
+                activeSlotId={activeSlotId}
+                onSelectSlot={setActiveSlotId}
+                tokenBudget={liveTokenBudget}
+              />
+            </section>
+          </main>
+
+          {/* 4. BOTTOM DUAL-AXIS BITEMPORAL RADAR (110px) */}
+          <footer className="h-28 bg-card border-t border-border-subtle flex shrink-0 select-none overflow-hidden">
+            <TimelineSlider
+              validTimeDay={validTimeDay}
+              onValidTimeChange={setValidTimeDay}
+              txTimeDay={txTimeDay}
+              onTxTimeChange={setTxTimeDay}
+              activeAdrCount={effectiveAdrs.length}
+              supersededCount={effectiveAdrs.filter((a) => a.status === 'superseded').length}
+            />
+
+            <AdrListCard
+              adrs={effectiveAdrs}
+              validTimeDay={validTimeDay}
+              onSelectAdr={(adr) => {
+                setSelectedAdr(adr);
+              }}
+              selectedAdrId={selectedAdr?.id}
+            />
+          </footer>
+        </>
+      )}
 
       {/* 5. MODALS & DRAWERS */}
       <TasksDrawer

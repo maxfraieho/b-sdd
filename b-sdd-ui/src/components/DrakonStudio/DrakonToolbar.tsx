@@ -84,10 +84,10 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
           : 'Зберегти схему';
 
   return (
-    <div className="h-10 bg-card/90 border-b border-border-subtle px-3 flex items-center justify-between shrink-0 select-none text-xs">
+    <div className="h-10 bg-card/90 border-b border-border-subtle px-2 md:px-3 flex items-center justify-between shrink-0 select-none text-xs overflow-x-auto gap-2">
       {/* Left: Title & Mode Switcher */}
-      <div className="flex items-center gap-3">
-        <span className="font-semibold text-slate-200 font-mono text-[11px] truncate max-w-[180px]">
+      <div className="flex items-center gap-2 md:gap-3 shrink-0">
+        <span className="font-semibold text-slate-200 font-mono text-[11px] truncate max-w-[120px] md:max-w-[180px]">
           {diagramName}
         </span>
 
@@ -95,7 +95,7 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
         <div className="flex items-center bg-panel border border-border-subtle rounded-lg p-0.5 text-[11px] font-mono">
           <button
             onClick={() => onViewModeChange('widget')}
-            className={`px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
+            className={`px-1.5 md:px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
               viewMode === 'widget'
                 ? 'bg-amber/15 text-amber font-bold shadow-xs'
                 : 'text-slate-400 hover:text-slate-200'
@@ -103,12 +103,13 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
             title="Канонічний інтерактивний редактор drakonwidget.js із палітрою ікон"
           >
             <Layers className="w-3 h-3" />
-            <span>ДРАКОН Рушій</span>
+            <span className="hidden sm:inline">ДРАКОН Рушій</span>
+            <span className="sm:hidden">Рушій</span>
           </button>
 
           <button
             onClick={() => onViewModeChange('flow')}
-            className={`px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
+            className={`px-1.5 md:px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
               viewMode === 'flow'
                 ? 'bg-amber/15 text-amber font-bold shadow-xs'
                 : 'text-slate-400 hover:text-slate-200'
@@ -121,7 +122,7 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
 
           <button
             onClick={() => onViewModeChange('json')}
-            className={`px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
+            className={`px-1.5 md:px-2 py-0.5 rounded flex items-center gap-1 transition-all ${
               viewMode === 'json'
                 ? 'bg-amber/15 text-amber font-bold shadow-xs'
                 : 'text-slate-400 hover:text-slate-200'
@@ -129,11 +130,11 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
             title="Канонічний JSON-IR код схеми"
           >
             <Code2 className="w-3 h-3" />
-            <span>JSON IR</span>
+            <span>JSON</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-mono">
+        <div className="hidden sm:flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-mono">
           <CheckCircle2 className="w-3 h-3" />
           <span>Planar · 0 Crossings</span>
         </div>
@@ -212,17 +213,18 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
         {onOpenPseudocode && (
           <button
             onClick={onOpenPseudocode}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-amber/10 hover:bg-amber/20 text-amber border border-amber/30 transition-colors text-[11px] font-mono font-medium"
+            className="flex items-center gap-1.5 px-2 md:px-2.5 py-1 rounded bg-amber/10 hover:bg-amber/20 text-amber border border-amber/30 transition-colors text-[11px] font-mono font-medium shrink-0"
             title="Експорт схеми в алгоритмічний псевдокод або структурні правила"
           >
             <FileCode2 className="w-3.5 h-3.5 text-amber" />
-            <span>Псевдокод & Правила</span>
+            <span className="hidden sm:inline">Псевдокод & Правила</span>
+            <span className="sm:hidden">Код</span>
           </button>
         )}
 
         <button
           onClick={onExportJson}
-          className="flex items-center gap-1 px-2 py-1 rounded bg-panel hover:bg-slate-800 text-slate-300 border border-border-subtle hover:text-amber transition-colors text-[11px] font-mono"
+          className="flex items-center gap-1 px-1.5 md:px-2 py-1 rounded bg-panel hover:bg-slate-800 text-slate-300 border border-border-subtle hover:text-amber transition-colors text-[11px] font-mono shrink-0"
           title="Завантажити схему як .drakon.json"
         >
           <Download className="w-3 h-3" />
@@ -233,7 +235,7 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
           <button
             onClick={onSaveSpec}
             disabled={saveState === 'saving'}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded border transition-colors text-[11px] font-mono font-semibold ${saveClasses}`}
+            className={`flex items-center gap-1 px-2 md:px-2.5 py-1 rounded border transition-colors text-[11px] font-mono font-semibold shrink-0 ${saveClasses}`}
             title={
               saveState === 'error' && saveErrorMessage
                 ? `Помилка збереження: ${saveErrorMessage}`
@@ -241,7 +243,8 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
             }
           >
             {saveIcon}
-            <span>{saveLabel}</span>
+            <span className="hidden sm:inline">{saveLabel}</span>
+            <span className="sm:hidden">{saveState === 'saved' ? 'OK' : 'Зберегти'}</span>
           </button>
         )}
       </div>
