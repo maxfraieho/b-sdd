@@ -5,7 +5,7 @@
 set -euo pipefail
 
 GATEWAY_URL="${1:-http://127.0.0.1:8765}"
-TIMEOUT=5
+TIMEOUT=10
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -17,7 +17,7 @@ echo -e "${CYAN}=== Probing B-SDD Gateway Health: ${GATEWAY_URL} ===${NC}"
 
 # Probe 1: /api/health
 echo -n "  [1/4] Probing /api/health... "
-HEALTH_RESP=$(curl -s --max-time "${TIMEOUT}" "${GATEWAY_URL}/api/health" || echo "")
+HEALTH_RESP=$(curl -s -4 --max-time "${TIMEOUT}" "${GATEWAY_URL}/api/health" || echo "")
 if [ -z "${HEALTH_RESP}" ]; then
   echo -e "${RED}FAILED (Connection timed out or refused)${NC}"
   exit 1
@@ -31,7 +31,7 @@ fi
 
 # Probe 2: /api/telemetry (ADR-012)
 echo -n "  [2/4] Probing /api/telemetry (SLA < 50ms)... "
-TELEM_RESP=$(curl -s --max-time "${TIMEOUT}" "${GATEWAY_URL}/api/telemetry" || echo "")
+TELEM_RESP=$(curl -s -4 --max-time "${TIMEOUT}" "${GATEWAY_URL}/api/telemetry" || echo "")
 if [ -z "${TELEM_RESP}" ]; then
   echo -e "${RED}FAILED${NC}"
   exit 1
@@ -53,7 +53,7 @@ fi
 
 # Probe 3: /api/metrics (Prometheus)
 echo -n "  [3/4] Probing /api/metrics (Prometheus exposition)... "
-METRICS_RESP=$(curl -s --max-time "${TIMEOUT}" "${GATEWAY_URL}/api/metrics" || echo "")
+METRICS_RESP=$(curl -s -4 --max-time "${TIMEOUT}" "${GATEWAY_URL}/api/metrics" || echo "")
 if echo "${METRICS_RESP}" | grep -q "bsdd_http_requests_total"; then
   echo -e "${GREEN}PASS (Prometheus format confirmed)${NC}"
 else
@@ -63,7 +63,7 @@ fi
 
 # Probe 4: /api/rules/active (Budget <= 500w)
 echo -n "  [4/4] Probing /api/rules/active (Word budget <= 500)... "
-RULES_RESP=$(curl -s --max-time "${TIMEOUT}" "${GATEWAY_URL}/api/rules/active" || echo "")
+RULES_RESP=$(curl -s -4 --max-time "${TIMEOUT}" "${GATEWAY_URL}/api/rules/active" || echo "")
 RULES_CHECK=$(printf '%s' "${RULES_RESP}" | python3 -c "
 import sys, json
 data = json.load(sys.stdin)
