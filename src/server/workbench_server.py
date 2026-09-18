@@ -36,9 +36,11 @@ from src.adapters.telemetry import TELEMETRY
 from src.adapters.gitnexus_graph import MultiWorkspaceSymbolIndexer, BackgroundIngestionWorker
 from src.core.crypto_verifier import AirGappedProofValidator
 from src.adapters.cluster_sync import ClusterNodeRegistry, ClusterLeaseManager
+from src.adapters.consensus_engine import ConsensusEngine
 
 GLOBAL_CLUSTER_REGISTRY = ClusterNodeRegistry()
 GLOBAL_LEASE_MANAGER = ClusterLeaseManager()
+GLOBAL_CONSENSUS_ENGINE = ConsensusEngine()
 
 GLOBAL_COMPILER = BSDDCompiler(root_dir=ROOT_DIR)
 try:
@@ -313,6 +315,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_graph_cross_repo_edges()
         elif path == "/api/cluster/nodes":
             self.handle_get_cluster_nodes()
+        elif path == "/api/consensus/proposals":
+            self.handle_get_consensus_proposals()
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -373,6 +377,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_cluster_lease_acquire(body)
         elif path == "/api/cluster/lease/release":
             self.handle_post_cluster_lease_release(body)
+        elif path == "/api/consensus/propose":
+            self.handle_post_consensus_propose(body)
+        elif path == "/api/consensus/vote":
+            self.handle_post_consensus_vote(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -1523,6 +1531,51 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         result = GLOBAL_LEASE_MANAGER.release_lease(resource_id=resource_id, holder_id=holder_id)
         status_code = 200 if result.get("released") else 403
         self._send_json(result, status=status_code)
+
+    def handle_get_consensus_proposals(self):
+        """GET /api/consensus/proposals: Returns all consensus proposals and ballot tallies (INV-019-04)."""
+        proposals = GLOBAL_CONSENSUS_ENGINE.get_proposals()
+        self._send_json({
+            "status": "ok",
+            "count": len(proposals),
+            "proposals": proposals,
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        })
+
+    def handle_post_consensus_propose(self, body: Dict[str, Any]):
+        """POST /api/consensus/propose: Registers a new architectural consensus proposal (INV-019-04)."""
+        title = body.get("title", "")
+        if not title:
+            self._send_error("Missing proposal title", 400)
+            return
+        target_adr = body.get("target_adr", "ADR-GLOBAL")
+        description = body.get("description", "")
+        proposer_id = body.get("proposer_id", "agent-anonymous")
+        voting_period_sec = int(body.get("voting_period_sec", 60))
+        prop = GLOBAL_CONSENSUS_ENGINE.propose(
+            title=title,
+            target_adr=target_adr,
+            description=description,
+            proposer_id=proposer_id,
+            voting_period_sec=voting_period_sec
+        )
+        self._send_json(prop)
+
+    def handle_post_consensus_vote(self, body: Dict[str, Any]):
+        """POST /api/consensus/vote: Casts a ballot on an active proposal (INV-019-04)."""
+        proposal_id = body.get("proposal_id", "")
+        voter_id = body.get("voter_id", "")
+        vote = body.get("vote", "approve")
+        if not proposal_id or not voter_id:
+            self._send_error("Missing proposal_id or voter_id", 400)
+            return
+        res = GLOBAL_CONSENSUS_ENGINE.cast_vote(
+            proposal_id=proposal_id,
+            voter_id=voter_id,
+            vote=vote
+        )
+        status_code = 200 if res.get("accepted") else 400
+        self._send_json(res, status=status_code)
 
     def handle_get_utopia_graph(self, query: Dict[str, List[str]]):
         """GET /api/utopia/graph: Returns bitemporal DAG filtered by Valid Time Tv (INV-012-04)."""

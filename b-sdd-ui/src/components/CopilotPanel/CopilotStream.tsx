@@ -608,6 +608,13 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
           Кластерні лізи (Mesh)
         </button>
         <button
+          onClick={() => handleSendPrompt('Отримай перелік активних архітектурних пропозицій та стан кворумного голосування (N >= 2/3).')}
+          className="px-2 py-0.5 rounded bg-amber/10 hover:bg-amber/20 border border-amber/30 text-amber shrink-0 transition-colors flex items-center gap-1 cursor-pointer"
+        >
+          <ShieldCheck className="w-3 h-3 text-amber" />
+          Кворум (2/3 Консенсус)
+        </button>
+        <button
           onClick={() => handleInspectSymbol('BackgroundIngestionWorker')}
           className="px-2 py-0.5 rounded bg-cyan/10 hover:bg-cyan/20 border border-cyan/30 text-cyan shrink-0 transition-colors flex items-center gap-1 cursor-pointer"
         >

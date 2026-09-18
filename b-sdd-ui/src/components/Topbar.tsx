@@ -280,6 +280,10 @@ export const Topbar: React.FC<TopbarProps> = ({
                   <span>Distributed Leases (Tx/Tv)</span>
                   <span className="text-cyan font-mono">0 Active (Lock-free)</span>
                 </div>
+                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-[#1e293b]/60">
+                  <span>Agent Quorum (2/3 Majority)</span>
+                  <span className="text-emerald font-mono">Consensus Ready</span>
+                </div>
               </div>
             </div>
           </>
