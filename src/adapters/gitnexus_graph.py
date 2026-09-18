@@ -4,6 +4,7 @@ Reads .gitnexus/index.sqlite in read-only mode and performs upstream-impact reso
 Falls back to deterministic path-based domain extraction on missing index or sqlite3.Error.
 Operates using 100% Pure Python Standard Library.
 """
+import os
 import sqlite3
 from pathlib import Path
 from typing import Set, Iterable, Optional, Dict, List, Any
@@ -230,4 +231,238 @@ Formalize `{component}` as a bounded architectural domain with verified AST inte
 - INV-{component.upper()}-01: Public exports from `{component}` must adhere to pure Python standard library runtime boundaries.
 - INV-{component.upper()}-02: Modifications require corresponding DRAKON planar flow updates (ADR-008).
 """
+
+
+class MultiWorkspaceSymbolIndexer:
+    """
+    Multi-tenant cross-repository AST symbol indexer and resolver (INV-014-04).
+    Indexes symbols across multiple linked workspaces and performs cross-repo lookup.
+    Pure Python standard library implementation.
+    """
+
+    EXCLUDE_DIRS = {
+        ".git", ".gitnexus", "node_modules", "dist", "build",
+        "__pycache__", ".pytest_cache", ".venv", "venv", "coverage",
+        "docs", ".context", ".gemini", "brain", "scratch"
+    }
+
+    def __init__(self, default_root: Optional[Path] = None):
+        self.workspaces: Dict[str, Dict[str, Any]] = {}
+        self._symbols_cache: List[Dict[str, Any]] = []
+        if default_root:
+            self.register_workspace("core", default_root, is_active=True)
+
+    def register_workspace(self, name: str, path: Any, is_active: bool = False):
+        """Registers a workspace directory for cross-repo symbol indexing."""
+        p = Path(path).resolve()
+        self.workspaces[name] = {
+            "name": name,
+            "path": p,
+            "is_active": is_active,
+            "indexed_count": 0
+        }
+
+    def get_registered_workspaces(self) -> List[Dict[str, Any]]:
+        """Returns list of all registered workspaces."""
+        return [
+            {
+                "name": ws["name"],
+                "path": str(ws["path"]),
+                "is_active": ws["is_active"],
+                "indexed_count": ws.get("indexed_count", 0)
+            }
+            for ws in self.workspaces.values()
+        ]
+
+    def _index_python_file(self, ws_name: str, file_path: Path, root_path: Path) -> List[Dict[str, Any]]:
+        import ast
+        symbols = []
+        rel_path = str(file_path.relative_to(root_path))
+        try:
+            tree = ast.parse(file_path.read_text(encoding="utf-8", errors="replace"), filename=rel_path)
+            for node in tree.body:
+                if isinstance(node, ast.ClassDef):
+                    doc = ast.get_docstring(node) or ""
+                    symbols.append({
+                        "name": node.name,
+                        "kind": "class",
+                        "workspace": ws_name,
+                        "file_path": rel_path,
+                        "line_number": getattr(node, "lineno", 1),
+                        "docstring": doc[:120].strip() if doc else ""
+                    })
+                    for item in node.body:
+                        if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                            m_doc = ast.get_docstring(item) or ""
+                            symbols.append({
+                                "name": f"{node.name}.{item.name}",
+                                "kind": "method",
+                                "workspace": ws_name,
+                                "file_path": rel_path,
+                                "line_number": getattr(item, "lineno", 1),
+                                "docstring": m_doc[:120].strip() if m_doc else ""
+                            })
+                elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    doc = ast.get_docstring(node) or ""
+                    symbols.append({
+                        "name": node.name,
+                        "kind": "function",
+                        "workspace": ws_name,
+                        "file_path": rel_path,
+                        "line_number": getattr(node, "lineno", 1),
+                        "docstring": doc[:120].strip() if doc else ""
+                    })
+                elif isinstance(node, ast.Assign):
+                    for target in node.targets:
+                        if isinstance(target, ast.Name) and target.id.isupper():
+                            symbols.append({
+                                "name": target.id,
+                                "kind": "constant",
+                                "workspace": ws_name,
+                                "file_path": rel_path,
+                                "line_number": getattr(target, "lineno", 1),
+                                "docstring": ""
+                            })
+        except Exception:
+            pass
+        return symbols
+
+    def _index_typescript_file(self, ws_name: str, file_path: Path, root_path: Path) -> List[Dict[str, Any]]:
+        import re
+        symbols = []
+        rel_path = str(file_path.relative_to(root_path))
+        try:
+            lines = file_path.read_text(encoding="utf-8", errors="replace").splitlines()
+            ts_regex = re.compile(
+                r"^\s*export\s+(?:default\s+)?(interface|type|class|function|const|let|enum)\s+([A-Za-z0-9_]+)"
+            )
+            for idx, line in enumerate(lines, start=1):
+                m = ts_regex.match(line)
+                if m:
+                    kind_raw, name = m.group(1), m.group(2)
+                    kind_map = {
+                        "interface": "interface",
+                        "type": "type",
+                        "class": "class",
+                        "function": "function",
+                        "const": "constant",
+                        "let": "variable",
+                        "enum": "enum"
+                    }
+                    symbols.append({
+                        "name": name,
+                        "kind": kind_map.get(kind_raw, "symbol"),
+                        "workspace": ws_name,
+                        "file_path": rel_path,
+                        "line_number": idx,
+                        "docstring": ""
+                    })
+        except Exception:
+            pass
+        return symbols
+
+    def index_workspace(self, ws_name: str) -> List[Dict[str, Any]]:
+        """Indexes all symbols for a specific registered workspace."""
+        if ws_name not in self.workspaces:
+            return []
+
+        ws = self.workspaces[ws_name]
+        root = ws["path"]
+        if not root.exists():
+            return []
+
+        symbols = []
+
+        # Check for GitNexus SQLite index first
+        nexus_db = root / ".gitnexus" / "index.sqlite"
+        if nexus_db.exists():
+            try:
+                uri = f"file:{nexus_db.as_posix()}?mode=ro"
+                conn = sqlite3.connect(uri, uri=True, timeout=1.0)
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT name, kind, file_path, line_number FROM symbols
+                """)
+                for name, kind, fpath, lnum in cursor.fetchall():
+                    symbols.append({
+                        "name": name,
+                        "kind": kind or "symbol",
+                        "workspace": ws_name,
+                        "file_path": fpath,
+                        "line_number": lnum or 1,
+                        "docstring": ""
+                    })
+                conn.close()
+            except sqlite3.Error:
+                pass
+
+        # Fallback / supplement with AST file scan
+        if not symbols:
+            for dirpath, dirnames, filenames in os.walk(root):
+                dirnames[:] = [d for d in dirnames if d not in self.EXCLUDE_DIRS]
+                for fname in filenames:
+                    ext = os.path.splitext(fname)[1].lower()
+                    if ext not in (".py", ".ts", ".tsx", ".js", ".jsx"):
+                        continue
+                    item = Path(dirpath) / fname
+                    if ext == ".py":
+                        symbols.extend(self._index_python_file(ws_name, item, root))
+                    elif ext in (".ts", ".tsx", ".js", ".jsx"):
+                        symbols.extend(self._index_typescript_file(ws_name, item, root))
+
+        ws["indexed_count"] = len(symbols)
+        return symbols
+
+    def index_all(self) -> List[Dict[str, Any]]:
+        """Scans and indexes all registered workspaces."""
+        all_symbols = []
+        for name in list(self.workspaces.keys()):
+            all_symbols.extend(self.index_workspace(name))
+        self._symbols_cache = all_symbols
+        return all_symbols
+
+    def search_symbols(
+        self,
+        query: str,
+        workspace: Optional[str] = None,
+        limit: int = 50
+    ) -> List[Dict[str, Any]]:
+        """Searches symbols across workspaces by query string."""
+        if not self._symbols_cache:
+            self.index_all()
+
+        q = query.strip().lower()
+        results = []
+
+        for s in self._symbols_cache:
+            if workspace and s["workspace"] != workspace:
+                continue
+            name_lower = s["name"].lower()
+            if q in name_lower or q in s["file_path"].lower():
+                # Score relevance
+                score = 0
+                if name_lower == q:
+                    score = 100
+                elif name_lower.startswith(q):
+                    score = 50
+                elif q in name_lower:
+                    score = 25
+                else:
+                    score = 10
+                results.append((score, s))
+
+        results.sort(key=lambda item: item[0], reverse=True)
+        return [item[1] for item in results[:limit]]
+
+    def resolve_symbol_cross_workspace(self, symbol_name: str) -> List[Dict[str, Any]]:
+        """Resolves exact symbol matches across all linked workspaces."""
+        if not self._symbols_cache:
+            self.index_all()
+
+        target = symbol_name.strip()
+        matches = [
+            s for s in self._symbols_cache
+            if s["name"] == target or s["name"].split(".")[-1] == target
+        ]
+        return matches
 

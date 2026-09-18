@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 015: Autonomous GitNexus Ingestion & Copilot Harness",
+  "category": "bsdd_pipeline",
+  "description": "Пайплайн автономної фонової інгестії віддалених репозиторіїв та інтерактивної взаємодії з Copilot",
+  "params": "auto_ingest_enabled: bool, copilot_cards_mounted: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 015 (Autonomous GitNexus Ingestion)",
+      "edges": { "down": "step_poll_repositories", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-010", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_poll_repositories",
+      "node_type": "action",
+      "label": "Опитування зареєстрованих воркспейсів та виявлення AST змін",
+      "edges": { "down": "cond_ast_diff_detected", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_ast_diff_detected",
+      "node_type": "question",
+      "label": "Виявлено нові або змінені символи в репозиторіях?",
+      "edges": { "down": "step_sync_utopia_dag", "right": "step_idle_wait" },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_idle_wait",
+      "node_type": "action",
+      "label": "Перехід у режим очікування подій файлової системи",
+      "edges": { "down": "step_emit_copilot_cards", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012", "severity": "normal" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_sync_utopia_dag",
+      "node_type": "action",
+      "label": "Синхронізація вузлів та ребер у Utopia DB DAG (:9922)",
+      "edges": { "down": "step_emit_copilot_cards", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_emit_copilot_cards",
+      "node_type": "action",
+      "label": "Генерація карток інтерактивного переходу до символів у Copilot",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_airgap_ed25519_proof",
+      "node_type": "action",
+      "label": "Офлайн-генерація Ed25519 сертифіката для review gate Φ6",
+      "edges": { "down": "end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Фініш Спринту 015 (Autonomous Ingestion & Agent Harness Verified)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}

@@ -271,3 +271,26 @@ export interface TelemetrySummaryResponse {
   readonly deployment: DeploymentTelemetry;
 }
 
+// ---- Multi-Tenant AST Symbol Navigation (INV-014-04) -----------------------
+
+export interface WorkspaceSymbol {
+  readonly name: string;
+  readonly kind: string;
+  readonly workspace: string;
+  readonly file_path: string;
+  readonly line_number: number;
+  readonly docstring?: string;
+}
+
+export interface SymbolsSearchResponse {
+  readonly query: string;
+  readonly workspace?: string | null;
+  readonly total_matches: number;
+  readonly symbols: WorkspaceSymbol[];
+  readonly workspaces: {
+    readonly name: string;
+    readonly path: string;
+    readonly is_active: boolean;
+    readonly indexed_count: number;
+  }[];
+}

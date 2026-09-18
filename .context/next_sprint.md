@@ -1,63 +1,45 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-ea0535f4-1789747190`
-- **Source Session:** `ea0535f4-faf1-4ff4-b154-add60157d0fe`
-- **Timestamp:** `2026-09-18T15:59:50.002967+00:00`
+- **Handoff ID:** `handoff-session-1789748532`
+- **Source Session:** `unspecified`
+- **Timestamp:** `2026-09-18T16:22:12.528977+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `main`, commit `38fe68c`
+- **Git Status:** branch `main`, commit `267c492`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
 ```
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/App.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/AdrLibraryModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/BitemporalRadar/TimelineSlider.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/BitemporalRadar/UtopiaDagCanvas.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonCanvas.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonToolbar.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/MobileRadarView.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/Topbar.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/drakon/ir-bridge.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/types/copilot.ts"
-"/home/vokov/projects/b-sdd/docs/adr/ADR-013-utopia-dag-visualization-and-pi-harness.md"
-"/home/vokov/projects/b-sdd/docs/ui_remediation/sprint_011_status_report_2026-09-18.md"
-"/home/vokov/projects/b-sdd/run_sprint_012.sh"
-"/home/vokov/projects/b-sdd/run_sprint_013.sh"
-"/home/vokov/projects/b-sdd/run_sprint_014.sh"
-"/home/vokov/projects/b-sdd/specs/012-dag-and-pi-harness/adr.md"
-"/home/vokov/projects/b-sdd/specs/012-dag-and-pi-harness/logic.drakon.json"
-"/home/vokov/projects/b-sdd/specs/012-dag-and-pi-harness/spec.md"
-"/home/vokov/projects/b-sdd/specs/012-dag-and-pi-harness/structure.drakon.json"
-"/home/vokov/projects/b-sdd/specs/012-dag-and-pi-harness/tasks.md"
-"/home/vokov/projects/b-sdd/specs/013-astryx-workbench-polish/logic.drakon.json"
-"/home/vokov/projects/b-sdd/specs/013-astryx-workbench-polish/spec.md"
-"/home/vokov/projects/b-sdd/specs/013-astryx-workbench-polish/structure.drakon.json"
-"/home/vokov/projects/b-sdd/specs/013-astryx-workbench-polish/tasks.md"
-"/home/vokov/projects/b-sdd/specs/014-multi-tenant-tracing-and-offline-crypto/logic.drakon.json"
-"/home/vokov/projects/b-sdd/specs/014-multi-tenant-tracing-and-offline-crypto/spec.md"
-"/home/vokov/projects/b-sdd/specs/014-multi-tenant-tracing-and-offline-crypto/tasks.md"
-"/home/vokov/projects/b-sdd/src/adapters/gitnexus_graph.py"
-"/home/vokov/projects/b-sdd/src/adapters/pi_harness.py"
-... and 11 more files
+.context/next_sprint.md
+b-sdd-ui/src/components/ProjectSwitcherModal.tsx
+b-sdd-ui/src/lib/api.ts
+b-sdd-ui/src/lib/backend-types.ts
+run_sprint_014.sh
+run_sprint_015.sh
+specs/014-multi-tenant-tracing-and-offline-crypto/tasks.md
+specs/015-autonomous-gitnexus-harness/
+src/adapters/gitnexus_graph.py
+src/core/crypto_verifier.py
+src/core/skill_crystallizer.py
+src/server/workbench_server.py
+tests/test_sprint_014_multi_tenant.py
 ```
 
 ### Completed Tasks
-- [x] task-053: Create test suite `tests/test_astryx_ergonomics_and_mobile.py` verifying hex color elimination, mobile nav buttons, and token gauge word metrics.
-- [x] task-054: Update `b-sdd-ui/src/components/MobileNavigation.tsx` to destructure and render `onOpenAdrLibrary` with Astryx styling.
-- [x] task-055: Update `b-sdd-ui/src/components/CopilotPanel/TokenGauge.tsx` to use semantic Astryx tokens and distinguish words from tokens.
-- [x] task-056: Compile production frontend `npm run build` in `b-sdd-ui`.
-- [x] task-057: Execute `./run_sprint_010.sh` to finalize remediation pipeline and pass 100% of architectural tests.
-- [x] task-077: **TASK-013-1 (Φ1 Intent Framing):** Formulate SPEC-013 and analyze Genspark v2 design handoff.
-- [x] task-078: **TASK-013-2 (Φ2 Topology Normalization):** Implement `normalizeDrakonDiagram` in `b-sdd-ui/src/lib/drakon/ir-bridge.ts` protecting against `reading 'tail'`.
-- [x] task-079: **TASK-013-3 (Φ3 Visual Studio Toolbar):** Update `DrakonToolbar.tsx` with breadcrumbs and fullscreen toggle (`Maximize2`/`Minimize2`).
-- [x] task-080: **TASK-013-4 (Φ4 Topbar Telemetry):** Collapse separate telemetry chips into unified `System Pulse` popover in `Topbar.tsx`.
-- [x] task-081: **TASK-013-5 (Φ4 Conversational Copilot):** Transform right panel into conversational chat with Architectural Critique Cards in `CopilotStream.tsx`.
 - [x] task-082: **TASK-013-6 (Φ4 F5 Bug & Project Persistence):** Set `selectedNodeId = null` in `App.tsx` and wire `ACTIVE_PROJECT_CONTEXT` persistence in `src/server/workbench_server.py`.
 - [x] task-083: **TASK-013-7 (Φ5 Fitness & Tests):** Pass 100% pytest suite (88/88) and compile clean frontend build (`tsc -b && vite build`).
 - [x] task-084: **TASK-013-8 (Φ5 Deployment):** Deploy updated production bundle to Cloudflare Pages (`https://b-sdd-ui.pages.dev`).
 - [x] task-085: **TASK-013-9 (Φ6 Review Gate):** Verify cryptographic proof and remote node sync on `192.168.3.184`.
 - [x] task-086: **TASK-013-10 (Φ7 Distillation):** Synthesize handoff artifacts and prepare baseline for Sprint 014.
+- [x] task-087: **TASK-014-1 (Φ1 Intent Framing):** Finalize SPEC-014 requirements, architectural invariants, and action graph.
+- [x] task-088: **TASK-014-2 (Φ2 Visual Flow):** Model and validate planar DRAKON flow (`specs/014-multi-tenant-tracing-and-offline-crypto/logic.drakon.json`).
+- [x] task-089: **TASK-014-3 (Φ3 TDD Harness):** Implement unit and invariant tests in `tests/test_sprint_014_multi_tenant.py`.
+- [x] task-090: **TASK-014-4 (Φ4 Multi-Tenant Tracing):** Implement cross-workspace symbol lookup in `src/adapters/gitnexus_graph.py`.
+- [x] task-091: **TASK-014-5 (Φ4 Direct SSE Stream):** Implement direct binarized SSE streaming in `src/server/workbench_server.py`.
+- [x] task-092: **TASK-014-6 (Φ4 Offline Ed25519 Proofs):** Implement standalone cryptographic verifier in `src/core/crypto_verifier.py`.
+- [x] task-093: **TASK-014-7 (Φ4 Frontend Tracing UI):** Update ProjectSwitcherModal with linked workspace symbol navigation.
+- [x] task-094: **TASK-014-8 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile `npm run build` in `b-sdd-ui`.
+- [x] task-095: **TASK-014-9 (Φ6 HITL Gate):** Generate cryptographic review proof in `.context/sprint_014_handoff.json`.
+- [x] task-096: **TASK-014-10 (Φ7 Distillation):** Synthesize handoff artifacts and prepare next sprint pipeline.
 
 ## 2. Active Architectural Constraints
 - [GLOBAL] **Bitemporal Architectural Invariants:** System architecture is governed by declarative Architectural Decision Records (ADRs) with bitemporal valid-time horizons (`valid_from` / `valid_to`) and explicit DAG supersession edges. Superseded decisions are mathematically pruned from agent context. (Ref: .specify/constitution.md)
@@ -92,4 +74,4 @@
 - [ ] task-065: **TASK-011-8 (Φ7 Handoff):** Generate `sprint_011_handoff.json` and synchronize git commit.
 - [ ] task-066: **TASK-012-1 (Φ1 Intent Framing):** Author ADR-013, behavioral spec, and action-level tasks.
 - [ ] task-067: **TASK-012-2 (Φ2 Visual Flow):** Validate Sprint 012 planar DRAKON flow (`specs/012-dag-and-pi-harness/logic.drakon.json`) and architecture topology (`structure.drakon.json`).
-- ... and 19 more pending tasks
+- ... and 18 more pending tasks

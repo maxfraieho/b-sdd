@@ -22,6 +22,7 @@ import type {
   GithubSyncResponse,
   PhaseTransitionEvent,
   TelemetrySummaryResponse,
+  SymbolsSearchResponse,
 } from './backend-types';
 
 // ---------------------------------------------------------------------------
@@ -418,6 +419,32 @@ export function subscribeRealtimeTelemetry(
     isClosed = true;
     es?.close();
   };
+}
+
+/**
+ * Searches AST symbols across all registered workspaces (INV-014-04).
+ */
+export async function searchCrossWorkspaceSymbols(
+  query: string,
+  workspace?: string,
+): Promise<SymbolsSearchResponse> {
+  const fallback: SymbolsSearchResponse = {
+    query,
+    workspace: workspace ?? null,
+    total_matches: 0,
+    symbols: [],
+    workspaces: [
+      { name: 'b-sdd', path: '/home/vokov/projects/b-sdd', is_active: true, indexed_count: 0 },
+    ],
+  };
+
+  const params = new URLSearchParams();
+  if (query) params.set('q', query);
+  if (workspace) params.set('workspace', workspace);
+
+  const endpoint = `/api/symbols/search${params.toString() ? `?${params.toString()}` : ''}`;
+  const res = await fetchWithFallback<SymbolsSearchResponse>(endpoint, fallback, { quiet: true });
+  return res.data;
 }
 
 

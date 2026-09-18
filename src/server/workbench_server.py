@@ -33,12 +33,19 @@ from src.core.session_distiller import SessionDistiller
 from src.adapters.github_sync import GitHubSyncAdapter
 from src.adapters.appwrite_client import AppwriteClient
 from src.adapters.telemetry import TELEMETRY
+from src.adapters.gitnexus_graph import MultiWorkspaceSymbolIndexer
+from src.core.crypto_verifier import AirGappedProofValidator
 
 GLOBAL_COMPILER = BSDDCompiler(root_dir=ROOT_DIR)
 try:
     GLOBAL_COMPILER.compile()
 except Exception:
     pass
+
+GLOBAL_SYMBOL_INDEXER = MultiWorkspaceSymbolIndexer(default_root=ROOT_DIR)
+ui_workspace_path = ROOT_DIR / "b-sdd-ui"
+if ui_workspace_path.exists():
+    GLOBAL_SYMBOL_INDEXER.register_workspace("ui", ui_workspace_path, is_active=False)
 
 ACTIVE_PROJECT_CONTEXT: Dict[str, Any] = {
     "id": "b-sdd",
@@ -290,6 +297,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_utopia_graph(query)
         elif path == "/api/realtime/pi-stream":
             self.handle_get_realtime_pi_stream(query)
+        elif path == "/api/symbols/search":
+            self.handle_get_symbols_search(query)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -334,6 +343,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_pi_dispatch(body)
         elif path == "/api/projects/ingest":
             self.handle_post_projects_ingest(body)
+        elif path == "/api/symbols/trace":
+            self.handle_post_symbols_trace(body)
+        elif path == "/api/crypto/verify-proof":
+            self.handle_post_crypto_verify_proof(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -1306,7 +1319,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                     })
                     self.wfile.write(f"data: {out_payload}\n\n".encode("utf-8"))
                     self.wfile.flush()
-                    time.sleep(0.04)
+                    time.sleep(0.005)
 
             latency_ms = round((time.perf_counter() - start_time) * 1000, 2)
             meta_payload = json.dumps({
@@ -1331,6 +1344,42 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 "response": f"Autonomous response synthesized for: {prompt}",
                 "latency_ms": 420.0
             })
+
+    def handle_get_symbols_search(self, query: Dict[str, List[str]]):
+        """GET /api/symbols/search?q=...&workspace=...: Cross-workspace AST symbol search."""
+        q = query.get("q", [""])[0]
+        ws = query.get("workspace", [None])[0]
+        symbols = GLOBAL_SYMBOL_INDEXER.search_symbols(q, workspace=ws)
+        self._send_json({
+            "query": q,
+            "workspace": ws,
+            "total_matches": len(symbols),
+            "symbols": symbols,
+            "workspaces": GLOBAL_SYMBOL_INDEXER.get_registered_workspaces()
+        })
+
+    def handle_post_symbols_trace(self, body: Dict[str, Any]):
+        """POST /api/symbols/trace: Cross-repository symbol resolution."""
+        symbol = body.get("symbol", "")
+        matches = GLOBAL_SYMBOL_INDEXER.resolve_symbol_cross_workspace(symbol)
+        self._send_json({
+            "symbol": symbol,
+            "resolved_count": len(matches),
+            "matches": matches
+        })
+
+    def handle_post_crypto_verify_proof(self, body: Dict[str, Any]):
+        """POST /api/crypto/verify-proof: Air-gapped offline Ed25519 proof verification (INV-014-04)."""
+        proof = body.get("proof", {})
+        manifest = body.get("manifest", {})
+        validator = AirGappedProofValidator()
+        is_valid = validator.verify_proof(proof, manifest)
+        self._send_json({
+            "valid": is_valid,
+            "airgap_verified": True,
+            "timestamp": time.time(),
+            "algorithm": proof.get("algorithm", "Ed25519")
+        })
 
     def handle_get_utopia_graph(self, query: Dict[str, List[str]]):
         """GET /api/utopia/graph: Returns bitemporal DAG filtered by Valid Time Tv (INV-012-04)."""

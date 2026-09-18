@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# B-SDD SPRINT 014 · MULTI-TENANT TRACING & AIR-GAPPED PROOFS ORCHESTRATOR
-# Standard: B-SDD Methodology v1.2 (ADR-001..014)
+# B-SDD SPRINT 015 · AUTONOMOUS INGESTION & COPILOT HARNESS ORCHESTRATOR
+# Standard: B-SDD Methodology v1.2 (ADR-001..015)
 # ==============================================================================
 set -euo pipefail
 
@@ -12,13 +12,12 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
-MAGENTA='\033[0;35m'
 BLUE='\033[0;34m'
 BOLD='\033[1m'
 DIM='\033[2m'
 NC='\033[0m'
 
-SPEC_DIR="specs/014-multi-tenant-tracing-and-offline-crypto"
+SPEC_DIR="specs/015-autonomous-gitnexus-harness"
 PYTEST_CMD="/home/vokov/.local/share/pipx/venvs/pytest/bin/pytest"
 if ! command -v "$PYTEST_CMD" &>/dev/null; then
     PYTEST_CMD="pytest"
@@ -26,7 +25,7 @@ fi
 
 show_header() {
     echo -e "${CYAN}╔══════════════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║     ${BOLD}B-SDD SPRINT 014 · MULTI-TENANT TRACING & AIRGAP PROOFS${NC}${CYAN}               ║${NC}"
+    echo -e "${CYAN}║     ${BOLD}B-SDD SPRINT 015 · AUTONOMOUS INGESTION & COPILOT HARNESS${NC}${CYAN}            ║${NC}"
     echo -e "${CYAN}║     ${DIM}Methodology v1.2: 7-Phase HITL LifeCycle (Φ1–Φ7)${NC}${CYAN}                     ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════════════════╝${NC}"
 }
@@ -119,7 +118,7 @@ run_phase_5() {
 run_phase_6() {
     echo -e "\n${BOLD}${BLUE}=== [Φ6] CRYPTOGRAPHIC HITL REVIEW GATE ===${NC}"
     mkdir -p .context
-    local handoff_file=".context/sprint_014_handoff.json"
+    local handoff_file=".context/sprint_015_handoff.json"
     echo -e "• Generating air-gapped Ed25519 review gate proof..."
     python3 -c "
 import json
@@ -130,10 +129,10 @@ from src.core.crypto_verifier import AirGappedProofValidator, generate_ed25519_k
 validator = AirGappedProofValidator()
 sk_hex, pk_hex = generate_ed25519_keypair()
 manifest = {
-    'sprint': '014',
+    'sprint': '015',
     'timestamp_utc': datetime.now(timezone.utc).isoformat(),
     'verified_by': 'B-SDD Sovereign Architect',
-    'invariants': ['ADR-002', 'ADR-004', 'ADR-005', 'ADR-008', 'ADR-012', 'ADR-014'],
+    'invariants': ['ADR-002', 'ADR-004', 'ADR-005', 'ADR-008', 'ADR-010', 'ADR-013'],
     'status': 'APPROVED'
 }
 proof = validator.generate_proof(manifest, sk_hex)
@@ -150,7 +149,7 @@ Path('$handoff_file').write_text(json.dumps(handoff_data, indent=2), encoding='u
 run_phase_7() {
     echo -e "\n${BOLD}${BLUE}=== [Φ7] DISTILLATION & HANDOFF ===${NC}"
     python3 -m src.cli.main handoff
-    echo -e "${GREEN}✓ Sprint 014 initialized successfully.${NC}"
+    echo -e "${GREEN}✓ Sprint 015 pipeline synthesized successfully.${NC}"
 }
 
 main() {

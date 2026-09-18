@@ -1,9 +1,9 @@
-// src/components/ProjectSwitcherModal.tsx
-// Universal Project & Repository Switcher (ADR-010)
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, Button, Badge, Dot, Banner } from './astryx/primitives';
-import { FolderGit2, GitBranch, Github, Plus, Check, ExternalLink, RefreshCw } from 'lucide-react';
+import { FolderGit2, GitBranch, Github, Plus, Check, ExternalLink, RefreshCw, Search, Code2 } from 'lucide-react';
 import type { ProjectInfo } from '@/types/specs';
+import { searchCrossWorkspaceSymbols } from '@/lib/api';
+import type { WorkspaceSymbol } from '@/lib/backend-types';
 
 export interface WorkspaceItem {
   id: string;
@@ -72,10 +72,34 @@ export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
   githubSyncedAt,
   githubIsLive = true,
 }) => {
-  const [activeTab, setActiveTab] = useState<'local' | 'github' | 'add'>('github');
+  const [activeTab, setActiveTab] = useState<'local' | 'github' | 'symbols' | 'add'>('github');
   const [customRepoUrl, setCustomRepoUrl] = useState('');
   const [isSwitching, setIsSwitching] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  // Cross-workspace AST Symbol Search State (INV-014-04)
+  const [symbolQuery, setSymbolQuery] = useState('');
+  const [symbols, setSymbols] = useState<WorkspaceSymbol[]>([]);
+  const [isSearchingSymbols, setIsSearchingSymbols] = useState(false);
+  const [selectedWsFilter, setSelectedWsFilter] = useState<string>('all');
+
+  const handleSearchSymbols = async (q: string, ws?: string) => {
+    setIsSearchingSymbols(true);
+    try {
+      const res = await searchCrossWorkspaceSymbols(q, ws && ws !== 'all' ? ws : undefined);
+      setSymbols(res.symbols);
+    } catch (e) {
+      console.error('Failed to search cross-workspace symbols:', e);
+    } finally {
+      setIsSearchingSymbols(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'symbols' && symbols.length === 0) {
+      void handleSearchSymbols(symbolQuery, selectedWsFilter);
+    }
+  }, [activeTab]);
 
   const handleSelect = async (id: string, name?: string) => {
     setIsSwitching(true);
@@ -147,7 +171,7 @@ export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
             }`}
           >
             <Github className="w-3.5 h-3.5" />
-            <span>GitHub репозиторії ({githubRepos.length})</span>
+            <span>GitHub ({githubRepos.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('local')}
@@ -158,7 +182,21 @@ export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
             }`}
           >
             <FolderGit2 className="w-3.5 h-3.5" />
-            <span>Локальні воркспейси ({workspaces.length})</span>
+            <span>Воркспейси ({workspaces.length})</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('symbols');
+              if (symbols.length === 0) void handleSearchSymbols(symbolQuery, selectedWsFilter);
+            }}
+            className={`pb-2 flex items-center gap-1.5 transition-colors border-b-2 ${
+              activeTab === 'symbols'
+                ? 'border-amber text-amber font-bold'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Code2 className="w-3.5 h-3.5" />
+            <span>AST Символи</span>
           </button>
           <button
             onClick={() => setActiveTab('add')}
@@ -169,7 +207,7 @@ export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
             }`}
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>Підключити новий репозиторій</span>
+            <span>Підключити</span>
           </button>
         </div>
 
@@ -289,7 +327,96 @@ export const ProjectSwitcherModal: React.FC<ProjectSwitcherModalProps> = ({
           </div>
         )}
 
-        {/* Tab 3: Add/Connect Repository */}
+        {/* Tab 3: AST Symbols (Multi-Tenant Tracing) */}
+        {activeTab === 'symbols' && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                <input
+                  type="text"
+                  placeholder="Пошук класів, функцій, інтерфейсів..."
+                  value={symbolQuery}
+                  onChange={(e) => {
+                    setSymbolQuery(e.target.value);
+                    void handleSearchSymbols(e.target.value, selectedWsFilter);
+                  }}
+                  className="w-full bg-[#141b27] border border-[#1e293b] rounded pl-8 pr-3 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-amber"
+                />
+              </div>
+              <select
+                value={selectedWsFilter}
+                onChange={(e) => {
+                  setSelectedWsFilter(e.target.value);
+                  void handleSearchSymbols(symbolQuery, e.target.value);
+                }}
+                className="bg-[#141b27] border border-[#1e293b] rounded px-2 py-1.5 text-xs font-mono text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber"
+              >
+                <option value="all">Усі воркспейси</option>
+                <option value="core">b-sdd (core)</option>
+                <option value="ui">b-sdd-ui</option>
+              </select>
+            </div>
+
+            <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+              <span>Знайдено символів: {symbols.length}</span>
+              {isSearchingSymbols && <span className="text-amber">Сканування AST...</span>}
+            </div>
+
+            <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1">
+              {symbols.length === 0 ? (
+                <div className="p-4 text-center text-xs text-slate-500 font-mono border border-dashed border-[#1e293b] rounded">
+                  {isSearchingSymbols ? 'Індексація символів...' : 'Символів не знайдено за запитом'}
+                </div>
+              ) : (
+                symbols.map((sym, idx) => (
+                  <div
+                    key={`${sym.workspace}-${sym.file_path}-${sym.name}-${idx}`}
+                    className="p-2 bg-[#0d121c] border border-[#1e293b] rounded flex items-center justify-between hover:border-slate-700 transition-colors"
+                  >
+                    <div className="flex flex-col gap-0.5 overflow-hidden">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-bold text-slate-100 text-xs truncate">
+                          {sym.name}
+                        </span>
+                        <Badge
+                          tone={
+                            sym.kind === 'class'
+                              ? 'amber'
+                              : sym.kind === 'interface'
+                              ? 'emerald'
+                              : 'cyan'
+                          }
+                          outline
+                        >
+                          {sym.kind}
+                        </Badge>
+                        <span className="text-[10px] text-slate-400 px-1 rounded bg-[#1e293b]">
+                          {sym.workspace}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-slate-500 font-mono truncate">
+                        {sym.file_path}:{sym.line_number}
+                        {sym.docstring ? ` — ${sym.docstring}` : ''}
+                      </span>
+                    </div>
+
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={isSwitching}
+                      onClick={() => handleSelect(sym.workspace, `${sym.workspace} (${sym.name})`)}
+                    >
+                      Перейти
+                    </Button>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Tab 4: Add/Connect Repository */}
         {activeTab === 'add' && (
           <form onSubmit={handleAddRepo} className="space-y-3 p-3 bg-[#0d121c] border border-[#1e293b] rounded">
             <div>
