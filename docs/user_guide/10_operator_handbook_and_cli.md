@@ -1,4 +1,4 @@
-# Розділ 3. Пайплайн розробника: CLI, ДРАКОН-моделювання та TDD
+# Розділ 10. Практичний довідник оператора, CLI та доставка на Kindle
 
 ## 3.1 Основні команди CLI B-SDD
 
@@ -77,3 +77,20 @@ python3 -m src.cli.main handoff --prompt "Опис задачі наступно
    python3 -m src.cli.main skill create --name "my-workflow-skill"
    ```
 2. Навичка зберігається в `.agents/skills/<name>/SKILL.md` і стає першокласним інструментом, доступним для автономного виконання будь-яким ШІ-агентом.
+
+---
+
+## 10.4 Автономний конвеєр компіляції та доставки на Kindle (send-to-kindle)
+
+Для читання актуальної документації та архітектурного посібника B-SDD на пристроях Amazon Kindle налаштовано автоматичний конвеєр доставки без участі людини:
+
+1. **Вузол доставки:** Сервер `.184` (репозиторій `https://github.com/maxfraieho/send-to-kindle`).
+2. **Авторизація:** Безголовий OAuth2-токен Google Gmail API (`~/.vydra-survey-profiles/gmail_token.json`).
+3. **Подвійна доставка:**
+   - Основний адресат: `tukroschu@kindle.com` (надходження безпосередньо в бібліотеку пристрою).
+   - Резервна копія: `tukroschu@gmail.com` (захист від затримок верифікації Amazon).
+4. **Команда одноразової збірки та відправки:**
+   ```bash
+   ssh 192.168.3.184 "cd /home/vokov/projects/send-to-kindle && uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib python3 bsdd_to_kindle.py"
+   ```
+5. **Підтримка типографіки Kindle:** Згенерований EPUB 3.0 містить оптимізовані стилі, зміст (NCX/NAV) та дозволяє вільно обирати шрифти (Bookerly, Ember, Baskerville) у меню налаштувань читалки.
