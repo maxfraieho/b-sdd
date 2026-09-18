@@ -467,9 +467,213 @@ class MultiWorkspaceSymbolIndexer:
         return matches
 
 
+class CrossRepoSemanticGraphResolver:
+    """
+    Resolves cross-repository semantic dependencies and federated query execution (INV-016-04).
+    Analyzes imports, method invocations, and workspace boundaries to link disparate
+    codebases into a unified DAG stored with bitemporal transaction and valid time coordinates.
+    Operates using 100% Pure Python Standard Library.
+    """
+
+    def __init__(self, indexer: Optional[MultiWorkspaceSymbolIndexer] = None):
+        self.indexer = indexer if indexer is not None else MultiWorkspaceSymbolIndexer()
+        self.cross_repo_edges: List[Dict[str, Any]] = []
+        self._nodes_cache: Dict[str, Dict[str, Any]] = {}
+
+    def resolve_cross_repo_dependencies(self, valid_time_day: Optional[int] = None) -> List[Dict[str, Any]]:
+        """
+        Scans all registered workspaces to detect cross-repository imports and dependencies.
+        Returns a list of bitemporal edge dictionaries.
+        """
+        import time
+        from datetime import datetime
+        import ast
+        import re
+
+        tx_time = time.time()
+        valid_from = valid_time_day or int(datetime.now().strftime("%Y%m%d"))
+
+        # 1. Index all symbols across workspaces
+        all_symbols = self.indexer.index_all()
+        symbol_map: Dict[str, List[Dict[str, Any]]] = {}
+        for s in all_symbols:
+            sname = s.get("name", "")
+            if sname:
+                symbol_map.setdefault(sname, []).append(s)
+                if "." in sname:
+                    short = sname.split(".")[-1]
+                    symbol_map.setdefault(short, []).append(s)
+
+        edges: List[Dict[str, Any]] = []
+        processed_pairs = set()
+
+        for ws_name, ws_info in self.indexer.workspaces.items():
+            ws_root = Path(ws_info["path"]).resolve()
+            if not ws_root.exists() or not ws_root.is_dir():
+                continue
+
+            for root, dirs, files in os.walk(ws_root):
+                dirs[:] = [d for d in dirs if d not in self.indexer.EXCLUDE_DIRS]
+                for fname in files:
+                    fpath = Path(root) / fname
+                    try:
+                        rel_path = str(fpath.relative_to(ws_root))
+                    except ValueError:
+                        rel_path = fname
+
+                    if fname.endswith(".py"):
+                        try:
+                            tree = ast.parse(fpath.read_text(encoding="utf-8", errors="replace"), filename=rel_path)
+                            for node in ast.walk(tree):
+                                target_ws = None
+                                target_mod = None
+                                target_sym = None
+
+                                if isinstance(node, ast.Import):
+                                    for alias in node.names:
+                                        parts = alias.name.split(".")
+                                        for other_ws in self.indexer.workspaces.keys():
+                                            other_norm = other_ws.replace("-", "_")
+                                            if other_ws != ws_name and (other_ws in parts or other_norm in parts):
+                                                target_ws = other_ws
+                                                target_mod = alias.name
+                                                target_sym = parts[-1]
+                                                break
+
+                                elif isinstance(node, ast.ImportFrom):
+                                    if node.module:
+                                        mod_parts = node.module.split(".")
+                                        for other_ws in self.indexer.workspaces.keys():
+                                            other_norm = other_ws.replace("-", "_")
+                                            if other_ws != ws_name and (other_ws in mod_parts or other_norm in mod_parts):
+                                                target_ws = other_ws
+                                                target_mod = node.module
+                                                if node.names:
+                                                    target_sym = node.names[0].name
+                                                break
+
+                                    if not target_ws and node.names:
+                                        for alias in node.names:
+                                            cand = symbol_map.get(alias.name, [])
+                                            for c in cand:
+                                                if c.get("workspace") != ws_name:
+                                                    target_ws = c.get("workspace")
+                                                    target_sym = alias.name
+                                                    target_mod = c.get("file_path")
+                                                    break
+
+                                if target_ws and target_ws != ws_name:
+                                    pair_key = (ws_name, rel_path, target_ws, target_mod or "", target_sym or "")
+                                    if pair_key not in processed_pairs:
+                                        processed_pairs.add(pair_key)
+                                        edges.append({
+                                            "source_workspace": ws_name,
+                                            "source_file": rel_path,
+                                            "source_symbol": getattr(node, "name", "module"),
+                                            "target_workspace": target_ws,
+                                            "target_file": target_mod or "",
+                                            "target_symbol": target_sym or (target_mod or "").split(".")[-1],
+                                            "rel_type": "IMPORTS",
+                                            "tx_time": tx_time,
+                                            "valid_from": valid_from,
+                                            "valid_to": None
+                                        })
+                        except Exception:
+                            pass
+
+                    elif fname.endswith((".ts", ".tsx", ".js")):
+                        try:
+                            content = fpath.read_text(encoding="utf-8", errors="replace")
+                            matches = re.findall(r"(?:import|from|require\()\s*['\"]([^'\"]+)['\"]", content)
+                            for import_path in matches:
+                                for other_ws in self.indexer.workspaces.keys():
+                                    other_norm = other_ws.replace("-", "_")
+                                    if other_ws != ws_name and (other_ws in import_path or other_norm in import_path or f"@{other_ws}" in import_path):
+                                        pair_key = (ws_name, rel_path, other_ws, import_path)
+                                        if pair_key not in processed_pairs:
+                                            processed_pairs.add(pair_key)
+                                            edges.append({
+                                                "source_workspace": ws_name,
+                                                "source_file": rel_path,
+                                                "source_symbol": "module",
+                                                "target_workspace": other_ws,
+                                                "target_file": import_path,
+                                                "target_symbol": Path(import_path).name,
+                                                "rel_type": "DEPENDS_ON",
+                                                "tx_time": tx_time,
+                                                "valid_from": valid_from,
+                                                "valid_to": None
+                                            })
+                        except Exception:
+                            pass
+
+        self.cross_repo_edges = edges
+        return edges
+
+    def query(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Federated graph query filtering by symbol, workspace, or relationship type.
+        Returns matching nodes and edges.
+        """
+        symbol_filter = params.get("symbol")
+        ws_filter = params.get("workspace")
+        rel_filter = params.get("rel_type")
+        limit = int(params.get("limit", 100))
+
+        if not self.cross_repo_edges:
+            self.resolve_cross_repo_dependencies()
+
+        all_symbols = self.indexer.index_all()
+
+        matched_nodes = []
+        matched_edges = []
+
+        for s in all_symbols:
+            match = True
+            if symbol_filter and symbol_filter.lower() not in s.get("name", "").lower():
+                match = False
+            if ws_filter and s.get("workspace") != ws_filter:
+                match = False
+            if match:
+                matched_nodes.append({
+                    "id": f"{s.get('workspace')}:{s.get('file_path')}:{s.get('name')}",
+                    "label": s.get("name"),
+                    "workspace": s.get("workspace"),
+                    "file_path": s.get("file_path"),
+                    "kind": s.get("kind"),
+                    "line": s.get("line_number")
+                })
+                if len(matched_nodes) >= limit:
+                    break
+
+        for e in self.cross_repo_edges:
+            match = True
+            if symbol_filter:
+                sf = symbol_filter.lower()
+                if sf not in e.get("source_symbol", "").lower() and sf not in e.get("target_symbol", "").lower():
+                    match = False
+            if ws_filter:
+                if e.get("source_workspace") != ws_filter and e.get("target_workspace") != ws_filter:
+                    match = False
+            if rel_filter and e.get("rel_type") != rel_filter:
+                match = False
+            if match:
+                matched_edges.append(e)
+                if len(matched_edges) >= limit:
+                    break
+
+        return {
+            "status": "ok",
+            "nodes_count": len(matched_nodes),
+            "edges_count": len(matched_edges),
+            "nodes": matched_nodes,
+            "edges": matched_edges
+        }
+
+
 class BackgroundIngestionWorker:
     """
-    Autonomous multi-repo AST ingestion worker (INV-015-04).
+    Autonomous multi-repo AST ingestion worker (INV-015-04, INV-016-04).
     Crawls linked workspaces, extracts structural components,
     and maps AST symbols to bitemporal Utopia DB DAG nodes and edges.
     100% Pure Python standard library.
@@ -482,6 +686,7 @@ class BackgroundIngestionWorker:
     ):
         self.indexer = indexer if indexer is not None else MultiWorkspaceSymbolIndexer()
         self.utopia_client = utopia_client
+        self.graph_resolver = CrossRepoSemanticGraphResolver(indexer=self.indexer)
         self.last_ingested_at: Optional[float] = None
         self.last_report: Dict[str, Any] = {
             "status": "idle",
@@ -489,6 +694,7 @@ class BackgroundIngestionWorker:
             "symbols_count": 0,
             "nodes_count": 0,
             "edges_count": 0,
+            "cross_edges_count": 0,
             "duration_ms": 0.0
         }
 
@@ -498,7 +704,8 @@ class BackgroundIngestionWorker:
         1. Indexes all registered workspaces.
         2. Synthesizes bitemporal DAG nodes (with Tx, Tv).
         3. Constructs containment and dependency edges.
-        4. Syncs to Utopia DB DAG if client is available.
+        4. Resolves cross-repository semantic dependencies.
+        5. Syncs to Utopia DB DAG if client is available.
         """
         import time
         from datetime import datetime
@@ -556,6 +763,9 @@ class BackgroundIngestionWorker:
                 "rel_type": "CONTAINS"
             })
 
+        # Resolve cross-repo dependencies
+        cross_edges = self.graph_resolver.resolve_cross_repo_dependencies(valid_time_day=tv)
+
         duration_ms = round((time.perf_counter() - t0) * 1000, 2)
         self.last_ingested_at = tx
 
@@ -565,12 +775,24 @@ class BackgroundIngestionWorker:
             "symbols_count": len(symbols),
             "nodes_count": len(nodes),
             "edges_count": len(edges),
+            "cross_edges_count": len(cross_edges),
             "duration_ms": duration_ms,
             "nodes": nodes,
-            "edges": edges
+            "edges": edges,
+            "cross_repo_edges": cross_edges
         }
         self.last_report = report
         return report
+
+    def get_cross_repo_edges(self) -> List[Dict[str, Any]]:
+        """Returns all discovered cross-repository dependency edges."""
+        if not self.graph_resolver.cross_repo_edges:
+            self.graph_resolver.resolve_cross_repo_dependencies()
+        return self.graph_resolver.cross_repo_edges
+
+    def query_graph(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Federated query execution across workspaces."""
+        return self.graph_resolver.query(params)
 
     def get_status(self) -> Dict[str, Any]:
         """Returns the status and metrics of the ingestion engine."""

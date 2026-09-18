@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 017: Sovereign Cross-Repo Mutation Harness & Transactional Refactoring",
+  "category": "bsdd_pipeline",
+  "description": "Пайплайн безпечної транзакційної модифікації коду між воркспейсами з підтримкою CoW та відкату",
+  "params": "cow_branch_enabled: bool, rollback_supported: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 017 (Cross-Repo Mutation Harness)",
+      "edges": { "down": "step_create_cow_branches", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-010", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_create_cow_branches",
+      "node_type": "action",
+      "label": "Створення ізольованих CoW-гілок у цільових воркспейсах",
+      "edges": { "down": "step_apply_ast_mutations", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "step_apply_ast_mutations",
+      "node_type": "action",
+      "label": "Застосування узгоджених мутацій AST через семантичний граф",
+      "edges": { "down": "cond_mutation_tests_pass", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "cond_mutation_tests_pass",
+      "node_type": "question",
+      "label": "Усі міжрепозиторні фітнес-тести пройшли успішно?",
+      "edges": { "down": "step_commit_bitemporal_tx", "right": "step_rollback_cow" },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_rollback_cow",
+      "node_type": "action",
+      "label": "Транзакційний відкат CoW-гілок та компенсація в Utopia DB",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 4.0, "y": 6.0
+    },
+    {
+      "node_id": "step_commit_bitemporal_tx",
+      "node_type": "action",
+      "label": "Фіксація змін з мітками Tx/Tv у Utopia DB (:9922)",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_airgap_ed25519_proof",
+      "node_type": "action",
+      "label": "Офлайн-генерація Ed25519 сертифіката для review gate Φ6",
+      "edges": { "down": "end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Фініш Спринту 017 (Cross-Repo Mutation Harness Verified)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}

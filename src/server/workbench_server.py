@@ -305,6 +305,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_ingest_status()
         elif path == "/api/copilot/symbol-card":
             self.handle_get_copilot_symbol_card(query)
+        elif path == "/api/graph/cross-repo-edges":
+            self.handle_get_graph_cross_repo_edges()
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -355,6 +357,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_crypto_verify_proof(body)
         elif path == "/api/ingest/async":
             self.handle_post_ingest_async(body)
+        elif path == "/api/graph/query":
+            self.handle_post_graph_query(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -1400,15 +1404,15 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         self._send_json(report)
 
     def handle_get_copilot_symbol_card(self, query: Dict[str, List[str]]):
-        """GET /api/copilot/symbol-card?name=...&workspace=...: Detailed symbol card for Copilot."""
-        name = query.get("name", [""])[0]
+        """GET /api/copilot/symbol-card?symbol=...&workspace=...: Detailed symbol card for Copilot."""
+        name = query.get("symbol", [""])[0] or query.get("name", [""])[0]
         ws = query.get("workspace", [None])[0]
         matches = GLOBAL_SYMBOL_INDEXER.resolve_symbol_cross_workspace(name)
         if not matches:
             matches = GLOBAL_SYMBOL_INDEXER.search_symbols(name, workspace=ws, limit=1)
         if matches:
             sym = matches[0]
-            self._send_json({
+            card_obj = {
                 "card_type": "ast_symbol_card",
                 "name": sym["name"],
                 "kind": sym["kind"],
@@ -1417,9 +1421,14 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 "line_number": sym["line_number"],
                 "docstring": sym.get("docstring", ""),
                 "status": "active"
+            }
+            self._send_json({
+                "status": "ok",
+                "card": card_obj,
+                **card_obj
             })
         else:
-            self._send_json({
+            card_obj = {
                 "card_type": "ast_symbol_card",
                 "name": name,
                 "kind": "unknown",
@@ -1428,7 +1437,26 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 "line_number": 1,
                 "docstring": "Symbol not found in AST index",
                 "status": "unresolved"
-            })
+            }
+            self._send_json({
+                "status": "not_found",
+                "card": card_obj,
+                **card_obj
+            }, 404 if not name else 200)
+
+    def handle_get_graph_cross_repo_edges(self):
+        """GET /api/graph/cross-repo-edges: Returns federated cross-repository dependency edges (INV-016-04)."""
+        edges = GLOBAL_INGESTION_WORKER.get_cross_repo_edges()
+        self._send_json({
+            "status": "ok",
+            "count": len(edges),
+            "cross_repo_edges": edges
+        })
+
+    def handle_post_graph_query(self, body: Dict[str, Any]):
+        """POST /api/graph/query: Executes federated graph query across workspaces (INV-016-04)."""
+        res = GLOBAL_INGESTION_WORKER.query_graph(body)
+        self._send_json(res)
 
     def handle_get_utopia_graph(self, query: Dict[str, List[str]]):
         """GET /api/utopia/graph: Returns bitemporal DAG filtered by Valid Time Tv (INV-012-04)."""
