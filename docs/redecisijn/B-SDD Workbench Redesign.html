@@ -1,0 +1,1476 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<title>B-SDD Workbench · Astryx Redesign</title>
+<meta name="viewport" content="width=1440, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          canvas:    '#090d13',
+          panel:     '#0d121c',
+          card:      '#141b27',
+          subtle:    '#1e293b',
+          amber:     '#f59e0b',
+          emerald:   '#10b981',
+          cyan:      '#06b6d4',
+          violet:    '#8b5cf6',
+          rose:      '#f43f5e',
+        },
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html, body, #root { height: 100%; }
+  body {
+    margin: 0;
+    background: #090d13;
+    color: #f8fafc;
+    font-family: 'Inter', system-ui, sans-serif;
+    overflow: hidden;   /* FE-INV-01 */
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0d121c; }
+  ::-webkit-scrollbar-thumb { background: #24324d; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+
+  /* range styling for scrubbers */
+  input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 4px; border-radius: 2px; background: #0d121c;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    height: 14px; width: 14px; border-radius: 999px;
+    background: currentColor; border: 2px solid #0d121c;
+    margin-top: -5px; cursor: pointer;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
+  }
+  input[type=range].tv { color: #10b981; }
+  input[type=range].tt { color: #06b6d4; }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, #14213033 1px, transparent 1px),
+      linear-gradient(to bottom, #14213033 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* line-clamp helper */
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  .ico {
+    width: 20px; height: 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #1e293b;
+    color: #94a3b8;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- =========================================================================
+     Mini-Icon component: tiny inline SVGs (replaces lucide-react)
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+const svg = (path, extra = null) => (props) => (
+  <svg
+    viewBox="0 0 24 24" width={props.size || 14} height={props.size || 14}
+    fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round"
+    className={props.className || ''}
+  >
+    {path}{extra}
+  </svg>
+);
+const Icons = {
+  Calendar:   svg(<><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></>),
+  History:    svg(<><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></>),
+  Play:       svg(<polygon points="6 3 20 12 6 21 6 3"/>),
+  Pause:      svg(<><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></>),
+  RotateCcw:  svg(<><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></>),
+  ChevronLeft:svg(<polyline points="15 18 9 12 15 6"/>),
+  ChevronRight:svg(<polyline points="9 18 15 12 9 6"/>),
+  FileText:   svg(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></>),
+  ArrowRight: svg(<><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></>),
+  ShieldCheck:svg(<><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></>),
+  Shield:     svg(<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>),
+  X:          svg(<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>),
+  Trash2:     svg(<><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></>),
+  Check:      svg(<polyline points="20 6 9 17 4 12"/>),
+  Save:       svg(<><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></>),
+  ArrowDown:  svg(<><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></>),
+  CornerDownRight:svg(<><polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/></>),
+  FileCode:   svg(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="10 13 8 15 10 17"/><polyline points="14 13 16 15 14 17"/></>),
+  Search:     svg(<><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></>),
+  BookOpen:   svg(<><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></>),
+  Plus:       svg(<><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>),
+  Pencil:     svg(<><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4z"/></>),
+  Eye:        svg(<><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>),
+  GitBranch:  svg(<><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></>),
+  ShieldPlus: svg(<><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></>),
+  Copy:       svg(<><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></>),
+  Workflow:   svg(<><rect x="3" y="3" width="8" height="8" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect x="13" y="13" width="8" height="8" rx="2"/></>),
+  GitBranchIco: svg(<><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></>),
+  Repeat:     svg(<><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></>),
+  Settings2:  svg(<><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></>),
+  LayoutGrid: svg(<><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></>),
+  Sparkles:   svg(<path d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/>),
+  Layers:     svg(<><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></>),
+  Code2:      svg(<><polyline points="18 16 22 12 18 8"/><polyline points="6 8 2 12 6 16"/><line x1="14" y1="4" x2="10" y2="20"/></>),
+  Download:   svg(<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>),
+  CheckCircle:svg(<><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 8"/></>),
+  Undo2:      svg(<path d="M9 14l-4-4 4-4M5 10h9a5 5 0 1 1 0 10h-3"/>),
+  Redo2:      svg(<path d="M15 14l4-4-4-4M19 10H10a5 5 0 1 0 0 10h3"/>),
+  ZoomIn:     svg(<><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></>),
+  ZoomOut:    svg(<><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></>),
+  Home:       svg(<path d="M3 12l9-9 9 9M5 10v10h4v-6h6v6h4V10"/>),
+  Terminal:   svg(<><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></>),
+  Users:      svg(<><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>),
+  Bell:       svg(<><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></>),
+  MenuIco:    svg(<><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></>),
+  Cpu:        svg(<><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></>),
+  Bot:        svg(<><rect x="3" y="8" width="18" height="12" rx="3"/><circle cx="9" cy="14" r="1.5"/><circle cx="15" cy="14" r="1.5"/><line x1="12" y1="2" x2="12" y2="8"/></>),
+};
+window.Icons = Icons;
+</script>
+
+<!-- =========================================================================
+     Mock ADR data + Drakon icon defs (adapted from repo)
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+const MOCK_ADRS = [
+  {
+    id: 'ADR-001',
+    title: 'Bitemporal Intent Graph as System of Truth',
+    status: 'accepted',
+    date: '2026-09-01',
+    valid_from: '2026-09-01T00:00:00Z',
+    valid_to: null,
+    file_path: 'docs/adr/ADR-001-bitemporal-intent-graph.md',
+    invariants: [
+      { id: 'INV-BI-01', statement: 'Всі рішення мають T_v та T_t мітки' },
+      { id: 'INV-BI-02', statement: 'Superseded ADRs — read-only' },
+    ],
+    content: '# ADR-001 — Bitemporal Intent Graph\n\n## Context\nB-SDD оперує двома вимірами часу: Valid Time (T_v) — коли рішення чинне для домену; та Transaction Time (T_t) — коли воно записане в системі.\n\n## Decision\nВсі архітектурні рішення зберігаються у Utopia DB як бітемпоральні записи. Скролер часу дозволяє реконструювати стан системи у будь-який момент.\n\n## Consequences\n### Positive\n- Повний аудит-трейл\n- Можливість «час-подорожі»\n### Negative\n- Складніша модель\n\n## Invariants\n- INV-BI-01 — Всі рішення мають T_v та T_t\n- INV-BI-02 — Superseded ADRs — read-only',
+  },
+  {
+    id: 'ADR-002', title: 'Deterministic Pre-Flight Compilation',
+    status: 'accepted', date: '2026-09-03', valid_from: '2026-09-03T00:00:00Z',
+    file_path: 'docs/adr/ADR-002-deterministic-pre-flight-compilation.md',
+    invariants: [{ id: 'INV-PF-01', statement: 'Context budget ≤ 500 words' }],
+    content: '# ADR-002 — Pre-Flight Compilation\n\nContext budget ≤ 500 слів гарантує детермінований контекст.',
+  },
+  {
+    id: 'ADR-003', title: 'Skill Lifecycle & Rule of 2',
+    status: 'accepted', date: '2026-09-05', valid_from: '2026-09-05T00:00:00Z',
+    invariants: [{ id: 'INV-SL-01', statement: 'Skill crystallizes після 2 повторень' }],
+    content: '# ADR-003 — Rule of 2\n\nПовторення двічі — кристалізація в скіл.',
+  },
+  {
+    id: 'ADR-004', title: 'AST Impact Graph Routing',
+    status: 'superseded', date: '2026-09-06', valid_from: '2026-09-06T00:00:00Z',
+    valid_to: '2026-09-12T00:00:00Z', superseded_by: 'ADR-008',
+    invariants: [],
+    content: '# ADR-004 — AST Impact\n\nСуперседед ADR-008.',
+  },
+  {
+    id: 'ADR-005', title: 'Automated Architectural Fitness Gates',
+    status: 'accepted', date: '2026-09-08', valid_from: '2026-09-08T00:00:00Z',
+    invariants: [{ id: 'INV-FG-01', statement: 'Fitness gates блокують merge при регресії' }],
+    content: '# ADR-005 — Fitness Gates',
+  },
+  {
+    id: 'ADR-006', title: 'Multi-Harness Distillation',
+    status: 'accepted', date: '2026-09-10', valid_from: '2026-09-10T00:00:00Z',
+    invariants: [{ id: 'INV-MH-01', statement: 'Distillation ≤ 3 rounds' }],
+    content: '# ADR-006 — Distillation',
+  },
+  {
+    id: 'ADR-007', title: 'Atomic Sprint Handoff & COW',
+    status: 'accepted', date: '2026-09-12', valid_from: '2026-09-12T00:00:00Z',
+    invariants: [{ id: 'INV-HO-01', statement: 'Handoff — атомарна COW-гілка' }],
+    content: '# ADR-007 — Atomic Handoff',
+  },
+  {
+    id: 'ADR-008', title: 'DRAKON Visual Logic & Developer Workbench',
+    status: 'accepted', date: '2026-09-14', valid_from: '2026-09-14T00:00:00Z',
+    invariants: [
+      { id: 'INV-DK-01', statement: 'Планарність графу без перетинів' },
+      { id: 'INV-DK-02', statement: 'Права гілка — завжди «worse»' },
+    ],
+    content: '# ADR-008 — DRAKON\n\nПланарний, шампуровий, right-is-worse.',
+  },
+  {
+    id: 'ADR-009', title: 'Astryx Design System & Universal Cockpit',
+    status: 'accepted', date: '2026-09-15', valid_from: '2026-09-15T00:00:00Z',
+    invariants: [{ id: 'INV-AX-01', statement: 'FE-INV-01: 100vh, no body scroll' }],
+    content: '# ADR-009 — Astryx',
+  },
+  {
+    id: 'ADR-010', title: 'Universal Multi-Project & Standard Algorithm Catalog',
+    status: 'accepted', date: '2026-09-16', valid_from: '2026-09-16T00:00:00Z',
+    invariants: [{ id: 'INV-CA-01', statement: 'Каталог — read-only reference' }],
+    content: '# ADR-010 — Catalog',
+  },
+  {
+    id: 'ADR-011', title: 'Live GitHub Sync & Appwrite Realtime',
+    status: 'proposed', date: '2026-09-17', valid_from: '2026-09-17T00:00:00Z',
+    invariants: [],
+    content: '# ADR-011 — Live sync',
+  },
+];
+
+const DRAKON_TABS = [
+  { id: 'flow',   label: 'Потік',        icon: 'Workflow' },
+  { id: 'branch', label: 'Розгалуження', icon: 'GitBranch' },
+  { id: 'loop',   label: 'Цикли',        icon: 'Repeat' },
+  { id: 'system', label: 'Система',      icon: 'Settings2' },
+];
+
+const DRAKON_ICONS = [
+  { id: 'b0',        name: 'b0 / Header',  tab: 'flow',   glyph: '▬' },
+  { id: 'action',    name: 'Дія',           tab: 'flow',   glyph: '▭' },
+  { id: 'end',       name: 'Кінець',        tab: 'flow',   glyph: '⬭' },
+  { id: 'insertion', name: 'Вставка',       tab: 'flow',   glyph: '▤' },
+
+  { id: 'question',  name: 'Умова',         tab: 'branch', glyph: '◇' },
+  { id: 'select',    name: 'Вибір',         tab: 'branch', glyph: '⌗' },
+  { id: 'case',      name: 'Варіант',       tab: 'branch', glyph: '⟠' },
+
+  { id: 'loop_start', name: 'Loop Start',   tab: 'loop',   glyph: '⟲' },
+  { id: 'loop_end',   name: 'Loop End',     tab: 'loop',   glyph: '⟳' },
+  { id: 'for_begin',  name: 'For Begin',    tab: 'loop',   glyph: '∀↧' },
+  { id: 'for_end',    name: 'For End',      tab: 'loop',   glyph: '∀↥' },
+
+  { id: 'timer',    name: 'Таймер',         tab: 'system', glyph: '⌛' },
+  { id: 'pause',    name: 'Пауза',          tab: 'system', glyph: '‖' },
+  { id: 'duration', name: 'Тривалість',     tab: 'system', glyph: '⌚' },
+  { id: 'process',  name: 'Процес',         tab: 'system', glyph: '⚙' },
+  { id: 'shelf',    name: 'Полиця',         tab: 'system', glyph: '≣' },
+  { id: 'comment',  name: 'Коментар',       tab: 'system', glyph: '¶' },
+  { id: 'address',  name: 'Address',        tab: 'system', glyph: '⌖' },
+];
+
+const MOCK_NODES = [
+  { node_id: 'n1', node_type: 'headline', label: 'B-SDD Pre-Flight Pipeline', edges: { down: 'n2', right: null } },
+  { node_id: 'n2', node_type: 'action',   label: 'Compile context budget ≤ 500w', edges: { down: 'n3', right: null }, semantic_binding: { adr_invariant_id: 'INV-PF-01', severity: 'severe' } },
+  { node_id: 'n3', node_type: 'question', label: 'Планарний граф? (0 crossings)', edges: { down: 'n4', right: 'n5' }, semantic_binding: { adr_invariant_id: 'INV-DK-01', severity: 'fatal' } },
+  { node_id: 'n4', node_type: 'action',   label: 'Emit DRAKON.json', edges: { down: 'n6', right: null } },
+  { node_id: 'n5', node_type: 'action',   label: 'Reject & log violation',  edges: { down: 'n6', right: null } },
+  { node_id: 'n6', node_type: 'end',      label: 'Done', edges: { down: null, right: null } },
+];
+
+window.MOCK_ADRS = MOCK_ADRS;
+window.DRAKON_TABS = DRAKON_TABS;
+window.DRAKON_ICONS = DRAKON_ICONS;
+window.MOCK_NODES = MOCK_NODES;
+</script>
+
+<!-- =========================================================================
+     ZONE D — TimelineSlider (2-column, fixed left + scroll rail right)
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo } = React;
+
+function AdrTimelineCard({ adr, validTimeDay, onSelect, selected }) {
+  const parseDay = (iso) => parseInt(iso.split('T')[0].split('-')[2], 10);
+  const startDay = parseDay(adr.date);
+  const endDay = adr.valid_to ? parseDay(adr.valid_to) : null;
+  const notYet = startDay > validTimeDay;
+  const superseded = endDay !== null && validTimeDay >= endDay;
+  const active = !notYet && !superseded;
+  const state = active ? 'active' : superseded ? 'superseded' : 'pending';
+
+  const cls = {
+    active: selected
+      ? 'bg-emerald/10 border-emerald ring-1 ring-emerald/40 shadow-[0_0_0_1px_rgba(16,185,129,0.15)]'
+      : 'bg-card border-subtle hover:border-emerald/50',
+    superseded: 'bg-panel/60 border-subtle opacity-55',
+    pending: 'bg-panel border-dashed border-subtle opacity-70',
+  }[state];
+
+  return (
+    <button
+      onClick={() => onSelect(adr)}
+      className={`shrink-0 w-56 text-left rounded-lg border px-3 py-2.5 transition-all ${cls}`}
+    >
+      <div className="flex items-center justify-between mb-1.5">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <Icons.FileText className={state === 'active' ? 'text-amber' : 'text-slate-500'} />
+          <span className="font-mono font-bold text-[12px] text-slate-100 truncate">{adr.id}</span>
+        </div>
+        <span className={`text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border tracking-wider ${
+          state === 'active'
+            ? 'text-emerald border-emerald/40 bg-emerald/10'
+            : state === 'superseded'
+              ? 'text-slate-500 border-slate-700 bg-slate-900/60 line-through'
+              : 'text-cyan border-cyan/40 bg-cyan/10'
+        }`}>
+          {state === 'active' ? 'Active' : state === 'superseded' ? 'Sup.' : 'Pending'}
+        </span>
+      </div>
+      <h4 className={`font-medium text-[11px] leading-snug line-clamp-2 ${state === 'active' ? 'text-slate-200' : 'text-slate-500'}`}>
+        {adr.title}
+      </h4>
+      {adr.superseded_by && (
+        <div className="flex items-center gap-1 text-[10px] text-amber/80 font-mono mt-1.5">
+          <span>→</span>
+          <Icons.ArrowRight />
+          <span className="font-bold">{adr.superseded_by}</span>
+        </div>
+      )}
+      <div className="flex items-center justify-between text-[10px] text-slate-500 mt-2 font-mono">
+        <span className="flex items-center gap-1">
+          <Icons.ShieldCheck className="text-emerald/70" />
+          {adr.invariants.length}
+        </span>
+        <span className="tabular-nums">{adr.date}</span>
+      </div>
+    </button>
+  );
+}
+
+function TimelineSlider({
+  validTimeDay, onValidTimeChange,
+  txTimeDay, onTxTimeChange,
+  adrs, activeAdrCount, supersededCount,
+  onSelectAdr, selectedAdrId,
+  minDay = 1, maxDay = 17,
+}) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const railRef = useRef(null);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const t = setInterval(() => {
+      onValidTimeChange(validTimeDay >= maxDay ? minDay : validTimeDay + 1);
+    }, 900);
+    return () => clearInterval(t);
+  }, [isPlaying, validTimeDay, maxDay, minDay, onValidTimeChange]);
+
+  const step = (d) => onValidTimeChange(Math.min(maxDay, Math.max(minDay, validTimeDay + d)));
+  const scrollRail = (dir) => railRef.current?.scrollBy({ left: dir * 320, behavior: 'smooth' });
+
+  const validDate = `2026-09-${String(validTimeDay).padStart(2, '0')}`;
+  const txDate = `2026-09-${String(txTimeDay).padStart(2, '0')}`;
+
+  return (
+    <section
+      aria-label="Bitemporal Timeline (Zone D)"
+      className="flex border-t border-subtle bg-canvas shrink-0"
+      style={{ height: 168 }}
+    >
+      {/* LEFT COLUMN — фіксована ширина w-64 */}
+      <aside className="w-64 flex-shrink-0 border-r border-subtle bg-panel p-3 flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-amber font-bold">
+            Bitemporal Lens
+          </span>
+          <div className="flex items-center gap-1.5 text-[10px] font-mono">
+            <span className="flex items-center gap-1 text-emerald">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse" />
+              {activeAdrCount}
+            </span>
+            <span className="text-slate-600">·</span>
+            <span className="text-slate-500">{supersededCount} sup.</span>
+          </div>
+        </div>
+
+        {/* T_v slot */}
+        <div className="rounded-md border border-subtle bg-card px-2.5 py-1.5">
+          <div className="flex items-center justify-between mb-1">
+            <span className="flex items-center gap-1.5 text-[10px] font-mono font-semibold text-emerald">
+              <span className="relative flex w-2 h-2">
+                <span className="absolute inset-0 rounded-full bg-emerald opacity-70 animate-ping" />
+                <span className="relative w-2 h-2 rounded-full bg-emerald" />
+              </span>
+              <Icons.Calendar size={12} />
+              T_v
+            </span>
+            <span className="text-[11px] font-mono font-bold text-slate-100 tabular-nums">{validDate}</span>
+          </div>
+          <input
+            type="range" min={minDay} max={maxDay}
+            value={validTimeDay}
+            onChange={(e) => onValidTimeChange(Number(e.target.value))}
+            className="tv w-full cursor-pointer"
+            aria-label="Valid Time scrubber"
+          />
+        </div>
+
+        {/* T_t slot */}
+        <div className="rounded-md border border-subtle bg-card px-2.5 py-1.5">
+          <div className="flex items-center justify-between mb-1">
+            <span className="flex items-center gap-1.5 text-[10px] font-mono font-semibold text-cyan">
+              <span className="relative flex w-2 h-2">
+                <span className="absolute inset-0 rounded-full bg-cyan opacity-70 animate-ping" />
+                <span className="relative w-2 h-2 rounded-full bg-cyan" />
+              </span>
+              <Icons.History size={12} />
+              T_t
+            </span>
+            <span className="text-[11px] font-mono font-bold text-slate-100 tabular-nums">{txDate}</span>
+          </div>
+          <input
+            type="range" min={minDay} max={maxDay}
+            value={txTimeDay}
+            onChange={(e) => onTxTimeChange(Number(e.target.value))}
+            className="tt w-full cursor-pointer"
+            aria-label="Transaction Time scrubber"
+          />
+        </div>
+
+        {/* Controls */}
+        <div className="mt-auto flex items-center gap-1">
+          <button onClick={() => step(-1)}
+            className="flex-1 h-7 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-300 flex items-center justify-center transition-colors"
+            title="Step back">
+            <Icons.ChevronLeft />
+          </button>
+          <button onClick={() => setIsPlaying(v => !v)}
+            className={`flex-1 h-7 rounded border flex items-center justify-center gap-1 font-mono text-[10px] font-bold transition-colors ${
+              isPlaying ? 'bg-amber/15 border-amber/50 text-amber' : 'bg-card border-subtle text-slate-300 hover:bg-[#1a2233]'
+            }`}
+            title={isPlaying ? 'Pause Timeline' : 'Play Timeline'}>
+            {isPlaying ? <Icons.Pause size={12}/> : <Icons.Play size={12}/>}
+            {isPlaying ? 'PAUSE' : 'PLAY'}
+          </button>
+          <button onClick={() => step(1)}
+            className="flex-1 h-7 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-300 flex items-center justify-center transition-colors"
+            title="Step forward">
+            <Icons.ChevronRight />
+          </button>
+          <button onClick={() => { setIsPlaying(false); onValidTimeChange(maxDay); onTxTimeChange(maxDay); }}
+            className="w-7 h-7 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-400 hover:text-slate-100 flex items-center justify-center transition-colors"
+            title="Reset to NOW">
+            <Icons.RotateCcw size={12}/>
+          </button>
+        </div>
+      </aside>
+
+      {/* RIGHT COLUMN — flex-1 min-w-0, скролюється горизонтально */}
+      <div className="flex-1 min-w-0 relative flex items-center">
+        <div aria-hidden className="absolute inset-0 pointer-events-none opacity-40"
+          style={{ backgroundImage: 'linear-gradient(to right, #1e293b 1px, transparent 1px)', backgroundSize: '80px 100%' }} />
+
+        <button onClick={() => scrollRail(-1)}
+          className="absolute left-1 z-10 w-6 h-6 rounded-full bg-panel/90 border border-subtle text-slate-400 hover:text-slate-100 flex items-center justify-center"
+          title="Scroll rail left">
+          <Icons.ChevronLeft />
+        </button>
+        <button onClick={() => scrollRail(1)}
+          className="absolute right-1 z-10 w-6 h-6 rounded-full bg-panel/90 border border-subtle text-slate-400 hover:text-slate-100 flex items-center justify-center"
+          title="Scroll rail right">
+          <Icons.ChevronRight />
+        </button>
+
+        <div ref={railRef}
+          className="flex-1 overflow-x-auto overflow-y-hidden p-3 flex gap-3 items-center min-w-0 scroll-smooth">
+          {adrs.map(adr => (
+            <AdrTimelineCard
+              key={adr.id}
+              adr={adr}
+              validTimeDay={validTimeDay}
+              onSelect={onSelectAdr}
+              selected={adr.id === selectedAdrId}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+window.TimelineSlider = TimelineSlider;
+</script>
+
+<!-- =========================================================================
+     ZONE B — DrakonIconPalette (4 tabs) + LogicStructureSwitcher + Toolbar
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+function DrakonIconPalette({ onInsertIcon, activeSocketType }) {
+  const [tab, setTab] = useState('flow');
+  const shown = DRAKON_ICONS.filter(i => i.tab === tab);
+
+  return (
+    <div className="bg-panel border-b border-subtle shrink-0 select-none">
+      {/* Tabs */}
+      <div className="h-8 px-2 flex items-center gap-2 border-b border-subtle">
+        <span className="text-[10px] font-mono uppercase tracking-widest text-amber/80 font-bold">
+          DRAKON Toolbox
+        </span>
+        <div className="inline-flex bg-canvas border border-subtle rounded p-0.5">
+          {DRAKON_TABS.map(({ id, label, icon }) => {
+            const Icon = Icons[icon];
+            const isActive = tab === id;
+            const accent = id === 'system' ? '#06b6d4' : '#f59e0b';
+            return (
+              <button
+                key={id}
+                onClick={() => setTab(id)}
+                className={`inline-flex items-center gap-1.5 px-2.5 h-6 rounded text-[11px] font-mono transition-all ${
+                  isActive ? 'bg-card font-bold' : 'text-slate-400 hover:text-slate-200'
+                }`}
+                style={isActive ? { boxShadow: `inset 0 -2px 0 ${accent}`, color: accent } : undefined}
+                role="tab" aria-selected={isActive}
+              >
+                <Icon />
+                {label}
+              </button>
+            );
+          })}
+        </div>
+        <span className="ml-auto text-[10px] font-mono text-slate-500">
+          {shown.length} фігур · [{tab}]
+        </span>
+      </div>
+
+      {/* Icon rail */}
+      <div className="h-10 px-2 flex items-center gap-1 overflow-x-auto">
+        {shown.map(icon => {
+          const isActive = activeSocketType === icon.id;
+          return (
+            <button
+              key={icon.id}
+              onClick={() => onInsertIcon(icon.id)}
+              title={icon.name}
+              className={`shrink-0 inline-flex items-center gap-1.5 px-2 h-7 rounded border text-[11px] font-mono transition-all ${
+                isActive ? 'bg-amber text-slate-950 border-amber font-bold shadow-sm'
+                         : 'bg-card hover:bg-[#1a2233] text-slate-200 border-subtle hover:border-slate-600'
+              }`}
+            >
+              <span className={`w-4 h-4 inline-flex items-center justify-center rounded-sm text-[12px] ${
+                isActive ? 'text-slate-950' : (icon.tab === 'system' ? 'text-cyan' : 'text-amber')
+              }`}>{icon.glyph}</span>
+              {icon.name}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function LogicStructureSwitcher({ value, onChange }) {
+  const isLogic = value === 'logic';
+  const isStructure = value === 'structure';
+  return (
+    <div role="tablist" className="inline-flex items-center bg-canvas border border-subtle rounded p-0.5 text-xs font-mono select-none">
+      <button role="tab" aria-selected={isLogic} onClick={() => onChange('logic')}
+        className={`inline-flex items-center gap-1.5 px-3 h-7 rounded transition-all ${
+          isLogic ? 'bg-card text-amber font-bold' : 'text-slate-400 hover:text-slate-200'
+        }`}
+        style={isLogic ? { boxShadow: 'inset 0 -2px 0 #f59e0b' } : undefined}>
+        <Icons.Workflow />
+        Логіка
+        <span className="text-[10px] opacity-70 font-normal">(Flow)</span>
+      </button>
+      <button role="tab" aria-selected={isStructure} onClick={() => onChange('structure')}
+        className={`inline-flex items-center gap-1.5 px-3 h-7 rounded transition-all ${
+          isStructure ? 'bg-card text-cyan font-bold' : 'text-slate-400 hover:text-slate-200'
+        }`}
+        style={isStructure ? { boxShadow: 'inset 0 -2px 0 #06b6d4' } : undefined}>
+        <Icons.LayoutGrid />
+        Структура
+        <span className="text-[10px] opacity-70 font-normal">(Structure)</span>
+      </button>
+    </div>
+  );
+}
+
+function DrakonToolbar({ diagramName, schemaMode, onSchemaModeChange, onOpenAdrLibrary }) {
+  return (
+    <div className="h-10 bg-card/90 border-b border-subtle px-3 flex items-center justify-between shrink-0 text-xs">
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="font-semibold text-slate-200 font-mono text-[11px] truncate max-w-[220px]">
+          {diagramName}
+        </span>
+        <LogicStructureSwitcher value={schemaMode} onChange={onSchemaModeChange} />
+        <span className="hidden md:inline-flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald/40 text-emerald bg-emerald/10">
+          <Icons.CheckCircle size={11}/>
+          Planar · 0 Crossings
+        </span>
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <button className="w-7 h-7 rounded hover:bg-[#1a2233] text-slate-400 hover:text-slate-100 inline-flex items-center justify-center">
+          <Icons.Undo2 />
+        </button>
+        <button className="w-7 h-7 rounded hover:bg-[#1a2233] text-slate-400 hover:text-slate-100 inline-flex items-center justify-center">
+          <Icons.Redo2 />
+        </button>
+        <div className="w-px h-4 bg-subtle mx-1" />
+        <button className="w-7 h-7 rounded hover:bg-[#1a2233] text-slate-400 hover:text-slate-100 inline-flex items-center justify-center" title="Zoom out">
+          <Icons.ZoomOut />
+        </button>
+        <button className="w-7 h-7 rounded hover:bg-[#1a2233] text-slate-400 hover:text-slate-100 inline-flex items-center justify-center" title="Zoom in">
+          <Icons.ZoomIn />
+        </button>
+        <button className="w-7 h-7 rounded hover:bg-[#1a2233] text-slate-400 hover:text-slate-100 inline-flex items-center justify-center" title="Home">
+          <Icons.Home />
+        </button>
+        <div className="w-px h-4 bg-subtle mx-1" />
+        <button
+          onClick={onOpenAdrLibrary}
+          className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-200 text-xs font-mono transition-colors"
+          title="Відкрити бібліотеку ADR">
+          <Icons.BookOpen />
+          ADR Library
+        </button>
+        <button className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded bg-emerald hover:bg-emerald/90 text-slate-950 text-xs font-mono font-bold shadow-sm">
+          <Icons.Save />
+          Зберегти
+        </button>
+      </div>
+    </div>
+  );
+}
+
+window.DrakonIconPalette = DrakonIconPalette;
+window.DrakonToolbar = DrakonToolbar;
+</script>
+
+<!-- =========================================================================
+     Drakon Canvas mock (renders MOCK_NODES; clicking a node → NodeInspector)
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+function DrakonCanvasMock({ schemaMode, nodes, onSelectNode, selectedNodeId }) {
+  // Positions computed to visualise "shampur"
+  const layout = {
+    n1: { x: 220, y: 40 },
+    n2: { x: 220, y: 140 },
+    n3: { x: 220, y: 240 },
+    n4: { x: 220, y: 360 },
+    n5: { x: 400, y: 240 },
+    n6: { x: 310, y: 460 },
+  };
+
+  const shape = (t) => t === 'question' ? 'rhomb' : t === 'end' ? 'pill' : t === 'headline' ? 'header' : 'rect';
+
+  const renderNode = (n) => {
+    const p = layout[n.node_id];
+    const isSel = selectedNodeId === n.node_id;
+    const w = shape(n.node_type) === 'header' ? 260 : 200;
+    const h = shape(n.node_type) === 'rhomb' ? 90 : 56;
+    return (
+      <g key={n.node_id} onClick={() => onSelectNode(n)} style={{ cursor: 'pointer' }}>
+        {shape(n.node_type) === 'rhomb' ? (
+          <polygon points={`${p.x},${p.y - h/2} ${p.x + w/2},${p.y} ${p.x},${p.y + h/2} ${p.x - w/2},${p.y}`}
+            fill={isSel ? '#f59e0b22' : '#141b27'}
+            stroke={isSel ? '#f59e0b' : '#1e293b'} strokeWidth={isSel ? 2 : 1.2} />
+        ) : (
+          <rect
+            x={p.x - w/2} y={p.y - h/2} width={w} height={h}
+            rx={shape(n.node_type) === 'pill' ? h/2 : 6}
+            fill={shape(n.node_type) === 'header' ? '#0d121c' : (isSel ? '#141b27' : '#141b27')}
+            stroke={isSel ? '#f59e0b' : (shape(n.node_type) === 'header' ? '#f59e0b55' : '#1e293b')}
+            strokeWidth={isSel ? 2 : 1.2}
+          />
+        )}
+        <text x={p.x} y={p.y + 4} textAnchor="middle"
+              fontFamily="JetBrains Mono" fontSize="11"
+              fill={shape(n.node_type) === 'header' ? '#f59e0b' : '#e2e8f0'}
+              style={{ pointerEvents: 'none' }}>
+          {n.label.length > 32 ? n.label.slice(0, 30) + '…' : n.label}
+        </text>
+        {n.semantic_binding && (
+          <g style={{ pointerEvents: 'none' }}>
+            <rect x={p.x + w/2 - 46} y={p.y - h/2 + 4} width={42} height={14} rx={2}
+                  fill="#f59e0b22" stroke="#f59e0b55" />
+            <text x={p.x + w/2 - 25} y={p.y - h/2 + 14} textAnchor="middle"
+                  fontFamily="JetBrains Mono" fontSize="9" fill="#f59e0b">INV</text>
+          </g>
+        )}
+      </g>
+    );
+  };
+
+  const renderEdge = (from, to, label, color = '#334155') => {
+    const a = layout[from], b = layout[to];
+    if (!a || !b) return null;
+    return (
+      <g key={`${from}->${to}`}>
+        <path d={`M ${a.x} ${a.y + 28} L ${b.x} ${b.y - 28}`}
+              stroke={color} strokeWidth="1.5" fill="none" markerEnd="url(#arrow)" />
+        {label && (
+          <text x={(a.x + b.x) / 2 + 8} y={(a.y + b.y) / 2}
+                fontFamily="JetBrains Mono" fontSize="10" fill={color}>{label}</text>
+        )}
+      </g>
+    );
+  };
+
+  return (
+    <div className="flex-1 relative overflow-hidden bg-canvas">
+      {/* dot grid */}
+      <div className="absolute inset-0 grid-bg opacity-70" aria-hidden />
+      {schemaMode === 'structure' && (
+        <div className="absolute top-3 left-3 text-[10px] font-mono uppercase tracking-widest text-cyan/80 px-2 py-1 rounded bg-cyan/10 border border-cyan/30">
+          Structure mode — читання дерева фаз
+        </div>
+      )}
+      {schemaMode === 'logic' && (
+        <div className="absolute top-3 left-3 text-[10px] font-mono uppercase tracking-widest text-amber/80 px-2 py-1 rounded bg-amber/10 border border-amber/30">
+          Logic mode — редагування шампура
+        </div>
+      )}
+
+      <svg viewBox="0 0 620 520" className="w-full h-full">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L6,3 z" fill="#64748b" />
+          </marker>
+        </defs>
+        {renderEdge('n1', 'n2')}
+        {renderEdge('n2', 'n3')}
+        {renderEdge('n3', 'n4', 'Так', '#10b981')}
+        {renderEdge('n3', 'n5', 'Ні (worse)', '#f43f5e')}
+        {renderEdge('n4', 'n6')}
+        {renderEdge('n5', 'n6')}
+        {nodes.map(renderNode)}
+      </svg>
+
+      <div className="absolute bottom-3 right-3 flex items-center gap-1.5 text-[10px] font-mono text-slate-500">
+        <span className="inline-flex items-center gap-1"><span className="w-2 h-2 bg-emerald rounded-sm"/>Так</span>
+        <span className="inline-flex items-center gap-1"><span className="w-2 h-2 bg-rose rounded-sm"/>Ні · worse</span>
+      </div>
+    </div>
+  );
+}
+window.DrakonCanvasMock = DrakonCanvasMock;
+</script>
+
+<!-- =========================================================================
+     Node Inspector Modal
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+function NodeInspectorModal({ node, allNodes, adrs, onClose, onUpdateNode, onDeleteNode }) {
+  const [label, setLabel] = useState('');
+  const [nodeType, setNodeType] = useState('action');
+  const [downEdge, setDownEdge] = useState('');
+  const [rightEdge, setRightEdge] = useState('');
+  const [invariantId, setInvariantId] = useState('');
+  const [severity, setSeverity] = useState('normal');
+  const [routing, setRouting] = useState('one');
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (!node) return;
+    setLabel(node.label || '');
+    setNodeType(node.node_type || 'action');
+    setDownEdge(node.edges?.down || '');
+    setRightEdge(node.edges?.right || '');
+    setInvariantId(node.semantic_binding?.adr_invariant_id || '');
+    setSeverity(node.semantic_binding?.severity || 'normal');
+    setRouting(node.edges?.right ? 'two' : 'one');
+    setIsSaved(false);
+  }, [node]);
+
+  useEffect(() => {
+    if (nodeType === 'question' && routing === 'one') setRouting('two');
+  }, [nodeType]);
+
+  if (!node) return null;
+
+  const otherNodes = allNodes.filter(n => n.node_id !== node.node_id);
+  const availableInvariants = adrs.flatMap(a => (a.invariants || []).map(inv => ({
+    id: inv.id, adrId: a.id, title: inv.statement,
+  })));
+
+  const handleSave = () => {
+    onUpdateNode({
+      ...node,
+      label,
+      node_type: nodeType,
+      edges: { down: downEdge || null, right: routing === 'two' ? rightEdge || null : null },
+      semantic_binding: invariantId ? { adr_invariant_id: invariantId, severity } : undefined,
+    });
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 1500);
+  };
+
+  const NODE_TYPES = [
+    { value: 'action',   label: 'action',   hint: 'Дія' },
+    { value: 'question', label: 'question', hint: 'Умова ТАК/НІ' },
+    { value: 'headline', label: 'headline', hint: 'Заголовок' },
+    { value: 'address',  label: 'address',  hint: 'Маршрут / силует' },
+    { value: 'end',      label: 'end',      hint: 'Кінець' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div className="w-full max-w-2xl bg-card border border-subtle rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <header className="flex items-center justify-between px-4 py-3 bg-panel border-b border-subtle shrink-0">
+          <div className="flex items-center gap-2">
+            <Icons.FileCode className="text-amber" />
+            <span className="font-mono font-bold text-slate-100 text-sm">Редактор вузла DRAKON</span>
+            <span className="font-mono text-[10px] text-amber px-1.5 py-0.5 rounded bg-amber/10 border border-amber/30">
+              #{node.node_id}
+            </span>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-100 p-1 rounded hover:bg-[#1a2233]">
+            <Icons.X />
+          </button>
+        </header>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="col-span-2">
+              <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">Назва вузла</label>
+              <input value={label} onChange={e => setLabel(e.target.value)}
+                placeholder="Опишіть дію або запитання…"
+                className="w-full h-8 bg-canvas border border-subtle rounded px-2.5 text-slate-100 font-sans text-xs focus:border-amber focus:outline-none focus:ring-1 focus:ring-amber/30"/>
+            </div>
+            <div>
+              <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">Тип</label>
+              <select value={nodeType} onChange={e => setNodeType(e.target.value)}
+                className="w-full h-8 bg-canvas border border-subtle rounded px-2 text-slate-100 font-mono text-xs focus:border-amber focus:outline-none">
+                {NODE_TYPES.map(t => (
+                  <option key={t.value} value={t.value}>{t.label} — {t.hint}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">Детальний текст / Інструкція</label>
+            <textarea value={label} onChange={e => setLabel(e.target.value)} rows={3}
+              className="w-full bg-canvas border border-subtle rounded p-2.5 text-slate-100 font-sans text-xs focus:border-amber focus:outline-none resize-none leading-relaxed"/>
+          </div>
+
+          <div className="rounded border border-subtle bg-panel p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold">Маршрутизація</span>
+              <div className="inline-flex bg-canvas border border-subtle rounded p-0.5">
+                {['one','two'].map(r => (
+                  <button key={r} disabled={nodeType === 'question' && r === 'one'}
+                    onClick={() => setRouting(r)}
+                    className={`px-2.5 h-6 rounded text-[10px] font-mono transition-all ${
+                      routing === r ? 'bg-card text-amber font-bold' : 'text-slate-400 hover:text-slate-200 disabled:opacity-40'
+                    }`}>
+                    {r === 'one' ? '1 — Down' : '2 — Down + Right'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              <div>
+                <label className="text-[11px] font-mono text-emerald flex items-center gap-1 mb-1">
+                  <Icons.ArrowDown size={12}/>
+                  {nodeType === 'question' ? 'ТАК (Down):' : 'Down:'}
+                </label>
+                <select value={downEdge} onChange={e => setDownEdge(e.target.value)}
+                  className="w-full h-7 bg-canvas border border-subtle rounded px-2 text-slate-200 font-mono text-[11px] focus:border-amber focus:outline-none">
+                  <option value="">— кінець гілки —</option>
+                  {otherNodes.map(n => (
+                    <option key={n.node_id} value={n.node_id}>[{n.node_type}] #{n.node_id} — {(n.label||'').slice(0,28)}</option>
+                  ))}
+                </select>
+              </div>
+              <div className={routing === 'one' ? 'opacity-40 pointer-events-none' : ''}>
+                <label className="text-[11px] font-mono text-rose flex items-center gap-1 mb-1">
+                  <Icons.CornerDownRight size={12}/>
+                  {nodeType === 'question' ? 'НІ (Right):' : 'Right:'}
+                </label>
+                <select value={rightEdge} onChange={e => setRightEdge(e.target.value)}
+                  className="w-full h-7 bg-canvas border border-subtle rounded px-2 text-slate-200 font-mono text-[11px] focus:border-amber focus:outline-none">
+                  <option value="">— немає розгалуження —</option>
+                  {otherNodes.map(n => (
+                    <option key={n.node_id} value={n.node_id}>[{n.node_type}] #{n.node_id} — {(n.label||'').slice(0,28)}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <p className="text-[10px] text-slate-500 font-mono mt-2">
+              Правило «Right is Worse»: права гілка веде до обробки помилки або відкату.
+            </p>
+          </div>
+
+          <div className="rounded border border-subtle bg-panel p-3">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-amber mb-2">
+              <Icons.Shield />
+              Прив'язка до інваріанту ADR
+            </div>
+            <div className="grid grid-cols-3 gap-2.5">
+              <div className="col-span-2">
+                <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">adr_invariant_id</label>
+                <select value={invariantId} onChange={e => setInvariantId(e.target.value)}
+                  className="w-full h-7 bg-canvas border border-subtle rounded px-2 text-slate-200 font-mono text-[11px] focus:border-amber focus:outline-none">
+                  <option value="">— без прив'язки —</option>
+                  {availableInvariants.map(inv => (
+                    <option key={inv.id} value={inv.id}>{inv.id} · {inv.title.slice(0,40)}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">Severity</label>
+                <div className="flex gap-1">
+                  {['normal','severe','fatal'].map(s => {
+                    const isActive = severity === s;
+                    const tone = s === 'fatal'
+                      ? 'bg-rose/20 text-rose border-rose/50'
+                      : s === 'severe'
+                        ? 'bg-amber/20 text-amber border-amber/50'
+                        : 'bg-emerald/20 text-emerald border-emerald/50';
+                    return (
+                      <button key={s} type="button" onClick={() => setSeverity(s)}
+                        disabled={!invariantId}
+                        className={`flex-1 h-7 rounded border text-[10px] font-mono uppercase transition-colors ${
+                          isActive ? tone : 'bg-canvas text-slate-500 border-subtle hover:text-slate-300 disabled:opacity-40'
+                        }`}>
+                        {s.slice(0,3)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer className="flex items-center justify-between px-4 py-3 bg-panel border-t border-subtle shrink-0">
+          <button onClick={() => onDeleteNode(node.node_id)}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded border border-rose/50 bg-rose/10 text-rose hover:bg-rose/20 text-xs font-mono font-semibold transition-colors">
+            <Icons.Trash2 />
+            Видалити
+          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={onClose}
+              className="h-8 px-3 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-300 text-xs font-mono transition-colors">
+              Скасувати
+            </button>
+            <button onClick={handleSave}
+              className="inline-flex items-center gap-1.5 h-8 px-4 rounded bg-emerald hover:bg-emerald/90 text-slate-950 text-xs font-mono font-bold shadow-sm">
+              {isSaved ? <Icons.Check/> : <Icons.Save/>}
+              {isSaved ? 'Збережено' : 'Застосувати зміни'}
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
+}
+window.NodeInspectorModal = NodeInspectorModal;
+</script>
+
+<!-- =========================================================================
+     ADR Library Modal — Reader + Editor + Amend
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+function AdrLibraryModal({ isOpen, onClose, adrs, onSaveAdr, onCreateAdr }) {
+  const [q, setQ] = useState('');
+  const [selectedId, setSelectedId] = useState(adrs[0]?.id || '');
+  const [mode, setMode] = useState('read');
+  const [draft, setDraft] = useState(null);
+  const [copiedInv, setCopiedInv] = useState(null);
+
+  if (!isOpen) return null;
+
+  const filtered = adrs.filter(a =>
+    a.title.toLowerCase().includes(q.toLowerCase()) ||
+    a.id.toLowerCase().includes(q.toLowerCase()) ||
+    (a.content || '').toLowerCase().includes(q.toLowerCase()),
+  );
+
+  const current = filtered.find(a => a.id === selectedId) || filtered[0] || adrs[0] || null;
+
+  const emptyDraft = (nextId) => ({
+    id: nextId, title: '', status: 'proposed',
+    date: new Date().toISOString().slice(0,10),
+    valid_from: new Date().toISOString(),
+    invariants: [],
+    content: `# ${nextId} — <TITLE>\n\n## Context\n\n## Decision\n\n## Consequences\n\n## Invariants\n`,
+  });
+
+  const startNew = () => {
+    const nextNum = String(adrs.length + 1).padStart(3, '0');
+    setDraft(emptyDraft(`ADR-${nextNum}`));
+    setMode('edit');
+  };
+  const startEdit = () => {
+    if (!current) return;
+    setDraft({ ...current });
+    setMode('edit');
+  };
+  const startAmend = () => {
+    if (!current) return;
+    const nextNum = String(adrs.length + 1).padStart(3, '0');
+    setDraft({
+      ...emptyDraft(`ADR-${nextNum}`),
+      title: `${current.title} (Amended)`,
+      content: `# ADR-${nextNum} — ${current.title} (Amended)\n\n> Supersedes **${current.id}**.\n\n## Context\n\n## Decision\n\n## Consequences\n\n## Invariants\n`,
+    });
+    setMode('edit');
+  };
+  const commit = (publish) => {
+    if (!draft) return;
+    const finalAdr = { ...draft, status: publish ? 'accepted' : 'proposed' };
+    if (adrs.some(a => a.id === draft.id)) onSaveAdr?.(finalAdr);
+    else onCreateAdr?.(finalAdr);
+    setMode('read');
+    setDraft(null);
+    setSelectedId(finalAdr.id);
+  };
+  const copyInv = (id) => {
+    navigator.clipboard?.writeText(id);
+    setCopiedInv(id);
+    setTimeout(() => setCopiedInv(null), 1500);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+      <div className="w-full max-w-6xl bg-card border border-subtle rounded-lg shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-subtle bg-panel shrink-0">
+          <div className="flex items-center gap-2.5">
+            <Icons.BookOpen className="text-emerald"/>
+            <div>
+              <div className="text-sm font-bold text-slate-100 font-mono">
+                Бібліотека Архітектурних Рішень · MADR 3.0
+              </div>
+              <span className="text-[11px] text-slate-400 font-mono">
+                {adrs.length} документів · Reader + Editor + Amend
+              </span>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-1 rounded text-slate-400 hover:text-slate-100 hover:bg-[#1a2233]">
+            <Icons.X />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 flex overflow-hidden" style={{ minHeight: 520 }}>
+          {/* LEFT LIST */}
+          <aside className="w-80 shrink-0 border-r border-subtle bg-panel/60 flex flex-col">
+            <div className="p-3 border-b border-subtle space-y-2">
+              <div className="relative">
+                <span className="absolute left-2.5 top-2 text-slate-400"><Icons.Search size={12}/></span>
+                <input placeholder="Пошук ADR або INV…" value={q} onChange={e => setQ(e.target.value)}
+                  className="w-full h-8 bg-canvas border border-subtle rounded pl-8 pr-3 text-xs text-slate-200 placeholder-slate-500 font-mono focus:border-amber focus:outline-none"/>
+              </div>
+              <button onClick={startNew}
+                className="w-full h-8 inline-flex items-center justify-center gap-1.5 rounded bg-amber hover:bg-amber/90 text-slate-950 text-xs font-mono font-bold shadow-sm">
+                <Icons.Plus /> Новий ADR
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
+              {filtered.map(adr => {
+                const isSel = adr.id === current?.id;
+                const tone = adr.status === 'accepted' ? 'emerald' : adr.status === 'superseded' ? 'neutral' : 'cyan';
+                const toneCls = {
+                  emerald: 'text-emerald border-emerald/40 bg-emerald/10',
+                  neutral: 'text-slate-400 border-slate-700 bg-slate-900/40',
+                  cyan: 'text-cyan border-cyan/40 bg-cyan/10',
+                }[tone];
+                return (
+                  <button key={adr.id}
+                    onClick={() => { setSelectedId(adr.id); setMode('read'); setDraft(null); }}
+                    className={`w-full text-left p-2.5 rounded border text-xs transition-all ${
+                      isSel ? 'bg-[#1a2233] border-amber/60' : 'bg-card/60 border-subtle hover:bg-[#1a2233] hover:border-slate-600'
+                    }`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-mono font-bold text-amber">{adr.id}</span>
+                      <span className={`text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border ${toneCls}`}>
+                        {adr.status}
+                      </span>
+                    </div>
+                    <h4 className="font-medium text-slate-200 line-clamp-2 text-[11px]">{adr.title}</h4>
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 mt-2 font-mono">
+                      <span>{adr.invariants.length} INV</span>
+                      <span className="tabular-nums">{adr.date}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          {/* RIGHT: reader OR editor */}
+          <div className="flex-1 flex flex-col bg-canvas overflow-hidden">
+            {current && mode === 'read' && (
+              <>
+                <div className="px-5 py-3 bg-panel border-b border-subtle flex items-center justify-between shrink-0">
+                  <div className="space-y-0.5 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-amber/40 text-amber bg-amber/10">{current.id}</span>
+                      <span className="text-xs font-bold text-slate-100 font-mono truncate">{current.title}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-[10px] text-slate-500 font-mono">
+                      {current.file_path && <code>{current.file_path}</code>}
+                      <span className="flex items-center gap-1"><Icons.Calendar size={11} className="text-amber"/>{current.date}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button onClick={startEdit}
+                      className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-200 text-xs font-mono">
+                      <Icons.Pencil /> Редагувати
+                    </button>
+                    <button onClick={startAmend}
+                      className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded border border-violet/40 bg-violet/10 hover:bg-violet/20 text-violet text-xs font-mono font-bold"
+                      title="Створити ADR що замінює цей (superseded_by)">
+                      <Icons.GitBranch /> Amend
+                    </button>
+                  </div>
+                </div>
+
+                {current.invariants?.length > 0 && (
+                  <div className="px-5 py-2 bg-panel/80 border-b border-subtle flex items-center gap-2 overflow-x-auto text-[11px] font-mono shrink-0">
+                    <span className="text-amber font-semibold flex items-center gap-1 shrink-0"><Icons.Shield /> Інваріанти:</span>
+                    {current.invariants.map(inv => (
+                      <div key={inv.id} className="px-2 py-0.5 rounded bg-card border border-subtle text-slate-300 flex items-center gap-1.5 shrink-0">
+                        <span className="text-amber font-bold">{inv.id}</span>
+                        <button onClick={() => copyInv(inv.id)} className="hover:text-slate-100" title="Копіювати">
+                          {copiedInv === inv.id ? <Icons.Check className="text-emerald"/> : <Icons.Copy className="text-slate-500"/>}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex-1 overflow-y-auto p-6 font-mono text-[13px] leading-relaxed bg-canvas text-slate-200 whitespace-pre-wrap">
+                  {current.content || <div className="text-slate-500 text-center p-8">Немає тіла документа.</div>}
+                </div>
+              </>
+            )}
+
+            {mode === 'edit' && draft && (
+              <>
+                <div className="px-5 py-3 bg-panel border-b border-subtle flex items-center justify-between shrink-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-cyan/40 text-cyan bg-cyan/10">{draft.id}</span>
+                    <span className="text-xs font-bold text-slate-100 font-mono">Editor · MADR 3.0</span>
+                    <span className="text-[10px] text-slate-500 font-mono">{draft.status}</span>
+                  </div>
+                  <button onClick={() => { setMode('read'); setDraft(null); }}
+                    className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-300 text-xs font-mono">
+                    <Icons.Eye /> Read Mode
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="col-span-2">
+                      <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">Title</label>
+                      <input value={draft.title} onChange={e => setDraft({...draft, title: e.target.value})}
+                        placeholder="Коротке декларативне рішення…"
+                        className="w-full h-8 bg-canvas border border-subtle rounded px-2.5 text-slate-100 text-sm font-sans focus:border-amber focus:outline-none"/>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">Status</label>
+                      <select value={draft.status} onChange={e => setDraft({...draft, status: e.target.value})}
+                        className="w-full h-8 bg-canvas border border-subtle rounded px-2 text-slate-100 font-mono text-xs focus:border-amber focus:outline-none">
+                        <option value="proposed">proposed</option>
+                        <option value="accepted">accepted</option>
+                        <option value="deprecated">deprecated</option>
+                        <option value="superseded">superseded</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-mono uppercase text-slate-400 block mb-1">MADR body (Markdown)</label>
+                    <textarea value={draft.content} rows={14}
+                      onChange={e => setDraft({...draft, content: e.target.value})}
+                      className="w-full bg-canvas border border-subtle rounded p-3 text-slate-200 font-mono text-[12px] leading-relaxed focus:border-amber focus:outline-none resize-y"/>
+                    <p className="text-[10px] text-slate-500 font-mono mt-1">
+                      Sections: <span className="text-amber">Context</span> · <span className="text-amber">Decision</span> · <span className="text-amber">Consequences</span> · <span className="text-amber">Invariants</span>
+                    </p>
+                  </div>
+
+                  <div className="rounded border border-subtle bg-panel p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-mono uppercase text-slate-400 font-semibold flex items-center gap-1.5">
+                        <Icons.Shield className="text-amber"/>
+                        Інваріанти ({(draft.invariants || []).length})
+                      </span>
+                      <button onClick={() => {
+                        const nextNum = String((draft.invariants?.length || 0) + 1).padStart(2, '0');
+                        setDraft({ ...draft, invariants: [...(draft.invariants || []), { id: `INV-NEW-${nextNum}`, statement: '' }]});
+                      }}
+                        className="inline-flex items-center gap-1 h-6 px-2 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-300 text-[11px] font-mono">
+                        <Icons.ShieldPlus className="text-emerald"/>+ INV
+                      </button>
+                    </div>
+                    <div className="space-y-1.5">
+                      {(draft.invariants || []).map((inv, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <input value={inv.id}
+                            onChange={e => { const next = [...draft.invariants]; next[idx] = {...next[idx], id: e.target.value}; setDraft({...draft, invariants: next}); }}
+                            className="w-32 h-7 bg-canvas border border-subtle rounded px-2 text-amber font-mono text-[11px] focus:border-amber focus:outline-none"/>
+                          <input value={inv.statement}
+                            onChange={e => { const next = [...draft.invariants]; next[idx] = {...next[idx], statement: e.target.value}; setDraft({...draft, invariants: next}); }}
+                            placeholder="Формулювання інваріанту…"
+                            className="flex-1 h-7 bg-canvas border border-subtle rounded px-2 text-slate-200 text-[11px] focus:border-amber focus:outline-none"/>
+                          <button onClick={() => setDraft({ ...draft, invariants: draft.invariants.filter((_,i) => i !== idx) })}
+                            className="w-7 h-7 rounded border border-subtle text-slate-500 hover:text-rose hover:border-rose/40 flex items-center justify-center">
+                            <Icons.Trash2 />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <footer className="flex items-center justify-between px-5 py-3 bg-panel border-t border-subtle shrink-0">
+                  <button onClick={() => { setMode('read'); setDraft(null); }}
+                    className="h-8 px-3 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-300 text-xs font-mono">
+                    Скасувати
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => commit(false)}
+                      className="inline-flex items-center gap-1.5 h-8 px-3 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-200 text-xs font-mono">
+                      <Icons.Save /> Save Draft
+                    </button>
+                    <button onClick={() => commit(true)}
+                      className="inline-flex items-center gap-1.5 h-8 px-4 rounded bg-emerald hover:bg-emerald/90 text-slate-950 text-xs font-mono font-bold shadow-sm">
+                      <Icons.Check /> Publish (accepted)
+                    </button>
+                  </div>
+                </footer>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+window.AdrLibraryModal = AdrLibraryModal;
+</script>
+
+<!-- =========================================================================
+     Top bar (Zone A) + Left rail (Zone C) + right copilot (Zone E) — light mocks
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+function TopBar({ onOpenAdrLibrary }) {
+  return (
+    <header className="h-11 bg-panel border-b border-subtle px-3 flex items-center justify-between shrink-0">
+      <div className="flex items-center gap-3">
+        <button className="w-7 h-7 rounded hover:bg-[#1a2233] text-slate-400 hover:text-slate-100 inline-flex items-center justify-center">
+          <Icons.MenuIco />
+        </button>
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded bg-amber/20 border border-amber/40 flex items-center justify-center">
+            <span className="font-mono text-amber font-bold text-[11px]">B</span>
+          </span>
+          <span className="font-mono font-bold text-slate-100 text-sm">B-SDD</span>
+          <span className="text-slate-500 font-mono text-[11px]">/ Workbench</span>
+        </div>
+        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-emerald/40 text-emerald bg-emerald/10">
+          maxfraieho/b-sdd · main
+        </span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <button onClick={onOpenAdrLibrary}
+          className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded border border-subtle bg-card hover:bg-[#1a2233] text-slate-200 text-xs font-mono">
+          <Icons.BookOpen /> ADR Library
+        </button>
+        <button className="w-7 h-7 rounded hover:bg-[#1a2233] text-slate-400 hover:text-slate-100 inline-flex items-center justify-center">
+          <Icons.Bell />
+        </button>
+        <div className="w-7 h-7 rounded bg-cyan/20 border border-cyan/40 flex items-center justify-center text-cyan font-mono font-bold text-[11px]">MF</div>
+      </div>
+    </header>
+  );
+}
+
+function LeftRail() {
+  const items = [
+    { id: 'phase', label: 'Phase', Icon: Icons.Layers },
+    { id: 'drakon', label: 'DRAKON', Icon: Icons.GitBranch, active: true },
+    { id: 'code', label: 'Code', Icon: Icons.Code2 },
+    { id: 'tests', label: 'Tests', Icon: Icons.CheckCircle },
+    { id: 'telemetry', label: 'Telemetry', Icon: Icons.Cpu },
+    { id: 'copilot', label: 'Copilot', Icon: Icons.Bot },
+    { id: 'team', label: 'Team', Icon: Icons.Users },
+    { id: 'term', label: 'Terminal', Icon: Icons.Terminal },
+  ];
+  return (
+    <nav className="w-14 bg-panel border-r border-subtle flex flex-col items-center py-2 gap-1 shrink-0">
+      {items.map(({ id, label, Icon, active }) => (
+        <button key={id}
+          className={`w-10 h-10 rounded flex flex-col items-center justify-center gap-0.5 text-[9px] font-mono transition-colors ${
+            active
+              ? 'bg-amber/15 text-amber border border-amber/40'
+              : 'text-slate-400 hover:text-slate-100 hover:bg-[#1a2233]'
+          }`}
+          title={label}>
+          <Icon size={16}/>
+          <span>{label}</span>
+        </button>
+      ))}
+    </nav>
+  );
+}
+
+function CopilotPanel() {
+  return (
+    <aside className="w-72 bg-panel border-l border-subtle flex flex-col shrink-0">
+      <div className="h-10 border-b border-subtle px-3 flex items-center gap-2">
+        <Icons.Bot className="text-cyan"/>
+        <span className="font-mono font-bold text-slate-100 text-sm">Copilot</span>
+        <span className="ml-auto text-[10px] font-mono text-slate-500">Zone E</span>
+      </div>
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 text-xs">
+        <div className="p-2.5 rounded border border-cyan/30 bg-cyan/5">
+          <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase text-cyan mb-1">
+            <Icons.Sparkles size={11}/> Contextual Suggestion
+          </div>
+          <p className="text-slate-200 leading-relaxed">
+            Вузол <code className="text-amber">#n3</code> прив'язаний до <code className="text-amber">INV-DK-01</code>.
+            Права гілка веде до <code className="text-rose">Reject</code> — коректно за правилом «Right is Worse».
+          </p>
+        </div>
+        <div className="p-2.5 rounded border border-subtle bg-card">
+          <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase text-slate-400 mb-1">
+            <Icons.CheckCircle size={11}/> Pre-flight
+          </div>
+          <ul className="text-slate-300 space-y-0.5 text-[11px] font-mono">
+            <li>• Planarity check: <span className="text-emerald">PASS</span></li>
+            <li>• Context budget: <span className="text-emerald">312 / 500 w</span></li>
+            <li>• INV coverage: <span className="text-emerald">4 / 4</span></li>
+          </ul>
+        </div>
+        <div className="p-2.5 rounded border border-subtle bg-card">
+          <div className="text-[10px] font-mono uppercase text-slate-400 mb-1">Останні події</div>
+          <ul className="text-slate-300 space-y-1 text-[11px] font-mono">
+            <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 bg-emerald rounded-full"/>ADR-008 accepted</li>
+            <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 bg-amber rounded-full"/>Sprint 011 compiled</li>
+            <li className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 bg-cyan rounded-full"/>Utopia sync OK</li>
+          </ul>
+        </div>
+      </div>
+      <div className="p-2.5 border-t border-subtle">
+        <input placeholder="Ask copilot…" className="w-full h-8 bg-canvas border border-subtle rounded px-2.5 text-xs font-mono text-slate-200 placeholder-slate-500 focus:border-cyan focus:outline-none"/>
+      </div>
+    </aside>
+  );
+}
+window.TopBar = TopBar;
+window.LeftRail = LeftRail;
+window.CopilotPanel = CopilotPanel;
+</script>
+
+<!-- =========================================================================
+     Root App
+     ========================================================================= -->
+<script type="text/babel" data-presets="react">
+function App() {
+  const [validTimeDay, setValidTimeDay] = useState(17);
+  const [txTimeDay, setTxTimeDay] = useState(17);
+  const [adrs, setAdrs] = useState(MOCK_ADRS);
+  const [selectedAdrId, setSelectedAdrId] = useState('ADR-008');
+  const [nodes, setNodes] = useState(MOCK_NODES);
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [schemaMode, setSchemaMode] = useState('logic');
+  const [adrLibraryOpen, setAdrLibraryOpen] = useState(false);
+  const [activeSocketType, setActiveSocketType] = useState(null);
+
+  const activeAdrCount = useMemo(() => adrs.filter(a => {
+    const startDay = parseInt(a.date.split('-')[2], 10);
+    const endDay = a.valid_to ? parseInt(a.valid_to.split('T')[0].split('-')[2], 10) : null;
+    return startDay <= validTimeDay && (endDay === null || validTimeDay < endDay);
+  }).length, [adrs, validTimeDay]);
+  const supersededCount = adrs.filter(a => a.status === 'superseded').length;
+
+  const updateNode = (n) => {
+    setNodes(prev => prev.map(x => x.node_id === n.node_id ? n : x));
+    setSelectedNode(null);
+  };
+  const deleteNode = (id) => {
+    setNodes(prev => prev.filter(x => x.node_id !== id));
+    setSelectedNode(null);
+  };
+
+  return (
+    <div className="h-screen w-screen flex flex-col bg-canvas text-slate-100 overflow-hidden select-none font-sans">
+      <TopBar onOpenAdrLibrary={() => setAdrLibraryOpen(true)} />
+
+      <div className="flex-1 flex overflow-hidden">
+        <LeftRail />
+
+        <main className="flex-1 flex flex-col overflow-hidden">
+          {/* Zone B: Toolbar + Palette */}
+          <DrakonToolbar
+            diagramName="bsdd_preflight_pipeline.drakon.json"
+            schemaMode={schemaMode}
+            onSchemaModeChange={setSchemaMode}
+            onOpenAdrLibrary={() => setAdrLibraryOpen(true)}
+          />
+          <DrakonIconPalette
+            onInsertIcon={(t) => setActiveSocketType(prev => prev === t ? null : t)}
+            activeSocketType={activeSocketType}
+          />
+
+          {/* Zone B: Canvas */}
+          <DrakonCanvasMock
+            schemaMode={schemaMode}
+            nodes={nodes}
+            onSelectNode={setSelectedNode}
+            selectedNodeId={selectedNode?.node_id}
+          />
+
+          {/* Zone D: Bitemporal Timeline */}
+          <TimelineSlider
+            validTimeDay={validTimeDay}
+            onValidTimeChange={setValidTimeDay}
+            txTimeDay={txTimeDay}
+            onTxTimeChange={setTxTimeDay}
+            adrs={adrs}
+            activeAdrCount={activeAdrCount}
+            supersededCount={supersededCount}
+            onSelectAdr={(a) => { setSelectedAdrId(a.id); setAdrLibraryOpen(true); }}
+            selectedAdrId={selectedAdrId}
+          />
+        </main>
+
+        <CopilotPanel />
+      </div>
+
+      {/* Modals */}
+      <NodeInspectorModal
+        node={selectedNode}
+        allNodes={nodes}
+        adrs={adrs}
+        onClose={() => setSelectedNode(null)}
+        onUpdateNode={updateNode}
+        onDeleteNode={deleteNode}
+      />
+      <AdrLibraryModal
+        isOpen={adrLibraryOpen}
+        onClose={() => setAdrLibraryOpen(false)}
+        adrs={adrs}
+        onSaveAdr={(a) => setAdrs(prev => prev.map(x => x.id === a.id ? a : x))}
+        onCreateAdr={(a) => setAdrs(prev => [...prev, a])}
+      />
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+</body>
+</html>

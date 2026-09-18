@@ -8,9 +8,10 @@ import { DrakonToolbar, type SaveState, type DrakonViewMode } from '@/components
 import { DrakonIconPalette } from '@/components/DrakonStudio/DrakonIconPalette';
 import { PseudocodeModal } from '@/components/DrakonStudio/PseudocodeModal';
 import { VisualFlowCanvas } from '@/components/DrakonStudio/VisualFlowCanvas';
-import { NodeInspectorModal } from '@/components/DrakonStudio/NodeInspectorModal';
+import { NodeInspector } from '@/components/DrakonStudio/NodeInspector';
 import { CopilotStream } from '@/components/CopilotPanel/CopilotStream';
 import { TimelineSlider } from '@/components/BitemporalRadar/TimelineSlider';
+import { AdrListCard } from '@/components/BitemporalRadar/AdrListCard';
 import { InvariantDrawer } from '@/components/InvariantDrawer';
 import { TasksDrawer } from '@/components/TasksPanel/TasksDrawer';
 import { AdrLibraryModal } from '@/components/AdrLibraryModal';
@@ -209,7 +210,6 @@ export const App: React.FC = () => {
   // DRAKON Studio State — default to full 'widget' editor
   const canvasRef = useRef<DrakonCanvasHandle>(null);
   const [drakonViewMode, setDrakonViewMode] = useState<DrakonViewMode>('widget');
-  const [schemaMode, setSchemaMode] = useState<'logic' | 'structure'>('logic');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>('cond_phi6');
   const [drakonNodes, setDrakonNodes] = useState<DrakonNodeIR[]>(CANONICAL_HITL_DRAKON_IR.nodes);
   const [activeSocketType, setActiveSocketType] = useState<string | null>(null);
@@ -546,15 +546,21 @@ export const App: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Interactive Node Editor / Inspector Modal */}
+                  {/* Interactive Node Editor / Inspector */}
                   {selectedNodeIR && (
-                    <NodeInspectorModal
+                    <NodeInspector
                       node={selectedNodeIR}
                       allNodes={drakonNodes}
                       adrs={effectiveAdrs}
                       onClose={() => setSelectedNodeId(null)}
                       onUpdateNode={handleUpdateNode}
                       onDeleteNode={handleDeleteNode}
+                      onOpenInvariantDetails={(invId) => {
+                        const matchingAdr = effectiveAdrs.find((a) =>
+                          a.invariants?.some((inv) => inv.id === invId),
+                        );
+                        if (matchingAdr) setSelectedAdr(matchingAdr);
+                      }}
                     />
                   )}
                 </div>
@@ -636,8 +642,6 @@ export const App: React.FC = () => {
                 viewMode={drakonViewMode}
                 onViewModeChange={setDrakonViewMode}
                 onAddNode={handleAddNode}
-                schemaMode={schemaMode}
-                onSchemaModeChange={setSchemaMode}
               />
 
               {/* Icon Palette when in DrakonWidget view */}
@@ -675,15 +679,21 @@ export const App: React.FC = () => {
                   )}
                 </AstryxZoneBoundary>
 
-                {/* Interactive Node Editor / Inspector Modal */}
+                {/* Interactive Node Editor / Inspector */}
                 {selectedNodeIR && (
-                  <NodeInspectorModal
+                  <NodeInspector
                     node={selectedNodeIR}
                     allNodes={drakonNodes}
                     adrs={effectiveAdrs}
                     onClose={() => setSelectedNodeId(null)}
                     onUpdateNode={handleUpdateNode}
                     onDeleteNode={handleDeleteNode}
+                    onOpenInvariantDetails={(invId) => {
+                      const matchingAdr = effectiveAdrs.find((a) =>
+                        a.invariants?.some((inv) => inv.id === invId),
+                      );
+                      if (matchingAdr) setSelectedAdr(matchingAdr);
+                    }}
                   />
                 )}
               </div>
@@ -700,19 +710,26 @@ export const App: React.FC = () => {
             </section>
           </main>
 
-          {/* 4. BOTTOM DUAL-AXIS BITEMPORAL RADAR (Zone D: 168px) */}
-          <TimelineSlider
-            validTimeDay={validTimeDay}
-            onValidTimeChange={setValidTimeDay}
-            txTimeDay={txTimeDay}
-            onTxTimeChange={setTxTimeDay}
-            adrs={effectiveAdrs}
-            activeAdrCount={effectiveAdrs.filter((a) => a.status === 'accepted').length}
-            supersededCount={effectiveAdrs.filter((a) => a.status === 'superseded').length}
-            onSelectAdr={(adr) => setSelectedAdr(adr)}
-            selectedAdrId={selectedAdr?.id}
-            maxDay={17}
-          />
+          {/* 4. BOTTOM DUAL-AXIS BITEMPORAL RADAR (110px) */}
+          <footer className="h-28 bg-card border-t border-border-subtle flex shrink-0 select-none overflow-hidden">
+            <TimelineSlider
+              validTimeDay={validTimeDay}
+              onValidTimeChange={setValidTimeDay}
+              txTimeDay={txTimeDay}
+              onTxTimeChange={setTxTimeDay}
+              activeAdrCount={effectiveAdrs.length}
+              supersededCount={effectiveAdrs.filter((a) => a.status === 'superseded').length}
+            />
+
+            <AdrListCard
+              adrs={effectiveAdrs}
+              validTimeDay={validTimeDay}
+              onSelectAdr={(adr) => {
+                setSelectedAdr(adr);
+              }}
+              selectedAdrId={selectedAdr?.id}
+            />
+          </footer>
         </>
       )}
 

@@ -61,8 +61,11 @@ export const MobileRadarView: React.FC<MobileRadarViewProps> = ({
           onValidTimeChange={onValidTimeChange}
           txTimeDay={txTimeDay}
           onTxTimeChange={onTxTimeChange}
+          adrs={adrs}
           activeAdrCount={activeAdrs.length}
           supersededCount={supersededAdrs.length}
+          onSelectAdr={onSelectAdr}
+          selectedAdrId={selectedAdrId}
         />
       </div>
 

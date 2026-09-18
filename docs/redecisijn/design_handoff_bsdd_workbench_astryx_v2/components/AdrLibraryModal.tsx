@@ -35,7 +35,6 @@ interface AdrLibraryModalProps {
   onCreateAdr?: (draft: Partial<BitemporalAdr>) => void;
   onSaveAdr?: (adr: BitemporalAdr) => void;
   onAmendAdr?: (base: BitemporalAdr, amended: Partial<BitemporalAdr>) => void;
-  onSelectAdrForInspect?: (adr: BitemporalAdr) => void;
 }
 
 const emptyDraft = (nextId: string): Partial<BitemporalAdr> => ({

@@ -19,11 +19,9 @@ import {
   Redo2,
 } from 'lucide-react';
 import { Button, IconButton, Badge, Segmented } from '@/components/astryx/primitives';
-import { LogicStructureSwitcher, DrakonSchemaMode } from './LogicStructureSwitcher';
 
 export type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 export type DrakonViewMode = 'widget' | 'flow' | 'json';
-export type { DrakonSchemaMode };
 
 interface DrakonToolbarProps {
   onZoomIn: () => void;
@@ -40,8 +38,6 @@ interface DrakonToolbarProps {
   viewMode: DrakonViewMode;
   onViewModeChange: (mode: DrakonViewMode) => void;
   onAddNode?: (type: 'action' | 'question' | 'end') => void;
-  schemaMode?: DrakonSchemaMode;
-  onSchemaModeChange?: (mode: DrakonSchemaMode) => void;
 }
 
 export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
@@ -59,8 +55,6 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
   viewMode,
   onViewModeChange,
   onAddNode,
-  schemaMode = 'logic',
-  onSchemaModeChange,
 }) => {
   const saveIcon =
     saveState === 'saving' ? (
@@ -82,7 +76,7 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
 
   const saveLabel =
     saveState === 'saving'
-      ? 'Saving...'
+      ? 'Saving…'
       : saveState === 'saved'
         ? 'Saved'
         : saveState === 'error'
@@ -96,13 +90,6 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
         <span className="font-semibold text-slate-200 font-mono text-[11px] truncate max-w-[120px] md:max-w-[180px]">
           {diagramName}
         </span>
-
-        {onSchemaModeChange && (
-          <LogicStructureSwitcher
-            value={schemaMode}
-            onChange={onSchemaModeChange}
-          />
-        )}
 
         {/* View Mode Toggle */}
         <Segmented
