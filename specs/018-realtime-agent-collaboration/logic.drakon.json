@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 018: Sovereign Realtime Agent Collaboration & Distributed Multi-Host Synchronization",
+  "category": "bsdd_pipeline",
+  "description": "Пайплайн розподіленої координації мульти-агентів у суверенному кластері з бітемпоральними лізами та SSE-пульсом",
+  "params": "cluster_sync_enabled: bool, bitemporal_lease_active: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 018 (Realtime Agent Collaboration)",
+      "edges": { "down": "step_discover_cluster_nodes", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-010", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_discover_cluster_nodes",
+      "node_type": "action",
+      "label": "Виявлення суверенних вузлів кластера (.161, .184, .251)",
+      "edges": { "down": "step_broadcast_sse_heartbeat", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "step_broadcast_sse_heartbeat",
+      "node_type": "action",
+      "label": "Трансляція SSE-пульсу присутності агентів у реальному часі",
+      "edges": { "down": "cond_lease_available", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-014", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "cond_lease_available",
+      "node_type": "question",
+      "label": "Цільовий воркспейс вільний від блокувань інших агентів?",
+      "edges": { "down": "step_acquire_bitemporal_lease", "right": "step_wait_or_yield" },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_wait_or_yield",
+      "node_type": "action",
+      "label": "Оптимістичне очікування або арбітраж черги блокувань",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007", "severity": "normal" },
+      "x": 4.0, "y": 6.0
+    },
+    {
+      "node_id": "step_acquire_bitemporal_lease",
+      "node_type": "action",
+      "label": "Реєстрація розподіленої лізи з мітками Tx/Tv у Utopia DB",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_airgap_ed25519_proof",
+      "node_type": "action",
+      "label": "Офлайн-генерація Ed25519 сертифіката для review gate Φ6",
+      "edges": { "down": "end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Фініш Спринту 018 (Realtime Multi-Agent Sync Verified)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}
