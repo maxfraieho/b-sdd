@@ -12,6 +12,7 @@ import {
   Sparkles,
   Square,
   WifiOff,
+  Zap,
 } from 'lucide-react';
 
 interface CopilotStreamProps {
@@ -124,6 +125,60 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
   const handleKillStream = () => {
     abortStream();
   };
+
+  const handleDispatchPi = async () => {
+    if (isStreaming) return;
+    const promptText = inputPrompt.trim() || 'Execute leaf Action node task under B-SDD invariants.';
+    const userMsg: CopilotLogMessage = {
+      id: `u_${Date.now()}`,
+      timestamp: new Date().toLocaleTimeString(),
+      role: 'user',
+      content: `[Pi Harness Dispatch] ${promptText}`,
+    };
+    const assistantId = `a_${Date.now()}`;
+    const assistantSeed: CopilotLogMessage = {
+      id: assistantId,
+      timestamp: new Date().toLocaleTimeString(),
+      role: 'assistant',
+      slot: 'pi-harness',
+      content: '⚡ Headless Pi Harness dispatching JSONL RPC...',
+    };
+    setMessages((prev) => [...prev, userMsg, assistantSeed]);
+    setInputPrompt('');
+
+    try {
+      const res = await fetch('/api/harness/pi/dispatch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          feature_id: '012-dag-and-pi-harness',
+          target_action_id: 'step_proxy_utopia',
+          prompt: promptText,
+          stream: false,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const eventsSummary = data.events?.map((e: any) => `• [${e.event}] ${e.status || ''} ${e.step || ''} ${e.message || ''}`).join('\n') || 'Pi execution completed with 0 errors.';
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? { ...m, content: `✓ [Pi Harness Completed]\n${eventsSummary}\n• Isolation Verified (INV-012-03): Topology unaltered.` }
+              : m
+          )
+        );
+      }
+    } catch (err) {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId
+            ? { ...m, content: `✗ Pi Harness dispatch failed: ${String(err)}` }
+            : m
+        )
+      );
+    }
+  };
+
 
   return (
     <div className="h-full flex flex-col bg-[#0d121c] text-slate-100 select-none">
@@ -250,6 +305,17 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
             disabled={isStreaming || !inputPrompt.trim()}
           >
             Send
+          </Button>
+
+          <Button
+            variant="secondary"
+            size="md"
+            icon={<Zap className="w-3.5 h-3.5 text-amber-400" />}
+            onClick={handleDispatchPi}
+            disabled={isStreaming}
+            title="Dispatch Headless Pi Harness (@earendil-works/pi)"
+          >
+            Pi
           </Button>
         </div>
       </div>

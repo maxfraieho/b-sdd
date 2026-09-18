@@ -279,6 +279,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_github_repos()
         elif path == "/api/temporal/timeline":
             self.handle_get_temporal_timeline()
+        elif path == "/api/utopia/graph":
+            self.handle_get_utopia_graph(query)
+        elif path == "/api/realtime/pi-stream":
+            self.handle_get_realtime_pi_stream(query)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -319,6 +323,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_pipelines_load(body)
         elif path == "/api/projects/switch":
             self.handle_post_projects_switch(body)
+        elif path == "/api/harness/pi/dispatch":
+            self.handle_post_pi_dispatch(body)
+        elif path == "/api/projects/ingest":
+            self.handle_post_projects_ingest(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -1316,6 +1324,107 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                 "response": f"Autonomous response synthesized for: {prompt}",
                 "latency_ms": 420.0
             })
+
+    def handle_get_utopia_graph(self, query: Dict[str, List[str]]):
+        """GET /api/utopia/graph: Returns bitemporal DAG filtered by Valid Time Tv (INV-012-04)."""
+        valid_time_str = query.get("valid_time_day", [None])[0] or query.get("tv", [None])[0]
+        tv = None
+        if valid_time_str is not None:
+            try:
+                tv = int(valid_time_str)
+            except (ValueError, TypeError):
+                pass
+
+        try:
+            from src.adapters.utopia_db import UtopiaDBAdapter
+            adapter = UtopiaDBAdapter()
+            graph = adapter.get_bitemporal_graph(valid_time_day=tv)
+            self._send_json({
+                "status": "ok",
+                "valid_time_day": tv,
+                "nodes": graph.get("nodes", []),
+                "edges": graph.get("edges", [])
+            })
+        except Exception as e:
+            self._send_error(f"Failed to fetch Utopia graph: {e}", 500)
+
+    def handle_get_realtime_pi_stream(self, query: Dict[str, List[str]]):
+        """GET /api/realtime/pi-stream: SSE endpoint streaming Pi execution events."""
+        feature_id = query.get("feature_id", ["012-dag-and-pi-harness"])[0]
+        action_id = query.get("action_id", ["step_proxy_utopia"])[0]
+        prompt = query.get("prompt", ["Streaming Pi execution"])[0]
+
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "keep-alive")
+        self._send_cors_headers()
+        self.end_headers()
+
+        from src.adapters.pi_harness import PiHarnessRunner
+        runner = PiHarnessRunner(project_root=ROOT_DIR)
+        for event in runner.dispatch_headless(feature_id, action_id, prompt):
+            self.wfile.write(f"data: {json.dumps(event)}\n\n".encode("utf-8"))
+            self.wfile.flush()
+        self.wfile.write(b"data: [DONE]\n\n")
+        self.wfile.flush()
+
+    def handle_post_pi_dispatch(self, body: Dict[str, Any]):
+        """POST /api/harness/pi/dispatch: Dispatches headless Pi agent execution (INV-012-01..03)."""
+        feature_id = body.get("feature_id", "012-dag-and-pi-harness")
+        target_action_id = body.get("target_action_id", "step_action")
+        prompt = body.get("prompt", "Execute task under B-SDD invariants.")
+        stream = body.get("stream", False)
+
+        from src.adapters.pi_harness import PiHarnessRunner
+        runner = PiHarnessRunner(project_root=ROOT_DIR)
+
+        if stream:
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Connection", "keep-alive")
+            self._send_cors_headers()
+            self.end_headers()
+
+            for event in runner.dispatch_headless(feature_id, target_action_id, prompt):
+                self.wfile.write(f"data: {json.dumps(event)}\n\n".encode("utf-8"))
+                self.wfile.flush()
+            self.wfile.write(b"data: [DONE]\n\n")
+            self.wfile.flush()
+        else:
+            events = list(runner.dispatch_headless(feature_id, target_action_id, prompt))
+            self._send_json({
+                "status": "ok",
+                "feature_id": feature_id,
+                "target_action_id": target_action_id,
+                "events": events
+            })
+
+    def handle_post_projects_ingest(self, body: Dict[str, Any]):
+        """POST /api/projects/ingest: Brownfield AST analysis and MADR 3.0 bootstrapping (INV-012-05)."""
+        files = body.get("files", [])
+        component = body.get("component", "core")
+        title = body.get("title", f"Automated Foundation Intent for {component}")
+
+        from src.adapters.gitnexus_graph import BrownfieldIngestionEngine
+        engine = BrownfieldIngestionEngine(project_root=ROOT_DIR)
+
+        if not files:
+            src_dir = ROOT_DIR / "src"
+            if src_dir.exists():
+                files = [str(p.relative_to(ROOT_DIR)) for p in src_dir.rglob("*.py")]
+
+        analysis = engine.analyze_ast_components(files)
+        detected_modules = analysis.get("components", {}).get(component, files[:5] if files else [])
+        madr = engine.generate_bootstrap_madr(component=component, title=title, detected_modules=detected_modules)
+
+        self._send_json({
+            "status": "ok",
+            "component": component,
+            "analysis": analysis,
+            "madr": madr
+        })
 
 
 class WorkbenchServer:

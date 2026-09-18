@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 012: Utopia DB DAG & Headless Pi Harness Pipeline",
+  "category": "bsdd_pipeline",
+  "description": "Оркестрація бітемпорального графа Utopia DB, ізольованого Pi Harness та двоконтурного аналізу GitNexus",
+  "params": "utopia_online: bool, pi_dispatch_ready: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 012 (Utopia DAG & Pi Harness)",
+      "edges": { "down": "step_proxy_utopia", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_proxy_utopia",
+      "node_type": "action",
+      "label": "Запит та фільтрація графа GET /api/utopia/graph за часом Tv",
+      "edges": { "down": "cond_utopia_ok", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-04", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_utopia_ok",
+      "node_type": "question",
+      "label": "Utopia DB доступна та повернула ребра графа?",
+      "edges": { "down": "step_generate_pi_context", "right": "step_fallback_mock_dag" },
+      "semantic_binding": { "adr_invariant_id": "INV-012-04", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_fallback_mock_dag",
+      "node_type": "action",
+      "label": "Активація локального детермінованого зрізу графа Utopia",
+      "edges": { "down": "step_generate_pi_context", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-04", "severity": "warning" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_generate_pi_context",
+      "node_type": "action",
+      "label": "Генерація стислого AGENTS.md (<500 слів) для Pi Harness",
+      "edges": { "down": "step_dispatch_pi_action", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-01", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_dispatch_pi_action",
+      "node_type": "action",
+      "label": "Headless RPC запуск Pi для реалізації Action-вузла через JSONL",
+      "edges": { "down": "cond_leaf_isolated", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-03", "severity": "critical" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "cond_leaf_isolated",
+      "node_type": "question",
+      "label": "Pi реалізував Action без порушення схеми ДРАКОН (C=0)?",
+      "edges": { "down": "step_ingest_ast_analysis", "right": "step_reject_pi_mutation" },
+      "semantic_binding": { "adr_invariant_id": "INV-012-03", "severity": "critical" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "step_reject_pi_mutation",
+      "node_type": "action",
+      "label": "Відхилення змін Pi та ізоляція мутації топології",
+      "edges": { "down": "step_ingest_ast_analysis", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-03", "severity": "critical" },
+      "x": 4.0, "y": 10.0
+    },
+    {
+      "node_id": "step_ingest_ast_analysis",
+      "node_type": "action",
+      "label": "Двоконтурний аналіз GitNexus та генерація початкових MADR 3.0",
+      "edges": { "down": "step_run_fitness_gates", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-05", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    },
+    {
+      "node_id": "step_run_fitness_gates",
+      "node_type": "action",
+      "label": "Запуск тестів (pytest tests/test_sprint_012_dag_and_pi.py)",
+      "edges": { "down": "end_sprint_012", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "critical" },
+      "x": 0.0, "y": 14.0
+    },
+    {
+      "node_id": "end_sprint_012",
+      "node_type": "end",
+      "label": "Спринт 012 успішно завершено: DAG та Pi Harness готові",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007", "severity": "normal" },
+      "x": 0.0, "y": 16.0
+    }
+  ]
+}

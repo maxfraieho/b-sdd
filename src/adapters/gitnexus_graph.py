@@ -6,7 +6,7 @@ Operates using 100% Pure Python Standard Library.
 """
 import sqlite3
 from pathlib import Path
-from typing import Set, Iterable
+from typing import Set, Iterable, Optional, Dict, List, Any
 
 
 class GitNexusDomainResolver:
@@ -107,3 +107,127 @@ class GitNexusDomainResolver:
             pass
 
         return impacted
+
+
+class BrownfieldIngestionEngine:
+    """Dual-contour ingestion engine using AST analysis and MADR 3.0 bootstrapping (INV-012-05)."""
+
+    def __init__(self, project_root: Optional[Path] = None):
+        self.project_root = Path(project_root).resolve() if project_root else Path.cwd().resolve()
+
+    def analyze_ast_components(self, files: List[str]) -> Dict[str, Any]:
+        """
+        Extracts structural components, classes, and call hierarchies from source files using ast.
+        Categorizes modules into bounded domains/components.
+        """
+        import ast
+
+        components: Dict[str, List[str]] = {}
+        ast_details: Dict[str, Dict[str, Any]] = {}
+
+        for rel_path in files:
+            p = Path(rel_path)
+            parts = p.parts
+            
+            # Determine component name
+            comp = "general"
+            if "src" in parts:
+                idx = parts.index("src")
+                if idx + 1 < len(parts):
+                    comp = parts[idx + 1]
+            elif "specs" in parts:
+                idx = parts.index("specs")
+                if idx + 1 < len(parts):
+                    comp = parts[idx + 1]
+            elif len(parts) > 1:
+                comp = parts[0]
+
+            if comp not in components:
+                components[comp] = []
+            components[comp].append(rel_path)
+
+            full_path = self.project_root / rel_path
+            classes = []
+            functions = []
+            imports = []
+
+            if full_path.exists():
+                try:
+                    tree = ast.parse(full_path.read_text(encoding="utf-8"), filename=rel_path)
+                    for node in ast.walk(tree):
+                        if isinstance(node, ast.ClassDef):
+                            classes.append(node.name)
+                        elif isinstance(node, ast.FunctionDef):
+                            functions.append(node.name)
+                        elif isinstance(node, ast.Import):
+                            for alias in node.names:
+                                imports.append(alias.name)
+                        elif isinstance(node, ast.ImportFrom):
+                            if node.module:
+                                imports.append(node.module)
+                except Exception:
+                    pass
+
+            ast_details[rel_path] = {
+                "classes": classes,
+                "functions": functions,
+                "imports": imports
+            }
+
+        return {
+            "components": components,
+            "ast_details": ast_details
+        }
+
+    def generate_bootstrap_madr(
+        self,
+        component: str,
+        title: str,
+        detected_modules: List[str]
+    ) -> str:
+        """
+        Synthesizes standard MADR 3.0 foundation intent record from detected components.
+        Conforms strictly to ADR-001 / ADR-013 format with positive/negative consequences and invariants.
+        """
+        modules_list = "\n".join([f"- `{m}`" for m in detected_modules])
+        
+        return f"""# ADR-900: {title}
+
+* **Status:** Proposed
+* **Date:** 2026-09-18
+* **Component:** {component}
+* **Supersedes:** None
+
+## Context and Problem Statement
+Brownfield ingestion discovered subsystem `{component}` comprising active implementation modules.
+The architecture lacks formal intent bounding under B-SDD bitemporal horizon.
+Modules identified during AST graph ingestion:
+{modules_list}
+
+## Decision Drivers
+* Formalize structural boundaries and public API contracts for `{component}`.
+* Prevent undocumented dependency drift and architectural regressions.
+* Enable automated fitness gates (ADR-005) and pre-flight compilation (ADR-002).
+
+## Considered Options
+1. Retain legacy unversioned structure without bitemporal tracking.
+2. Refactor entire subsystem immediately without intent baseline.
+3. Establish bootstrap MADR 3.0 baseline with bounded leaf actions (Chosen).
+
+## Decision Outcome
+Chosen option: **Option 3: Establish bootstrap MADR 3.0 baseline**.
+Formalize `{component}` as a bounded architectural domain with verified AST interfaces.
+
+## Consequences
+### Positive
+* Subsystem `{component}` is integrated into the Utopia DB bitemporal graph.
+* Changes undergo pre-flight compilation and GitNexus impact routing.
+
+### Negative
+* Requires maintaining explicit invariants for subsequent refactors.
+
+## Invariants
+- INV-{component.upper()}-01: Public exports from `{component}` must adhere to pure Python standard library runtime boundaries.
+- INV-{component.upper()}-02: Modifications require corresponding DRAKON planar flow updates (ADR-008).
+"""
+

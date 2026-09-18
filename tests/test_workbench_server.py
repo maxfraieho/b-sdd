@@ -165,3 +165,49 @@ def test_server_utopia_sync_endpoint(server):
         assert "synced_at" in data
 
 
+def test_server_utopia_graph_endpoint(server):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/utopia/graph?valid_time_day=12"
+    with urllib.request.urlopen(url) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert data["status"] == "ok"
+        assert "nodes" in data
+        assert "edges" in data
+        assert data["valid_time_day"] == 12
+
+
+def test_server_pi_dispatch_endpoint(server):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/harness/pi/dispatch"
+    payload = json.dumps({
+        "feature_id": "012-dag-and-pi-harness",
+        "target_action_id": "step_test_action",
+        "prompt": "Test dispatch headless Pi execution",
+        "stream": False
+    }).encode("utf-8")
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert data["status"] == "ok"
+        assert data["target_action_id"] == "step_test_action"
+        assert len(data["events"]) > 0
+
+
+def test_server_projects_ingest_endpoint(server):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/projects/ingest"
+    payload = json.dumps({
+        "files": ["src/core/compiler.py", "src/server/workbench_server.py"],
+        "component": "core",
+        "title": "Automated Core Intent"
+    }).encode("utf-8")
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert data["status"] == "ok"
+        assert "analysis" in data
+        assert "madr" in data
+        assert "# ADR-" in data["madr"]
+
+
+

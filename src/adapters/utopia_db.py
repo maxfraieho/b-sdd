@@ -429,3 +429,120 @@ class UtopiaDBAdapter:
             "entities": adr_count + len(skills_meta),
             "facts": facts_count
         }
+
+    def filter_dag_by_time(self, raw_graph: Dict[str, Any], valid_time_day: Optional[int] = None) -> Dict[str, Any]:
+        """
+        Filters bitemporal DAG nodes and edges by Valid Time day (Tv).
+        Prunes future nodes (valid_from > valid_time_day).
+        Updates superseded status for nodes active at valid_time_day (valid_to > valid_time_day)
+        or superseded at valid_time_day (valid_to <= valid_time_day).
+        """
+        if valid_time_day is None:
+            return raw_graph
+
+        filtered_nodes = []
+        retained_ids = set()
+
+        for node in raw_graph.get("nodes", []):
+            node_copy = dict(node)
+            v_from = node_copy.get("valid_from")
+            v_to = node_copy.get("valid_to")
+
+            # Prune future decisions
+            if v_from is not None:
+                try:
+                    if float(v_from) > float(valid_time_day):
+                        continue
+                except (ValueError, TypeError):
+                    pass
+
+            # Update status based on valid_to vs valid_time_day
+            if v_to is not None:
+                try:
+                    if float(valid_time_day) >= float(v_to):
+                        node_copy["status"] = "superseded"
+                    else:
+                        # If node was superseded later, at valid_time_day it was active
+                        if node_copy.get("status") == "superseded":
+                            node_copy["status"] = "accepted"
+                except (ValueError, TypeError):
+                    pass
+
+            filtered_nodes.append(node_copy)
+            retained_ids.add(node_copy["id"])
+
+        filtered_edges = [
+            e for e in raw_graph.get("edges", [])
+            if e.get("source") in retained_ids and e.get("target") in retained_ids
+        ]
+
+        return {
+            "nodes": filtered_nodes,
+            "edges": filtered_edges
+        }
+
+    def get_bitemporal_graph(self, valid_time_day: Optional[int] = None) -> Dict[str, Any]:
+        """
+        Returns full bitemporal graph from Utopia DB or local ADR fallback,
+        optionally filtered by valid_time_day.
+        """
+        adr_dir = Path(__file__).resolve().parent.parent.parent / "docs" / "adr"
+        nodes = []
+        edges = []
+
+        if adr_dir.exists():
+            for f in sorted(adr_dir.glob("*.md")):
+                try:
+                    txt = f.read_text(encoding="utf-8")
+                    lines = txt.splitlines()
+                    title = f.stem
+                    status = "accepted"
+                    supersedes = []
+                    valid_from = 1
+                    valid_to = None
+
+                    import re
+                    m_title = re.search(r"^#\s+(?:ADR-\d+:\s*)?([^\n\r]+)", txt, re.M)
+                    if m_title:
+                        title = m_title.group(1).strip()
+                    m_status = re.search(r"^\*\s*\*\*Status:\*\*\s*(\w+)", txt, re.M)
+                    if m_status:
+                        status = m_status.group(1).lower()
+                    m_super = re.search(r"^\*\s*\*\*Supersedes:\*\*\s*([^\n\r]+)", txt, re.M)
+                    if m_super:
+                        raw_super = m_super.group(1).strip()
+                        if raw_super.lower() != "none":
+                            supersedes = re.findall(r"ADR-\d+", raw_super, re.I)
+
+                    # Extract ID
+                    m_id = re.search(r"^(ADR-\d+)", f.name)
+                    adr_id = m_id.group(1).upper() if m_id else f.stem.upper()
+
+                    # Extract day from ADR number or date
+                    m_num = re.search(r"ADR-0*(\d+)", adr_id)
+                    num_val = int(m_num.group(1)) if m_num else 1
+                    valid_from = num_val
+
+                    if status == "superseded":
+                        valid_to = valid_from + 2
+
+                    nodes.append({
+                        "id": adr_id,
+                        "title": title,
+                        "valid_from": valid_from,
+                        "valid_to": valid_to,
+                        "status": status
+                    })
+
+                    for sup in supersedes:
+                        edges.append({
+                            "source": adr_id,
+                            "target": sup.upper(),
+                            "type": "supersedes"
+                        })
+                except Exception as ex:
+                    logger.warning(f"Error parsing {f.name}: {ex}")
+
+        raw_graph = {"nodes": nodes, "edges": edges}
+        return self.filter_dag_by_time(raw_graph, valid_time_day)
+

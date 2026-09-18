@@ -9,6 +9,7 @@
 import React from 'react';
 import type { BitemporalAdr } from '@/types/adr';
 import { AdrTimelineCard } from './AdrListCard';
+import { UtopiaDagCanvas } from './UtopiaDagCanvas';
 import {
   Calendar,
   History,
@@ -47,6 +48,7 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
   maxDay,
 }) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
+  const [viewMode, setViewMode] = React.useState<'cards' | 'dag'>('cards');
   const maxLimit = maxDay ?? 17;
   const minLimit = minDay;
   const railRef = React.useRef<HTMLDivElement | null>(null);
@@ -81,18 +83,34 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
       {/* LEFT COLUMN — фіксована ширина, без переносу, границя праворуч       */}
       {/* ================================================================== */}
       <aside className="w-64 flex-shrink-0 border-r border-[#1e293b] bg-[#0d121c] p-3 flex flex-col gap-2">
-        {/* Header — bitemporal label + лічильники */}
+        {/* Header — bitemporal label + лічильники + перемикач Cards / DAG */}
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-mono uppercase tracking-widest text-[#f59e0b] font-bold">
             Bitemporal Lens
           </span>
-          <div className="flex items-center gap-1.5 text-[10px] font-mono">
-            <span className="flex items-center gap-1 text-[#10b981]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
-              {activeAdrCount}
-            </span>
-            <span className="text-slate-600">·</span>
-            <span className="text-slate-500">{supersededCount} sup.</span>
+          <div className="flex items-center bg-[#141b27] p-0.5 rounded border border-[#1e293b]">
+            <button
+              onClick={() => setViewMode('cards')}
+              className={`px-1.5 py-0.5 rounded text-[9px] font-mono transition-colors ${
+                viewMode === 'cards'
+                  ? 'bg-[#3b82f6] text-white font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Cards Rail View"
+            >
+              Cards
+            </button>
+            <button
+              onClick={() => setViewMode('dag')}
+              className={`px-1.5 py-0.5 rounded text-[9px] font-mono transition-colors ${
+                viewMode === 'dag'
+                  ? 'bg-[#f59e0b] text-slate-900 font-bold'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Utopia DB DAG View"
+            >
+              DAG
+            </button>
           </div>
         </div>
 
@@ -191,51 +209,60 @@ export const TimelineSlider: React.FC<TimelineSliderProps> = ({
       </aside>
 
       {/* ================================================================== */}
-      {/* RIGHT COLUMN — flex-1 min-w-0, горизонтальний скрол                  */}
+      {/* RIGHT COLUMN — flex-1 min-w-0, Cards Rail OR Utopia DAG Canvas    */}
       {/* ================================================================== */}
-      <div className="flex-1 min-w-0 relative flex items-center">
-        {/* subtle grid */}
-        <div
-          aria-hidden
-          className="absolute inset-0 pointer-events-none opacity-40"
-          style={{
-            backgroundImage:
-              'linear-gradient(to right, #1e293b 1px, transparent 1px)',
-            backgroundSize: '80px 100%',
-          }}
+      {viewMode === 'dag' ? (
+        <UtopiaDagCanvas
+          validTimeDay={validTimeDay}
+          adrs={adrs}
+          selectedAdrId={selectedAdrId}
+          onSelectAdr={onSelectAdr}
         />
+      ) : (
+        <div className="flex-1 min-w-0 relative flex items-center">
+          {/* subtle grid */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none opacity-40"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, #1e293b 1px, transparent 1px)',
+              backgroundSize: '80px 100%',
+            }}
+          />
 
-        {/* left/right rail nav */}
-        <button
-          onClick={() => scrollRail(-1)}
-          className="absolute left-1 z-10 w-6 h-6 rounded-full bg-[#0d121c]/90 border border-[#1e293b] text-slate-400 hover:text-slate-100 flex items-center justify-center"
-          title="Scroll rail left"
-        >
-          <ChevronLeft className="w-3.5 h-3.5" />
-        </button>
-        <button
-          onClick={() => scrollRail(1)}
-          className="absolute right-1 z-10 w-6 h-6 rounded-full bg-[#0d121c]/90 border border-[#1e293b] text-slate-400 hover:text-slate-100 flex items-center justify-center"
-          title="Scroll rail right"
-        >
-          <ChevronRight className="w-3.5 h-3.5" />
-        </button>
+          {/* left/right rail nav */}
+          <button
+            onClick={() => scrollRail(-1)}
+            className="absolute left-1 z-10 w-6 h-6 rounded-full bg-[#0d121c]/90 border border-[#1e293b] text-slate-400 hover:text-slate-100 flex items-center justify-center"
+            title="Scroll rail left"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => scrollRail(1)}
+            className="absolute right-1 z-10 w-6 h-6 rounded-full bg-[#0d121c]/90 border border-[#1e293b] text-slate-400 hover:text-slate-100 flex items-center justify-center"
+            title="Scroll rail right"
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
 
-        <div
-          ref={railRef}
-          className="flex-1 overflow-x-auto overflow-y-hidden p-3 flex gap-3 items-center min-w-0 scroll-smooth"
-        >
-          {adrs.map((adr) => (
-            <AdrTimelineCard
-              key={adr.id}
-              adr={adr}
-              validTimeDay={validTimeDay}
-              onSelect={onSelectAdr}
-              selected={adr.id === selectedAdrId}
-            />
-          ))}
+          <div
+            ref={railRef}
+            className="flex-1 overflow-x-auto overflow-y-hidden p-3 flex gap-3 items-center min-w-0 scroll-smooth"
+          >
+            {adrs.map((adr) => (
+              <AdrTimelineCard
+                key={adr.id}
+                adr={adr}
+                validTimeDay={validTimeDay}
+                onSelect={onSelectAdr}
+                selected={adr.id === selectedAdrId}
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 };

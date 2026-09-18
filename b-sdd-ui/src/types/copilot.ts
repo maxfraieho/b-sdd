@@ -1,6 +1,6 @@
 // src/types/copilot.ts
 
-export type ModelSlotId = 'agent-proxy' | 'coding-proxy' | 'reasoning-proxy';
+export type ModelSlotId = 'agent-proxy' | 'coding-proxy' | 'reasoning-proxy' | 'pi-harness';
 
 export interface ModelSlot {
   id: ModelSlotId;

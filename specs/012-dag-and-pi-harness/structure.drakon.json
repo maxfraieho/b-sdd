@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 012: Architecture Topology & Communications",
+  "category": "architecture_structure",
+  "description": "Архітектурна топологія зв'язків: b-sdd-ui <-> workbench_server.py <-> Utopia DB (:9922) <-> Pi Harness <-> GitNexus Ingestion",
+  "nodes": [
+    {
+      "node_id": "struct_start",
+      "node_type": "headline",
+      "label": "Топологія зв'язків Спринту 012",
+      "edges": { "down": "node_ui_cockpit", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "node_ui_cockpit",
+      "node_type": "action",
+      "label": "Фронтенд b-sdd-ui (Zone D SVG DAG + Copilot Pi Stream)",
+      "edges": { "down": "node_workbench_server", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-04", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "node_workbench_server",
+      "node_type": "action",
+      "label": "Бекенд workbench_server.py (REST API + SSE Streaming)",
+      "edges": { "down": "node_utopia_db", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "node_utopia_db",
+      "node_type": "action",
+      "label": "Суверенний сервер 192.168.3.251:9922 (Utopia DB Bitemporal DAG)",
+      "edges": { "down": "node_pi_harness", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-04", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "node_pi_harness",
+      "node_type": "action",
+      "label": "Адаптер PiHarnessRunner (Headless JSONL RPC @earendil-works/pi)",
+      "edges": { "down": "node_gitnexus_ingest", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-03", "severity": "critical" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "node_gitnexus_ingest",
+      "node_type": "action",
+      "label": "Двоконтурний Ingestion Engine (AST Аналіз GitNexus)",
+      "edges": { "down": "struct_end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "INV-012-05", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "struct_end",
+      "node_type": "end",
+      "label": "Цілісність топології підтверджено",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}
