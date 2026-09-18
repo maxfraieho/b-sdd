@@ -24,6 +24,17 @@ export interface SymbolCardData {
   dependencies?: string[];
 }
 
+export interface MutationCardData {
+  tx_id: string;
+  operation: string;
+  target_symbol?: string;
+  new_name?: string;
+  cow_branch?: string;
+  mutations_applied: number;
+  files_affected?: Array<{ workspace: string; file: string }>;
+  status: 'committed' | 'rolled_back' | 'dry_run_completed';
+}
+
 export interface CopilotLogMessage {
   id: string;
   timestamp: string;
@@ -32,6 +43,7 @@ export interface CopilotLogMessage {
   slot?: ModelSlotId;
   tokensUsed?: number;
   symbolCard?: SymbolCardData;
+  mutationCard?: MutationCardData;
   critique?: {
     invariantId: string;
     title: string;

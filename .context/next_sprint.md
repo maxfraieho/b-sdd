@@ -1,38 +1,39 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-session-1789752053`
+- **Handoff ID:** `handoff-session-1789753190`
 - **Source Session:** `unspecified`
-- **Timestamp:** `2026-09-18T17:20:53.972287+00:00`
+- **Timestamp:** `2026-09-18T17:39:50.356450+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `main`, commit `43c8e29`
+- **Git Status:** branch `main`, commit `cf92f04`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
 ```
 .context/next_sprint.md
-b-sdd-ui/src/components/BitemporalRadar/UtopiaDagCanvas.tsx
-specs/016-cross-repo-semantic-graph/tasks.md
+b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx
+b-sdd-ui/src/types/copilot.ts
+specs/017-cross-repo-mutation-harness/tasks.md
 src/adapters/gitnexus_graph.py
 src/server/workbench_server.py
-tests/test_sprint_016_semantic_graph.py
+tests/test_sprint_017_mutation_harness.py
 ```
 
 ### Completed Tasks
-- [x] task-100: **TASK-015-4 (Φ4 Background Ingestion):** Implement asynchronous multi-repo ingestion with Utopia DB DAG node mapping.
-- [x] task-101: **TASK-015-5 (Φ4 Copilot Symbol Cards):** Add AST symbol inspection cards and jump-to-source in `CopilotStream.tsx`.
-- [x] task-102: **TASK-015-6 (Φ4 Rule of 2 Lifecycle):** Verify skill crystallization for repeated ingestion workflows.
-- [x] task-103: **TASK-015-7 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile clean `npm run build` in `b-sdd-ui`.
-- [x] task-104: **TASK-015-8 (Φ6 Review Gate):** Verify air-gapped Ed25519 review manifest in `.context/sprint_015_handoff.json`.
-- [x] task-105: **TASK-015-9 (Φ7 Distillation):** Synthesize handoff artifacts and establish next sprint baseline.
-- [x] task-106: **TASK-016-1 (Φ1 Intent Framing):** Finalize SPEC-016 requirements, cross-tenant invariants, and action graph.
-- [x] task-107: **TASK-016-2 (Φ2 Visual Flow):** Model and validate planar DRAKON flow (`specs/016-cross-repo-semantic-graph/logic.drakon.json`).
-- [x] task-108: **TASK-016-3 (Φ3 TDD Harness):** Implement unit and invariant tests in `tests/test_sprint_016_semantic_graph.py`.
 - [x] task-109: **TASK-016-4 (Φ4 Graph Resolver):** Implement cross-repository semantic dependency resolver in `src/adapters/gitnexus_graph.py`.
 - [x] task-110: **TASK-016-5 (Φ4 Server Endpoints):** Wire `POST /api/graph/query` and `GET /api/graph/cross-repo-edges` into `workbench_server.py`.
 - [x] task-111: **TASK-016-6 (Φ4 UI Visualizer):** Wire cross-repo dependency view into Astryx Topology / Radar components.
 - [x] task-112: **TASK-016-7 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile clean `npm run build` in `b-sdd-ui`.
 - [x] task-113: **TASK-016-8 (Φ6 Review Gate):** Verify air-gapped Ed25519 review manifest in `.context/sprint_016_handoff.json`.
 - [x] task-114: **TASK-016-9 (Φ7 Distillation):** Synthesize handoff artifacts and establish next sprint baseline.
+- [x] task-115: **TASK-017-1 (Φ1 Intent Framing):** Finalize SPEC-017 requirements, CoW mutation boundaries, and action graph.
+- [x] task-116: **TASK-017-2 (Φ2 Visual Flow):** Model and validate planar DRAKON flow (`specs/017-cross-repo-mutation-harness/logic.drakon.json`).
+- [x] task-117: **TASK-017-3 (Φ3 TDD Harness):** Implement unit and invariant tests in `tests/test_sprint_017_mutation_harness.py`.
+- [x] task-118: **TASK-017-4 (Φ4 Mutation Engine):** Implement transactional cross-repo mutation manager with git CoW branches in `src/adapters/gitnexus_graph.py`.
+- [x] task-119: **TASK-017-5 (Φ4 Server Endpoints):** Wire `POST /api/mutation/refactor` and `POST /api/mutation/rollback` into `workbench_server.py`.
+- [x] task-120: **TASK-017-6 (Φ4 UI Feedback):** Add refactoring diff preview and transactional rollback trigger in Astryx Workbench.
+- [x] task-121: **TASK-017-7 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile clean `npm run build` in `b-sdd-ui`.
+- [x] task-122: **TASK-017-8 (Φ6 Review Gate):** Verify air-gapped Ed25519 review manifest in `.context/sprint_017_handoff.json`.
+- [x] task-123: **TASK-017-9 (Φ7 Distillation):** Synthesize handoff artifacts and establish next sprint baseline.
 
 ## 2. Active Architectural Constraints
 - [GLOBAL] **Bitemporal Architectural Invariants:** System architecture is governed by declarative Architectural Decision Records (ADRs) with bitemporal valid-time horizons (`valid_from` / `valid_to`) and explicit DAG supersession edges. Superseded decisions are mathematically pruned from agent context. (Ref: .specify/constitution.md)

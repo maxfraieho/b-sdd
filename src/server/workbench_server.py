@@ -359,6 +359,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_ingest_async(body)
         elif path == "/api/graph/query":
             self.handle_post_graph_query(body)
+        elif path == "/api/mutation/refactor":
+            self.handle_post_mutation_refactor(body)
+        elif path == "/api/mutation/rollback":
+            self.handle_post_mutation_rollback(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -1456,6 +1460,17 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
     def handle_post_graph_query(self, body: Dict[str, Any]):
         """POST /api/graph/query: Executes federated graph query across workspaces (INV-016-04)."""
         res = GLOBAL_INGESTION_WORKER.query_graph(body)
+        self._send_json(res)
+
+    def handle_post_mutation_refactor(self, body: Dict[str, Any]):
+        """POST /api/mutation/refactor: Executes atomic cross-repo refactor on CoW branch (INV-017-04)."""
+        res = GLOBAL_INGESTION_WORKER.apply_refactor(body)
+        self._send_json(res)
+
+    def handle_post_mutation_rollback(self, body: Dict[str, Any]):
+        """POST /api/mutation/rollback: Rolls back transactional mutation by tx_id (INV-017-04)."""
+        tx_id = body.get("tx_id", "")
+        res = GLOBAL_INGESTION_WORKER.rollback(tx_id)
         self._send_json(res)
 
     def handle_get_utopia_graph(self, query: Dict[str, List[str]]):

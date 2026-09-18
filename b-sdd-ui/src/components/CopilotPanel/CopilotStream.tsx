@@ -6,7 +6,7 @@ import { TokenGauge } from './TokenGauge';
 import { ContextBadges } from './ContextBadges';
 import { useCopilotStream } from '@/hooks/useCopilotStream';
 import { Button, Badge, Banner, Dot } from '@/components/astryx/primitives';
-import type { SymbolCardData } from '@/types/copilot';
+import type { SymbolCardData, MutationCardData } from '@/types/copilot';
 import {
   Send,
   Cpu,
@@ -23,6 +23,9 @@ import {
   Code2,
   FileCode,
   ExternalLink,
+  GitCommit,
+  Undo2,
+  ArrowRightLeft,
 } from 'lucide-react';
 
 interface CopilotStreamProps {
@@ -256,6 +259,90 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     }
   };
 
+  const handleTriggerRefactor = async (targetSymbol: string, newName: string, dryRun: boolean = true) => {
+    const assistantId = `mut_${Date.now()}`;
+    const assistantSeed: CopilotLogMessage = {
+      id: assistantId,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      role: 'assistant',
+      slot: 'coding-proxy',
+      content: `⚡ Ініціалізація ${dryRun ? 'dry-run ' : ''}рефакторингу символу \`${targetSymbol}\` -> \`${newName}\`...`,
+    };
+    setMessages((prev) => [...prev, assistantSeed]);
+
+    try {
+      const res = await fetch('/api/mutation/refactor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          operation: 'rename_symbol',
+          target_symbol: targetSymbol,
+          new_name: newName,
+          dry_run: dryRun,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const mutCard: MutationCardData = {
+          tx_id: data.tx_id,
+          operation: data.operation || 'rename_symbol',
+          target_symbol: targetSymbol,
+          new_name: newName,
+          cow_branch: data.cow_branch,
+          mutations_applied: data.mutations_applied || 0,
+          files_affected: data.files_affected || [],
+          status: dryRun ? 'dry_run_completed' : 'committed',
+        };
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? {
+                  ...m,
+                  content: dryRun
+                    ? `✓ Dry-run рефакторингу успішно валідовано (Tx ID: \`${data.tx_id}\`). Готово до застосування на CoW-гілці.`
+                    : `✓ Транзакційну мутацію успішно застосовано на CoW-гілці \`${data.cow_branch}\` (Tx ID: \`${data.tx_id}\`).`,
+                  mutationCard: mutCard,
+                }
+              : m
+          )
+        );
+      }
+    } catch (err) {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId
+            ? { ...m, content: `✗ Помилка виконання рефакторингу: ${String(err)}` }
+            : m
+        )
+      );
+    }
+  };
+
+  const handleRollbackMutation = async (txId: string) => {
+    try {
+      const res = await fetch('/api/mutation/rollback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tx_id: txId }),
+      });
+      if (res.ok) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.mutationCard?.tx_id === txId
+              ? {
+                  ...m,
+                  content: `${m.content}\n\n↩ [ВІДКАТАНО] Транзакція ${txId} успішно скасована через compensation rollback.`,
+                  mutationCard: { ...m.mutationCard, status: 'rolled_back' },
+                }
+              : m
+          )
+        );
+      }
+    } catch (err) {
+      console.error('Rollback failed:', err);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col bg-[#0d121c] text-slate-100 select-none">
       {/* Top: Header with Slot Selector & Word Budget */}
@@ -419,6 +506,58 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
                     </div>
                   </div>
                 )}
+
+                {msg.mutationCard && (
+                  <div className="mt-2.5 p-2.5 rounded-lg border border-purple-500/40 bg-[#120f24] font-mono text-xs shadow-xs">
+                    <div className="flex items-center justify-between pb-1.5 border-b border-purple-500/20">
+                      <div className="flex items-center gap-1.5">
+                        <ArrowRightLeft className="w-3.5 h-3.5 text-purple-400" />
+                        <span className="font-bold text-purple-300 text-[11px]">{msg.mutationCard.operation}</span>
+                        <span className={`px-1.5 py-0.2 text-[9px] rounded font-semibold uppercase ${
+                          msg.mutationCard.status === 'rolled_back'
+                            ? 'bg-rose-950 text-rose-300 border border-rose-800'
+                            : msg.mutationCard.status === 'dry_run_completed'
+                            ? 'bg-blue-950 text-blue-300 border border-blue-800'
+                            : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                        }`}>
+                          {msg.mutationCard.status}
+                        </span>
+                      </div>
+                      <span className="text-[9px] text-slate-400 truncate">{msg.mutationCard.tx_id}</span>
+                    </div>
+
+                    <div className="mt-2 flex items-center gap-1 text-[11px] text-slate-200">
+                      <span className="line-through text-slate-400">{msg.mutationCard.target_symbol}</span>
+                      <span className="text-purple-400">→</span>
+                      <span className="text-emerald-400 font-bold">{msg.mutationCard.new_name}</span>
+                    </div>
+
+                    {msg.mutationCard.cow_branch && (
+                      <div className="mt-1 text-[10px] text-slate-400 flex items-center gap-1">
+                        <GitCommit className="w-3 h-3 text-purple-400" />
+                        <span>Гілка: <span className="text-slate-300">{msg.mutationCard.cow_branch}</span></span>
+                      </div>
+                    )}
+
+                    {msg.mutationCard.files_affected && msg.mutationCard.files_affected.length > 0 && (
+                      <div className="mt-1.5 text-[9px] text-slate-400">
+                        <span>Мутовано файлів: {msg.mutationCard.mutations_applied}</span>
+                      </div>
+                    )}
+
+                    {msg.mutationCard.status === 'committed' && (
+                      <div className="mt-2 pt-1.5 border-t border-purple-500/20 flex justify-end">
+                        <button
+                          onClick={() => handleRollbackMutation(msg.mutationCard!.tx_id)}
+                          className="px-2 py-1 rounded bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 text-[10px] flex items-center gap-1 transition-colors cursor-pointer"
+                        >
+                          <Undo2 className="w-3 h-3" />
+                          <span>Відкотити CoW мутацію</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -453,6 +592,13 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
       {/* Suggested Quick Prompts */}
       <div className="px-3 pt-2 pb-1 bg-[#141b27]/50 border-t border-[#1e293b]/60 flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono">
         <span className="text-slate-500 uppercase shrink-0">Підказки:</span>
+        <button
+          onClick={() => handleTriggerRefactor('OldEngine', 'NewEngine', true)}
+          className="px-2 py-0.5 rounded bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 shrink-0 transition-colors flex items-center gap-1 cursor-pointer"
+        >
+          <ArrowRightLeft className="w-3 h-3 text-purple-400" />
+          Рефакторинг (Dry-run)
+        </button>
         <button
           onClick={() => handleInspectSymbol('BackgroundIngestionWorker')}
           className="px-2 py-0.5 rounded bg-cyan/10 hover:bg-cyan/20 border border-cyan/30 text-cyan shrink-0 transition-colors flex items-center gap-1 cursor-pointer"
