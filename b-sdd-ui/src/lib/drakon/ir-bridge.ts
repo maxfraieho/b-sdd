@@ -116,3 +116,105 @@ export function convertDrakonDiagramToIr(
     nodes,
   };
 }
+
+/**
+ * Normalizes a DrakonWidget diagram to eliminate missing nodes, dangling pointers,
+ * invalid types, and prevent runtime rendering crashes (e.g. TypeError: reading 'tail').
+ */
+export function normalizeDrakonDiagram(diagram: DrakonDiagram): DrakonDiagram {
+  if (!diagram) {
+    return {
+      name: 'Empty Schema',
+      access: 'write',
+      items: {
+        b0: { type: 'branch', branchId: 0, content: 'Головна гілка', one: 'end0' },
+        end0: { type: 'end', content: 'Кінець' },
+      },
+    };
+  }
+
+  const rawItems = diagram.items || {};
+  const items: Record<string, DrakonItem> = {};
+
+  // 1. Clone items, strip nulls, normalize node types
+  for (const [id, rawItem] of Object.entries(rawItems)) {
+    if (!rawItem) continue;
+    const item: DrakonItem = { ...rawItem };
+
+    // DrakonWidget reserves 'header' for global title block; canvas flow nodes must be 'action'
+    if (item.type === 'header' || item.type === 'headline') {
+      item.type = 'action';
+    } else if (!item.type) {
+      item.type = 'action';
+    }
+    items[id] = item;
+  }
+
+  // If items empty, create minimal valid diagram
+  if (Object.keys(items).length === 0) {
+    return {
+      ...diagram,
+      access: 'write',
+      items: {
+        b0: { type: 'branch', branchId: 0, content: diagram.name || 'Головна гілка', one: 'end0' },
+        end0: { type: 'end', content: 'Кінець' },
+      },
+    };
+  }
+
+  // 2. Prune dangling links that point to non-existent items
+  for (const [id, item] of Object.entries(items)) {
+    if (item.one && (!items[item.one] || item.one === id)) {
+      item.one = undefined;
+    }
+    if (item.two && (!items[item.two] || item.two === id)) {
+      item.two = undefined;
+    }
+  }
+
+  // 3. Ensure there is an 'end' node in the diagram
+  const hasEndNode = Object.values(items).some((it) => it.type === 'end');
+  let endNodeId = Object.keys(items).find((k) => items[k]?.type === 'end');
+  if (!hasEndNode || !endNodeId) {
+    endNodeId = 'end_terminal';
+    items[endNodeId] = {
+      type: 'end',
+      content: 'Кінець',
+    };
+  }
+
+  // 4. Ensure non-terminal leaf action nodes terminate cleanly
+  for (const [id, item] of Object.entries(items)) {
+    if (item.type !== 'branch' && item.type !== 'end' && item.type !== 'address' && !item.one) {
+      if (id !== endNodeId) {
+        item.one = endNodeId;
+      }
+    }
+  }
+
+  // 5. Ensure there is at least one branch node (root)
+  const branches = Object.entries(items).filter(([_, it]) => it.type === 'branch');
+  if (branches.length === 0) {
+    const firstNonBranchKey = Object.keys(items).find((k) => items[k].type !== 'branch' && items[k].type !== 'end') || endNodeId;
+    items['b0'] = {
+      type: 'branch',
+      branchId: 0,
+      content: diagram.name || 'Головна гілка',
+      one: firstNonBranchKey,
+    };
+  } else {
+    // If a branch points to nothing or to an invalid node, link it to first non-branch node
+    for (const [branchId, branchItem] of branches) {
+      if (!branchItem.one || !items[branchItem.one]) {
+        const target = Object.keys(items).find((k) => items[k].type !== 'branch' && k !== branchId);
+        branchItem.one = target || endNodeId;
+      }
+    }
+  }
+
+  return {
+    ...diagram,
+    access: 'write',
+    items,
+  };
+}

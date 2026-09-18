@@ -1,5 +1,5 @@
 // src/components/CopilotPanel/CopilotStream.tsx
-// Astryx-native LLM Copilot Streaming Terminal (ADR-008, ADR-009)
+// Astryx Conversational Copilot with Architectural Critique Cards (ADR-008, ADR-009)
 import React, { useState, useRef, useEffect } from 'react';
 import type { ModelSlot, ModelSlotId, CopilotLogMessage, TokenBudget } from '@/types/copilot';
 import { TokenGauge } from './TokenGauge';
@@ -13,6 +13,12 @@ import {
   Square,
   WifiOff,
   Zap,
+  ShieldCheck,
+  Bot,
+  User,
+  CheckCircle2,
+  AlertTriangle,
+  FileCheck2,
 } from 'lucide-react';
 
 interface CopilotStreamProps {
@@ -33,13 +39,19 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
       id: 'm1',
       timestamp: '18:14:02',
       role: 'system',
-      content: '[Pre-Flight] Active rules compiled: 476 words (<500 budget), latency 16.4ms (<50ms). Zero third-party imports detected in src/.',
+      content: 'Active rules compiled: 476 words (<500 budget), latency 16.4ms (<50ms). Zero third-party imports detected in src/. Planarity C=0 verified.',
+      critique: {
+        invariantId: 'ADR-002 · ADR-008',
+        title: 'Pre-Flight Architectural Verification',
+        status: 'pass',
+        detail: 'Planarity invariant C=0 satisfied. Standard library purity maintained.',
+      },
     },
     {
       id: 'm2',
       timestamp: '18:14:15',
       role: 'assistant',
-      content: 'Standing by in Sovereign Execution VPC (192.168.3.184:18880). Control flow topology locked to canonical DRAKON-IR.',
+      content: 'Привіт! Я суверенний асистент B-SDD. Архітектурні інваріанти зафіксовані. Чим можу допомогти у поточній сесії (моделювання схеми, синтез коду чи реверс-інжиніринг MADR)?',
     },
   ]);
 
@@ -90,20 +102,21 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     );
   };
 
-  const handleSendPrompt = () => {
-    if (!inputPrompt.trim() || isStreaming) return;
+  const handleSendPrompt = (overridePrompt?: string) => {
+    const textToSend = overridePrompt || inputPrompt;
+    if (!textToSend.trim() || isStreaming) return;
 
     const userMsg: CopilotLogMessage = {
       id: `u_${Date.now()}`,
-      timestamp: new Date().toLocaleTimeString(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       role: 'user',
-      content: inputPrompt,
+      content: textToSend,
     };
 
     const assistantId = `a_${Date.now()}`;
     const assistantSeed: CopilotLogMessage = {
       id: assistantId,
-      timestamp: new Date().toLocaleTimeString(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       role: 'assistant',
       slot: activeSlot.id,
       content: '',
@@ -111,11 +124,10 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     pendingMessageIdRef.current = assistantId;
 
     setMessages((prev) => [...prev, userMsg, assistantSeed]);
-    const prompt = inputPrompt;
-    setInputPrompt('');
+    if (!overridePrompt) setInputPrompt('');
 
     startStream({
-      prompt,
+      prompt: textToSend,
       slot: activeSlot.id as ModelSlotId,
       stream: true,
       attached_contexts: attachedContexts,
@@ -131,14 +143,14 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     const promptText = inputPrompt.trim() || 'Execute leaf Action node task under B-SDD invariants.';
     const userMsg: CopilotLogMessage = {
       id: `u_${Date.now()}`,
-      timestamp: new Date().toLocaleTimeString(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       role: 'user',
       content: `[Pi Harness Dispatch] ${promptText}`,
     };
     const assistantId = `a_${Date.now()}`;
     const assistantSeed: CopilotLogMessage = {
       id: assistantId,
-      timestamp: new Date().toLocaleTimeString(),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       role: 'assistant',
       slot: 'pi-harness',
       content: '⚡ Headless Pi Harness dispatching JSONL RPC...',
@@ -163,7 +175,16 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId
-              ? { ...m, content: `✓ [Pi Harness Completed]\n${eventsSummary}\n• Isolation Verified (INV-012-03): Topology unaltered.` }
+              ? {
+                  ...m,
+                  content: `✓ [Pi Harness Completed]\n${eventsSummary}\n• Isolation Verified (INV-012-03): Topology unaltered.`,
+                  critique: {
+                    invariantId: 'INV-012-03',
+                    title: 'Action Node Isolation Verified',
+                    status: 'pass',
+                    detail: 'Target node modified without altering parent DAG edges or branching structure.',
+                  },
+                }
               : m
           )
         );
@@ -179,25 +200,25 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     }
   };
 
-
   return (
     <div className="h-full flex flex-col bg-[#0d121c] text-slate-100 select-none">
-      {/* Top: Model Slots Selector */}
-      <div className="p-3 border-b border-[#1e293b] bg-[#141b27]/60 flex flex-col gap-2">
+      {/* Top: Header with Slot Selector & Word Budget */}
+      <div className="p-2.5 border-b border-[#1e293b] bg-[#141b27]/70 flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Cpu className="w-4 h-4 text-amber" />
-            <span className="text-xs font-mono font-bold uppercase tracking-wider">
-              Sovereign LLM Pool (.184)
+            <Bot className="w-4 h-4 text-amber" />
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+              Sovereign Copilot
             </span>
+            <Dot tone="emerald" pulse />
           </div>
           <span className="text-[10px] font-mono text-slate-400">
-            Avg Latency: <span className="text-emerald">{activeSlot.latencyAvg}</span>
+            Avg: <span className="text-emerald">{activeSlot.latencyAvg}</span>
           </span>
         </div>
 
-        {/* 3 Model Slot Pills */}
-        <div className="grid grid-cols-3 gap-2">
+        {/* Compact 3 Model Slot Pills */}
+        <div className="grid grid-cols-3 gap-1.5">
           {modelSlots.map((slot) => {
             const isSelected = slot.id === activeSlotId;
 
@@ -205,19 +226,16 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
               <button
                 key={slot.id}
                 onClick={() => onSelectSlot(slot.id)}
-                className={`p-2 rounded border text-left flex flex-col transition-all cursor-pointer ${
+                className={`px-2 py-1 rounded border text-left flex flex-col transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#1a2233] border-amber text-amber font-semibold shadow-xs'
-                    : 'bg-[#141b27] hover:bg-[#1a2233] border-[#1e293b] text-slate-300'
+                    ? 'bg-[#1a2233] border-amber/70 text-amber font-semibold shadow-xs'
+                    : 'bg-[#121824] hover:bg-[#182130] border-[#1e293b] text-slate-300'
                 }`}
               >
-                <div className="flex items-center justify-between text-[11px] font-mono">
-                  <span>{slot.name}</span>
+                <div className="flex items-center justify-between text-[10px] font-mono">
+                  <span className="truncate">{slot.name}</span>
                   {isSelected && <Dot tone="amber" />}
                 </div>
-                <span className="text-[9px] text-slate-400 font-sans truncate mt-0.5">
-                  {slot.model.split('/')[1] || slot.model}
-                </span>
               </button>
             );
           })}
@@ -227,36 +245,79 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
         <TokenGauge budget={tokenBudget} />
       </div>
 
-      {/* Center: Realtime Streaming Log Terminal */}
+      {/* Center: Conversational Chat Message Stream */}
       <div
         ref={scrollRef}
-        className="flex-1 p-3 overflow-y-auto font-mono text-xs space-y-3 bg-[#090d13]/60"
+        className="flex-1 p-3 overflow-y-auto font-sans text-xs space-y-3 bg-[#090d13]/70 flex flex-col"
       >
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`p-2.5 rounded border text-xs leading-relaxed ${
-              msg.role === 'system'
-                ? 'bg-cyan/10 border-cyan/30 text-cyan-200'
-                : msg.role === 'user'
-                ? 'bg-[#1a2233] border-[#1e293b] text-slate-200'
-                : 'bg-[#141b27] border-[#1e293b] text-slate-100'
-            }`}
-          >
-            <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1 border-b border-[#1e293b]/50 pb-1">
-              <span className="uppercase font-bold tracking-wider text-slate-400">
-                {msg.role === 'assistant' ? `🤖 ${msg.slot || 'LLM Gateway'}` : msg.role}
-              </span>
-              <span>{msg.timestamp}</span>
+        {messages.map((msg) => {
+          if (msg.role === 'system' || msg.critique) {
+            return (
+              <div
+                key={msg.id}
+                className="w-full p-2.5 rounded-lg border bg-[#111726]/80 border-[#1e293b] shadow-xs font-mono text-xs my-1"
+              >
+                <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-[#1e293b]">
+                  <div className="flex items-center gap-1.5">
+                    {msg.critique?.status === 'pass' ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald" />
+                    ) : (
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber" />
+                    )}
+                    <span className="font-bold text-slate-200 text-[11px]">
+                      {msg.critique?.title || 'Architectural Critique'}
+                    </span>
+                    {msg.critique?.invariantId && (
+                      <span className="px-1.5 py-0.2 text-[9px] rounded bg-cyan/10 text-cyan border border-cyan/30">
+                        {msg.critique.invariantId}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-slate-500">{msg.timestamp}</span>
+                </div>
+                <p className="text-slate-300 leading-relaxed text-[11px] whitespace-pre-wrap">
+                  {msg.content}
+                </p>
+              </div>
+            );
+          }
+
+          if (msg.role === 'user') {
+            return (
+              <div key={msg.id} className="flex flex-col items-end max-w-[88%] self-end">
+                <div className="flex items-center gap-1 text-[10px] text-slate-400 mb-1 font-mono">
+                  <span>Ви</span>
+                  <span>·</span>
+                  <span>{msg.timestamp}</span>
+                  <User className="w-3 h-3 text-blue-400" />
+                </div>
+                <div className="p-3 rounded-2xl rounded-tr-xs bg-blue-600/20 border border-blue-500/30 text-blue-100 text-xs leading-relaxed font-sans shadow-xs whitespace-pre-wrap">
+                  {msg.content}
+                </div>
+              </div>
+            );
+          }
+
+          // Assistant message
+          return (
+            <div key={msg.id} className="flex flex-col items-start max-w-[92%] self-start">
+              <div className="flex items-center gap-1 text-[10px] text-slate-400 mb-1 font-mono">
+                <Bot className="w-3 h-3 text-amber" />
+                <span className="text-amber font-semibold">{msg.slot || 'B-SDD Copilot'}</span>
+                <span>·</span>
+                <span>{msg.timestamp}</span>
+              </div>
+              <div className="p-3 rounded-2xl rounded-tl-xs bg-[#131b29] border border-[#1e293b] text-slate-200 text-xs leading-relaxed font-sans shadow-xs whitespace-pre-wrap">
+                {msg.content}
+              </div>
             </div>
-            <p className="whitespace-pre-wrap font-mono text-[11px]">{msg.content}</p>
-          </div>
-        ))}
+          );
+        })}
 
         {isStreaming && (
-          <div className="p-2.5 rounded border border-amber/30 bg-amber/5 text-amber text-xs font-mono flex items-center gap-2">
-            <Sparkles className="w-4 h-4 animate-spin text-amber" />
-            <span className="flex-1 animate-pulse">
+          <div className="p-2.5 rounded-lg border border-amber/30 bg-amber/5 text-amber text-xs font-mono flex items-center gap-2 self-start max-w-full">
+            <Sparkles className="w-4 h-4 animate-spin text-amber shrink-0" />
+            <span className="flex-1 animate-pulse truncate">
               SSE stream from <span className="font-bold">{activeSlot.name}</span>
               {totalTokens > 0 && <span className="text-slate-400"> · {totalTokens} tok</span>}
             </span>
@@ -265,22 +326,45 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
               size="sm"
               icon={<Square className="w-3 h-3" />}
               onClick={handleKillStream}
-              title="Kill sovereign SSE stream and rollback partial tokens"
+              title="Перервати стрім"
             >
-              Kill Stream
+              Зупинити
             </Button>
           </div>
         )}
 
         {!isStreaming && streamError && (
           <Banner tone="error" icon={<WifiOff className="w-4 h-4" />}>
-            <span>Sovereign gateway offline — next prompt will use fallback simulation.</span>
+            <span>Суверенний шлюз офлайн — наступний промпт використає локальну емуляцію.</span>
           </Banner>
         )}
       </div>
 
+      {/* Suggested Quick Prompts */}
+      <div className="px-3 pt-2 pb-1 bg-[#141b27]/50 border-t border-[#1e293b]/60 flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono">
+        <span className="text-slate-500 uppercase shrink-0">Підказки:</span>
+        <button
+          onClick={() => handleSendPrompt('Перевір планарність C=0 та шампурну лінійність для поточної схеми.')}
+          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-amber shrink-0 transition-colors"
+        >
+          Планарність C=0
+        </button>
+        <button
+          onClick={() => handleSendPrompt('Перевір чистоту stdlib у src/ (ADR-002, 0 сторонніх імпортів).')}
+          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-emerald shrink-0 transition-colors"
+        >
+          Чистота stdlib
+        </button>
+        <button
+          onClick={() => handleSendPrompt('Синтезуй оновлення MADR 3.0 на основі AST змін.')}
+          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-cyan shrink-0 transition-colors"
+        >
+          Синтез MADR
+        </button>
+      </div>
+
       {/* Bottom: Context Attachments & Input Bar */}
-      <div className="p-3 border-t border-[#1e293b] bg-[#141b27]/70 flex flex-col gap-2">
+      <div className="p-3 border-t border-[#1e293b] bg-[#141b27]/80 flex flex-col gap-2">
         <ContextBadges
           attachedContexts={attachedContexts}
           onAttach={handleToggleAttach}
@@ -289,7 +373,7 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
         <div className="flex items-center gap-2">
           <input
             type="text"
-            placeholder="Prompt LLM Gateway (e.g. Synthesize leaf action body for cond_phi3)..."
+            placeholder="Запит до суверенного копілота або Pi Harness..."
             value={inputPrompt}
             onChange={(e) => setInputPrompt(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendPrompt()}
@@ -301,10 +385,10 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
             variant="primary"
             size="md"
             icon={<Send className="w-3.5 h-3.5" />}
-            onClick={handleSendPrompt}
+            onClick={() => handleSendPrompt()}
             disabled={isStreaming || !inputPrompt.trim()}
           >
-            Send
+            Надіслати
           </Button>
 
           <Button
@@ -322,3 +406,4 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     </div>
   );
 };
+

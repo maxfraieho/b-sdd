@@ -19,6 +19,12 @@ export interface CopilotLogMessage {
   content: string;
   slot?: ModelSlotId;
   tokensUsed?: number;
+  critique?: {
+    invariantId: string;
+    title: string;
+    status: 'pass' | 'warn' | 'fail';
+    detail: string;
+  };
 }
 
 export interface TokenBudget {

@@ -40,6 +40,13 @@ try:
 except Exception:
     pass
 
+ACTIVE_PROJECT_CONTEXT: Dict[str, Any] = {
+    "id": "b-sdd",
+    "name": "B-SDD Framework Core",
+    "path": str(ROOT_DIR),
+    "switched_at": None,
+}
+
 
 def extract_git_timeline(limit: int = 100) -> Dict[str, Any]:
     """Extract git commit history for dynamic bitemporal timeline navigation."""
@@ -498,7 +505,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         gh_data = gh_adapter.fetch_user_repositories()
         gh_repos = []
         for r in gh_data.get("repositories", []):
-            is_active = r.get("name") == "b-sdd"
+            is_active = r.get("name") == ACTIVE_PROJECT_CONTEXT["id"]
             gh_repos.append({
                 "name": r.get("name"),
                 "full_name": r.get("full_name"),
@@ -516,9 +523,9 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 
         self._send_json({
             "current_project": {
-                "id": "b-sdd",
-                "name": "B-SDD Framework Core",
-                "path": str(ROOT_DIR),
+                "id": ACTIVE_PROJECT_CONTEXT["id"],
+                "name": ACTIVE_PROJECT_CONTEXT["name"],
+                "path": ACTIVE_PROJECT_CONTEXT.get("path", str(ROOT_DIR)),
                 "branch": branch,
                 "commit": commit,
                 "dirty_files": dirty_files,
@@ -535,13 +542,13 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                     "id": "b-sdd",
                     "name": "B-SDD Framework Core",
                     "path": str(ROOT_DIR),
-                    "active": True
+                    "active": ACTIVE_PROJECT_CONTEXT["id"] == "b-sdd"
                 },
                 {
                     "id": "ai-drakon-scaffolder",
                     "name": "AI Drakon Scaffolder",
                     "path": "/home/vokov/workspace/ai-drakon-scaffolder",
-                    "active": False
+                    "active": ACTIVE_PROJECT_CONTEXT["id"] == "ai-drakon-scaffolder"
                 }
             ],
             "github": {
@@ -615,15 +622,15 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
 
     def handle_post_projects_switch(self, body):
         """POST /api/projects/switch: Switches active workspace context."""
-        project_id = body.get("project_id")
-        repo_name = body.get("repo_name", project_id)
+        global ACTIVE_PROJECT_CONTEXT
+        project_id = body.get("project_id") or "b-sdd"
+        repo_name = body.get("repo_name") or project_id
+        ACTIVE_PROJECT_CONTEXT["id"] = project_id
+        ACTIVE_PROJECT_CONTEXT["name"] = repo_name
+        ACTIVE_PROJECT_CONTEXT["switched_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         self._send_json({
             "status": "switched",
-            "active_project": {
-                "id": project_id or "b-sdd",
-                "name": repo_name or "B-SDD Framework Core",
-                "switched_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
-            },
+            "active_project": dict(ACTIVE_PROJECT_CONTEXT),
             "message": f"Workspace switched to {repo_name}"
         })
 

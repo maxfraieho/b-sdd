@@ -93,6 +93,15 @@ def test_server_projects_switch_endpoint(server):
         assert data["active_project"]["id"] == "ai-drakon-scaffolder"
         assert "AI Drakon Scaffolder" in data["active_project"]["name"]
 
+    # Reset back to canonical b-sdd project context
+    reset_payload = json.dumps({
+        "project_id": "b-sdd",
+        "repo_name": "B-SDD Framework Core"
+    }).encode("utf-8")
+    reset_req = urllib.request.Request(url, data=reset_payload, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(reset_req) as resp:
+        assert resp.status == 200
+
 
 def test_adr_009_and_010_invariants_compiled():
     """Verify ADR-009 and ADR-010 invariants are indexed and comply with <500w budget."""

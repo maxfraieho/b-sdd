@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { Topbar } from '@/components/Topbar';
 import { PhaseStepper } from '@/components/PhaseStepper';
 import { ReviewGateModal } from '@/components/ReviewGateModal';
@@ -159,7 +159,14 @@ export const App: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ project_id: projectId, repo_name: name }),
       });
-      await liveProjects.refresh();
+      await Promise.all([
+        liveProjects.refresh(),
+        liveHealth.refresh(),
+        liveSpecs.refresh(),
+        liveRules.refresh(),
+        liveAdrs.refresh(),
+        liveDrakon.refresh(),
+      ]);
     } catch (e) {
       console.warn('Switch project fallback:', e);
     }
@@ -210,11 +217,23 @@ export const App: React.FC = () => {
   const canvasRef = useRef<DrakonCanvasHandle>(null);
   const [drakonViewMode, setDrakonViewMode] = useState<DrakonViewMode>('widget');
   const [schemaMode, setSchemaMode] = useState<'logic' | 'structure'>('logic');
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>('cond_phi6');
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
   const [drakonNodes, setDrakonNodes] = useState<DrakonNodeIR[]>(CANONICAL_HITL_DRAKON_IR.nodes);
   const [activeSocketType, setActiveSocketType] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Exit fullscreen on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isCanvasFullscreen) {
+        setIsCanvasFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isCanvasFullscreen]);
 
   // Copilot State
   const [activeSlotId, setActiveSlotId] = useState('coding-proxy');
@@ -268,6 +287,7 @@ export const App: React.FC = () => {
   });
 
   const currentDiagram = liveDrakon.data.diagram || CANONICAL_DRAKON_DIAGRAM;
+  const currentSpec = liveSpecs.data.specs.find((s) => s.id === selectedSpecId) || liveSpecs.data.specs[0] || null;
 
   // Synchronize IR nodes from backend specification when loaded
   React.useEffect(() => {
@@ -509,6 +529,8 @@ export const App: React.FC = () => {
                   saveState={saveState}
                   saveErrorMessage={saveError}
                   diagramName={currentDiagram.name}
+                  projectName={liveProjects.data.current_project?.name || 'b-sdd'}
+                  specName={currentSpec?.title || currentDiagram.name}
                   viewMode={drakonViewMode}
                   onViewModeChange={setDrakonViewMode}
                   onAddNode={handleAddNode}
@@ -610,12 +632,14 @@ export const App: React.FC = () => {
       ) : (
         <>
           {/* 2. HITL 7-PHASE STEPPER BAR (44px) */}
-          <PhaseStepper
-            phases={sprintState.phases}
-            currentPhaseId={sprintState.currentPhase}
-            onSelectPhase={handlePhaseSelect}
-            onOpenReviewGate={() => setIsReviewGateOpen(true)}
-          />
+          {!isCanvasFullscreen && (
+            <PhaseStepper
+              phases={sprintState.phases}
+              currentPhaseId={sprintState.currentPhase}
+              onSelectPhase={handlePhaseSelect}
+              onOpenReviewGate={() => setIsReviewGateOpen(true)}
+            />
+          )}
 
           {/* 3. MAIN WORKBENCH BODY */}
           <main className="flex-1 flex overflow-hidden">
@@ -633,11 +657,15 @@ export const App: React.FC = () => {
                 saveState={saveState}
                 saveErrorMessage={saveError}
                 diagramName={currentDiagram.name}
+                projectName={liveProjects.data.current_project?.name || 'b-sdd'}
+                specName={currentSpec?.title || currentDiagram.name}
                 viewMode={drakonViewMode}
                 onViewModeChange={setDrakonViewMode}
                 onAddNode={handleAddNode}
                 schemaMode={schemaMode}
                 onSchemaModeChange={setSchemaMode}
+                isFullscreen={isCanvasFullscreen}
+                onToggleFullscreen={() => setIsCanvasFullscreen(!isCanvasFullscreen)}
               />
 
               {/* Icon Palette when in DrakonWidget view */}
@@ -690,29 +718,33 @@ export const App: React.FC = () => {
             </section>
 
             {/* RIGHT: SOVEREIGN COPILOT PANEL (420px) */}
-            <section className="w-[420px] shrink-0 bg-panel flex flex-col overflow-hidden">
-              <CopilotStream
-                modelSlots={MOCK_MODEL_SLOTS}
-                activeSlotId={activeSlotId}
-                onSelectSlot={setActiveSlotId}
-                tokenBudget={liveTokenBudget}
-              />
-            </section>
+            {!isCanvasFullscreen && (
+              <section className="w-[420px] shrink-0 bg-panel flex flex-col overflow-hidden">
+                <CopilotStream
+                  modelSlots={MOCK_MODEL_SLOTS}
+                  activeSlotId={activeSlotId}
+                  onSelectSlot={setActiveSlotId}
+                  tokenBudget={liveTokenBudget}
+                />
+              </section>
+            )}
           </main>
 
           {/* 4. BOTTOM DUAL-AXIS BITEMPORAL RADAR (Zone D: 168px) */}
-          <TimelineSlider
-            validTimeDay={validTimeDay}
-            onValidTimeChange={setValidTimeDay}
-            txTimeDay={txTimeDay}
-            onTxTimeChange={setTxTimeDay}
-            adrs={effectiveAdrs}
-            activeAdrCount={effectiveAdrs.filter((a) => a.status === 'accepted').length}
-            supersededCount={effectiveAdrs.filter((a) => a.status === 'superseded').length}
-            onSelectAdr={(adr) => setSelectedAdr(adr)}
-            selectedAdrId={selectedAdr?.id}
-            maxDay={17}
-          />
+          {!isCanvasFullscreen && (
+            <TimelineSlider
+              validTimeDay={validTimeDay}
+              onValidTimeChange={setValidTimeDay}
+              txTimeDay={txTimeDay}
+              onTxTimeChange={setTxTimeDay}
+              adrs={effectiveAdrs}
+              activeAdrCount={effectiveAdrs.filter((a) => a.status === 'accepted').length}
+              supersededCount={effectiveAdrs.filter((a) => a.status === 'superseded').length}
+              onSelectAdr={(adr) => setSelectedAdr(adr)}
+              selectedAdrId={selectedAdr?.id}
+              maxDay={17}
+            />
+          )}
         </>
       )}
 

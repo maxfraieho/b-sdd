@@ -1,6 +1,6 @@
 // src/components/Topbar.tsx
 // High-Density Astryx TopNav (Zone 1) with Universal Project & Catalog Integration
-import React from 'react';
+import React, { useState } from 'react';
 import type { ProjectInfo, SpecItem } from '@/types/specs';
 import {
   Layers,
@@ -73,9 +73,11 @@ export const Topbar: React.FC<TopbarProps> = ({
   telemetryLatency,
   telemetrySlaOk = true,
 }) => {
+  const [isPulseOpen, setIsPulseOpen] = useState(false);
   const currentSpec = specs.find((s) => s.id === selectedSpecId) || specs[0] || null;
   const totalTasks = specs.reduce((sum, s) => sum + s.tasks_count, 0);
   const completedTasks = specs.reduce((sum, s) => sum + s.completed_count, 0);
+  const allHealthy = utopiaOnline && llmOnline && appwriteOnline && githubOnline;
 
   return (
     <header className="h-12 bg-[#0d121c] border-b border-[#1e293b] px-2 sm:px-3 md:px-4 flex items-center justify-between shrink-0 select-none z-30 font-mono">
@@ -163,50 +165,104 @@ export const Topbar: React.FC<TopbarProps> = ({
         )}
       </div>
 
-      {/* Middle: Sovereign Infrastructure Status & Utopia Sync */}
-      <div className="hidden xl:flex items-center gap-2.5 text-[11px]">
-        {/* Appwrite RT Status Chip (ADR-011) */}
-        <div className="flex items-center gap-1.5 bg-[#141b27] border border-[#1e293b] px-2 py-1 rounded text-slate-300">
-          <Workflow className={`w-3.5 h-3.5 ${appwriteOnline ? 'text-emerald' : 'text-slate-400'}`} />
-          <span>Appwrite RT</span>
-          <span className="text-[10px] text-slate-500">{appwriteLatency ? `${appwriteLatency}ms` : 'Connected'}</span>
-          <Dot tone={appwriteOnline ? 'emerald' : 'amber'} pulse={!appwriteOnline} />
-        </div>
+      {/* Middle: Sovereign Infrastructure Status - System Pulse Popover */}
+      <div className="relative">
+        <button
+          onClick={() => setIsPulseOpen(!isPulseOpen)}
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border transition-colors ${
+            allHealthy
+              ? 'bg-[#141b27] hover:bg-[#1a2233] text-slate-200 border-[#1e293b] hover:border-emerald/50'
+              : 'bg-[#1f1618] hover:bg-[#2a1d20] text-rose-200 border-rose-900/60'
+          }`}
+          title="Статус суверенної інфраструктури (Utopia DB, LLM Gateway, Appwrite RT, GitHub Sync)"
+        >
+          <Activity className={`w-3.5 h-3.5 ${allHealthy ? 'text-emerald' : 'text-rose-400 animate-pulse'}`} />
+          <span className="font-semibold text-[11px] hidden md:inline">System Pulse</span>
+          <Dot tone={allHealthy ? 'emerald' : 'rose'} pulse={!allHealthy} />
+          <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isPulseOpen ? 'rotate-180' : ''}`} />
+        </button>
 
-        {/* GitHub API Live Sync Chip (ADR-011) */}
-        <div className="flex items-center gap-1.5 bg-[#141b27] border border-[#1e293b] px-2 py-1 rounded text-slate-300">
-          <Github className={`w-3.5 h-3.5 ${githubOnline ? 'text-cyan' : 'text-slate-400'}`} />
-          <span>GitHub</span>
-          <span className="text-[10px] text-slate-500">{githubLive ? 'Live Sync' : 'Cached'}</span>
-          <Dot tone={githubOnline ? 'emerald' : 'cyan'} />
-        </div>
+        {isPulseOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setIsPulseOpen(false)} />
+            <div className="absolute top-full mt-1.5 left-1/2 -translate-x-1/2 w-72 bg-[#101725] border border-[#1e293b] rounded-lg shadow-2xl p-3 z-50 text-xs font-mono space-y-2">
+              <div className="flex items-center justify-between border-b border-[#1e293b] pb-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Суверенний Пульс</span>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded border font-bold ${
+                  allHealthy
+                    ? 'bg-emerald/10 text-emerald border-emerald/20'
+                    : 'bg-rose/10 text-rose-400 border-rose/20'
+                }`}>
+                  {allHealthy ? 'All Systems Active' : 'Degraded Mode'}
+                </span>
+              </div>
 
-        <div className="flex items-center gap-2 bg-[#141b27] border border-[#1e293b] px-2.5 py-1 rounded">
-          <div className="flex items-center gap-1.5 text-slate-300">
-            <Database className={`w-3.5 h-3.5 ${utopiaOnline ? 'text-emerald' : 'text-rose'}`} />
-            <span>Utopia DB</span>
-            <span className="text-[10px] text-slate-500">.251:9922</span>
-            <Dot tone={utopiaOnline ? 'emerald' : 'rose'} pulse={!utopiaOnline} />
-          </div>
-          {onSyncUtopia && (
-            <button
-              onClick={() => void onSyncUtopia()}
-              disabled={isSyncingUtopia}
-              className="text-[10px] text-amber hover:underline flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber/10 hover:bg-amber/20 border border-amber/30 transition-colors disabled:opacity-50"
-              title="Запустити синхронізацію активних інваріантів з Utopia DB"
-            >
-              {isSyncingUtopia ? <Loader2 className="w-2.5 h-2.5 animate-spin" /> : <RefreshCw className="w-2.5 h-2.5" />}
-              <span>{isSyncingUtopia ? 'Синхронізація…' : 'Синхронізувати'}</span>
-            </button>
-          )}
-        </div>
+              {/* Utopia DB */}
+              <div className="flex items-center justify-between p-2 rounded bg-canvas-subtle/50 border border-[#1e293b]">
+                <div className="flex items-center gap-2">
+                  <Database className={`w-4 h-4 ${utopiaOnline ? 'text-emerald' : 'text-rose-400'}`} />
+                  <div>
+                    <div className="text-slate-200 font-medium text-[11px]">Utopia DB (DAG)</div>
+                    <div className="text-[10px] text-slate-500">192.168.3.251:9922</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Dot tone={utopiaOnline ? 'emerald' : 'rose'} pulse={!utopiaOnline} />
+                  {onSyncUtopia && (
+                    <button
+                      onClick={() => void onSyncUtopia()}
+                      disabled={isSyncingUtopia}
+                      className="p-1 rounded hover:bg-white/10 text-amber disabled:opacity-50 transition-colors"
+                      title="Запустити синхронізацію активних інваріантів"
+                    >
+                      {isSyncingUtopia ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+                    </button>
+                  )}
+                </div>
+              </div>
 
-        <div className="flex items-center gap-1.5 bg-[#141b27] border border-[#1e293b] px-2.5 py-1 rounded text-slate-300">
-          <Cpu className={`w-3.5 h-3.5 ${llmOnline ? 'text-blue-400' : 'text-rose'}`} />
-          <span>LLM Gateway</span>
-          <span className="text-[10px] text-slate-500">.184:18880</span>
-          <Dot tone={llmOnline ? 'emerald' : 'rose'} pulse={!llmOnline} />
-        </div>
+              {/* LLM Gateway */}
+              <div className="flex items-center justify-between p-2 rounded bg-canvas-subtle/50 border border-[#1e293b]">
+                <div className="flex items-center gap-2">
+                  <Cpu className={`w-4 h-4 ${llmOnline ? 'text-blue-400' : 'text-rose-400'}`} />
+                  <div>
+                    <div className="text-slate-200 font-medium text-[11px]">LLM Gateway</div>
+                    <div className="text-[10px] text-slate-500">192.168.3.184:18880</div>
+                  </div>
+                </div>
+                <Dot tone={llmOnline ? 'emerald' : 'rose'} pulse={!llmOnline} />
+              </div>
+
+              {/* Appwrite RT */}
+              <div className="flex items-center justify-between p-2 rounded bg-canvas-subtle/50 border border-[#1e293b]">
+                <div className="flex items-center gap-2">
+                  <Workflow className={`w-4 h-4 ${appwriteOnline ? 'text-emerald' : 'text-slate-400'}`} />
+                  <div>
+                    <div className="text-slate-200 font-medium text-[11px]">Appwrite RT</div>
+                    <div className="text-[10px] text-slate-500">
+                      {appwriteLatency ? `${appwriteLatency}ms latency` : 'Connected'}
+                    </div>
+                  </div>
+                </div>
+                <Dot tone={appwriteOnline ? 'emerald' : 'amber'} pulse={!appwriteOnline} />
+              </div>
+
+              {/* GitHub Live Sync */}
+              <div className="flex items-center justify-between p-2 rounded bg-canvas-subtle/50 border border-[#1e293b]">
+                <div className="flex items-center gap-2">
+                  <Github className={`w-4 h-4 ${githubOnline ? 'text-cyan' : 'text-slate-400'}`} />
+                  <div>
+                    <div className="text-slate-200 font-medium text-[11px]">GitHub API</div>
+                    <div className="text-[10px] text-slate-500">
+                      {githubLive ? 'Real-time Sync' : 'Cached'}
+                    </div>
+                  </div>
+                </div>
+                <Dot tone={githubOnline ? 'emerald' : 'cyan'} />
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Right: Actions, Responsive Mode Switcher, Drawers */}

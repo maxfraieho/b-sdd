@@ -17,6 +17,8 @@ import {
   FileCode2,
   Undo2,
   Redo2,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 import { Button, IconButton, Badge, Segmented } from '@/components/astryx/primitives';
 import { LogicStructureSwitcher, DrakonSchemaMode } from './LogicStructureSwitcher';
@@ -35,6 +37,9 @@ interface DrakonToolbarProps {
   onUndo?: () => void;
   onRedo?: () => void;
   diagramName: string;
+  projectName?: string;
+  specName?: string;
+  functionName?: string;
   saveState?: SaveState;
   saveErrorMessage?: string | null;
   viewMode: DrakonViewMode;
@@ -42,6 +47,8 @@ interface DrakonToolbarProps {
   onAddNode?: (type: 'action' | 'question' | 'end') => void;
   schemaMode?: DrakonSchemaMode;
   onSchemaModeChange?: (mode: DrakonSchemaMode) => void;
+  isFullscreen?: boolean;
+  onToggleFullscreen?: () => void;
 }
 
 export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
@@ -54,6 +61,9 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
   onUndo,
   onRedo,
   diagramName,
+  projectName = 'b-sdd',
+  specName,
+  functionName,
   saveState = 'idle',
   saveErrorMessage,
   viewMode,
@@ -61,6 +71,8 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
   onAddNode,
   schemaMode = 'logic',
   onSchemaModeChange,
+  isFullscreen,
+  onToggleFullscreen,
 }) => {
   const saveIcon =
     saveState === 'saving' ? (
@@ -91,10 +103,32 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
 
   return (
     <div className="h-10 bg-[#141b27]/90 border-b border-[#1e293b] px-2 md:px-3 flex items-center justify-between shrink-0 select-none text-xs overflow-x-auto gap-2">
-      {/* Left: Title & Mode Switcher */}
+      {/* Left: Breadcrumbs & Mode Switcher */}
       <div className="flex items-center gap-2 md:gap-3 shrink-0">
-        <span className="font-semibold text-slate-200 font-mono text-[11px] truncate max-w-[120px] md:max-w-[180px]">
-          {diagramName}
+        {/* Breadcrumbs Trail */}
+        <div className="hidden sm:flex items-center gap-1 font-mono text-[11px] text-slate-400 bg-canvas-subtle/50 px-2 py-0.5 rounded border border-[#1e293b]">
+          <span className="text-slate-300 font-medium hover:text-white transition-colors cursor-default">
+            {projectName}
+          </span>
+          <span className="text-slate-600">/</span>
+          <span className="text-slate-200 font-medium truncate max-w-[130px]" title={specName || diagramName}>
+            {specName || diagramName}
+          </span>
+          <span className="text-slate-600">/</span>
+          <span className="text-amber/90 font-medium">
+            {schemaMode === 'logic' ? 'Логіка' : 'Структура'}
+          </span>
+          {functionName && (
+            <>
+              <span className="text-slate-600">/</span>
+              <span className="text-indigo-300 truncate max-w-[100px]">{functionName}</span>
+            </>
+          )}
+        </div>
+
+        {/* Small screen fallback */}
+        <span className="sm:hidden font-semibold text-slate-200 font-mono text-[11px] truncate max-w-[100px]">
+          {specName || diagramName}
         </span>
 
         {onSchemaModeChange && (
@@ -257,6 +291,17 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
             <span className="hidden sm:inline">{saveLabel}</span>
             <span className="sm:hidden">{saveState === 'saved' ? 'OK' : 'Зберегти'}</span>
           </Button>
+        )}
+
+        {onToggleFullscreen && (
+          <IconButton
+            title={isFullscreen ? 'Вийти з повноекранного режиму (Esc)' : 'Повноекранний режим студії'}
+            size="sm"
+            onClick={onToggleFullscreen}
+            className={isFullscreen ? 'text-amber bg-amber/10 border border-amber/30' : ''}
+          >
+            {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+          </IconButton>
         )}
       </div>
     </div>
