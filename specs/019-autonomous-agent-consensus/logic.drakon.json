@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 019: Sovereign Autonomous Multi-Agent Consensus & Quorum Arbitration",
+  "category": "bsdd_pipeline",
+  "description": "Пайплайн консенсусу та кворумного голосування між суверенними агентами для погодження архітектурних рішень",
+  "params": "quorum_threshold: float, bitemporal_ballots: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 019 (Multi-Agent Consensus & Quorum)",
+      "edges": { "down": "step_submit_proposal", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-010", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_submit_proposal",
+      "node_type": "action",
+      "label": "Реєстрація пропозиції архітектурної мутації з хешем Tx/Tv",
+      "edges": { "down": "step_broadcast_ballot", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "step_broadcast_ballot",
+      "node_type": "action",
+      "label": "Трансляція бюлетеня агентам кластера (.161, .184, .251)",
+      "edges": { "down": "cond_quorum_reached", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-014", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "cond_quorum_reached",
+      "node_type": "question",
+      "label": "Отримано схвальний кворум більшості (N >= 2/3 голосів)?",
+      "edges": { "down": "step_apply_consensus_decision", "right": "step_reject_or_amend" },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_reject_or_amend",
+      "node_type": "action",
+      "label": "Відхилення пропозиції або повернення на доопрацювання",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007", "severity": "normal" },
+      "x": 4.0, "y": 6.0
+    },
+    {
+      "node_id": "step_apply_consensus_decision",
+      "node_type": "action",
+      "label": "Фіксація погодженого рішення в леджері Utopia DB (:9922)",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_airgap_ed25519_proof",
+      "node_type": "action",
+      "label": "Офлайн-генерація Ed25519 сертифіката для review gate Φ6",
+      "edges": { "down": "end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Фініш Спринту 019 (Agent Quorum & Consensus Verified)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}
