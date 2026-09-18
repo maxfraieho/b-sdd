@@ -19,6 +19,7 @@ import {
   Monitor,
   Github,
   Activity,
+  Radio,
 } from 'lucide-react';
 import { Button, IconButton, Badge, Dot } from './astryx/primitives';
 
@@ -259,6 +260,26 @@ export const Topbar: React.FC<TopbarProps> = ({
                   </div>
                 </div>
                 <Dot tone={githubOnline ? 'emerald' : 'cyan'} />
+              </div>
+
+              {/* Sovereign Mesh & Cluster Leases (Sprint 018) */}
+              <div className="p-2 rounded bg-canvas-subtle/50 border border-[#1e293b] space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Radio className="w-4 h-4 text-emerald" />
+                    <div>
+                      <div className="text-slate-200 font-medium text-[11px]">Sovereign Mesh</div>
+                      <div className="text-[10px] text-slate-500">.161 • .184 • .251:9922</div>
+                    </div>
+                  </div>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald/10 text-emerald border border-emerald/20 font-bold">
+                    3 Nodes Sync
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-[#1e293b]/60">
+                  <span>Distributed Leases (Tx/Tv)</span>
+                  <span className="text-cyan font-mono">0 Active (Lock-free)</span>
+                </div>
               </div>
             </div>
           </>

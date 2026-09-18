@@ -35,6 +35,10 @@ from src.adapters.appwrite_client import AppwriteClient
 from src.adapters.telemetry import TELEMETRY
 from src.adapters.gitnexus_graph import MultiWorkspaceSymbolIndexer, BackgroundIngestionWorker
 from src.core.crypto_verifier import AirGappedProofValidator
+from src.adapters.cluster_sync import ClusterNodeRegistry, ClusterLeaseManager
+
+GLOBAL_CLUSTER_REGISTRY = ClusterNodeRegistry()
+GLOBAL_LEASE_MANAGER = ClusterLeaseManager()
 
 GLOBAL_COMPILER = BSDDCompiler(root_dir=ROOT_DIR)
 try:
@@ -307,6 +311,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_copilot_symbol_card(query)
         elif path == "/api/graph/cross-repo-edges":
             self.handle_get_graph_cross_repo_edges()
+        elif path == "/api/cluster/nodes":
+            self.handle_get_cluster_nodes()
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -363,6 +369,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_mutation_refactor(body)
         elif path == "/api/mutation/rollback":
             self.handle_post_mutation_rollback(body)
+        elif path == "/api/cluster/lease/acquire":
+            self.handle_post_cluster_lease_acquire(body)
+        elif path == "/api/cluster/lease/release":
+            self.handle_post_cluster_lease_release(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -1472,6 +1482,47 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
         tx_id = body.get("tx_id", "")
         res = GLOBAL_INGESTION_WORKER.rollback(tx_id)
         self._send_json(res)
+
+    def handle_get_cluster_nodes(self):
+        """GET /api/cluster/nodes: Returns registered cluster nodes and active leases (INV-018-04)."""
+        nodes = GLOBAL_CLUSTER_REGISTRY.get_nodes(probe=False)
+        active_leases = GLOBAL_LEASE_MANAGER.get_active_leases()
+        self._send_json({
+            "status": "ok",
+            "cluster": "sovereign-mesh",
+            "nodes": nodes,
+            "active_leases": active_leases,
+            "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        })
+
+    def handle_post_cluster_lease_acquire(self, body: Dict[str, Any]):
+        """POST /api/cluster/lease/acquire: Acquires or renews distributed lease with Tx/Tv (INV-018-04)."""
+        resource_id = body.get("resource_id", "")
+        holder_id = body.get("holder_id", "")
+        holder_host = body.get("holder_host", "127.0.0.1")
+        ttl_seconds = int(body.get("ttl_seconds", 30))
+        if not resource_id or not holder_id:
+            self._send_error("Missing resource_id or holder_id", 400)
+            return
+        result = GLOBAL_LEASE_MANAGER.acquire_lease(
+            resource_id=resource_id,
+            holder_id=holder_id,
+            holder_host=holder_host,
+            ttl_seconds=ttl_seconds
+        )
+        status_code = 200 if result.get("acquired") else 409
+        self._send_json(result, status=status_code)
+
+    def handle_post_cluster_lease_release(self, body: Dict[str, Any]):
+        """POST /api/cluster/lease/release: Releases an active lease (INV-018-04)."""
+        resource_id = body.get("resource_id", "")
+        holder_id = body.get("holder_id", "")
+        if not resource_id or not holder_id:
+            self._send_error("Missing resource_id or holder_id", 400)
+            return
+        result = GLOBAL_LEASE_MANAGER.release_lease(resource_id=resource_id, holder_id=holder_id)
+        status_code = 200 if result.get("released") else 403
+        self._send_json(result, status=status_code)
 
     def handle_get_utopia_graph(self, query: Dict[str, List[str]]):
         """GET /api/utopia/graph: Returns bitemporal DAG filtered by Valid Time Tv (INV-012-04)."""

@@ -26,6 +26,7 @@ import {
   GitCommit,
   Undo2,
   ArrowRightLeft,
+  Radio,
 } from 'lucide-react';
 
 interface CopilotStreamProps {
@@ -598,6 +599,13 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
         >
           <ArrowRightLeft className="w-3 h-3 text-purple-400" />
           Рефакторинг (Dry-run)
+        </button>
+        <button
+          onClick={() => handleSendPrompt('Перевір стан синхронізації кластера (.161, .184, .251) та наявність активних ліз.')}
+          className="px-2 py-0.5 rounded bg-emerald/10 hover:bg-emerald/20 border border-emerald/30 text-emerald shrink-0 transition-colors flex items-center gap-1 cursor-pointer"
+        >
+          <Radio className="w-3 h-3 text-emerald" />
+          Кластерні лізи (Mesh)
         </button>
         <button
           onClick={() => handleInspectSymbol('BackgroundIngestionWorker')}
