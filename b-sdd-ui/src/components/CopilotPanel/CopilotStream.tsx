@@ -6,6 +6,7 @@ import { TokenGauge } from './TokenGauge';
 import { ContextBadges } from './ContextBadges';
 import { useCopilotStream } from '@/hooks/useCopilotStream';
 import { Button, Badge, Banner, Dot } from '@/components/astryx/primitives';
+import type { SymbolCardData } from '@/types/copilot';
 import {
   Send,
   Cpu,
@@ -19,6 +20,9 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileCheck2,
+  Code2,
+  FileCode,
+  ExternalLink,
 } from 'lucide-react';
 
 interface CopilotStreamProps {
@@ -200,6 +204,58 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
     }
   };
 
+  const handleInspectSymbol = async (symbolName: string) => {
+    if (!symbolName.trim() || isStreaming) return;
+    const assistantId = `sym_${Date.now()}`;
+    const assistantSeed: CopilotLogMessage = {
+      id: assistantId,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      role: 'assistant',
+      slot: 'coding-proxy',
+      content: `🔍 Запит інспекції символу \`${symbolName}\` до суверенного індексу...`,
+    };
+    setMessages((prev) => [...prev, assistantSeed]);
+
+    try {
+      const res = await fetch(`/api/copilot/symbol-card?symbol=${encodeURIComponent(symbolName)}`);
+      if (res.ok) {
+        const data = await res.json();
+        const card: SymbolCardData = data.card;
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? {
+                  ...m,
+                  content: `✓ AST Symbol Card для \`${card.name}\` знайдено у суверенному bitemporal індексі Utopia DB.`,
+                  symbolCard: card,
+                }
+              : m
+          )
+        );
+      } else {
+        const errData = await res.json().catch(() => ({ error: 'Символ не знайдено' }));
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId
+              ? {
+                  ...m,
+                  content: `⚠️ Інспекція символу \`${symbolName}\`: ${errData.error || 'Символ відсутній в AST індексі репозиторію.'}`,
+                }
+              : m
+          )
+        );
+      }
+    } catch (err) {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId
+            ? { ...m, content: `✗ Помилка запиту картки символу: ${String(err)}` }
+            : m
+        )
+      );
+    }
+  };
+
   return (
     <div className="h-full flex flex-col bg-[#0d121c] text-slate-100 select-none">
       {/* Top: Header with Slot Selector & Word Budget */}
@@ -309,6 +365,60 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
               </div>
               <div className="p-3 rounded-2xl rounded-tl-xs bg-[#131b29] border border-[#1e293b] text-slate-200 text-xs leading-relaxed font-sans shadow-xs whitespace-pre-wrap">
                 {msg.content}
+
+                {msg.symbolCard && (
+                  <div className="mt-2.5 p-2.5 rounded-lg border border-cyan/40 bg-[#0c1624] font-mono text-xs shadow-xs">
+                    <div className="flex items-center justify-between pb-1.5 border-b border-cyan/20">
+                      <div className="flex items-center gap-1.5">
+                        <Code2 className="w-3.5 h-3.5 text-cyan" />
+                        <span className="font-bold text-cyan text-[12px]">{msg.symbolCard.name}</span>
+                        <span className="px-1.5 py-0.2 text-[9px] rounded bg-cyan/15 text-cyan border border-cyan/30 uppercase font-semibold">
+                          {msg.symbolCard.kind}
+                        </span>
+                        <span className="px-1.5 py-0.2 text-[9px] rounded bg-slate-800 text-slate-300 border border-slate-700 uppercase">
+                          {msg.symbolCard.workspace}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[10px] text-slate-400">
+                        <span>L{msg.symbolCard.line}</span>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-[10px] text-slate-300 flex items-center gap-1.5">
+                      <FileCode className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span className="font-mono truncate text-slate-300" title={msg.symbolCard.file}>
+                        {msg.symbolCard.file}:{msg.symbolCard.line}
+                      </span>
+                    </div>
+                    {msg.symbolCard.docstring && (
+                      <div className="mt-2 p-1.5 rounded bg-[#090d13] border border-[#1e293b] text-slate-300 text-[10px] leading-relaxed italic">
+                        {msg.symbolCard.docstring}
+                      </div>
+                    )}
+                    <div className="mt-2 flex items-center justify-between pt-1.5 border-t border-[#1e293b]/70 text-[9px] text-slate-400">
+                      <div className="flex items-center gap-2">
+                        {msg.symbolCard.tx && (
+                          <span>
+                            Tx: <span className="text-slate-300">{msg.symbolCard.tx.slice(11, 19)}</span>
+                          </span>
+                        )}
+                        {msg.symbolCard.tv && (
+                          <span>
+                            Tv: <span className="text-slate-300">{msg.symbolCard.tv.slice(11, 19)}</span>
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => {
+                          handleSendPrompt(`Покажи детальний контекст та залежності для символу ${msg.symbolCard?.name}`);
+                        }}
+                        className="px-2 py-0.5 rounded bg-cyan/10 hover:bg-cyan/20 border border-cyan/30 text-cyan text-[10px] flex items-center gap-1 transition-colors cursor-pointer"
+                      >
+                        <ExternalLink className="w-2.5 h-2.5" />
+                        <span>Аналіз залежностей</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -344,20 +454,34 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
       <div className="px-3 pt-2 pb-1 bg-[#141b27]/50 border-t border-[#1e293b]/60 flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono">
         <span className="text-slate-500 uppercase shrink-0">Підказки:</span>
         <button
+          onClick={() => handleInspectSymbol('BackgroundIngestionWorker')}
+          className="px-2 py-0.5 rounded bg-cyan/10 hover:bg-cyan/20 border border-cyan/30 text-cyan shrink-0 transition-colors flex items-center gap-1 cursor-pointer"
+        >
+          <Code2 className="w-3 h-3 text-cyan" />
+          Символ IngestionWorker
+        </button>
+        <button
+          onClick={() => handleInspectSymbol('ModelSlot')}
+          className="px-2 py-0.5 rounded bg-cyan/10 hover:bg-cyan/20 border border-cyan/30 text-cyan shrink-0 transition-colors flex items-center gap-1 cursor-pointer"
+        >
+          <Code2 className="w-3 h-3 text-cyan" />
+          Символ ModelSlot
+        </button>
+        <button
           onClick={() => handleSendPrompt('Перевір планарність C=0 та шампурну лінійність для поточної схеми.')}
-          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-amber shrink-0 transition-colors"
+          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-amber shrink-0 transition-colors cursor-pointer"
         >
           Планарність C=0
         </button>
         <button
           onClick={() => handleSendPrompt('Перевір чистоту stdlib у src/ (ADR-002, 0 сторонніх імпортів).')}
-          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-emerald shrink-0 transition-colors"
+          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-emerald shrink-0 transition-colors cursor-pointer"
         >
           Чистота stdlib
         </button>
         <button
           onClick={() => handleSendPrompt('Синтезуй оновлення MADR 3.0 на основі AST змін.')}
-          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-cyan shrink-0 transition-colors"
+          className="px-2 py-0.5 rounded bg-canvas hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 hover:text-cyan shrink-0 transition-colors cursor-pointer"
         >
           Синтез MADR
         </button>

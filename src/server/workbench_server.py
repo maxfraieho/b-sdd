@@ -33,7 +33,7 @@ from src.core.session_distiller import SessionDistiller
 from src.adapters.github_sync import GitHubSyncAdapter
 from src.adapters.appwrite_client import AppwriteClient
 from src.adapters.telemetry import TELEMETRY
-from src.adapters.gitnexus_graph import MultiWorkspaceSymbolIndexer
+from src.adapters.gitnexus_graph import MultiWorkspaceSymbolIndexer, BackgroundIngestionWorker
 from src.core.crypto_verifier import AirGappedProofValidator
 
 GLOBAL_COMPILER = BSDDCompiler(root_dir=ROOT_DIR)
@@ -46,6 +46,8 @@ GLOBAL_SYMBOL_INDEXER = MultiWorkspaceSymbolIndexer(default_root=ROOT_DIR)
 ui_workspace_path = ROOT_DIR / "b-sdd-ui"
 if ui_workspace_path.exists():
     GLOBAL_SYMBOL_INDEXER.register_workspace("ui", ui_workspace_path, is_active=False)
+
+GLOBAL_INGESTION_WORKER = BackgroundIngestionWorker(indexer=GLOBAL_SYMBOL_INDEXER)
 
 ACTIVE_PROJECT_CONTEXT: Dict[str, Any] = {
     "id": "b-sdd",
@@ -299,6 +301,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_realtime_pi_stream(query)
         elif path == "/api/symbols/search":
             self.handle_get_symbols_search(query)
+        elif path == "/api/ingest/status":
+            self.handle_get_ingest_status()
+        elif path == "/api/copilot/symbol-card":
+            self.handle_get_copilot_symbol_card(query)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -347,6 +353,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_symbols_trace(body)
         elif path == "/api/crypto/verify-proof":
             self.handle_post_crypto_verify_proof(body)
+        elif path == "/api/ingest/async":
+            self.handle_post_ingest_async(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -1380,6 +1388,47 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             "timestamp": time.time(),
             "algorithm": proof.get("algorithm", "Ed25519")
         })
+
+    def handle_get_ingest_status(self):
+        """GET /api/ingest/status: Returns background ingestion status and telemetry."""
+        self._send_json(GLOBAL_INGESTION_WORKER.get_status())
+
+    def handle_post_ingest_async(self, body: Dict[str, Any]):
+        """POST /api/ingest/async: Triggers background AST ingestion across all workspaces."""
+        valid_time_day = body.get("valid_time_day")
+        report = GLOBAL_INGESTION_WORKER.run_ingestion(valid_time_day=valid_time_day)
+        self._send_json(report)
+
+    def handle_get_copilot_symbol_card(self, query: Dict[str, List[str]]):
+        """GET /api/copilot/symbol-card?name=...&workspace=...: Detailed symbol card for Copilot."""
+        name = query.get("name", [""])[0]
+        ws = query.get("workspace", [None])[0]
+        matches = GLOBAL_SYMBOL_INDEXER.resolve_symbol_cross_workspace(name)
+        if not matches:
+            matches = GLOBAL_SYMBOL_INDEXER.search_symbols(name, workspace=ws, limit=1)
+        if matches:
+            sym = matches[0]
+            self._send_json({
+                "card_type": "ast_symbol_card",
+                "name": sym["name"],
+                "kind": sym["kind"],
+                "workspace": sym["workspace"],
+                "file_path": sym["file_path"],
+                "line_number": sym["line_number"],
+                "docstring": sym.get("docstring", ""),
+                "status": "active"
+            })
+        else:
+            self._send_json({
+                "card_type": "ast_symbol_card",
+                "name": name,
+                "kind": "unknown",
+                "workspace": ws or "core",
+                "file_path": "unknown",
+                "line_number": 1,
+                "docstring": "Symbol not found in AST index",
+                "status": "unresolved"
+            })
 
     def handle_get_utopia_graph(self, query: Dict[str, List[str]]):
         """GET /api/utopia/graph: Returns bitemporal DAG filtered by Valid Time Tv (INV-012-04)."""

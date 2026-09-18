@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 016: Sovereign Multi-Tenant Cross-Repo Semantic Graph",
+  "category": "bsdd_pipeline",
+  "description": "Пайплайн резолюції крос-репозиторних залежностей та федеративних граф-запитів у Utopia DB",
+  "params": "federation_enabled: bool, cross_repo_query_active: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 016 (Cross-Repo Semantic Graph)",
+      "edges": { "down": "step_index_cross_repo", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-010", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_index_cross_repo",
+      "node_type": "action",
+      "label": "Індексація крос-репозиторних символів та інтерфейсів",
+      "edges": { "down": "cond_cross_refs_found", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_cross_refs_found",
+      "node_type": "question",
+      "label": "Виявлено зовнішні залежності між воркспейсами?",
+      "edges": { "down": "step_build_federated_dag", "right": "step_intra_repo_only" },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_intra_repo_only",
+      "node_type": "action",
+      "label": "Локалізація графа в межах автономного репозиторію",
+      "edges": { "down": "step_expose_query_api", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012", "severity": "normal" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_build_federated_dag",
+      "node_type": "action",
+      "label": "Побудова федеративного DAG зв'язків у Utopia DB (:9922)",
+      "edges": { "down": "step_expose_query_api", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_expose_query_api",
+      "node_type": "action",
+      "label": "Відкриття API /api/graph/query та візуалізація зв'язків",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_airgap_ed25519_proof",
+      "node_type": "action",
+      "label": "Офлайн-генерація Ed25519 сертифіката для review gate Φ6",
+      "edges": { "down": "end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Фініш Спринту 016 (Cross-Repo Semantic Federation Verified)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}

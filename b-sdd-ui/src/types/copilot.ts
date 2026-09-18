@@ -12,6 +12,18 @@ export interface ModelSlot {
   active: boolean;
 }
 
+export interface SymbolCardData {
+  name: string;
+  kind: string;
+  workspace: string;
+  file: string;
+  line: number;
+  docstring: string;
+  tx?: string;
+  tv?: string;
+  dependencies?: string[];
+}
+
 export interface CopilotLogMessage {
   id: string;
   timestamp: string;
@@ -19,6 +31,7 @@ export interface CopilotLogMessage {
   content: string;
   slot?: ModelSlotId;
   tokensUsed?: number;
+  symbolCard?: SymbolCardData;
   critique?: {
     invariantId: string;
     title: string;

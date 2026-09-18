@@ -1,45 +1,39 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-session-1789748532`
+- **Handoff ID:** `handoff-session-1789750210`
 - **Source Session:** `unspecified`
-- **Timestamp:** `2026-09-18T16:22:12.528977+00:00`
+- **Timestamp:** `2026-09-18T16:50:10.460412+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `main`, commit `267c492`
+- **Git Status:** branch `main`, commit `5d86bfd`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
 ```
 .context/next_sprint.md
-b-sdd-ui/src/components/ProjectSwitcherModal.tsx
-b-sdd-ui/src/lib/api.ts
-b-sdd-ui/src/lib/backend-types.ts
-run_sprint_014.sh
-run_sprint_015.sh
-specs/014-multi-tenant-tracing-and-offline-crypto/tasks.md
-specs/015-autonomous-gitnexus-harness/
+b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx
+b-sdd-ui/src/types/copilot.ts
+specs/015-autonomous-gitnexus-harness/tasks.md
 src/adapters/gitnexus_graph.py
-src/core/crypto_verifier.py
-src/core/skill_crystallizer.py
 src/server/workbench_server.py
-tests/test_sprint_014_multi_tenant.py
+tests/test_sprint_015_autonomous_harness.py
 ```
 
 ### Completed Tasks
-- [x] task-082: **TASK-013-6 (Φ4 F5 Bug & Project Persistence):** Set `selectedNodeId = null` in `App.tsx` and wire `ACTIVE_PROJECT_CONTEXT` persistence in `src/server/workbench_server.py`.
-- [x] task-083: **TASK-013-7 (Φ5 Fitness & Tests):** Pass 100% pytest suite (88/88) and compile clean frontend build (`tsc -b && vite build`).
-- [x] task-084: **TASK-013-8 (Φ5 Deployment):** Deploy updated production bundle to Cloudflare Pages (`https://b-sdd-ui.pages.dev`).
-- [x] task-085: **TASK-013-9 (Φ6 Review Gate):** Verify cryptographic proof and remote node sync on `192.168.3.184`.
-- [x] task-086: **TASK-013-10 (Φ7 Distillation):** Synthesize handoff artifacts and prepare baseline for Sprint 014.
-- [x] task-087: **TASK-014-1 (Φ1 Intent Framing):** Finalize SPEC-014 requirements, architectural invariants, and action graph.
-- [x] task-088: **TASK-014-2 (Φ2 Visual Flow):** Model and validate planar DRAKON flow (`specs/014-multi-tenant-tracing-and-offline-crypto/logic.drakon.json`).
-- [x] task-089: **TASK-014-3 (Φ3 TDD Harness):** Implement unit and invariant tests in `tests/test_sprint_014_multi_tenant.py`.
-- [x] task-090: **TASK-014-4 (Φ4 Multi-Tenant Tracing):** Implement cross-workspace symbol lookup in `src/adapters/gitnexus_graph.py`.
 - [x] task-091: **TASK-014-5 (Φ4 Direct SSE Stream):** Implement direct binarized SSE streaming in `src/server/workbench_server.py`.
 - [x] task-092: **TASK-014-6 (Φ4 Offline Ed25519 Proofs):** Implement standalone cryptographic verifier in `src/core/crypto_verifier.py`.
 - [x] task-093: **TASK-014-7 (Φ4 Frontend Tracing UI):** Update ProjectSwitcherModal with linked workspace symbol navigation.
 - [x] task-094: **TASK-014-8 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile `npm run build` in `b-sdd-ui`.
 - [x] task-095: **TASK-014-9 (Φ6 HITL Gate):** Generate cryptographic review proof in `.context/sprint_014_handoff.json`.
 - [x] task-096: **TASK-014-10 (Φ7 Distillation):** Synthesize handoff artifacts and prepare next sprint pipeline.
+- [x] task-097: **TASK-015-1 (Φ1 Intent Framing):** Finalize SPEC-015 requirements, architectural invariants, and action graph.
+- [x] task-098: **TASK-015-2 (Φ2 Visual Flow):** Model and validate planar DRAKON flow (`specs/015-autonomous-gitnexus-harness/logic.drakon.json`).
+- [x] task-099: **TASK-015-3 (Φ3 TDD Harness):** Implement unit and invariant tests in `tests/test_sprint_015_autonomous_harness.py`.
+- [x] task-100: **TASK-015-4 (Φ4 Background Ingestion):** Implement asynchronous multi-repo ingestion with Utopia DB DAG node mapping.
+- [x] task-101: **TASK-015-5 (Φ4 Copilot Symbol Cards):** Add AST symbol inspection cards and jump-to-source in `CopilotStream.tsx`.
+- [x] task-102: **TASK-015-6 (Φ4 Rule of 2 Lifecycle):** Verify skill crystallization for repeated ingestion workflows.
+- [x] task-103: **TASK-015-7 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile clean `npm run build` in `b-sdd-ui`.
+- [x] task-104: **TASK-015-8 (Φ6 Review Gate):** Verify air-gapped Ed25519 review manifest in `.context/sprint_015_handoff.json`.
+- [x] task-105: **TASK-015-9 (Φ7 Distillation):** Synthesize handoff artifacts and establish next sprint baseline.
 
 ## 2. Active Architectural Constraints
 - [GLOBAL] **Bitemporal Architectural Invariants:** System architecture is governed by declarative Architectural Decision Records (ADRs) with bitemporal valid-time horizons (`valid_from` / `valid_to`) and explicit DAG supersession edges. Superseded decisions are mathematically pruned from agent context. (Ref: .specify/constitution.md)
@@ -74,4 +68,4 @@ tests/test_sprint_014_multi_tenant.py
 - [ ] task-065: **TASK-011-8 (Φ7 Handoff):** Generate `sprint_011_handoff.json` and synchronize git commit.
 - [ ] task-066: **TASK-012-1 (Φ1 Intent Framing):** Author ADR-013, behavioral spec, and action-level tasks.
 - [ ] task-067: **TASK-012-2 (Φ2 Visual Flow):** Validate Sprint 012 planar DRAKON flow (`specs/012-dag-and-pi-harness/logic.drakon.json`) and architecture topology (`structure.drakon.json`).
-- ... and 18 more pending tasks
+- ... and 9 more pending tasks
