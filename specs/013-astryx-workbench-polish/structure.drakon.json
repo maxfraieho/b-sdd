@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 013: Architecture Topology",
+  "category": "bsdd_structure",
+  "description": "Архітектурна топологія Astryx Workbench: Core -> UI Studio -> Copilot -> Sovereign Relay",
+  "nodes": [
+    {
+      "node_id": "core_invariants",
+      "node_type": "headline",
+      "label": "Суверенне ядро B-SDD (Pure Python Standard Library)",
+      "edges": { "down": "ui_drakon_studio", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-002", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "ui_drakon_studio",
+      "node_type": "action",
+      "label": "Drakon Studio: Зона B (Toolbar, 4-Tab Palette, Canvas, Modal)",
+      "edges": { "down": "ui_topbar_pulse", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "ui_topbar_pulse",
+      "node_type": "action",
+      "label": "Topbar Зона A: Компактний System Pulse Popover",
+      "edges": { "down": "ui_copilot_stream", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-009", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "ui_copilot_stream",
+      "node_type": "action",
+      "label": "Copilot Зона C: Розмовний чат & Architectural Critique Cards",
+      "edges": { "down": "ui_timeline_radar", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-009", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "ui_timeline_radar",
+      "node_type": "action",
+      "label": "Timeline Зона D: 2-колонковий радар (Cards & Utopia DAG)",
+      "edges": { "down": "sovereign_relay", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "sovereign_relay",
+      "node_type": "end",
+      "label": "Суверенні сервери (192.168.3.184 / 192.168.3.251 / Cloudflare Pages)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    }
+  ]
+}

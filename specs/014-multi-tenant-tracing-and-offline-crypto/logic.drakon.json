@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 014: Cross-Repo Tracing & Air-Gapped Verification",
+  "category": "bsdd_pipeline",
+  "description": "Пайплайн наскрізного AST-трасування символів між репозиторіями та офлайн криптографічної верифікації Ed25519",
+  "params": "multi_repo_enabled: bool, airgap_mode: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 014 (Cross-Repo AST & Airgap Proofs)",
+      "edges": { "down": "step_parse_linked_repos", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_parse_linked_repos",
+      "node_type": "action",
+      "label": "Сканування та побудова графа символів для зв'язаних воркспейсів",
+      "edges": { "down": "cond_symbols_resolved", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_symbols_resolved",
+      "node_type": "question",
+      "label": "Усі міжмодульні залежності успішно розв'язані?",
+      "edges": { "down": "step_direct_sse_stream", "right": "step_isolate_unresolved" },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_isolate_unresolved",
+      "node_type": "action",
+      "label": "Ізоляція невизначених символів у локальний мок-контур",
+      "edges": { "down": "step_direct_sse_stream", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-004", "severity": "warning" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_direct_sse_stream",
+      "node_type": "action",
+      "label": "Пряма трансляція SSE-потоку до Copilot із латентністю <30мс",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-012", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_airgap_ed25519_proof",
+      "node_type": "action",
+      "label": "Локальна генерація та верифікація Ed25519 підпису для фази Φ6",
+      "edges": { "down": "end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Фініш Спринту 014 (Multi-Tenant Offline Pipeline Verified)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    }
+  ]
+}

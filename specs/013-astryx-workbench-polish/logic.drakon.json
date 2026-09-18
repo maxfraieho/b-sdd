@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 013: Astryx Workbench Polish & Topology Normalization",
+  "category": "bsdd_pipeline",
+  "description": "Нормалізація топології ДРАКОН, інтерактивний System Pulse та розмовний Copilot із картками архітектурної критики",
+  "params": "canvas_mounted: bool, system_healthy: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 013 (Astryx Workbench Polish)",
+      "edges": { "down": "step_normalize_topology", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_normalize_topology",
+      "node_type": "action",
+      "label": "Запуск normalizeDrakonDiagram: перевірка b0, end та покажчиків",
+      "edges": { "down": "cond_topology_valid", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "cond_topology_valid",
+      "node_type": "question",
+      "label": "Схема містить валідний корінь b0 та термінатор end?",
+      "edges": { "down": "step_render_canvas", "right": "step_heal_pointers" },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "step_heal_pointers",
+      "node_type": "action",
+      "label": "Автодобудова гілки b0 та очищення висячих покажчиків",
+      "edges": { "down": "step_render_canvas", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "warning" },
+      "x": 4.0, "y": 4.0
+    },
+    {
+      "node_id": "step_render_canvas",
+      "node_type": "action",
+      "label": "Рендеринг полотна DrakonWidget без ризику reading 'tail'",
+      "edges": { "down": "step_system_pulse", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-008", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_system_pulse",
+      "node_type": "action",
+      "label": "Моніторинг суверенних вузлів через компактний System Pulse",
+      "edges": { "down": "step_copilot_critique", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-009", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_copilot_critique",
+      "node_type": "action",
+      "label": "Генерація карток архітектурної критики при мутаціях вузлів",
+      "edges": { "down": "end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-009", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Фініш Спринту 013 (Astryx Cockpit Verified)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}
