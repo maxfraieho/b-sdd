@@ -1,10 +1,10 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-session-1789758210`
+- **Handoff ID:** `handoff-session-1789759366`
 - **Source Session:** `unspecified`
-- **Timestamp:** `2026-09-18T19:03:30.392312+00:00`
+- **Timestamp:** `2026-09-18T19:22:46.360892+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `main`, commit `c658874`
+- **Git Status:** branch `main`, commit `14d0729`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
@@ -12,28 +12,30 @@
 .context/next_sprint.md
 b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx
 b-sdd-ui/src/components/Topbar.tsx
-specs/019-autonomous-agent-consensus/tasks.md
-src/adapters/consensus_engine.py
+run_sprint_020.sh
+specs/020-agent-self-correction-and-healing/
+src/adapters/self_healing_engine.py
 src/server/workbench_server.py
-tests/test_sprint_019_consensus.py
+tests/test_sprint_015_autonomous_harness.py
+tests/test_sprint_020_self_healing.py
 ```
 
 ### Completed Tasks
-- [x] task-127: **TASK-018-4 (Φ4 Cluster Adapter):** Implement pure stdlib cluster discovery and lease manager in `src/adapters/cluster_sync.py`.
-- [x] task-128: **TASK-018-5 (Φ4 Server Endpoints):** Wire `GET /api/cluster/nodes`, `POST /api/cluster/lease/acquire`, and `POST /api/cluster/lease/release` into `workbench_server.py`.
-- [x] task-129: **TASK-018-6 (Φ4 UI Pulse & Topology):** Add cluster node presence card and active lease badge in Astryx Workbench.
-- [x] task-130: **TASK-018-7 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile clean `npm run build` in `b-sdd-ui`.
-- [x] task-131: **TASK-018-8 (Φ6 Review Gate):** Verify air-gapped Ed25519 review manifest in `.context/sprint_018_handoff.json`.
-- [x] task-132: **TASK-018-9 (Φ7 Distillation):** Synthesize handoff artifacts and establish next sprint baseline.
-- [x] task-133: **TASK-019-1 (Φ1 Intent Framing):** Finalize SPEC-019 requirements, quorum calculation rules, and ballot schema.
-- [x] task-134: **TASK-019-2 (Φ2 Visual Flow):** Model and validate planar DRAKON flow (`specs/019-autonomous-agent-consensus/logic.drakon.json`).
-- [x] task-135: **TASK-019-3 (Φ3 TDD Harness):** Implement unit and invariant tests in `tests/test_sprint_019_consensus.py`.
 - [x] task-136: **TASK-019-4 (Φ4 Consensus Engine):** Implement pure stdlib consensus engine and quorum aggregator in `src/adapters/consensus_engine.py`.
 - [x] task-137: **TASK-019-5 (Φ4 Server Endpoints):** Wire `POST /api/consensus/propose`, `POST /api/consensus/vote`, and `GET /api/consensus/proposals` into `workbench_server.py`.
 - [x] task-138: **TASK-019-6 (Φ4 UI Quorum Badges):** Add consensus proposal voting cards and quorum progress indicators in Astryx Workbench.
 - [x] task-139: **TASK-019-7 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile clean `npm run build` in `b-sdd-ui`.
 - [x] task-140: **TASK-019-8 (Φ6 Review Gate):** Verify air-gapped Ed25519 review manifest in `.context/sprint_019_handoff.json`.
 - [x] task-141: **TASK-019-9 (Φ7 Distillation):** Synthesize handoff artifacts and establish next sprint baseline.
+- [x] task-142: **TASK-020-1 (Φ1 Intent Framing):** Finalize SPEC-020 requirements, compensation protocols, and AST repair schema.
+- [x] task-143: **TASK-020-2 (Φ2 Visual Flow):** Model and validate planar DRAKON flow (`specs/020-agent-self-correction-and-healing/logic.drakon.json`).
+- [x] task-144: **TASK-020-3 (Φ3 TDD Harness):** Implement unit and invariant tests in `tests/test_sprint_020_self_healing.py`.
+- [x] task-145: **TASK-020-4 (Φ4 Self-Healing Engine):** Implement pure stdlib checkpoint manager, diff reverser, and AST healing analyzer in `src/adapters/self_healing_engine.py`.
+- [x] task-146: **TASK-020-5 (Φ4 Server Endpoints):** Wire `POST /api/healing/checkpoint`, `POST /api/healing/compensate`, and `GET /api/healing/status` into `workbench_server.py`.
+- [x] task-147: **TASK-020-6 (Φ4 UI Pulse & Copilot):** Add self-healing status indicator in Astryx Topbar and quick prompt pill in CopilotStream.
+- [x] task-148: **TASK-020-7 (Φ5 Fitness Gates):** Pass 100% pytest suite and compile clean `npm run build` in `b-sdd-ui`.
+- [x] task-149: **TASK-020-8 (Φ6 Review Gate):** Verify air-gapped Ed25519 review manifest in `.context/sprint_020_handoff.json`.
+- [x] task-150: **TASK-020-9 (Φ7 Distillation):** Synthesize handoff artifacts and establish next sprint baseline.
 
 ## 2. Active Architectural Constraints
 - [GLOBAL] **Bitemporal Architectural Invariants:** System architecture is governed by declarative Architectural Decision Records (ADRs) with bitemporal valid-time horizons (`valid_from` / `valid_to`) and explicit DAG supersession edges. Superseded decisions are mathematically pruned from agent context. (Ref: .specify/constitution.md)

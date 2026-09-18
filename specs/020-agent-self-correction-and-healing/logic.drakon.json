@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "name": "Sprint 020: Sovereign Agent Self-Correction & Automated Rollback Compensation",
+  "category": "bsdd_pipeline",
+  "description": "Пайплайн автономної самокорекції, бітемпорального чекпоінтингу та компенсаційного відкату при збоях AST",
+  "params": "rollback_enabled: bool, bitemporal_checkpoints: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Ініціалізація Спринту 020 (Self-Correction & Rollback Compensation)",
+      "edges": { "down": "step_capture_checkpoint", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-010", "severity": "normal" },
+      "x": 0.0, "y": 0.0
+    },
+    {
+      "node_id": "step_capture_checkpoint",
+      "node_type": "action",
+      "label": "Фіксація бітемпорального чекпоінта (Tx/Tv) стану кодової бази",
+      "edges": { "down": "step_apply_ast_mutation", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 2.0
+    },
+    {
+      "node_id": "step_apply_ast_mutation",
+      "node_type": "action",
+      "label": "Автономне застосування AST-мутації або патчу рефакторингу",
+      "edges": { "down": "cond_fitness_verified", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 4.0
+    },
+    {
+      "node_id": "cond_fitness_verified",
+      "node_type": "question",
+      "label": "Фітнес-гейти та синтаксичний парсинг AST пройдені успішно?",
+      "edges": { "down": "step_commit_healing_ledger", "right": "step_rollback_compensation" },
+      "semantic_binding": { "adr_invariant_id": "ADR-005", "severity": "normal" },
+      "x": 0.0, "y": 6.0
+    },
+    {
+      "node_id": "step_rollback_compensation",
+      "node_type": "action",
+      "label": "Автоматичний відкат до чекпоінта та генерація евристик автокорекції",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-007", "severity": "normal" },
+      "x": 4.0, "y": 6.0
+    },
+    {
+      "node_id": "step_commit_healing_ledger",
+      "node_type": "action",
+      "label": "Фіксація успішної мутації в бітемпоральному журналі стану",
+      "edges": { "down": "step_airgap_ed25519_proof", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-013", "severity": "normal" },
+      "x": 0.0, "y": 8.0
+    },
+    {
+      "node_id": "step_airgap_ed25519_proof",
+      "node_type": "action",
+      "label": "Офлайн-генерація Ed25519 сертифіката для review gate Φ6",
+      "edges": { "down": "end", "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-011", "severity": "normal" },
+      "x": 0.0, "y": 10.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Фініш Спринту 020 (Self-Correction & Rollback Compensation Verified)",
+      "edges": { "down": null, "right": null },
+      "semantic_binding": { "adr_invariant_id": "ADR-001", "severity": "normal" },
+      "x": 0.0, "y": 12.0
+    }
+  ]
+}

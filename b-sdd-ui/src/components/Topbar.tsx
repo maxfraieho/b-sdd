@@ -284,6 +284,10 @@ export const Topbar: React.FC<TopbarProps> = ({
                   <span>Agent Quorum (2/3 Majority)</span>
                   <span className="text-emerald font-mono">Consensus Ready</span>
                 </div>
+                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-[#1e293b]/60">
+                  <span>Self-Healing AST (Auto-Rollback)</span>
+                  <span className="text-emerald font-mono">Compensate Ready</span>
+                </div>
               </div>
             </div>
           </>

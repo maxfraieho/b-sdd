@@ -27,6 +27,7 @@ import {
   Undo2,
   ArrowRightLeft,
   Radio,
+  Activity,
 } from 'lucide-react';
 
 interface CopilotStreamProps {
@@ -613,6 +614,13 @@ export const CopilotStream: React.FC<CopilotStreamProps> = ({
         >
           <ShieldCheck className="w-3 h-3 text-amber" />
           Кворум (2/3 Консенсус)
+        </button>
+        <button
+          onClick={() => handleSendPrompt('Запусти аналіз AST-помилок кодової бази, перевір стан чекпоінтів та готовність компенсаційного відкату.')}
+          className="px-2 py-0.5 rounded bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-300 shrink-0 transition-colors flex items-center gap-1 cursor-pointer"
+        >
+          <Activity className="w-3 h-3 text-blue-400" />
+          Самозцілення (Auto-Heal)
         </button>
         <button
           onClick={() => handleInspectSymbol('BackgroundIngestionWorker')}

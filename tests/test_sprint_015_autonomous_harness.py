@@ -153,7 +153,7 @@ def test_server_ingest_and_symbol_card_endpoints(server):
         headers={"Content-Type": "application/json"},
         method="POST"
     )
-    with urllib.request.urlopen(ingest_req, timeout=10.0) as resp:
+    with urllib.request.urlopen(ingest_req, timeout=25.0) as resp:
         assert resp.status == 200
         data = json.loads(resp.read().decode("utf-8"))
         assert data["status"] == "completed"

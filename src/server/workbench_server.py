@@ -37,10 +37,12 @@ from src.adapters.gitnexus_graph import MultiWorkspaceSymbolIndexer, BackgroundI
 from src.core.crypto_verifier import AirGappedProofValidator
 from src.adapters.cluster_sync import ClusterNodeRegistry, ClusterLeaseManager
 from src.adapters.consensus_engine import ConsensusEngine
+from src.adapters.self_healing_engine import SelfHealingEngine
 
 GLOBAL_CLUSTER_REGISTRY = ClusterNodeRegistry()
 GLOBAL_LEASE_MANAGER = ClusterLeaseManager()
 GLOBAL_CONSENSUS_ENGINE = ConsensusEngine()
+GLOBAL_HEALING_ENGINE = SelfHealingEngine()
 
 GLOBAL_COMPILER = BSDDCompiler(root_dir=ROOT_DIR)
 try:
@@ -317,6 +319,8 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_cluster_nodes()
         elif path == "/api/consensus/proposals":
             self.handle_get_consensus_proposals()
+        elif path == "/api/healing/status":
+            self.handle_get_healing_status()
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -381,6 +385,10 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_consensus_propose(body)
         elif path == "/api/consensus/vote":
             self.handle_post_consensus_vote(body)
+        elif path == "/api/healing/checkpoint":
+            self.handle_post_healing_checkpoint(body)
+        elif path == "/api/healing/compensate":
+            self.handle_post_healing_compensate(body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
@@ -1575,6 +1583,44 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             vote=vote
         )
         status_code = 200 if res.get("accepted") else 400
+        self._send_json(res, status=status_code)
+
+    def handle_get_healing_status(self):
+        """GET /api/healing/status: Returns status of self-healing engine and compensation trail (INV-020-04)."""
+        status = GLOBAL_HEALING_ENGINE.get_status()
+        self._send_json(status)
+
+    def handle_post_healing_checkpoint(self, body: Dict[str, Any]):
+        """POST /api/healing/checkpoint: Creates a bitemporal transactional checkpoint for code artifacts (INV-020-04)."""
+        file_path = body.get("file_path", "")
+        content = body.get("content", "")
+        author = body.get("author", "autonomous-agent")
+        reason = body.get("reason", "Pre-mutation checkpoint")
+        if not file_path:
+            self._send_error("Missing file_path", 400)
+            return
+        cp = GLOBAL_HEALING_ENGINE.create_checkpoint(
+            file_path=file_path,
+            content=content,
+            author=author,
+            reason=reason
+        )
+        self._send_json(cp.to_dict())
+
+    def handle_post_healing_compensate(self, body: Dict[str, Any]):
+        """POST /api/healing/compensate: Reverts file to checkpoint snapshot upon failure (INV-020-04)."""
+        checkpoint_id = body.get("checkpoint_id", "")
+        target_path = body.get("target_path")
+        reason = body.get("reason", "Automated rollback compensation")
+        if not checkpoint_id:
+            self._send_error("Missing checkpoint_id", 400)
+            return
+        res = GLOBAL_HEALING_ENGINE.compensate_rollback(
+            checkpoint_id=checkpoint_id,
+            target_path=target_path,
+            reason=reason
+        )
+        status_code = 200 if res.get("success") else 400
         self._send_json(res, status=status_code)
 
     def handle_get_utopia_graph(self, query: Dict[str, List[str]]):
