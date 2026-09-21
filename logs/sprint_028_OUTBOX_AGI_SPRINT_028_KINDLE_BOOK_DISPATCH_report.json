@@ -1,0 +1,22 @@
+{
+  "sprint_id": "sprint_028",
+  "instruction_name": "OUTBOX_AGI_SPRINT_028_KINDLE_BOOK_DISPATCH",
+  "correlation_id": "corr_20260921_kindle_book_01",
+  "status": "SUCCESS",
+  "report_name": "INBOX_GEMINI_SPRINT_028_KINDLE_BOOK_DISPATCH_REPORT",
+  "source_title": "INBOX_GEMINI_SPRINT_028_KINDLE_BOOK_DISPATCH_REPORT",
+  "target_notebook_id": "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2",
+  "secondary_notebook_id": "6813ab1c-ac22-4c3c-9c8e-9dd67e35da99",
+  "epub_artifact": "/home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub",
+  "epub_size_bytes": 1038581,
+  "code_dump_artifact": "/home/vokov/projects/b-sdd/b-sdd_code_dump.txt",
+  "code_dump_size_bytes": 2691431,
+  "skills_count": 53,
+  "tests_passed": "18/18",
+  "invariants": {
+    "adr_002_pure_stdlib": true,
+    "amazon_kindle_compliant": true,
+    "notebooklm_synced": true,
+    "n8n_callback_sent": true
+  }
+}
