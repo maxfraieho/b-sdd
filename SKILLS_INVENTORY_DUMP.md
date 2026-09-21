@@ -1,10 +1,10 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP
 
-**Згенеровано:** 2026-09-21 19:01:21Z  
+**Згенеровано:** 2026-09-21 20:01:57Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
 **Загальна кількість скілів:** **53**  
-**Загальна кількість файлів коду/конфігів:** **233**  
+**Загальна кількість файлів коду/конфігів:** **234**  
 **Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR)  
 
 > [!NOTE]
@@ -41,7 +41,7 @@
 | 21 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | `SKILL.md`, `HTML-REPORT.md` |
 | 22 | [**intent-continuity**](#skill-intent-continuity) | Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization. | `SKILL.md` (1 файл) |
 | 23 | [**investigate-first**](#skill-investigate-first) | Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked... | `SKILL.md`, `agents/openai.yaml` |
-| 24 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to... | `SKILL.md`, `scripts/bsdd_to_kindle.py` +5 |
+| 24 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to... | `SKILL.md`, `scripts/bsdd_to_kindle.py` +6 |
 | 25 | [**laya-decision-router**](#skill-laya-decision-router) | Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing. | `SKILL.md` (1 файл) |
 | 26 | [**make-interfaces-feel-better**](#skill-make-interfaces-feel-better) | Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover s... | `SKILL.md`, `animations.md` +3 |
 | 27 | [**mcp-builder**](#skill-mcp-builder) | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use whe... | `SKILL.md`, `LICENSE.txt` +8 |
@@ -12372,75 +12372,104 @@ interface:
 ### [24/53] Скіл: `kindle-release-pipeline`
 
 **Каталог:** `~/.agents/skills/kindle-release-pipeline`  
-**Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via Gmail API OAuth2.  
-**Файлів у складі:** 7  
+**Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.  
+**Файлів у складі:** 8  
 
-#### Файл: `kindle-release-pipeline/SKILL.md` (3,784 байт)
+#### Файл: `kindle-release-pipeline/SKILL.md` (6,936 байт)
 ````markdown
 ---
 name: kindle-release-pipeline
-description: Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via Gmail API OAuth2.
+description: Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.
 ---
 
 # Kindle Release Pipeline Skill
 
-Autonomous delivery pipeline for compiling B-SDD project documentation, Architectural Decision Records (ADR-001..ADR-020), and sprint summaries into standard **EPUB 3.0** ebooks and delivering them directly to **Amazon Kindle** (`tukroschu@kindle.com`) with backup copies sent to `tukroschu@gmail.com`.
+Autonomous delivery pipeline for compiling B-SDD project documentation, Architectural Decision Records (ADR-001..ADR-028), and sprint ledgers into standard **EPUB 3.0** ebooks and delivering them directly to **Amazon Kindle** (`tukroschu@kindle.com`).
 
 ---
 
 ## 1. Core Architecture & Workflow
 
 ```
-┌───────────────────────────────┐      ┌───────────────────────────────┐      ┌───────────────────────────────┐
-│   B-SDD Architecture Docs     │      │   EPUB 3.0 & Gmail Dispatch   │      │   Amazon Kindle & Gmail       │
-│   docs/user_guide_vol2/       │ ───► │   scripts/bsdd_to_kindle.py   │ ───► │   tukroschu@kindle.com        │
-│   (ADRs + Guides + Sprints)   │      │   scripts/send_digest.py      │      │   tukroschu@gmail.com         │
-└───────────────────────────────┘      └───────────────────────────────┘      └───────────────────────────────┘
+┌─────────────────────────────────┐      ┌─────────────────────────────────┐      ┌─────────────────────────────────┐
+│   B-SDD Architecture Source     │      │   EPUB 3.0 Compilation         │      │   Amazon Kindle Delivery        │
+│   /home/vokov/projects/b-sdd    │ ───► │   run_md_service.sh (Batch 184) │ ───► │   n8n Kindle Dispatcher         │
+│   (ADRs + Guides + Code + Specs)│      │   or md_to_epub.py / pandoc     │      │   tukroschu@kindle.com          │
+└─────────────────────────────────┘      └─────────────────────────────────┘      └─────────────────────────────────┘
+                                                                                             │
+                                                                                             ▼
+                                                                                  [Verified Gmail API: SENT]
+                                                                                  [Strictly ZERO CC (No E009)]
 ```
 
-1. **Source Content (`docs/user_guide_vol2/`):** Structured Markdown chapters covering the B-SDD manifesto, 7-phase HITL lifecycle, DRAKON visual algorithms ($C=0, X=0$), sovereign mesh & leases, agent consensus, self-healing AST, Astryx Cockpit UI, ADR registry (ADR-001 through ADR-012), and sprint ledgers (sprint_020 through sprint_027).
-2. **Compiler (`scripts/md_to_epub.py`):** Converts Markdown into standard EPUB 3.0 with table of contents (NCX/NAV) and Kindle-compatible typography.
-3. **Execution Script (`scripts/bsdd_to_kindle.py`):** Orchestrates book assembly, compilation, and email delivery.
-4. **Delivery Transport (`scripts/send_digest.py`):** Uses headless OAuth2 credentials in `~/.vydra-survey-profiles/gmail_token.json` to dispatch the book to Amazon Send-to-Kindle (`tukroschu@kindle.com`) with an automatic backup copy to `tukroschu@gmail.com`.
+### Key Lifecycle Phases:
+1. **Compilation Phase (Host 184 Batch Service):**
+   Converts markdown chapters and codebase specifications into standard EPUB 3.0 with navigation tables (NCX/NAV) and Kindle-compatible typography via `md_to_embeddings_service_v4.py` / `run_md_service.sh`.
+2. **Delivery Transport (n8n Kindle Dispatcher):**
+   Dispatches the binary `.epub` through n8n workflow `B-SDD Kindle Dispatcher` (`GC5pv2TIYbKHj2Ch`) on Oracle VM `100.66.97.93` / `https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book`.
+   Uses active Google OAuth2 credentials (`Gmail account`) to call Gmail API `messages.send`.
+3. **Amazon Invariant (Anti-E009):**
+   Amazon Send-to-Kindle rejects emails containing multiple recipients or CC fields with error `E009`. Delivery **MUST ALWAYS BE EXCLUSIVELY TO** `tukroschu@kindle.com` without any CC addresses.
 
 ---
 
 ## 2. Configuration & Credentials
 
-- **Execution Nodes:** `192.168.3.161` (Local Orchestrator) / `192.168.3.184` (Remote Relay)
-- **Sender Address:** `tukroschu@gmail.com`
-- **Recipient Address:** `tukroschu@kindle.com`
-- **Backup Address:** `tukroschu@gmail.com`
-- **Secrets Directory:** `~/.vydra-survey-profiles/`
-  - `gmail_token.json` (OAuth2 token with `gmail.send` scope)
-  - `gmail_client_secret.json` (Desktop Client credentials)
-- **Attachment Limit:** 25 MB (Amazon Send-to-Kindle limit)
+| Параметр | Значення | Примітка |
+| :--- | :--- | :--- |
+| **Одержувач** | `tukroschu@kindle.com` | Авторизований Amazon Send-to-Kindle акаунт |
+| **Відправник** | `tukroschu@gmail.com` | Дозволений відправник у налаштуваннях Amazon |
+| **Поштовий шлюз** | `n8n Kindle Dispatcher` (`GC5pv2TIYbKHj2Ch`) | Активна OAuth2 авторизація в n8n (`Gmail account`) |
+| **Webhook Endpoint** | `https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book` | Резервний прямий: `http://100.66.97.93:5678/webhook/dispatch-kindle-book` |
+| **Максимальний розмір** | 25 МБ | Ліміт вкладень Amazon Send-to-Kindle |
+| **Формат файлу** | `.epub` (EPUB 3.0 / `application/epub+zip`) | Стандарт для e-ink рідерів Kindle |
 
 ---
 
-## 3. Standard Execution Commands
+## 3. Standard Execution Playbook
 
-### A. Compile and Deliver Architecture Book Vol. 2
+### Крок 1. Компіляція книги EPUB 3.0 (Хост 184)
+Запусти віддалену збірку через існуючий batch-сервіс:
 ```bash
-python3 scripts/bsdd_to_kindle.py
+ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 "cd /home/vokov/projects/resume && ./run_md_service.sh --batch --source /home/vokov/projects/b-sdd --output /home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub"
+```
+Стягни свіжий згенерований файл на хост 161 (якщо збірка виконувалася на 184):
+```bash
+scp -o StrictHostKeyChecking=no vokov@192.168.3.184:/home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub /home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub
 ```
 
-### B. Dry-Run Compilation (Verify Without Emailing)
+### Крок 2. Реальна відправка книги на Kindle
+Використай перевірену утиліту `scripts/dispatch_kindle_book.sh`:
 ```bash
-python3 scripts/bsdd_to_kindle.py --dry-run
+/home/vokov/projects/b-sdd/scripts/dispatch_kindle_book.sh \
+  /home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub \
+  "B-SDD Architecture & Sprint Ledger Vol. 2"
 ```
 
-### C. Custom Recipient or Source Directory
+Або прямий виклик через curl:
 ```bash
-python3 scripts/bsdd_to_kindle.py --source /path/to/docs --output /path/to/book.epub --to custom@kindle.com
+curl -s -X POST https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book \
+  -F "subject=B-SDD Architecture & Sprint Ledger Vol. 2" \
+  -F "data=@/home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub;type=application/epub+zip"
+```
+
+Очікувана відповідь поштового шлюзу (Gmail API):
+```json
+{"id":"1a0c5880b8e48c15","threadId":"1a0c5880b8e48c15","labelIds":["SENT"]}
 ```
 
 ---
 
-## 4. Invariants & Compliance
+## 4. Troubleshooting & Post-Mortem Lessons
 
-- **Invariant ADR-003:** Encapsulated in `~/.agents/skills/kindle-release-pipeline` with valid YAML frontmatter and documentation.
-- **Amazon Send-to-Kindle Invariant:** Delivery is formatted as a valid MIME attachment with authorized sender address to avoid Amazon rejection.
+1. **Помилка `invalid_grant: Token has been expired or revoked`:**
+   - Статичні токени в `~/.vydra-survey-profiles/gmail_token.json` мають властивість втрачати авторизацію або блокуватися Google через невикористання.
+   - **Вирішення:** Транспорт переведено на централізований `n8n Kindle Dispatcher`, де n8n автоматично оновлює refresh-токен Google OAuth2.
+2. **Помилка блокування Amazon `E009`:**
+   - Amazon Send-to-Kindle вимагає відсутності сторонніх адрес у `CC` або `BCC`. Будь-яка копія на `tukroschu@gmail.com` у тому самому листі призводить до тиражування відмови.
+   - **Правило:** Відправка на Kindle здійснюється суворо як окремий лист на одну адресу `tukroschu@kindle.com`.
+3. **Multipart Binary Field Mapping (`data0`):**
+   - При надсиланні файлу через multipart/form-data (`curl -F data=@...`), n8n призначає індекс масиву: бінарна властивість називається `data0`, а не `data`. У параметрі `attachmentsBinary` вузла Gmail обов'язково вказувати `property: data0`.
 
 ````
 
@@ -12538,33 +12567,85 @@ if __name__ == "__main__":
 
 ````
 
-#### Файл: `kindle-release-pipeline/scripts/dispatch_on_184.sh` (1,007 байт)
+#### Файл: `kindle-release-pipeline/scripts/dispatch_kindle_book.sh` (1,466 байт)
+````bash
+#!/usr/bin/env bash
+# ==============================================================================
+# B-SDD Kindle Delivery Utility
+# Dispatches EPUB documents to tukroschu@kindle.com via n8n Kindle Dispatcher.
+# Guarantees:
+#   - Real delivery via authorized Gmail API
+#   - Strictly NO CC (Amazon E009 error avoidance)
+#   - Verified HTTP 200 and Gmail message ID returned
+# ==============================================================================
+set -euo pipefail
+
+EPUB_PATH="${1:-/home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub}"
+SUBJECT="${2:-B-SDD Architecture & Sprint Ledger Vol. 2}"
+ENDPOINT="https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book"
+
+if [[ ! -f "$EPUB_PATH" ]]; then
+  echo "[-] Error: File not found: $EPUB_PATH" >&2
+  exit 1
+fi
+
+FILE_SIZE=$(stat -c%s "$EPUB_PATH" 2>/dev/null || stat -f%z "$EPUB_PATH")
+echo "[*] Dispatching to Kindle (tukroschu@kindle.com)..."
+echo "    File: $EPUB_PATH (${FILE_SIZE} bytes)"
+echo "    Subject: $SUBJECT"
+echo "    Endpoint: $ENDPOINT"
+
+RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$ENDPOINT" \
+  -F "subject=$SUBJECT" \
+  -F "data=@${EPUB_PATH};type=application/epub+zip")
+
+HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+BODY=$(echo "$RESPONSE" | head -n -1)
+
+if [[ "$HTTP_CODE" -eq 200 ]]; then
+  echo "[+] SUCCESS: Book delivered to Kindle!"
+  echo "    Response: $BODY"
+  exit 0
+else
+  echo "[-] FAILED: Gateway returned HTTP $HTTP_CODE" >&2
+  echo "    Response: $BODY" >&2
+  exit 1
+fi
+
+````
+
+#### Файл: `kindle-release-pipeline/scripts/dispatch_on_184.sh` (1,385 байт)
 ````bash
 #!/usr/bin/env bash
 # ==============================================================================
 # B-SDD KINDLE DISPATCH RUNNER (HOST .184)
 # Executes autonomous EPUB compilation and dispatch on remote server 192.168.3.184
+# and delivers via verified n8n Kindle Dispatcher (NO CC, anti-E009).
 # ==============================================================================
 set -euo pipefail
 
 REMOTE_HOST="192.168.3.184"
-REMOTE_KINDLE_REPO="/home/vokov/projects/send-to-kindle"
+REMOTE_RESUME_REPO="/home/vokov/projects/resume"
 REMOTE_BSDD_REPO="/home/vokov/projects/b-sdd"
+OUTPUT_EPUB="${REMOTE_BSDD_REPO}/b_sdd_architecture_vol2.epub"
+SUBJECT="${1:-B-SDD Architecture & Sprint Ledger Vol. 2}"
 
-echo "=== [1/3] Syncing repositories on ${REMOTE_HOST} ==="
+echo "=== [1/3] Compiling B-SDD Architecture EPUB on ${REMOTE_HOST} ==="
 ssh -o ConnectTimeout=10 "${REMOTE_HOST}" "
-  cd '${REMOTE_BSDD_REPO}' && git pull origin main &&
-  cd '${REMOTE_KINDLE_REPO}' && git pull origin master
+  cd '${REMOTE_RESUME_REPO}' &&
+  ./run_md_service.sh --batch --source '${REMOTE_BSDD_REPO}' --output '${OUTPUT_EPUB}'
 "
 
-echo "=== [2/3] Compiling and dispatching B-SDD documentation to Kindle ==="
-ssh -o ConnectTimeout=10 "${REMOTE_HOST}" "
-  cd '${REMOTE_KINDLE_REPO}' &&
-  uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib \
-    python3 bsdd_to_kindle.py $*
-"
+echo "=== [2/3] Fetching fresh EPUB to local host ==="
+scp -o ConnectTimeout=10 "${REMOTE_HOST}:${OUTPUT_EPUB}" "/home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub"
 
-echo "=== [3/3] Execution complete ==="
+echo "=== [3/3] Dispatching to Kindle via n8n Kindle Dispatcher ==="
+curl -s -X POST https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book \
+  -F "subject=${SUBJECT}" \
+  -F "data=@/home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epub;type=application/epub+zip"
+
+echo ""
+echo "[+] Kindle delivery pipeline completed successfully!"
 
 ````
 

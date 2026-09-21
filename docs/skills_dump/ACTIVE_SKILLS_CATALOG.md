@@ -1,6 +1,6 @@
 # B-SDD ACTIVE CORE SKILLS CATALOG (53 ACTIVE SKILLS)
 
-**Дата генерації:** 2026-09-21 19:01:21Z  
+**Дата генерації:** 2026-09-21 20:01:58Z  
 **Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  
 **Каталог активних скілів:** `/home/vokov/.agents/skills`  
 **Каталог розширених скілів:** `/home/vokov/.agents/skills/_extended`  
@@ -379,10 +379,10 @@
 
 ### `kindle-release-pipeline`
 - **Назва:** kindle-release-pipeline
-- **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via Gmail API OAuth2.
+- **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.
 - **Шлях:** `~/.agents/skills/kindle-release-pipeline`
-- **Кількість файлів коду/конфігів:** 7
-- **Ключові файли:** `SKILL.md, scripts/bsdd_to_kindle.py, scripts/dispatch_on_184.sh, scripts/dossier_to_kindle.py, scripts/kindle_digest.py, scripts/md_to_epub.py, scripts/send_digest.py`
+- **Кількість файлів коду/конфігів:** 8
+- **Ключові файли:** `SKILL.md, scripts/bsdd_to_kindle.py, scripts/dispatch_kindle_book.sh, scripts/dispatch_on_184.sh, scripts/dossier_to_kindle.py, scripts/kindle_digest.py, scripts/md_to_epub.py, scripts/send_digest.py`
 
 ### `mcp-builder`
 - **Назва:** mcp-builder
@@ -466,4 +466,4 @@
 | `verify-and-stop` | Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion ch... |
 
 ---
-**Всього активних файлів коду у 48 скілах ядра:** 233
+**Всього активних файлів коду у 48 скілах ядра:** 234
