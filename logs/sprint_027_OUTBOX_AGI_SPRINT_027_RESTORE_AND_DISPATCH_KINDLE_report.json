@@ -1,0 +1,39 @@
+{
+  "sprint_id": "sprint_027",
+  "instruction_name": "OUTBOX_AGI_SPRINT_027_RESTORE_AND_DISPATCH_KINDLE",
+  "correlation_id": "corr_20260921_restore_kindle_01",
+  "status": "SUCCESS",
+  "node": "192.168.3.161",
+  "target_notebook_id": "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2",
+  "secondary_notebook_id": "6813ab1c-ac22-4c3c-9c8e-9dd67e35da99",
+  "tests_summary": "18/18 ARCHITECTURAL REGRESSION PASSED, 100% COMPLIANT",
+  "report_name": "INBOX_GEMINI_SPRINT_027_RESTORE_KINDLE_REPORT",
+  "restored_skills": [
+    "kindle-release-pipeline",
+    "drakon-compiler",
+    "utopia-intent-ledger",
+    "astryx-scaffolder"
+  ],
+  "total_active_skills": 53,
+  "total_code_files": 233,
+  "epub_artifact": "docs/b_sdd_architecture_vol2.epub",
+  "epub_size_bytes": 75914,
+  "epub_chapters": 30,
+  "kindle_target": "tukroschu@kindle.com",
+  "gmail_backup_target": "tukroschu@gmail.com",
+  "delivery_log": "logs/kindle_delivery.log",
+  "deliverables": [
+    "~/.agents/skills/kindle-release-pipeline",
+    "~/.agents/skills/drakon-compiler",
+    "~/.agents/skills/utopia-intent-ledger",
+    "~/.agents/skills/astryx-scaffolder",
+    "docs/skills_dump/ACTIVE_SKILLS_CATALOG.md",
+    "docs/skills_dump/SKILLS_INVENTORY_DUMP.md",
+    "SKILLS_INVENTORY_DUMP.md",
+    "docs/user_guide_vol2",
+    "docs/b_sdd_architecture_vol2.epub",
+    "scripts/bsdd_to_kindle.py",
+    "logs/sprint_027_restore_kindle_report.md",
+    "logs/sprint_027_report.json"
+  ]
+}

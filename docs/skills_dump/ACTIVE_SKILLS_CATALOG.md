@@ -1,6 +1,6 @@
-# B-SDD ACTIVE CORE SKILLS CATALOG (49 GOLDEN STANDARD)
+# B-SDD ACTIVE CORE SKILLS CATALOG (53 ACTIVE SKILLS)
 
-**Дата генерації:** 2026-09-21 16:03:39Z  
+**Дата генерації:** 2026-09-21 18:30:01Z  
 **Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  
 **Каталог активних скілів:** `/home/vokov/.agents/skills`  
 **Каталог розширених скілів:** `/home/vokov/.agents/skills/_extended`  
@@ -8,7 +8,7 @@
 **Статус:** Затверджено як активний стандарт для Astryx Copilot та ДРАКОН-нод.  
 
 > [!IMPORTANT]
-> Даний каталог містить **49 активних скілів ядра**, відкаліброваних для автономного циклу B-SDD.
+> Даний каталог містить **53 активних скілів ядра**, включаючи відновлені скіли спринту 027 (kindle-release-pipeline, drakon-compiler, utopia-intent-ledger, astryx-scaffolder).
 > Допоміжні та доменні скіли (29 найменувань) надійно ізольовано в `~/.agents/skills/_extended/`
 > і не перевантажують контекстне вікно планувальника.
 
@@ -18,18 +18,18 @@
 
 | № | Категорія | Кількість скілів | Призначення |
 |---|-----------|:----------------:|-------------|
-| 1 | Core B-SDD & Architecture | 9 | Дотримання інваріантів B-SDD, бітемпоральність, аудит та створення скілів |
+| 1 | Core B-SDD & Architecture | 11 | Дотримання інваріантів B-SDD, бітемпоральність, ДРАКОН-компілятор, Utopia Ledger |
 | 2 | Planning & SSD Specs | 9 | Планування, декомпозиція задач, передача контексту, парне проєктування |
 | 3 | Refactoring & Code Quality | 9 | Безпечний рефакторинг, патчинг, AST-пошук, рев'ю та git-ізоляція |
 | 4 | Testing & TDD | 5 | TDD-цикли, антипатерни тестування, ліквідація гонок, веб-тести |
 | 5 | Diagnostics & Debugging | 4 | Системне налагодження, пошук кореневих причин, трейсинг дефектів |
-| 6 | Frontend & Astryx Ergonomics | 7 | Інтерфейси Astryx Cockpit, React/Vercel патерни, дизайн та теми |
-| 7 | Protocols & System Tools | 6 | MCP-сервери, NotebookLM, GitNexus, API та CLI інструменти |
-| **Σ** | **Всього активних скілів** | **49** | **Повний замкнений контур AGI** |
+| 6 | Frontend & Astryx Ergonomics | 8 | Інтерфейси Astryx Cockpit, скафолдинг компонентів, React/Vercel патерни |
+| 7 | Protocols & System Tools | 7 | Kindle пайплайн релізів, MCP-сервери, NotebookLM, GitNexus, API та CLI |
+| **Σ** | **Всього активних скілів** | **53** | **Повний замкнений контур AGI** |
 
 ---
 
-## 1. Core B-SDD & Architecture (9)
+## 1. Core B-SDD & Architecture (11)
 
 ### `b-sdd`
 - **Назва:** b-sdd
@@ -51,6 +51,20 @@
 - **Шлях:** `~/.agents/skills/laya-decision-router`
 - **Кількість файлів коду/конфігів:** 1
 - **Ключові файли:** `SKILL.md`
+
+### `drakon-compiler`
+- **Назва:** drakon-compiler
+- **Опис:** Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict skewer alignment.
+- **Шлях:** `~/.agents/skills/drakon-compiler`
+- **Кількість файлів коду/конфігів:** 2
+- **Ключові файли:** `SKILL.md, scripts/compile_drakon.py`
+
+### `utopia-intent-ledger`
+- **Назва:** utopia-intent-ledger
+- **Опис:** Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge graph.
+- **Шлях:** `~/.agents/skills/utopia-intent-ledger`
+- **Кількість файлів коду/конфігів:** 3
+- **Ключові файли:** `SKILL.md, scripts/sync_utopia.py, scripts/validate_ontology.py`
 
 ### `architecture-designer`
 - **Назва:** architecture-designer
@@ -301,7 +315,7 @@
 
 ---
 
-## 6. Frontend & Astryx Ergonomics (7)
+## 6. Frontend & Astryx Ergonomics (8)
 
 ### `frontend-design`
 - **Назва:** frontend-design
@@ -309,6 +323,13 @@
 - **Шлях:** `~/.agents/skills/frontend-design`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `LICENSE.txt, SKILL.md`
+
+### `astryx-scaffolder`
+- **Назва:** astryx-scaffolder
+- **Опис:** Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.
+- **Шлях:** `~/.agents/skills/astryx-scaffolder`
+- **Кількість файлів коду/конфігів:** 2
+- **Ключові файли:** `SKILL.md, scripts/scaffold_component.py`
 
 ### `make-interfaces-feel-better`
 - **Назва:** make-interfaces-feel-better
@@ -354,7 +375,14 @@
 
 ---
 
-## 7. Protocols & System Tools (6)
+## 7. Protocols & System Tools (7)
+
+### `kindle-release-pipeline`
+- **Назва:** kindle-release-pipeline
+- **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via Gmail API OAuth2.
+- **Шлях:** `~/.agents/skills/kindle-release-pipeline`
+- **Кількість файлів коду/конфігів:** 7
+- **Ключові файли:** `SKILL.md, scripts/bsdd_to_kindle.py, scripts/dispatch_on_184.sh, scripts/dossier_to_kindle.py, scripts/kindle_digest.py, scripts/md_to_epub.py, scripts/send_digest.py`
 
 ### `mcp-builder`
 - **Назва:** mcp-builder
@@ -438,4 +466,4 @@
 | `verify-and-stop` | Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion ch... |
 
 ---
-**Всього активних файлів коду у 48 скілах ядра:** 219
+**Всього активних файлів коду у 48 скілах ядра:** 233

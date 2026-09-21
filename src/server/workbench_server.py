@@ -1312,7 +1312,7 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
                     headers={"Content-Type": "application/json"},
                     method="POST"
                 )
-                with urllib.request.urlopen(req, timeout=3.0) as resp:
+                with urllib.request.urlopen(req, timeout=0.08) as resp:
                     for line in resp:
                         decoded = line.decode("utf-8", errors="replace").strip()
                         if not decoded.startswith("data:"):

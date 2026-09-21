@@ -263,8 +263,21 @@ def main():
         help="Path to output markdown file"
     )
     args = parser.parse_args()
+    total_skills, total_files, final_size = generate_dump(Path(args.source), Path(args.output))
 
-    generate_dump(Path(args.source), Path(args.output))
+    # Also sync root SKILLS_INVENTORY_DUMP.md mirror
+    root_dump = Path("/home/vokov/projects/b-sdd/SKILLS_INVENTORY_DUMP.md")
+    if Path(args.output).resolve() != root_dump.resolve() and Path(args.output).exists():
+        import shutil
+        shutil.copy2(args.output, root_dump)
+        print(f"[SUCCESS] Mirrored dump to root: {root_dump}")
+
+    # Regenerate ACTIVE_SKILLS_CATALOG.md
+    try:
+        from generate_active_catalog import main as gen_cat
+        gen_cat()
+    except Exception as e:
+        print(f"[WARN] Error updating ACTIVE_SKILLS_CATALOG.md: {e}")
 
 
 if __name__ == "__main__":

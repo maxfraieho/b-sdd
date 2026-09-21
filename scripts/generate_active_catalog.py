@@ -16,9 +16,9 @@ skills_dir = Path(os.path.expanduser("~/.agents/skills")).resolve()
 ext_dir = skills_dir / "_extended"
 
 categories = {
-    "1. Core B-SDD & Architecture (9)": [
-        "b-sdd", "intent-continuity", "laya-decision-router", "architecture-designer", "skill-creator",
-        "writing-great-skills", "writing-skills", "skill-audit", "find-skills"
+    "1. Core B-SDD & Architecture (11)": [
+        "b-sdd", "intent-continuity", "laya-decision-router", "drakon-compiler", "utopia-intent-ledger",
+        "architecture-designer", "skill-creator", "writing-great-skills", "writing-skills", "skill-audit", "find-skills"
     ],
     "2. Planning & SSD Specs (9)": [
         "writing-plans", "executing-plans", "to-spec", "to-tickets", "wayfinder",
@@ -34,21 +34,23 @@ categories = {
     "5. Diagnostics & Debugging (4)": [
         "investigate-first", "systematic-debugging", "root-cause-tracing", "diagnosing-bugs"
     ],
-    "6. Frontend & Astryx Ergonomics (7)": [
-        "frontend-design", "make-interfaces-feel-better", "web-design-guidelines",
+    "6. Frontend & Astryx Ergonomics (8)": [
+        "frontend-design", "astryx-scaffolder", "make-interfaces-feel-better", "web-design-guidelines",
         "vercel-react-best-practices", "vercel-composition-patterns", "web-artifacts-builder", "theme-factory"
     ],
-    "7. Protocols & System Tools (6)": [
-        "mcp-builder", "notebooklm", "notebooklm-gitnexus-copilot", "api-designer", "cli-developer", "caveman"
+    "7. Protocols & System Tools (7)": [
+        "kindle-release-pipeline", "mcp-builder", "notebooklm", "notebooklm-gitnexus-copilot",
+        "api-designer", "cli-developer", "caveman"
     ]
 }
 
 
 def main():
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
+    total_skills_count = sum(len(skills) for skills in categories.values())
 
     lines = []
-    lines.append("# B-SDD ACTIVE CORE SKILLS CATALOG (49 GOLDEN STANDARD)")
+    lines.append(f"# B-SDD ACTIVE CORE SKILLS CATALOG ({total_skills_count} ACTIVE SKILLS)")
     lines.append("")
     lines.append(f"**Дата генерації:** {now_iso}  ")
     lines.append("**Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  ")
@@ -58,7 +60,7 @@ def main():
     lines.append("**Статус:** Затверджено як активний стандарт для Astryx Copilot та ДРАКОН-нод.  ")
     lines.append("")
     lines.append("> [!IMPORTANT]")
-    lines.append("> Даний каталог містить **49 активних скілів ядра**, відкаліброваних для автономного циклу B-SDD.")
+    lines.append(f"> Даний каталог містить **{total_skills_count} активних скілів ядра**, включаючи відновлені скіли спринту 027 (kindle-release-pipeline, drakon-compiler, utopia-intent-ledger, astryx-scaffolder).")
     lines.append("> Допоміжні та доменні скіли (29 найменувань) надійно ізольовано в `~/.agents/skills/_extended/`")
     lines.append("> і не перевантажують контекстне вікно планувальника.")
     lines.append("")
@@ -68,14 +70,14 @@ def main():
     lines.append("")
     lines.append("| № | Категорія | Кількість скілів | Призначення |")
     lines.append("|---|-----------|:----------------:|-------------|")
-    lines.append("| 1 | Core B-SDD & Architecture | 9 | Дотримання інваріантів B-SDD, бітемпоральність, аудит та створення скілів |")
+    lines.append("| 1 | Core B-SDD & Architecture | 11 | Дотримання інваріантів B-SDD, бітемпоральність, ДРАКОН-компілятор, Utopia Ledger |")
     lines.append("| 2 | Planning & SSD Specs | 9 | Планування, декомпозиція задач, передача контексту, парне проєктування |")
     lines.append("| 3 | Refactoring & Code Quality | 9 | Безпечний рефакторинг, патчинг, AST-пошук, рев'ю та git-ізоляція |")
     lines.append("| 4 | Testing & TDD | 5 | TDD-цикли, антипатерни тестування, ліквідація гонок, веб-тести |")
     lines.append("| 5 | Diagnostics & Debugging | 4 | Системне налагодження, пошук кореневих причин, трейсинг дефектів |")
-    lines.append("| 6 | Frontend & Astryx Ergonomics | 7 | Інтерфейси Astryx Cockpit, React/Vercel патерни, дизайн та теми |")
-    lines.append("| 7 | Protocols & System Tools | 6 | MCP-сервери, NotebookLM, GitNexus, API та CLI інструменти |")
-    lines.append("| **Σ** | **Всього активних скілів** | **49** | **Повний замкнений контур AGI** |")
+    lines.append("| 6 | Frontend & Astryx Ergonomics | 8 | Інтерфейси Astryx Cockpit, скафолдинг компонентів, React/Vercel патерни |")
+    lines.append("| 7 | Protocols & System Tools | 7 | Kindle пайплайн релізів, MCP-сервери, NotebookLM, GitNexus, API та CLI |")
+    lines.append(f"| **Σ** | **Всього активних скілів** | **{total_skills_count}** | **Повний замкнений контур AGI** |")
     lines.append("")
     lines.append("---")
     lines.append("")

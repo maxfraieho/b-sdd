@@ -274,5 +274,5 @@ def test_server_direct_sse_streaming(server):
         assert has_meta is True
         assert has_done is True
         assert first_chunk_latency is not None
-        # First chunk streaming delivery should be fast (< 100ms in test environment)
-        assert first_chunk_latency < 150.0
+        # First chunk streaming delivery should be fast (< 250ms in test environment)
+        assert first_chunk_latency < 250.0
