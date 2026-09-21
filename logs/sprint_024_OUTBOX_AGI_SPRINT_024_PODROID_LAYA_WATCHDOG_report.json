@@ -1,0 +1,24 @@
+{
+  "sprint_id": "sprint_024",
+  "instruction_name": "OUTBOX_AGI_SPRINT_024_PODROID_LAYA_WATCHDOG",
+  "status": "SUCCESS",
+  "node": "192.168.3.161",
+  "edge_node": "192.168.3.251",
+  "tests_summary": "18/18 REGRESSION PASSED, 15/15 UNIT TESTS PASSED",
+  "report_name": "INBOX_GEMINI_SPRINT_024_PODROID_LAYA_REPORT",
+  "deliverables": [
+    "deploy/podroid/setup_laya_alpine.sh",
+    "deploy/podroid/laya_daemon.py",
+    "deploy/podroid/podroid_laya.service",
+    "deploy/podroid/podroid_laya.initd",
+    "deploy/podroid/start_laya.sh",
+    "deploy/podroid/README.md",
+    "scripts/podroid_watchdog.py",
+    "systemd/b-sdd-podroid-watchdog.service",
+    "systemd/b-sdd-podroid-watchdog.timer",
+    "src/core/laya_client.py",
+    "tests/test_laya_client.py",
+    "tests/test_podroid_watchdog.py"
+  ],
+  "notebook_id": "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2"
+}

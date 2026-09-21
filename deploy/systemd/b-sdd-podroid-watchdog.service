@@ -1,0 +1,18 @@
+[Unit]
+Description=B-SDD Sovereign Podroid Watchdog (Pixel 7 Monitor)
+Documentation=https://github.com/maxfraieho/b-sdd
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=vokov
+Group=vokov
+WorkingDirectory=/home/vokov/projects/b-sdd
+Environment=PYTHONPATH=/home/vokov/projects/b-sdd
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /home/vokov/projects/b-sdd/scripts/podroid_watchdog.py --check
+TimeoutSec=30
+
+[Install]
+WantedBy=multi-user.target

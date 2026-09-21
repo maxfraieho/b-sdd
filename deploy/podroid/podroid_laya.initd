@@ -1,0 +1,23 @@
+#!/sbin/openrc-run
+# OpenRC service script for Laya Decision Engine on Alpine Linux (Podroid)
+
+name="podroid-laya"
+description="Laya Decision Engine REST Daemon"
+
+command="/usr/bin/python3"
+command_args="/opt/laya/laya_daemon.py --host 0.0.0.0 --port 9623"
+command_background="yes"
+command_user="root"
+directory="/opt/laya"
+pidfile="/run/podroid-laya.pid"
+output_log="/var/log/laya/laya.log"
+error_log="/var/log/laya/laya.err"
+
+depend() {
+    need net
+    after firewall
+}
+
+start_pre() {
+    checkpath -d -m 0755 -o root:root /var/log/laya /run
+}

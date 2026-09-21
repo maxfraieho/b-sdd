@@ -1,0 +1,20 @@
+[Unit]
+Description=Laya Decision Engine REST Daemon (Podroid Pixel 7)
+Documentation=https://github.com/maxfraieho/b-sdd
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/laya
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /opt/laya/laya_daemon.py --host 0.0.0.0 --port 9623
+Restart=always
+RestartSec=3
+KillMode=mixed
+TimeoutStopSec=10
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
