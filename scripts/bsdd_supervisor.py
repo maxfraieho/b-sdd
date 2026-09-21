@@ -360,6 +360,26 @@ def execute_task_async(
             logging.info(f"Звіт успішно надіслано в n8n: {resp_body}")
     except Exception as e:
         logging.error(f"Помилка надсилання вебхука в n8n: {e}")
+        try:
+            tg_url = "https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage"
+            status_icon = "✅" if status == "SUCCESS" else "🚨"
+            tg_text = (
+                f"{status_icon} [PROJECT: B-SDD] [SUPERVISOR FALLBACK]\n"
+                f"⚠️ Сповіщення: n8n webhook offline ({e})\n\n"
+                f"📍 Вузол: 192.168.3.161\n"
+                f"⚙️ Спринт: {sprint_id}\n"
+                f"🎯 Інструкція: {instruction_name}\n"
+                f"📊 Статус: {status}\n"
+                f"📄 Звіт: {source_title} у NotebookLM\n"
+            )
+            if failed_cmd:
+                tg_text += f"❌ Збій: {failed_cmd}\n"
+            tg_payload = json.dumps({"chat_id": "6412868393", "text": tg_text}).encode("utf-8")
+            tg_req = urllib.request.Request(tg_url, data=tg_payload, headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(tg_req, timeout=10) as tg_resp:
+                logging.info(f"Direct Telegram fallback sent successfully (status {tg_resp.status})")
+        except Exception as tg_err:
+            logging.error(f"Failed to send direct Telegram fallback: {tg_err}")
 
 
 class DispatchHandler(BaseHTTPRequestHandler):

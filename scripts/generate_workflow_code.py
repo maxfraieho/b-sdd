@@ -24,7 +24,7 @@ const gmailTrigger = trigger({
       simple: false,
       filters: {
         readStatus: 'unread',
-        q: 'subject:"[B-SDD-DISPATCH:"'
+        q: 'from:tukroschu@gmail.com subject:[B-SDD-DISPATCH'
       }
     },
     credentials: {
@@ -33,9 +33,9 @@ const gmailTrigger = trigger({
   },
   output: [
     {
-      id: '1a0c33bfdc558f1f',
-      snippet: 'OUTBOX_AGI_SPRINT_021_ISOLATE_EXTENDED_SKILLS',
-      subject: '[B-SDD-DISPATCH: SPRINT_021]'
+      id: '1a0c3ffea8a5e4ba',
+      snippet: 'OUTBOX_AGI_SPRINT_022_EPIC_KINDLE_PIPELINE',
+      subject: '[B-SDD-DISPATCH: SPRINT_022] OUTBOX_AGI_SPRINT_022_EPIC_KINDLE_PIPELINE'
     }
   ]
 });
@@ -52,13 +52,13 @@ const extractParams = node({
           {
             id: 'instruction-name',
             name: 'instruction_name',
-            value: expr("={{ ($json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g) ? ($json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g)[0] : 'OUTBOX_AGI_SPRINT_021_SUPERVISOR_SPEC' }}"),
+            value: expr("={{ ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g) ? ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g)[0] : 'OUTBOX_AGI_SPRINT_022_EPIC_KINDLE_PIPELINE' }}"),
             type: 'string'
           },
           {
             id: 'sprint-id',
             name: 'sprint_id',
-            value: expr("={{ ($json.subject || '').match(/SPRINT_\\\\d+/i) ? ($json.subject || '').match(/SPRINT_\\\\d+/i)[0].toLowerCase() : 'sprint_021' }}"),
+            value: expr("={{ ($json.subject || '').match(/SPRINT_\\\\d+/i) ? ($json.subject || '').match(/SPRINT_\\\\d+/i)[0].toLowerCase() : 'sprint_022' }}"),
             type: 'string'
           }
         ]
@@ -166,7 +166,7 @@ const processTelemetry = node({
           {
             id: 'sprint_id',
             name: 'sprint_id',
-            value: expr("={{ $json.body?.sprint_id || $json.sprint_id || 'sprint_021' }}"),
+            value: expr("={{ $json.body?.sprint_id || $json.sprint_id || 'sprint_022' }}"),
             type: 'string'
           },
           {
@@ -323,11 +323,8 @@ const sendEmailGmail = node({
       resource: 'message',
       operation: 'send',
       sendTo: 'tukroschu@gmail.com',
-      subject: expr('={{ "[PROJECT: " + ($json.body?.project || $json.project || "B-SDD") + "] | " + ($json.body?.sprint_id || $json.sprint_id) + " | Status: " + ($json.body?.status || $json.status) }}'),
-      message: expr('={{ "=== B-SDD TELEMETRY DISPATCH ===\\n\\nВузол: " + ($json.body?.node || $json.node || "192.168.3.161") + "\\nПроєкт: [PROJECT: " + ($json.body?.project || $json.project || "B-SDD") + "]\\nСпринт: " + ($json.body?.sprint_id || $json.sprint_id) + "\\nСтатус: " + ($json.body?.status || $json.status) + "\\nКомміт: " + ($json.body?.commit || $json.commit || "HEAD") + "\\nТести: " + ($json.body?.tests_summary || $json.tests_summary || "18/18 PASSED") + "\\nЗвіт у NotebookLM: " + ($json.body?.report_name || $json.report_name) + "\\n\\n---\\nB-SDD Telemetry Dual-Loop" }}'),
-      options: {
-        ccList: 'tukroschu@kindle.com'
-      }
+      subject: expr('={{ "[PROJECT: " + ($(\\'Process Telemetry & Source\\').item.json.project || "B-SDD") + "] | " + ($(\\'Process Telemetry & Source\\').item.json.sprint_id || "sprint_022") + " | Status: " + ($(\\'Process Telemetry & Source\\').item.json.status || "SUCCESS") }}'),
+      message: expr('={{ "=== B-SDD TELEMETRY DISPATCH ===\\n\\nВузол: " + ($(\\'Process Telemetry & Source\\').item.json.node || "192.168.3.161") + "\\nПроєкт: [PROJECT: " + ($(\\'Process Telemetry & Source\\').item.json.project || "B-SDD") + "]\\nСпринт: " + ($(\\'Process Telemetry & Source\\').item.json.sprint_id || "sprint_022") + "\\nСтатус: " + ($(\\'Process Telemetry & Source\\').item.json.status || "SUCCESS") + "\\nКомміт: " + ($(\\'Process Telemetry & Source\\').item.json.commit || "HEAD") + "\\nТести: " + ($(\\'Process Telemetry & Source\\').item.json.tests_summary || "18/18 PASSED") + "\\nЗвіт у NotebookLM: " + ($(\\'Process Telemetry & Source\\').item.json.report_name || "") + "\\n\\n---\\nB-SDD Telemetry Dual-Loop" }}')
     },
     credentials: {
       gmailOAuth2: newCredential('Gmail account')
