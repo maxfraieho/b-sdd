@@ -19,7 +19,7 @@ from typing import Dict, List, Optional, Tuple, Any
 
 PORT = 8161
 PROJECT_DIR = os.path.expanduser("~/projects/b-sdd")
-N8N_CALLBACK_WEBHOOK = "https://n8n.exodus.pp.ua/webhook/bsdd-supervisor-result"
+N8N_CALLBACK_WEBHOOK = "http://100.66.97.93:5678/webhook/bsdd-supervisor-result"
 NOTEBOOK_ID_METHODOLOGY = "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2"
 NOTEBOOK_ID_LEGAL = "6813ab1c-ac22-4c3c-9c8e-9dd67e35da99"
 PRIMARY_NOTEBOOKS = [NOTEBOOK_ID_METHODOLOGY, NOTEBOOK_ID_LEGAL]
