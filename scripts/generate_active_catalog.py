@@ -16,8 +16,8 @@ skills_dir = Path(os.path.expanduser("~/.agents/skills")).resolve()
 ext_dir = skills_dir / "_extended"
 
 categories = {
-    "1. Core B-SDD & Architecture (8)": [
-        "b-sdd", "intent-continuity", "architecture-designer", "skill-creator",
+    "1. Core B-SDD & Architecture (9)": [
+        "b-sdd", "intent-continuity", "laya-decision-router", "architecture-designer", "skill-creator",
         "writing-great-skills", "writing-skills", "skill-audit", "find-skills"
     ],
     "2. Planning & SSD Specs (9)": [
@@ -48,7 +48,7 @@ def main():
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
 
     lines = []
-    lines.append("# B-SDD ACTIVE CORE SKILLS CATALOG (48 GOLDEN STANDARD)")
+    lines.append("# B-SDD ACTIVE CORE SKILLS CATALOG (49 GOLDEN STANDARD)")
     lines.append("")
     lines.append(f"**Дата генерації:** {now_iso}  ")
     lines.append("**Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  ")
@@ -58,7 +58,7 @@ def main():
     lines.append("**Статус:** Затверджено як активний стандарт для Astryx Copilot та ДРАКОН-нод.  ")
     lines.append("")
     lines.append("> [!IMPORTANT]")
-    lines.append("> Даний каталог містить **48 активних скілів ядра**, відкаліброваних для автономного циклу B-SDD.")
+    lines.append("> Даний каталог містить **49 активних скілів ядра**, відкаліброваних для автономного циклу B-SDD.")
     lines.append("> Допоміжні та доменні скіли (29 найменувань) надійно ізольовано в `~/.agents/skills/_extended/`")
     lines.append("> і не перевантажують контекстне вікно планувальника.")
     lines.append("")
@@ -68,14 +68,14 @@ def main():
     lines.append("")
     lines.append("| № | Категорія | Кількість скілів | Призначення |")
     lines.append("|---|-----------|:----------------:|-------------|")
-    lines.append("| 1 | Core B-SDD & Architecture | 8 | Дотримання інваріантів B-SDD, бітемпоральність, аудит та створення скілів |")
+    lines.append("| 1 | Core B-SDD & Architecture | 9 | Дотримання інваріантів B-SDD, бітемпоральність, аудит та створення скілів |")
     lines.append("| 2 | Planning & SSD Specs | 9 | Планування, декомпозиція задач, передача контексту, парне проєктування |")
     lines.append("| 3 | Refactoring & Code Quality | 9 | Безпечний рефакторинг, патчинг, AST-пошук, рев'ю та git-ізоляція |")
     lines.append("| 4 | Testing & TDD | 5 | TDD-цикли, антипатерни тестування, ліквідація гонок, веб-тести |")
     lines.append("| 5 | Diagnostics & Debugging | 4 | Системне налагодження, пошук кореневих причин, трейсинг дефектів |")
     lines.append("| 6 | Frontend & Astryx Ergonomics | 7 | Інтерфейси Astryx Cockpit, React/Vercel патерни, дизайн та теми |")
     lines.append("| 7 | Protocols & System Tools | 6 | MCP-сервери, NotebookLM, GitNexus, API та CLI інструменти |")
-    lines.append("| **Σ** | **Всього активних скілів** | **48** | **Повний замкнений контур AGI** |")
+    lines.append("| **Σ** | **Всього активних скілів** | **49** | **Повний замкнений контур AGI** |")
     lines.append("")
     lines.append("---")
     lines.append("")

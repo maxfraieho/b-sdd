@@ -22,9 +22,16 @@ DEFAULT_PORT = 9623
 MODEL_NAME = "laya-multilingual"
 MODEL_VERSION = "mmBERT-base-322M"
 
+DOMAIN_SKILL_RECOMMENDATIONS = {
+    "core": ["b-sdd", "intent-continuity", "safe-refactor"],
+    "ui": ["frontend-design", "make-interfaces-feel-better", "web-artifacts-builder"],
+    "skills": ["skill-creator", "skill-audit", "writing-great-skills"],
+    "infrastructure": ["cli-developer", "mcp-builder", "defense-in-depth"],
+}
+
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] [LayaDaemon] %(message)s"
+    format="%(asctime)s [%(levelname)s] %(message)s"
 )
 
 
@@ -74,6 +81,35 @@ class FastDecisionEngine:
             if isinstance(v, dict) and v.get("status") != "RESOLVED"
         ] if isinstance(questions, dict) else []
 
+        # Determine task domain
+        combined_text = " ".join([
+            str(state.get("instruction_name", "")),
+            str(state.get("directive", "")),
+            str(state.get("task", "")),
+            str(state.get("sprint_id", ""))
+        ]).lower()
+
+        if any(k in combined_text for k in ("ui", "frontend", "css", "html", "cockpit", "astryx", "web", "panel", "view", "react", "component", "theme", "layout", "modal")):
+            domain = "ui"
+        elif any(k in combined_text for k in ("skill", "skills", "catalog", "golden", "dump_skills", "skills_dump", "crystalliz", "agent_skills", "active_skills")):
+            domain = "skills"
+        elif any(k in combined_text for k in ("podroid", "watchdog", "deploy", "systemd", "alpine", "daemon", "service", "infra", "network", "n8n", "host", "ssh", "curl", "socket", "port", "pixel")):
+            domain = "infrastructure"
+        else:
+            domain = "core"
+
+        # Assess probability of invariant violation P(violation)
+        if not invariants_satisfied:
+            p_violation = 0.90
+        elif critical_risk:
+            p_violation = 0.85
+        elif any(w in combined_text for w in ("bypass", "override", "force", "disable", "external_dep", "break", "unverified")):
+            p_violation = 0.65
+        elif any(w in combined_text for w in ("refactor", "migration", "isolate", "extract")):
+            p_violation = 0.15
+        else:
+            p_violation = 0.02
+
         if critical_risk:
             decision = "HALT_FOR_INSPECTION"
             action = "REQUIRE_OPERATOR_REVIEW"
@@ -91,12 +127,25 @@ class FastDecisionEngine:
             action = "AUTO_EXECUTE"
             confidence = 0.96
 
+        choice = decision
+        score = round(max(0.0, min(1.0, 1.0 - p_violation)), 2)
+        noul = bool(p_violation < 0.5 and decision == "PROCEED")
+        rec_skills = list(DOMAIN_SKILL_RECOMMENDATIONS.get(domain, DOMAIN_SKILL_RECOMMENDATIONS["core"]))
+        skills_formatted = ", ".join(f"@{s}" for s in rec_skills)
+
         metadata = {
             "state_digest": digest,
             "engine": "laya-fast-evaluator",
             "onnx_active": self.session is not None,
             "unresolved_count": len(unresolved_questions),
             "critical_risk": critical_risk,
+            "domain": domain,
+            "p_violation": p_violation,
+            "choice": choice,
+            "score": score,
+            "noul": noul,
+            "recommended_skills": rec_skills,
+            "skills_formatted": skills_formatted
         }
         return decision, action, confidence, metadata
 
@@ -164,6 +213,13 @@ class LayaRequestHandler(BaseHTTPRequestHandler):
                 "status": "ok",
                 "decision": decision,
                 "action": action,
+                "choice": metadata.get("choice", decision),
+                "score": metadata.get("score", confidence),
+                "noul": metadata.get("noul", True),
+                "domain": metadata.get("domain", "core"),
+                "p_violation": metadata.get("p_violation", 0.02),
+                "recommended_skills": metadata.get("recommended_skills", []),
+                "skills_formatted": metadata.get("skills_formatted", ""),
                 "confidence": confidence,
                 "latency_ms": latency_ms,
                 "model": MODEL_NAME,

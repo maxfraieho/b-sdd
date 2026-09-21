@@ -1,6 +1,6 @@
-# B-SDD ACTIVE CORE SKILLS CATALOG (48 GOLDEN STANDARD)
+# B-SDD ACTIVE CORE SKILLS CATALOG (49 GOLDEN STANDARD)
 
-**Дата генерації:** 2026-09-21 10:41:14Z  
+**Дата генерації:** 2026-09-21 16:03:39Z  
 **Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  
 **Каталог активних скілів:** `/home/vokov/.agents/skills`  
 **Каталог розширених скілів:** `/home/vokov/.agents/skills/_extended`  
@@ -8,7 +8,7 @@
 **Статус:** Затверджено як активний стандарт для Astryx Copilot та ДРАКОН-нод.  
 
 > [!IMPORTANT]
-> Даний каталог містить **48 активних скілів ядра**, відкаліброваних для автономного циклу B-SDD.
+> Даний каталог містить **49 активних скілів ядра**, відкаліброваних для автономного циклу B-SDD.
 > Допоміжні та доменні скіли (29 найменувань) надійно ізольовано в `~/.agents/skills/_extended/`
 > і не перевантажують контекстне вікно планувальника.
 
@@ -18,18 +18,18 @@
 
 | № | Категорія | Кількість скілів | Призначення |
 |---|-----------|:----------------:|-------------|
-| 1 | Core B-SDD & Architecture | 8 | Дотримання інваріантів B-SDD, бітемпоральність, аудит та створення скілів |
+| 1 | Core B-SDD & Architecture | 9 | Дотримання інваріантів B-SDD, бітемпоральність, аудит та створення скілів |
 | 2 | Planning & SSD Specs | 9 | Планування, декомпозиція задач, передача контексту, парне проєктування |
 | 3 | Refactoring & Code Quality | 9 | Безпечний рефакторинг, патчинг, AST-пошук, рев'ю та git-ізоляція |
 | 4 | Testing & TDD | 5 | TDD-цикли, антипатерни тестування, ліквідація гонок, веб-тести |
 | 5 | Diagnostics & Debugging | 4 | Системне налагодження, пошук кореневих причин, трейсинг дефектів |
 | 6 | Frontend & Astryx Ergonomics | 7 | Інтерфейси Astryx Cockpit, React/Vercel патерни, дизайн та теми |
 | 7 | Protocols & System Tools | 6 | MCP-сервери, NotebookLM, GitNexus, API та CLI інструменти |
-| **Σ** | **Всього активних скілів** | **48** | **Повний замкнений контур AGI** |
+| **Σ** | **Всього активних скілів** | **49** | **Повний замкнений контур AGI** |
 
 ---
 
-## 1. Core B-SDD & Architecture (8)
+## 1. Core B-SDD & Architecture (9)
 
 ### `b-sdd`
 - **Назва:** b-sdd
@@ -42,6 +42,13 @@
 - **Назва:** intent-continuity
 - **Опис:** Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization.
 - **Шлях:** `~/.agents/skills/intent-continuity`
+- **Кількість файлів коду/конфігів:** 1
+- **Ключові файли:** `SKILL.md`
+
+### `laya-decision-router`
+- **Назва:** laya-decision-router
+- **Опис:** Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing.
+- **Шлях:** `~/.agents/skills/laya-decision-router`
 - **Кількість файлів коду/конфігів:** 1
 - **Ключові файли:** `SKILL.md`
 
@@ -431,4 +438,4 @@
 | `verify-and-stop` | Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion ch... |
 
 ---
-**Всього активних файлів коду у 48 скілах ядра:** 218
+**Всього активних файлів коду у 48 скілах ядра:** 219

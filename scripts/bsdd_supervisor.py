@@ -11,6 +11,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import urllib.request
 import urllib.error
@@ -19,6 +20,14 @@ from typing import Dict, List, Optional, Tuple, Any
 
 PORT = 8161
 PROJECT_DIR = os.path.expanduser("~/projects/b-sdd")
+if PROJECT_DIR not in sys.path:
+    sys.path.insert(0, PROJECT_DIR)
+
+try:
+    from src.core.laya_client import get_laya_client
+except Exception:
+    get_laya_client = None
+
 N8N_CALLBACK_WEBHOOK = "http://100.66.97.93:5678/webhook/bsdd-supervisor-result"
 NOTEBOOK_ID_METHODOLOGY = "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2"
 NOTEBOOK_ID_LEGAL = "6813ab1c-ac22-4c3c-9c8e-9dd67e35da99"
@@ -36,6 +45,48 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
+
+
+def perform_preflight_hook(
+    instruction_name: str,
+    directive: str = "",
+    sprint_id: str = ""
+) -> Dict[str, Any]:
+    """
+    Sub-40ms Laya Pre-Flight classification hook (Deliverable A).
+    Determines task domain (core, ui, skills, infrastructure),
+    P(violation), and recommended 2-3 target skills from 48 Golden Core.
+    Falls back gracefully to static heuristics if Podroid is sleeping or unreachable.
+    """
+    try:
+        if get_laya_client is not None:
+            client = get_laya_client()
+            res = client.predict(
+                instruction_name=instruction_name,
+                directive=directive,
+                sprint_id=sprint_id
+            )
+            if res.get("fallback"):
+                logging.warning("[WARN] Laya offline, using static heuristic")
+            return res
+    except Exception as e:
+        logging.warning(f"[WARN] Error executing Laya pre-flight hook: {e}. Using static heuristic.")
+
+    logging.warning("[WARN] Laya offline, using static heuristic")
+    return {
+        "fallback": True,
+        "domain": "core",
+        "confidence": 0.5,
+        "p_violation": 0.02,
+        "recommended_skills": ["b-sdd", "intent-continuity", "safe-refactor"],
+        "skills_formatted": "@b-sdd, @intent-continuity, @safe-refactor",
+        "choice": "PROCEED",
+        "score": 0.98,
+        "noul": True,
+        "decision": "PROCEED",
+        "action": "AUTO_EXECUTE",
+        "latency_ms": 0.0
+    }
 
 
 class NotebookLmMcpClient:
@@ -286,13 +337,25 @@ def execute_task_async(
     proc_env["PATH"] = ":".join(user_paths) + ":" + proc_env.get("PATH", "")
 
     # If no shell commands found, but instruction is an AGI directive: call agy CLI
+    preflight = None
     if not commands and instruction_name.startswith("OUTBOX_AGI_") and os.path.isfile(AGY_CLI_PATH):
         logging.info(f"Немає явних bash-команд. Запуск оркестратора AGI через agy CLI...")
-        prompt_arg = instruction_text if instruction_text else f"Виконай інструкцію {instruction_name} для спринту {sprint_id}."
+        directive_body = instruction_text if instruction_text else f"Виконай інструкцію {instruction_name} для спринту {sprint_id}."
+
+        # Deliverable A: Sub-40ms Pre-Flight Classification & Context Injection
+        preflight = perform_preflight_hook(instruction_name=instruction_name, directive=directive_body, sprint_id=sprint_id)
+        domain = preflight.get("domain", "core")
+        conf = preflight.get("confidence", 0.5)
+        skills = preflight.get("skills_formatted", "@b-sdd, @intent-continuity, @safe-refactor")
+
+        capsule = f"[LAYA DECISION CONTEXT: Domain: {domain}, Confidence: {conf}, Recommended Skills: {skills}]"
+        prompt_arg = f"{directive_body} \n\n{capsule}"
+
         cmd = f"{AGY_CLI_PATH} -p {json.dumps(prompt_arg)} --dangerously-skip-permissions"
         p = subprocess.run(cmd, shell=True, cwd=PROJECT_DIR, capture_output=True, text=True, env=proc_env)
         logs.append({
             "cmd": f"agy -p <{instruction_name}>",
+            "preflight": preflight,
             "code": p.returncode,
             "stdout": p.stdout[-1000:],
             "stderr": p.stderr[-1000:]
@@ -346,6 +409,14 @@ def execute_task_async(
         "target_notebook_id": target_notebook_id or NOTEBOOK_ID_METHODOLOGY,
         "failed_command": failed_cmd,
         "require_user": failed,
+        "preflight": {
+            "domain": preflight.get("domain", "core"),
+            "confidence": preflight.get("confidence", 0.5),
+            "p_violation": preflight.get("p_violation", 0.02),
+            "recommended_skills": preflight.get("recommended_skills", []),
+            "skills_formatted": preflight.get("skills_formatted", ""),
+            "fallback": preflight.get("fallback", False)
+        } if preflight else None,
         "logs": logs
     }
     try:
@@ -403,6 +474,15 @@ class DispatchHandler(BaseHTTPRequestHandler):
             target_notebook_id = body.get("notebook_id", "")
 
             logging.info(f"Отримано POST /dispatch: {instruction_name} (sprint: {sprint_id}, corr: {correlation_id})")
+
+            # Deliverable A: Immediate Pre-Flight Hook classification upon /dispatch
+            preflight_early = perform_preflight_hook(instruction_name=instruction_name, sprint_id=sprint_id)
+            logging.info(
+                f"[PREFLIGHT HOOK] Domain: {preflight_early.get('domain')}, "
+                f"Confidence: {preflight_early.get('confidence')}, "
+                f"P(violation): {preflight_early.get('p_violation')}, "
+                f"Recommended Skills: {preflight_early.get('skills_formatted')}"
+            )
 
             self.send_response(202)
             self.send_header("Content-Type", "application/json")

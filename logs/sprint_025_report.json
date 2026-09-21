@@ -1,0 +1,23 @@
+{
+  "sprint_id": "sprint_025",
+  "instruction_name": "OUTBOX_AGI_SPRINT_025_LAYA_PREFLIGHT_HOOK_AND_SKILL",
+  "status": "SUCCESS",
+  "node": "192.168.3.161",
+  "edge_node": "192.168.3.251:9623",
+  "tests_summary": "18/18 REGRESSION PASSED, 14/14 UNIT/PREFLIGHT TESTS PASSED (32/32 TOTAL)",
+  "report_name": "INBOX_GEMINI_SPRINT_025_LAYA_INTEGRATION_REPORT",
+  "deliverables": [
+    "scripts/bsdd_supervisor.py",
+    "bsdd_supervisor.py",
+    "src/core/laya_client.py",
+    "deploy/podroid/laya_daemon.py",
+    "/home/vokov/.agents/skills/laya-decision-router/SKILL.md",
+    "docs/skills_dump/ACTIVE_SKILLS_CATALOG.md",
+    "scripts/generate_active_catalog.py",
+    "scripts/deploy_to_podroid.sh",
+    "tests/test_preflight_hook.py",
+    "tests/test_laya_client.py"
+  ],
+  "notebook_id": "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2",
+  "correlation_id": "corr_20260921_laya_hook_01"
+}
