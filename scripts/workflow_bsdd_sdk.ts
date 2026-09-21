@@ -16,10 +16,10 @@ const gmailTrigger = trigger({
           }
         ]
       },
-      simple: false,
+      simple: true,
       filters: {
         readStatus: 'unread',
-        q: 'from:tukroschu@gmail.com subject:[B-SDD-DISPATCH'
+        q: 'from:tukroschu@gmail.com subject:B-SDD-DISPATCH'
       }
     },
     credentials: {
@@ -29,8 +29,8 @@ const gmailTrigger = trigger({
   output: [
     {
       id: '1a0c3ffea8a5e4ba',
-      snippet: 'OUTBOX_AGI_SPRINT_022_EPIC_KINDLE_PIPELINE',
-      subject: '[B-SDD-DISPATCH: SPRINT_022] OUTBOX_AGI_SPRINT_022_EPIC_KINDLE_PIPELINE'
+      snippet: 'OUTBOX_AGI_SPRINT_023_EXTRACT_FEEDBACK_LOOP_REPO',
+      subject: '[B-SDD-DISPATCH: SPRINT_023] OUTBOX_AGI_SPRINT_023_EXTRACT_FEEDBACK_LOOP_REPO'
     }
   ]
 });
@@ -47,13 +47,13 @@ const extractParams = node({
           {
             id: 'instruction-name',
             name: 'instruction_name',
-            value: expr("={{ ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g) ? ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g)[0] : 'OUTBOX_AGI_SPRINT_022_EPIC_KINDLE_PIPELINE' }}"),
+            value: expr("={{ ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i)[0] : 'OUTBOX_AGI_SPRINT_023_EXTRACT_FEEDBACK_LOOP_REPO' }}"),
             type: 'string'
           },
           {
             id: 'sprint-id',
             name: 'sprint_id',
-            value: expr("={{ ($json.subject || '').match(/SPRINT_\\d+/i) ? ($json.subject || '').match(/SPRINT_\\d+/i)[0].toLowerCase() : 'sprint_022' }}"),
+            value: expr("={{ ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i)[0].toLowerCase() : 'sprint_023' }}"),
             type: 'string'
           }
         ]
@@ -62,8 +62,8 @@ const extractParams = node({
   },
   output: [
     {
-      instruction_name: 'OUTBOX_AGI_SPRINT_021_ISOLATE_EXTENDED_SKILLS',
-      sprint_id: 'sprint_021'
+      instruction_name: 'OUTBOX_AGI_SPRINT_023_EXTRACT_FEEDBACK_LOOP_REPO',
+      sprint_id: 'sprint_023'
     }
   ]
 });

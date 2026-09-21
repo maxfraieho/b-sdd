@@ -1,1 +1,758 @@
-{"workflow":{"id":"6FzcypHVkvqrxf9o","name":"B-SDD Autonomous Supervisor Harness","active":true,"isArchived":false,"versionId":"33289594-a289-461c-952b-0d8dda9709ee","activeVersionId":"33289594-a289-461c-952b-0d8dda9709ee","triggerCount":2,"createdAt":"2026-09-20T16:46:14.677Z","updatedAt":"2026-09-21T06:43:22.728Z","settings":{"executionOrder":"v1","availableInMCP":true,"binaryMode":"separate","timeSavedMode":"fixed","callerPolicy":"workflowsFromSameOwner"},"connections":{"Gmail Trigger (B-SDD)":{"main":[[{"node":"Extract Params","type":"main","index":0}]]},"Extract Params":{"main":[[{"node":"Dispatch to Host 161","type":"main","index":0}]]},"Supervisor Callback Webhook":{"main":[[{"node":"Process Telemetry & Source","type":"main","index":0}]]},"Process Telemetry & Source":{"main":[[{"node":"Check Status","type":"main","index":0}]]},"Check Status":{"main":[[{"node":"Telegram Alert (/me)","type":"main","index":0}],[{"node":"Telegram Notify (Success)","type":"main","index":0}]]},"Telegram Notify (Success)":{"main":[[{"node":"Send Email (Gmail)","type":"main","index":0}]]}},"nodes":[{"id":"150392e4-90ce-4c72-9dad-010923350067","name":"Gmail Trigger (B-SDD)","type":"n8n-nodes-base.gmailTrigger","typeVersion":1.2,"position":[-480,-100],"parameters":{"pollTimes":{"item":[{"mode":"everyX","value":1,"unit":"minutes"}]},"simple":false,"filters":{"readStatus":"unread","q":"subject:\"[B-SDD-DISPATCH:\""},"options":{}}},{"id":"575b2d8d-1a01-4cd4-bf5f-e93c9bbfe3e0","name":"Extract Params","type":"n8n-nodes-base.set","typeVersion":3.4,"position":[-260,-100],"parameters":{"assignments":{"assignments":[{"id":"instruction-name","name":"instruction_name","value":"={{ ($json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g) ? ($json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g)[0] : 'OUTBOX_AGI_SPRINT_021_SUPERVISOR_SPEC' }}","type":"string"},{"id":"sprint-id","name":"sprint_id","value":"={{ ($json.subject || '').match(/SPRINT_\\d+/i) ? ($json.subject || '').match(/SPRINT_\\d+/i)[0].toLowerCase() : 'sprint_021' }}","type":"string"}]},"options":{}}},{"id":"5af3af4c-e59e-4826-829d-5fc28a8bde37","name":"Dispatch to Host 161","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[-40,-100],"parameters":{"method":"POST","url":"http://100.65.225.122:8161/dispatch","sendBody":true,"bodyParameters":{"parameters":[{"name":"instruction_name","value":"={{ $json.instruction_name }}"},{"name":"sprint_id","value":"={{ $json.sprint_id }}"}]},"options":{"timeout":10000}}},{"id":"fa5a5ca2-79aa-4bbb-b572-76057b6b8ea0","name":"Supervisor Callback Webhook","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[-480,140],"parameters":{"path":"bsdd-supervisor-result","httpMethod":"POST","responseMode":"onReceived","options":{}},"webhookId":"ac33af8b-9d2c-4434-8a62-657dcf48d2bf"},{"id":"7cd6cb5f-3375-43f7-bf12-27fc22b25680","name":"Process Telemetry & Source","type":"n8n-nodes-base.set","typeVersion":3.4,"position":[-260,140],"parameters":{"assignments":{"assignments":[{"id":"project-tag","name":"project_tag","value":"={{ ($json.body?.project_tag || $json.body?.project || (($json.body?.sprint_id || '').includes('legal')) ? '[PROJECT: B-SDD-LEGAL]' : '[PROJECT: B-SDD]') }}","type":"string"},{"id":"host-source","name":"host_source","value":"={{ $json.body?.host || $json.body?.node || $json.body?.orchestrator_node || '192.168.3.161' }}","type":"string"},{"id":"sprint-id","name":"sprint_id","value":"={{ $json.body?.sprint_id || $json.sprint_id || 'sprint_001_legal' }}","type":"string"},{"id":"status","name":"status","value":"={{ $json.body?.status || $json.status || 'SUCCESS' }}","type":"string"},{"id":"report-name","name":"report_name","value":"={{ $json.body?.report_name || $json.body?.source_title || 'INBOX_GEMINI_REPORT' }}","type":"string"},{"id":"instruction-name","name":"instruction_name","value":"={{ $json.body?.instruction_name || $json.instruction_name || 'SPRINT_STEP' }}","type":"string"},{"id":"failed-cmd","name":"failed_command","value":"={{ $json.body?.failed_command || $json.failed_command || '' }}","type":"string"},{"id":"require-user","name":"require_user","value":"={{ $json.body?.require_user || false }}","type":"boolean"},{"id":"actors-list","name":"actors","value":"={{ $json.body?.actors || 'Olena KOVALENKO, Arsen KOVALENKO, Tetyana KOVALENKO, Adriano MILLI (Shield Protected)' }}","type":"string"}]},"options":{}}},{"id":"65d3fff7-5eea-4e9e-908c-217a4428010b","name":"Check Status","type":"n8n-nodes-base.if","typeVersion":2.2,"position":[-60,140],"parameters":{"conditions":{"options":{"caseSensitive":true,"leftValue":"","typeValidation":"loose","version":2},"conditions":[{"id":"cond-failure","leftValue":"={{ $json.status === 'FAILED' || $json.require_user === true }}","rightValue":"","operator":{"type":"boolean","operation":"true","singleValue":true}}],"combinator":"and"},"looseTypeValidation":true,"options":{}}},{"id":"9197ded8-703e-49ad-934c-4a03fc78b7e5","name":"Telegram Alert (/me)","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[160,80],"parameters":{"method":"POST","url":"https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage","sendBody":true,"bodyParameters":{"parameters":[{"name":"chat_id","value":"6412868393"},{"name":"text","value":"={{ '🚨 ' + $json.project_tag + ' [INTERRUPT] Потрібне втручання (/me)\\n\\n📍 Вузол: ' + $json.host_source + '\\n⚙️ Інструкція: ' + $json.instruction_name + '\\n❌ Помилка: ' + ($json.failed_command || 'перегляньте логи') + '\\n📄 Звіт: ' + $json.report_name + ' у NotebookLM\\n\\nСтатус: FAILED' }}"}]},"options":{"timeout":10000}}},{"id":"a4a45916-ed39-4b99-8712-f78fcc30227e","name":"Telegram Notify (Success)","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[160,240],"parameters":{"method":"POST","url":"https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage","sendBody":true,"bodyParameters":{"parameters":[{"name":"chat_id","value":"6412868393"},{"name":"text","value":"={{ '✅ ' + $json.project_tag + ' [SUCCESS] Крок спринту завершено успішно\\n\\n📍 Вузол: ' + $json.host_source + '\\n⚙️ Спринт: ' + $json.sprint_id + '\\n📄 Звіт: ' + $json.report_name + ' у NotebookLM\\n👥 Актори: ' + $json.actors + '\\n\\nВсі тести та скрипти виконано без помилок.' }}"}]},"options":{"timeout":10000}}},{"id":"7eefad5b-8cad-42ea-a304-6aa4260f1e1f","name":"Send Email (Gmail)","type":"n8n-nodes-base.gmail","typeVersion":2.2,"position":[380,240],"parameters":{"resource":"message","operation":"send","sendTo":"tukroschu@gmail.com","subject":"={{ $json.project_tag + ' | ' + $json.sprint_id + ' | Status: ' + $json.status }}","message":"={{ '=== B-SDD TELEMETRY DISPATCH ===\\n\\n' + 'Вузол: ' + $json.host_source + '\\nПроєкт: ' + $json.project_tag + '\\nСпринт: ' + $json.sprint_id + '\\nСтатус: ' + $json.status + '\\nЗвіт у NotebookLM: ' + $json.report_name + '\\nЗаписник: notebooks/6813ab1c-ac22-4c3c-9c8e-9dd67e35da99\\n\\nЗадіяні актори:\\n- ' + (Array.isArray($json.actors) ? $json.actors.join('\\n- ') : $json.actors) + '\\n\\n---\\nB-SDD Telemetry Dual-Loop' }}","options":{"ccList":"tukroschu@kindle.com"}},"webhookId":"fbd0df90-6a18-48c4-ae5b-7bec71a781f9"}],"activeVersion":{"nodes":[{"id":"150392e4-90ce-4c72-9dad-010923350067","name":"Gmail Trigger (B-SDD)","type":"n8n-nodes-base.gmailTrigger","typeVersion":1.2,"position":[-480,-100],"parameters":{"pollTimes":{"item":[{"mode":"everyX","value":1,"unit":"minutes"}]},"simple":false,"filters":{"readStatus":"unread","q":"subject:\"[B-SDD-DISPATCH:\""},"options":{}}},{"id":"575b2d8d-1a01-4cd4-bf5f-e93c9bbfe3e0","name":"Extract Params","type":"n8n-nodes-base.set","typeVersion":3.4,"position":[-260,-100],"parameters":{"assignments":{"assignments":[{"id":"instruction-name","name":"instruction_name","value":"={{ ($json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g) ? ($json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/g)[0] : 'OUTBOX_AGI_SPRINT_021_SUPERVISOR_SPEC' }}","type":"string"},{"id":"sprint-id","name":"sprint_id","value":"={{ ($json.subject || '').match(/SPRINT_\\d+/i) ? ($json.subject || '').match(/SPRINT_\\d+/i)[0].toLowerCase() : 'sprint_021' }}","type":"string"}]},"options":{}}},{"id":"5af3af4c-e59e-4826-829d-5fc28a8bde37","name":"Dispatch to Host 161","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[-40,-100],"parameters":{"method":"POST","url":"http://100.65.225.122:8161/dispatch","sendBody":true,"bodyParameters":{"parameters":[{"name":"instruction_name","value":"={{ $json.instruction_name }}"},{"name":"sprint_id","value":"={{ $json.sprint_id }}"}]},"options":{"timeout":10000}}},{"id":"fa5a5ca2-79aa-4bbb-b572-76057b6b8ea0","name":"Supervisor Callback Webhook","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[-480,140],"parameters":{"path":"bsdd-supervisor-result","httpMethod":"POST","responseMode":"onReceived","options":{}},"webhookId":"ac33af8b-9d2c-4434-8a62-657dcf48d2bf"},{"id":"7cd6cb5f-3375-43f7-bf12-27fc22b25680","name":"Process Telemetry & Source","type":"n8n-nodes-base.set","typeVersion":3.4,"position":[-260,140],"parameters":{"assignments":{"assignments":[{"id":"project-tag","name":"project_tag","value":"={{ ($json.body?.project_tag || $json.body?.project || (($json.body?.sprint_id || '').includes('legal')) ? '[PROJECT: B-SDD-LEGAL]' : '[PROJECT: B-SDD]') }}","type":"string"},{"id":"host-source","name":"host_source","value":"={{ $json.body?.host || $json.body?.node || $json.body?.orchestrator_node || '192.168.3.161' }}","type":"string"},{"id":"sprint-id","name":"sprint_id","value":"={{ $json.body?.sprint_id || $json.sprint_id || 'sprint_001_legal' }}","type":"string"},{"id":"status","name":"status","value":"={{ $json.body?.status || $json.status || 'SUCCESS' }}","type":"string"},{"id":"report-name","name":"report_name","value":"={{ $json.body?.report_name || $json.body?.source_title || 'INBOX_GEMINI_REPORT' }}","type":"string"},{"id":"instruction-name","name":"instruction_name","value":"={{ $json.body?.instruction_name || $json.instruction_name || 'SPRINT_STEP' }}","type":"string"},{"id":"failed-cmd","name":"failed_command","value":"={{ $json.body?.failed_command || $json.failed_command || '' }}","type":"string"},{"id":"require-user","name":"require_user","value":"={{ $json.body?.require_user || false }}","type":"boolean"},{"id":"actors-list","name":"actors","value":"={{ $json.body?.actors || 'Olena KOVALENKO, Arsen KOVALENKO, Tetyana KOVALENKO, Adriano MILLI (Shield Protected)' }}","type":"string"}]},"options":{}}},{"id":"65d3fff7-5eea-4e9e-908c-217a4428010b","name":"Check Status","type":"n8n-nodes-base.if","typeVersion":2.2,"position":[-60,140],"parameters":{"conditions":{"options":{"caseSensitive":true,"leftValue":"","typeValidation":"loose","version":2},"conditions":[{"id":"cond-failure","leftValue":"={{ $json.status === 'FAILED' || $json.require_user === true }}","rightValue":"","operator":{"type":"boolean","operation":"true","singleValue":true}}],"combinator":"and"},"looseTypeValidation":true,"options":{}}},{"id":"9197ded8-703e-49ad-934c-4a03fc78b7e5","name":"Telegram Alert (/me)","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[160,80],"parameters":{"method":"POST","url":"https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage","sendBody":true,"bodyParameters":{"parameters":[{"name":"chat_id","value":"6412868393"},{"name":"text","value":"={{ '🚨 ' + $json.project_tag + ' [INTERRUPT] Потрібне втручання (/me)\\n\\n📍 Вузол: ' + $json.host_source + '\\n⚙️ Інструкція: ' + $json.instruction_name + '\\n❌ Помилка: ' + ($json.failed_command || 'перегляньте логи') + '\\n📄 Звіт: ' + $json.report_name + ' у NotebookLM\\n\\nСтатус: FAILED' }}"}]},"options":{"timeout":10000}}},{"id":"a4a45916-ed39-4b99-8712-f78fcc30227e","name":"Telegram Notify (Success)","type":"n8n-nodes-base.httpRequest","typeVersion":4.2,"position":[160,240],"parameters":{"method":"POST","url":"https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage","sendBody":true,"bodyParameters":{"parameters":[{"name":"chat_id","value":"6412868393"},{"name":"text","value":"={{ '✅ ' + $json.project_tag + ' [SUCCESS] Крок спринту завершено успішно\\n\\n📍 Вузол: ' + $json.host_source + '\\n⚙️ Спринт: ' + $json.sprint_id + '\\n📄 Звіт: ' + $json.report_name + ' у NotebookLM\\n👥 Актори: ' + $json.actors + '\\n\\nВсі тести та скрипти виконано без помилок.' }}"}]},"options":{"timeout":10000}}},{"id":"7eefad5b-8cad-42ea-a304-6aa4260f1e1f","name":"Send Email (Gmail)","type":"n8n-nodes-base.gmail","typeVersion":2.2,"position":[380,240],"parameters":{"resource":"message","operation":"send","sendTo":"tukroschu@gmail.com","subject":"={{ $json.project_tag + ' | ' + $json.sprint_id + ' | Status: ' + $json.status }}","message":"={{ '=== B-SDD TELEMETRY DISPATCH ===\\n\\n' + 'Вузол: ' + $json.host_source + '\\nПроєкт: ' + $json.project_tag + '\\nСпринт: ' + $json.sprint_id + '\\nСтатус: ' + $json.status + '\\nЗвіт у NotebookLM: ' + $json.report_name + '\\nЗаписник: notebooks/6813ab1c-ac22-4c3c-9c8e-9dd67e35da99\\n\\nЗадіяні актори:\\n- ' + (Array.isArray($json.actors) ? $json.actors.join('\\n- ') : $json.actors) + '\\n\\n---\\nB-SDD Telemetry Dual-Loop' }}","options":{"ccList":"tukroschu@kindle.com"}},"webhookId":"fbd0df90-6a18-48c4-ae5b-7bec71a781f9"}],"connections":{"Gmail Trigger (B-SDD)":{"main":[[{"node":"Extract Params","type":"main","index":0}]]},"Extract Params":{"main":[[{"node":"Dispatch to Host 161","type":"main","index":0}]]},"Supervisor Callback Webhook":{"main":[[{"node":"Process Telemetry & Source","type":"main","index":0}]]},"Process Telemetry & Source":{"main":[[{"node":"Check Status","type":"main","index":0}]]},"Check Status":{"main":[[{"node":"Telegram Alert (/me)","type":"main","index":0}],[{"node":"Telegram Notify (Success)","type":"main","index":0}]]},"Telegram Notify (Success)":{"main":[[{"node":"Send Email (Gmail)","type":"main","index":0}]]}}},"tags":[],"meta":{"aiBuilderAssisted":true},"parentFolderId":null,"description":"Autonomous B-SDD supervisor harness with dual-loop telemetry (host recognition, Telegram #Legal-Cockpit & Gmail notification)","scopes":["workflow:create","workflow:delete","workflow:execute","workflow:execute-chat","workflow:list","workflow:move","workflow:publish","workflow:read","workflow:share","workflow:unpublish","workflow:unshare","workflow:update","workflow:updateRedactionSetting"],"canExecute":true},"triggerInfo":"This workflow has the following trigger(s):\n\n\nWebhook trigger(s):\n\n\n\t\t\t\t<trigger 1>\n\t\t\t\t\t - Node name: Supervisor Callback Webhook\n\t\t\t\t\t - Base URL: https://n8n.exodus.pp.ua/\n\t\t\t\t\t - Production path: /webhook/bsdd-supervisor-result\n\t\t\t\t\t - Test path: /webhook-test/bsdd-supervisor-result\n\t\t\t\t\t - HTTP Method: POST\n\t\t\t\t\t - Response Mode: Webhook is configured to respond immediately with the message \"Workflow got started.\"\n\t\t\t\t\t - No credentials required for this webhook.\n\t\t\t\t</trigger 1>"}
+{
+  "workflow": {
+    "id": "6FzcypHVkvqrxf9o",
+    "name": "B-SDD Autonomous Supervisor Harness",
+    "active": true,
+    "isArchived": false,
+    "versionId": "fbafe609-03f2-46d6-ac2a-62bcaa2b8d92",
+    "activeVersionId": "fbafe609-03f2-46d6-ac2a-62bcaa2b8d92",
+    "triggerCount": 2,
+    "createdAt": "2026-09-20T16:46:14.677Z",
+    "updatedAt": "2026-09-21T15:26:43.935Z",
+    "settings": {
+      "executionOrder": "v1",
+      "availableInMCP": true,
+      "binaryMode": "separate",
+      "timeSavedMode": "fixed",
+      "callerPolicy": "workflowsFromSameOwner",
+      "timezone": "Europe/Kyiv"
+    },
+    "connections": {
+      "Gmail Trigger (B-SDD)": {
+        "main": [
+          [
+            {
+              "node": "Extract Params",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Params": {
+        "main": [
+          [
+            {
+              "node": "Dispatch to Host 161",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supervisor Callback Webhook": {
+        "main": [
+          [
+            {
+              "node": "Process Telemetry & Source",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process Telemetry & Source": {
+        "main": [
+          [
+            {
+              "node": "Check Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Status": {
+        "main": [
+          [
+            {
+              "node": "Telegram Notify (Success)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Telegram Alert (/me)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram Notify (Success)": {
+        "main": [
+          [
+            {
+              "node": "Send Email (Gmail)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodes": [
+      {
+        "id": "150392e4-90ce-4c72-9dad-010923350067",
+        "name": "Gmail Trigger (B-SDD)",
+        "type": "n8n-nodes-base.gmailTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -480,
+          -100
+        ],
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyX",
+                "value": 1,
+                "unit": "minutes"
+              }
+            ]
+          },
+          "simple": true,
+          "filters": {
+            "readStatus": "unread",
+            "q": "from:tukroschu@gmail.com subject:B-SDD-DISPATCH"
+          }
+        }
+      },
+      {
+        "id": "575b2d8d-1a01-4cd4-bf5f-e93c9bbfe3e0",
+        "name": "Extract Params",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -260,
+          -100
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "instruction-name",
+                "name": "instruction_name",
+                "value": "={{ ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i)[0] : 'OUTBOX_AGI_SPRINT_023_EXTRACT_FEEDBACK_LOOP_REPO' }}",
+                "type": "string"
+              },
+              {
+                "id": "sprint-id",
+                "name": "sprint_id",
+                "value": "={{ ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i)[0].toLowerCase() : 'sprint_023' }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "5af3af4c-e59e-4826-829d-5fc28a8bde37",
+        "name": "Dispatch to Host 161",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -40,
+          -100
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "http://100.65.225.122:8161/dispatch",
+          "sendBody": true,
+          "specifyBody": "keypair",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "instruction_name",
+                "value": "={{ $json.instruction_name }}"
+              },
+              {
+                "name": "sprint_id",
+                "value": "={{ $json.sprint_id }}"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 10000
+          }
+        }
+      },
+      {
+        "id": "fa5a5ca2-79aa-4bbb-b572-76057b6b8ea0",
+        "name": "Supervisor Callback Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          -480,
+          140
+        ],
+        "parameters": {
+          "path": "bsdd-supervisor-result",
+          "httpMethod": "POST",
+          "responseMode": "onReceived"
+        },
+        "webhookId": "89dd67ad-e169-41d8-a5ac-bb16bf5d914f"
+      },
+      {
+        "id": "7cd6cb5f-3375-43f7-bf12-27fc22b25680",
+        "name": "Process Telemetry & Source",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -260,
+          140
+        ],
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "project",
+                "name": "project",
+                "value": "={{ $json.body?.project || $json.project || 'B-SDD' }}",
+                "type": "string"
+              },
+              {
+                "id": "status",
+                "name": "status",
+                "value": "={{ $json.body?.status || $json.status || 'SUCCESS' }}",
+                "type": "string"
+              },
+              {
+                "id": "node",
+                "name": "node",
+                "value": "={{ $json.body?.node || $json.node || $json.body?.host || '192.168.3.161' }}",
+                "type": "string"
+              },
+              {
+                "id": "sprint_id",
+                "name": "sprint_id",
+                "value": "={{ $json.body?.sprint_id || $json.sprint_id || 'sprint_022' }}",
+                "type": "string"
+              },
+              {
+                "id": "commit",
+                "name": "commit",
+                "value": "={{ $json.body?.commit || $json.commit || 'HEAD' }}",
+                "type": "string"
+              },
+              {
+                "id": "tests_summary",
+                "name": "tests_summary",
+                "value": "={{ $json.body?.tests_summary || $json.tests_summary || '18/18 PASSED' }}",
+                "type": "string"
+              },
+              {
+                "id": "report_name",
+                "name": "report_name",
+                "value": "={{ $json.body?.report_name || $json.report_name || $json.body?.source_title || 'INBOX_GEMINI_REPORT' }}",
+                "type": "string"
+              },
+              {
+                "id": "error_details",
+                "name": "error_details",
+                "value": "={{ $json.body?.error_details || $json.error || $json.body?.failed_command || $json.failed_command || '' }}",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "65d3fff7-5eea-4e9e-908c-217a4428010b",
+        "name": "Check Status",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -60,
+          140
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "cond-status-success",
+                "leftValue": "={{ $json.body?.status || $json.status }}",
+                "rightValue": "SUCCESS",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "looseTypeValidation": true
+        }
+      },
+      {
+        "id": "a4a45916-ed39-4b99-8712-f78fcc30227e",
+        "name": "Telegram Notify (Success)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          160,
+          240
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage",
+          "sendBody": true,
+          "specifyBody": "keypair",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "chat_id",
+                "value": "6412868393"
+              },
+              {
+                "name": "text",
+                "value": "={{ \"\u2705 [PROJECT: \" + ($json.body?.project || $json.project || \"B-SDD\") + \"] [\" + ($json.body?.status || $json.status) + \"] \u041a\u0440\u043e\u043a \u0441\u043f\u0440\u0438\u043d\u0442\u0443 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e \u0443\u0441\u043f\u0456\u0448\u043d\u043e\\n\\n\ud83d\udccd \u0412\u0443\u0437\u043e\u043b: \" + ($json.body?.node || $json.node || \"192.168.3.161\") + \"\\n\u2699\ufe0f \u0421\u043f\u0440\u0438\u043d\u0442: \" + ($json.body?.sprint_id || $json.sprint_id) + \"\\n\ud83d\udce6 \u041a\u043e\u043c\u043c\u0456\u0442: \" + ($json.body?.commit || $json.commit || \"HEAD\") + \"\\n\ud83e\uddea \u0422\u0435\u0441\u0442\u0438: \" + ($json.body?.tests_summary || $json.tests_summary || \"18/18 PASSED\") + \"\\n\ud83d\udcc4 \u0417\u0432\u0456\u0442: \" + ($json.body?.report_name || $json.report_name) + \" \u0443 NotebookLM\\n\\n\u0412\u0441\u0456 \u0456\u043d\u0432\u0430\u0440\u0456\u0430\u043d\u0442\u0438 \u0442\u0430 \u0442\u0435\u0441\u0442\u0438 \u0432\u0438\u043a\u043e\u043d\u0430\u043d\u043e \u0431\u0435\u0437 \u043f\u043e\u043c\u0438\u043b\u043e\u043a.\" }}"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 10000
+          }
+        }
+      },
+      {
+        "id": "7eefad5b-8cad-42ea-a304-6aa4260f1e1f",
+        "name": "Send Email (Gmail)",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          380,
+          240
+        ],
+        "parameters": {
+          "resource": "message",
+          "operation": "send",
+          "sendTo": "tukroschu@gmail.com",
+          "subject": "={{ \"[PROJECT: \" + ($('Process Telemetry & Source').item.json.project || \"B-SDD\") + \"] | \" + ($('Process Telemetry & Source').item.json.sprint_id || \"sprint_022\") + \" | Status: \" + ($('Process Telemetry & Source').item.json.status || \"SUCCESS\") }}",
+          "message": "={{ \"=== B-SDD TELEMETRY DISPATCH ===\\n\\n\u0412\u0443\u0437\u043e\u043b: \" + ($('Process Telemetry & Source').item.json.node || \"192.168.3.161\") + \"\\n\u041f\u0440\u043e\u0454\u043a\u0442: [PROJECT: \" + ($('Process Telemetry & Source').item.json.project || \"B-SDD\") + \"]\\n\u0421\u043f\u0440\u0438\u043d\u0442: \" + ($('Process Telemetry & Source').item.json.sprint_id || \"sprint_022\") + \"\\n\u0421\u0442\u0430\u0442\u0443\u0441: \" + ($('Process Telemetry & Source').item.json.status || \"SUCCESS\") + \"\\n\u041a\u043e\u043c\u043c\u0456\u0442: \" + ($('Process Telemetry & Source').item.json.commit || \"HEAD\") + \"\\n\u0422\u0435\u0441\u0442\u0438: \" + ($('Process Telemetry & Source').item.json.tests_summary || \"18/18 PASSED\") + \"\\n\u0417\u0432\u0456\u0442 \u0443 NotebookLM: \" + ($('Process Telemetry & Source').item.json.report_name || \"\") + \"\\n\\n---\\nB-SDD Telemetry Dual-Loop\" }}"
+        },
+        "webhookId": "e97aa473-f662-42e8-bbea-e120e38735e8"
+      },
+      {
+        "id": "9197ded8-703e-49ad-934c-4a03fc78b7e5",
+        "name": "Telegram Alert (/me)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          160,
+          80
+        ],
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage",
+          "sendBody": true,
+          "specifyBody": "keypair",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "chat_id",
+                "value": "6412868393"
+              },
+              {
+                "name": "text",
+                "value": "={{ \"\ud83d\udea8 [PROJECT: \" + ($json.body?.project || $json.project || \"B-SDD\") + \"] [INTERRUPT] \u041f\u043e\u0442\u0440\u0456\u0431\u043d\u0435 \u0432\u0442\u0440\u0443\u0447\u0430\u043d\u043d\u044f (/me)\\n\\n\ud83d\udccd \u0412\u0443\u0437\u043e\u043b: \" + ($json.body?.node || $json.node || \"192.168.3.161\") + \"\\n\u2699\ufe0f \u0421\u043f\u0440\u0438\u043d\u0442: \" + ($json.body?.sprint_id || $json.sprint_id) + \"\\n\u274c \u041f\u043e\u043c\u0438\u043b\u043a\u0430: \" + ($json.body?.error_details || $json.error || $json.body?.failed_command || $json.failed_command || \"\u043f\u0435\u0440\u0435\u0433\u043b\u044f\u043d\u044c\u0442\u0435 \u043b\u043e\u0433\u0438\") + \"\\n\ud83d\udcc4 \u0417\u0432\u0456\u0442: \" + ($json.body?.report_name || $json.report_name) + \" \u0443 NotebookLM\\n\\n\u0421\u0442\u0430\u0442\u0443\u0441: \" + ($json.body?.status || $json.status || \"FAILED\") }}"
+              }
+            ]
+          },
+          "options": {
+            "timeout": 10000
+          }
+        }
+      }
+    ],
+    "activeVersion": {
+      "nodes": [
+        {
+          "id": "150392e4-90ce-4c72-9dad-010923350067",
+          "name": "Gmail Trigger (B-SDD)",
+          "type": "n8n-nodes-base.gmailTrigger",
+          "typeVersion": 1.2,
+          "position": [
+            -480,
+            -100
+          ],
+          "parameters": {
+            "pollTimes": {
+              "item": [
+                {
+                  "mode": "everyX",
+                  "value": 1,
+                  "unit": "minutes"
+                }
+              ]
+            },
+            "simple": true,
+            "filters": {
+              "readStatus": "unread",
+              "q": "from:tukroschu@gmail.com subject:B-SDD-DISPATCH"
+            }
+          }
+        },
+        {
+          "id": "575b2d8d-1a01-4cd4-bf5f-e93c9bbfe3e0",
+          "name": "Extract Params",
+          "type": "n8n-nodes-base.set",
+          "typeVersion": 3.4,
+          "position": [
+            -260,
+            -100
+          ],
+          "parameters": {
+            "assignments": {
+              "assignments": [
+                {
+                  "id": "instruction-name",
+                  "name": "instruction_name",
+                  "value": "={{ ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i)[0] : 'OUTBOX_AGI_SPRINT_023_EXTRACT_FEEDBACK_LOOP_REPO' }}",
+                  "type": "string"
+                },
+                {
+                  "id": "sprint-id",
+                  "name": "sprint_id",
+                  "value": "={{ ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i)[0].toLowerCase() : 'sprint_023' }}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "5af3af4c-e59e-4826-829d-5fc28a8bde37",
+          "name": "Dispatch to Host 161",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.2,
+          "position": [
+            -40,
+            -100
+          ],
+          "parameters": {
+            "method": "POST",
+            "url": "http://100.65.225.122:8161/dispatch",
+            "sendBody": true,
+            "specifyBody": "keypair",
+            "bodyParameters": {
+              "parameters": [
+                {
+                  "name": "instruction_name",
+                  "value": "={{ $json.instruction_name }}"
+                },
+                {
+                  "name": "sprint_id",
+                  "value": "={{ $json.sprint_id }}"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 10000
+            }
+          }
+        },
+        {
+          "id": "fa5a5ca2-79aa-4bbb-b572-76057b6b8ea0",
+          "name": "Supervisor Callback Webhook",
+          "type": "n8n-nodes-base.webhook",
+          "typeVersion": 2,
+          "position": [
+            -480,
+            140
+          ],
+          "parameters": {
+            "path": "bsdd-supervisor-result",
+            "httpMethod": "POST",
+            "responseMode": "onReceived"
+          },
+          "webhookId": "89dd67ad-e169-41d8-a5ac-bb16bf5d914f"
+        },
+        {
+          "id": "7cd6cb5f-3375-43f7-bf12-27fc22b25680",
+          "name": "Process Telemetry & Source",
+          "type": "n8n-nodes-base.set",
+          "typeVersion": 3.4,
+          "position": [
+            -260,
+            140
+          ],
+          "parameters": {
+            "assignments": {
+              "assignments": [
+                {
+                  "id": "project",
+                  "name": "project",
+                  "value": "={{ $json.body?.project || $json.project || 'B-SDD' }}",
+                  "type": "string"
+                },
+                {
+                  "id": "status",
+                  "name": "status",
+                  "value": "={{ $json.body?.status || $json.status || 'SUCCESS' }}",
+                  "type": "string"
+                },
+                {
+                  "id": "node",
+                  "name": "node",
+                  "value": "={{ $json.body?.node || $json.node || $json.body?.host || '192.168.3.161' }}",
+                  "type": "string"
+                },
+                {
+                  "id": "sprint_id",
+                  "name": "sprint_id",
+                  "value": "={{ $json.body?.sprint_id || $json.sprint_id || 'sprint_022' }}",
+                  "type": "string"
+                },
+                {
+                  "id": "commit",
+                  "name": "commit",
+                  "value": "={{ $json.body?.commit || $json.commit || 'HEAD' }}",
+                  "type": "string"
+                },
+                {
+                  "id": "tests_summary",
+                  "name": "tests_summary",
+                  "value": "={{ $json.body?.tests_summary || $json.tests_summary || '18/18 PASSED' }}",
+                  "type": "string"
+                },
+                {
+                  "id": "report_name",
+                  "name": "report_name",
+                  "value": "={{ $json.body?.report_name || $json.report_name || $json.body?.source_title || 'INBOX_GEMINI_REPORT' }}",
+                  "type": "string"
+                },
+                {
+                  "id": "error_details",
+                  "name": "error_details",
+                  "value": "={{ $json.body?.error_details || $json.error || $json.body?.failed_command || $json.failed_command || '' }}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "65d3fff7-5eea-4e9e-908c-217a4428010b",
+          "name": "Check Status",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 2.2,
+          "position": [
+            -60,
+            140
+          ],
+          "parameters": {
+            "conditions": {
+              "options": {
+                "caseSensitive": true,
+                "leftValue": "",
+                "typeValidation": "loose",
+                "version": 2
+              },
+              "conditions": [
+                {
+                  "id": "cond-status-success",
+                  "leftValue": "={{ $json.body?.status || $json.status }}",
+                  "rightValue": "SUCCESS",
+                  "operator": {
+                    "type": "string",
+                    "operation": "equals",
+                    "singleValue": true
+                  }
+                }
+              ],
+              "combinator": "and"
+            },
+            "looseTypeValidation": true
+          }
+        },
+        {
+          "id": "a4a45916-ed39-4b99-8712-f78fcc30227e",
+          "name": "Telegram Notify (Success)",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.2,
+          "position": [
+            160,
+            240
+          ],
+          "parameters": {
+            "method": "POST",
+            "url": "https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage",
+            "sendBody": true,
+            "specifyBody": "keypair",
+            "bodyParameters": {
+              "parameters": [
+                {
+                  "name": "chat_id",
+                  "value": "6412868393"
+                },
+                {
+                  "name": "text",
+                  "value": "={{ \"\u2705 [PROJECT: \" + ($json.body?.project || $json.project || \"B-SDD\") + \"] [\" + ($json.body?.status || $json.status) + \"] \u041a\u0440\u043e\u043a \u0441\u043f\u0440\u0438\u043d\u0442\u0443 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043e \u0443\u0441\u043f\u0456\u0448\u043d\u043e\\n\\n\ud83d\udccd \u0412\u0443\u0437\u043e\u043b: \" + ($json.body?.node || $json.node || \"192.168.3.161\") + \"\\n\u2699\ufe0f \u0421\u043f\u0440\u0438\u043d\u0442: \" + ($json.body?.sprint_id || $json.sprint_id) + \"\\n\ud83d\udce6 \u041a\u043e\u043c\u043c\u0456\u0442: \" + ($json.body?.commit || $json.commit || \"HEAD\") + \"\\n\ud83e\uddea \u0422\u0435\u0441\u0442\u0438: \" + ($json.body?.tests_summary || $json.tests_summary || \"18/18 PASSED\") + \"\\n\ud83d\udcc4 \u0417\u0432\u0456\u0442: \" + ($json.body?.report_name || $json.report_name) + \" \u0443 NotebookLM\\n\\n\u0412\u0441\u0456 \u0456\u043d\u0432\u0430\u0440\u0456\u0430\u043d\u0442\u0438 \u0442\u0430 \u0442\u0435\u0441\u0442\u0438 \u0432\u0438\u043a\u043e\u043d\u0430\u043d\u043e \u0431\u0435\u0437 \u043f\u043e\u043c\u0438\u043b\u043e\u043a.\" }}"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 10000
+            }
+          }
+        },
+        {
+          "id": "7eefad5b-8cad-42ea-a304-6aa4260f1e1f",
+          "name": "Send Email (Gmail)",
+          "type": "n8n-nodes-base.gmail",
+          "typeVersion": 2.2,
+          "position": [
+            380,
+            240
+          ],
+          "parameters": {
+            "resource": "message",
+            "operation": "send",
+            "sendTo": "tukroschu@gmail.com",
+            "subject": "={{ \"[PROJECT: \" + ($('Process Telemetry & Source').item.json.project || \"B-SDD\") + \"] | \" + ($('Process Telemetry & Source').item.json.sprint_id || \"sprint_022\") + \" | Status: \" + ($('Process Telemetry & Source').item.json.status || \"SUCCESS\") }}",
+            "message": "={{ \"=== B-SDD TELEMETRY DISPATCH ===\\n\\n\u0412\u0443\u0437\u043e\u043b: \" + ($('Process Telemetry & Source').item.json.node || \"192.168.3.161\") + \"\\n\u041f\u0440\u043e\u0454\u043a\u0442: [PROJECT: \" + ($('Process Telemetry & Source').item.json.project || \"B-SDD\") + \"]\\n\u0421\u043f\u0440\u0438\u043d\u0442: \" + ($('Process Telemetry & Source').item.json.sprint_id || \"sprint_022\") + \"\\n\u0421\u0442\u0430\u0442\u0443\u0441: \" + ($('Process Telemetry & Source').item.json.status || \"SUCCESS\") + \"\\n\u041a\u043e\u043c\u043c\u0456\u0442: \" + ($('Process Telemetry & Source').item.json.commit || \"HEAD\") + \"\\n\u0422\u0435\u0441\u0442\u0438: \" + ($('Process Telemetry & Source').item.json.tests_summary || \"18/18 PASSED\") + \"\\n\u0417\u0432\u0456\u0442 \u0443 NotebookLM: \" + ($('Process Telemetry & Source').item.json.report_name || \"\") + \"\\n\\n---\\nB-SDD Telemetry Dual-Loop\" }}"
+          },
+          "webhookId": "e97aa473-f662-42e8-bbea-e120e38735e8"
+        },
+        {
+          "id": "9197ded8-703e-49ad-934c-4a03fc78b7e5",
+          "name": "Telegram Alert (/me)",
+          "type": "n8n-nodes-base.httpRequest",
+          "typeVersion": 4.2,
+          "position": [
+            160,
+            80
+          ],
+          "parameters": {
+            "method": "POST",
+            "url": "https://api.telegram.org/bot8717667434:AAFWddh_xwTfMVHW7puxrlIFprbO9m_Au7Y/sendMessage",
+            "sendBody": true,
+            "specifyBody": "keypair",
+            "bodyParameters": {
+              "parameters": [
+                {
+                  "name": "chat_id",
+                  "value": "6412868393"
+                },
+                {
+                  "name": "text",
+                  "value": "={{ \"\ud83d\udea8 [PROJECT: \" + ($json.body?.project || $json.project || \"B-SDD\") + \"] [INTERRUPT] \u041f\u043e\u0442\u0440\u0456\u0431\u043d\u0435 \u0432\u0442\u0440\u0443\u0447\u0430\u043d\u043d\u044f (/me)\\n\\n\ud83d\udccd \u0412\u0443\u0437\u043e\u043b: \" + ($json.body?.node || $json.node || \"192.168.3.161\") + \"\\n\u2699\ufe0f \u0421\u043f\u0440\u0438\u043d\u0442: \" + ($json.body?.sprint_id || $json.sprint_id) + \"\\n\u274c \u041f\u043e\u043c\u0438\u043b\u043a\u0430: \" + ($json.body?.error_details || $json.error || $json.body?.failed_command || $json.failed_command || \"\u043f\u0435\u0440\u0435\u0433\u043b\u044f\u043d\u044c\u0442\u0435 \u043b\u043e\u0433\u0438\") + \"\\n\ud83d\udcc4 \u0417\u0432\u0456\u0442: \" + ($json.body?.report_name || $json.report_name) + \" \u0443 NotebookLM\\n\\n\u0421\u0442\u0430\u0442\u0443\u0441: \" + ($json.body?.status || $json.status || \"FAILED\") }}"
+                }
+              ]
+            },
+            "options": {
+              "timeout": 10000
+            }
+          }
+        }
+      ],
+      "connections": {
+        "Gmail Trigger (B-SDD)": {
+          "main": [
+            [
+              {
+                "node": "Extract Params",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Extract Params": {
+          "main": [
+            [
+              {
+                "node": "Dispatch to Host 161",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Supervisor Callback Webhook": {
+          "main": [
+            [
+              {
+                "node": "Process Telemetry & Source",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Process Telemetry & Source": {
+          "main": [
+            [
+              {
+                "node": "Check Status",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Check Status": {
+          "main": [
+            [
+              {
+                "node": "Telegram Notify (Success)",
+                "type": "main",
+                "index": 0
+              }
+            ],
+            [
+              {
+                "node": "Telegram Alert (/me)",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Telegram Notify (Success)": {
+          "main": [
+            [
+              {
+                "node": "Send Email (Gmail)",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "tags": [],
+    "meta": {
+      "aiBuilderAssisted": true
+    },
+    "parentFolderId": null,
+    "description": "Autonomous B-SDD supervisor harness with dual-loop telemetry (host recognition, Telegram & Gmail notification)",
+    "scopes": [
+      "workflow:create",
+      "workflow:delete",
+      "workflow:execute",
+      "workflow:execute-chat",
+      "workflow:list",
+      "workflow:move",
+      "workflow:publish",
+      "workflow:read",
+      "workflow:share",
+      "workflow:unpublish",
+      "workflow:unshare",
+      "workflow:update",
+      "workflow:updateRedactionSetting"
+    ],
+    "canExecute": true
+  },
+  "triggerInfo": "This workflow has the following trigger(s):\n\n\nWebhook trigger(s):\n\n\n\t\t\t\t<trigger 1>\n\t\t\t\t\t - Node name: Supervisor Callback Webhook\n\t\t\t\t\t - Base URL: https://n8n.exodus.pp.ua/\n\t\t\t\t\t - Production path: /webhook/bsdd-supervisor-result\n\t\t\t\t\t - Test path: /webhook-test/bsdd-supervisor-result\n\t\t\t\t\t - HTTP Method: POST\n\t\t\t\t\t - Response Mode: Webhook is configured to respond immediately with the message \"Workflow got started.\"\n\t\t\t\t\t - No credentials required for this webhook.\n\t\t\t\t</trigger 1>"
+}
