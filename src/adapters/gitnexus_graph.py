@@ -1001,3 +1001,90 @@ class TransactionalMutationManager:
         }
 
 
+class GitNexusBlastRadiusAuditor:
+    """
+    Mandatory blast-radius verification auditor (ADR-004: AST Impact Containment).
+    Performs topological impact resolution for symbols and modules before gate transitions.
+    100% Pure Python Standard Library.
+    """
+
+    def __init__(self, repo_root: Optional[Path] = None):
+        self.repo_root = Path(repo_root).resolve() if repo_root else Path.cwd().resolve()
+        self.indexer = MultiWorkspaceSymbolIndexer(default_root=self.repo_root)
+        self.domain_resolver = GitNexusDomainResolver(repo_root=self.repo_root)
+
+    def audit_symbol_blast_radius(
+        self,
+        symbol_name: str,
+        max_depth: int = 2
+    ) -> Dict[str, Any]:
+        """
+        Calculates the topological blast radius of a symbol across repository modules.
+        Returns directly impacted files, dependent modules, and risk rating.
+        """
+        all_symbols = self.indexer.index_all()
+        target_records = [s for s in all_symbols if s.get("name") == symbol_name or s.get("name", "").split(".")[-1] == symbol_name]
+
+        affected_files: Set[str] = set()
+        affected_modules: Set[str] = set()
+
+        for rec in target_records:
+            fpath = rec.get("file_path", "")
+            if fpath:
+                affected_files.add(fpath)
+                parts = Path(fpath).parts
+                if "src" in parts:
+                    idx = parts.index("src")
+                    if idx + 1 < len(parts):
+                        affected_modules.add(parts[idx + 1])
+                elif len(parts) > 1:
+                    affected_modules.add(parts[0])
+
+        # Resolve upstream callers/dependents via DomainResolver
+        impacted_domains = self.domain_resolver.resolve(list(affected_files))
+        affected_modules.update(impacted_domains)
+
+        impact_count = len(affected_files)
+        risk = "LOW"
+        if impact_count > 10 or len(affected_modules) > 3:
+            risk = "HIGH"
+        elif impact_count > 3 or len(affected_modules) > 1:
+            risk = "MEDIUM"
+
+        return {
+            "symbol": symbol_name,
+            "found_instances": len(target_records),
+            "target_definitions": target_records,
+            "impacted_files": sorted(list(affected_files)),
+            "affected_modules": sorted(list(affected_modules)),
+            "risk": risk,
+            "reconciliation_required": len(affected_modules) > 1,
+            "reconciliation_targets": sorted(list(affected_modules - {"global"})),
+        }
+
+    def verify_blast_radius_contained(
+        self,
+        mutated_files: List[str],
+        allowed_domains: Optional[Set[str]] = None
+    ) -> Dict[str, Any]:
+        """
+        Verifies that code mutations are contained within authorized architectural domains.
+        """
+        impacted_domains = self.domain_resolver.resolve(mutated_files)
+        if allowed_domains is None:
+            # Auto-allow domains directly owning the mutated files
+            allowed_domains = self.domain_resolver._fallback_path_resolve(mutated_files)
+
+        leaked_domains = impacted_domains - allowed_domains
+        is_contained = len(leaked_domains) == 0
+
+        return {
+            "is_contained": is_contained,
+            "impacted_domains": sorted(list(impacted_domains)),
+            "allowed_domains": sorted(list(allowed_domains)),
+            "leaked_domains": sorted(list(leaked_domains)),
+            "message": "Blast radius contained" if is_contained else f"Domain containment breach: {leaked_domains}"
+        }
+
+
+

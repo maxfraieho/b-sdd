@@ -134,6 +134,8 @@ def generate_dump(source_dir: Path, output_file: Path) -> Tuple[int, int, int]:
 
     # Iterate over top-level items in skills_dir
     for item in sorted(source_dir.iterdir()):
+        if item.name.startswith("_") or item.name.startswith("."):
+            continue
         if item.is_dir() and not item.is_symlink():
             name, desc, files = parse_skill_metadata(item)
             skills_data.append({

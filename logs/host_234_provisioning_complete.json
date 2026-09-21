@@ -1,0 +1,105 @@
+{
+  "sprint_id": "HOST_234_PROVISIONING",
+  "title": "B-SDD SPRINT DISPATCH: HOST_234_PROVISIONING · MCP, SKILLS & N8N DUAL-LOOP",
+  "standard": "B-SDD Methodology v1.2 (ADR-001..020)",
+  "timestamp": "2026-09-21T09:52:00Z",
+  "phase": "Φ5_FINAL_DELIVERY",
+  "status": "SUCCESS",
+  "target_dedicated_node": {
+    "host": "192.168.3.234",
+    "arch": "aarch64 (ARM64 Linux 6.6)",
+    "role": "Dedicated Gemini Pro Legal Cockpit Execution Node",
+    "workspace": "/home/vokov/projects/b-sdd-legal",
+    "git_commit": "f5925a5"
+  },
+  "associated_infrastructure": {
+    "n8n_server": {
+      "workflow_id": "6FzcypHVkvqrxf9o",
+      "version_id": "33289594-a289-461c-952b-0d8dda9709ee",
+      "status": "ACTIVE_PUBLISHED",
+      "dual_loop_features": {
+        "source_recognition": true,
+        "supported_hosts": ["192.168.3.161", "192.168.3.234"],
+        "project_tag_filter": "[PROJECT: B-SDD-LEGAL]",
+        "telegram_notification": {
+          "bot": "@bsdd_supervisor_bot",
+          "chat_id": "6412868393",
+          "topic_tag": "#Legal-Cockpit"
+        },
+        "email_dispatch": {
+          "recipient": "tukroschu@gmail.com",
+          "cc_kindle": "tukroschu@kindle.com",
+          "subject": "[PROJECT: B-SDD-LEGAL] | {{ $json.body.sprint_id }} | Status: {{ $json.body.status }}",
+          "template": "Structured WORM extract, involved actors, and NotebookLM link"
+        }
+      }
+    },
+    "utopia_db": {
+      "endpoint": "192.168.3.251:9922",
+      "container": "utopia-db",
+      "database": "utopia",
+      "schema": "public / intent_store",
+      "relations_count": 65,
+      "status": "HEALTHY"
+    },
+    "gitnexus_kuzu": {
+      "endpoint": "http://192.168.3.184:4747",
+      "mcp_url": "http://192.168.3.184:4747/api/mcp",
+      "status": "HEALTHY"
+    },
+    "notebooklm": {
+      "mcp_endpoint": "http://192.168.3.184:8002/mcp",
+      "target_notebook_id": "6813ab1c-ac22-4c3c-9c8e-9dd67e35da99",
+      "status": "HEALTHY"
+    }
+  },
+  "mcp_servers_node_234": {
+    "config_path": "/home/vokov/.gemini/antigravity-cli/mcp_config.json",
+    "servers": [
+      {"name": "notebooklm", "type": "http", "url": "http://192.168.3.184:8002/mcp", "status": "HEALTHY"},
+      {"name": "gitnexus", "type": "http", "url": "http://192.168.3.184:4747/api/mcp", "status": "HEALTHY"},
+      {"name": "utopia-db", "type": "stdio", "command": "/home/vokov/bin/utopia-mcp-server.py", "status": "HEALTHY"},
+      {"name": "filesystem", "type": "stdio", "path": "/home/vokov/projects/b-sdd-legal", "status": "HEALTHY"},
+      {"name": "ai-memory", "type": "http", "url": "http://192.168.3.184:49374/mcp", "status": "HEALTHY"},
+      {"name": "sequential-thinking", "type": "stdio", "status": "CONFIGURED"}
+    ]
+  },
+  "specialized_skills_synced": [
+    "b-sdd",
+    "intent-continuity",
+    "b-sdd-notebooklm-sync",
+    "b-sdd-kindle-docs",
+    "send-to-kindle",
+    "notebooklm-legal-copilot",
+    "utopia-dossier-reconciliation",
+    "utopia-job-hunter-sync",
+    "skill-creator"
+  ],
+  "tooling_and_compilers": {
+    "legal_epub_generator": {
+      "script": "scripts/generate_legal_book.py",
+      "runtime": "Pure Python Standard Library (0 dependencies)",
+      "validation": "test_dossier.epub compiled successfully (1.13 MB)"
+    },
+    "drakon_planar_solver": {
+      "module": "src/core/drakon/planar_solver.py",
+      "tests": "tests/test_planar.py (3/3 passed)"
+    },
+    "legal_core": {
+      "modules": ["src/legal/actors.py", "src/legal/timeline_calibrator.py"],
+      "tests": "tests/test_legal_core.py (4/4 passed)"
+    },
+    "autonomous_runner": {
+      "script": "scripts/run_legal_sprint.sh",
+      "e2e_ping_verified": "PING_HOST_234_AUTONOMY (source aec0cf56-b00e-441a-a618-d8b846f1291e in NotebookLM)"
+    }
+  },
+  "invariants_compliance": {
+    "adr_001_bitemporal": "PASSED (dual-axis Tv vs Tt)",
+    "adr_002_pure_stdlib": "PASSED (100% Python Standard Library in core)",
+    "adr_003_bona_fide_shield": "PASSED (Adriano MILLI protected)",
+    "adr_005_active_rules_budget": "PASSED (291 words / 500 max)",
+    "adr_008_drakon_planar": "PASSED (crossings=0, skewer X=0)",
+    "closed_loop_telemetry": "PASSED (dual loop n8n/Telegram/Gmail/NotebookLM)"
+  }
+}

@@ -1,0 +1,19 @@
+# TASK: DIAGNOSE B-SDD DISPATCH PIPELINE
+
+A test email was sent at 20:33 with subject `[B-SDD-DISPATCH: SPRINT_021] OUTBOX_AGI_SPRINT_021_SETUP_SUPERVISOR_AND_BOT`.
+The notification has not arrived yet. Diagnose both ends:
+
+1. Check local daemon log on host 161:
+   ```bash
+   tail -n 30 ~/projects/b-sdd/logs/supervisor.log 2>/dev/null || ps aux | grep bsdd_supervisor
+Did any HTTP POST request hit port 8161 after 20:33?
+
+In n8n via MCP, inspect the latest executions of workflow 6FzcypHVkvqrxf9o:
+
+Were there any executions after 20:32?
+
+If yes: what was the status and error? (Did Dispatch to Host 161 fail to reach 192.168.3.161:8161?)
+
+If no executions exist: Gmail Trigger did not poll the message (due to query filter syntax subject:"[B-SDD-DISPATCH:" or poll interval).
+
+Report the exact execution log and root cause.

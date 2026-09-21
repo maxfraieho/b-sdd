@@ -1,0 +1,142 @@
+{
+  "sprint_id": "sprint_021",
+  "instruction_name": "OUTBOX_AGI_SPRINT_021_ISOLATE_EXTENDED_SKILLS",
+  "correlation_id": "corr_20260921_skills_03",
+  "timestamp": "2026-09-21T10:42:03Z",
+  "status": "SUCCESS",
+  "host": "100.65.225.122 (.161)",
+  "target_notebook_id": "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2",
+  "report_title": "INBOX_GEMINI_SPRINT_021_ISOLATE_EXTENDED_SKILLS_REPORT",
+  "diagnostics": {
+    "n8n_root_cause": "Execution 13515 failed at node 'Dispatch to Host 161' with connect ECONNREFUSED 100.65.225.122:8161. Supervisor process died when previous CLI session terminated.",
+    "supervisor_healing": "Supervisor migrated to permanent systemd user service 'b-sdd-supervisor.service' with Restart=always. Verified active (running) on 100.65.225.122:8161 and 127.0.0.1:8161.",
+    "service_unit": "~/.config/systemd/user/b-sdd-supervisor.service"
+  },
+  "skills_partitioning": {
+    "active_core_count": 48,
+    "extended_isolated_count": 29,
+    "archived_count": 37,
+    "domain_packs_count": 9,
+    "active_categories": {
+      "1. Core B-SDD & Architecture (8)": [
+        "b-sdd",
+        "intent-continuity",
+        "architecture-designer",
+        "skill-creator",
+        "writing-great-skills",
+        "writing-skills",
+        "skill-audit",
+        "find-skills"
+      ],
+      "2. Planning & SSD Specs (9)": [
+        "writing-plans",
+        "executing-plans",
+        "to-spec",
+        "to-tickets",
+        "wayfinder",
+        "subagent-driven-development",
+        "handoff",
+        "brainstorming",
+        "grill-with-docs"
+      ],
+      "3. Refactoring & Code Quality (9)": [
+        "safe-refactor",
+        "surgical-patch",
+        "codebase-design",
+        "improve-codebase-architecture",
+        "code-reviewer",
+        "code-documenter",
+        "ast-grep",
+        "verification-before-completion",
+        "using-git-worktrees"
+      ],
+      "4. Testing & TDD (5)": [
+        "test-driven-development",
+        "testing-anti-patterns",
+        "condition-based-waiting",
+        "defense-in-depth",
+        "webapp-testing"
+      ],
+      "5. Diagnostics & Debugging (4)": [
+        "investigate-first",
+        "systematic-debugging",
+        "root-cause-tracing",
+        "diagnosing-bugs"
+      ],
+      "6. Frontend & Astryx Ergonomics (7)": [
+        "frontend-design",
+        "make-interfaces-feel-better",
+        "web-design-guidelines",
+        "vercel-react-best-practices",
+        "vercel-composition-patterns",
+        "web-artifacts-builder",
+        "theme-factory"
+      ],
+      "7. Protocols & System Tools (6)": [
+        "mcp-builder",
+        "notebooklm",
+        "notebooklm-gitnexus-copilot",
+        "api-designer",
+        "cli-developer",
+        "caveman"
+      ]
+    },
+    "extended_isolated_skills": [
+      "ask-matt",
+      "b-sdd-notebooklm-sync",
+      "canvas-design",
+      "chaos-engineer",
+      "cloud-architect",
+      "codex",
+      "composition-patterns",
+      "dispatching-parallel-agents",
+      "doc-indexer",
+      "documentation-review",
+      "finishing-a-development-branch",
+      "implement",
+      "kubernetes-specialist",
+      "lean-build",
+      "migration",
+      "obsidian-markdown",
+      "prototype",
+      "react-best-practices",
+      "receiving-code-review",
+      "requesting-code-review",
+      "research",
+      "setup-matt-pocock-skills",
+      "sharing-skills",
+      "superpowers",
+      "teach",
+      "triage",
+      "using-superpowers",
+      "vercel-react-native-skills",
+      "verify-and-stop"
+    ]
+  },
+  "artifacts_generated": {
+    "catalog": "docs/skills_dump/ACTIVE_SKILLS_CATALOG.md",
+    "dump": "docs/skills_dump/SKILLS_INVENTORY_DUMP.md",
+    "dump_root": "SKILLS_INVENTORY_DUMP.md",
+    "total_skills_dumped": 48,
+    "total_files_dumped": 218,
+    "dump_size_bytes": 1154429,
+    "dump_size_mb": 1.1
+  },
+  "test_suite": {
+    "framework": "pytest",
+    "total_passed": 18,
+    "total_failed": 0,
+    "duration_sec": 8.38,
+    "suites": [
+      "tests/test_tripartite_adr.py",
+      "tests/test_planar_solver.py",
+      "tests/test_architecture_fitness.py"
+    ]
+  },
+  "invariants_verified": [
+    "ADR-002: Pure stdlib in core scripts (scripts/dump_skills.py, scripts/generate_active_catalog.py, scripts/bsdd_supervisor.py)",
+    "ADR-003: Rule of 2 & Skill Ontology (48 active skills strictly aligned with Astryx Copilot requirements)",
+    "ADR-010: Tripartite ADR Ontology & SkillADR entities",
+    "FL-01: Closed-Loop Feedback to NotebookLM & n8n webhook"
+  ]
+}

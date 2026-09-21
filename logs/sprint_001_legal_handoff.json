@@ -1,0 +1,88 @@
+{
+  "sprint_id": "sprint_001_legal",
+  "title": "SPRINT_001_LEGAL · ADVOCATE WORKBENCH INITIALIZATION",
+  "methodology": "B-SDD v1.2 (ADR-001..020)",
+  "timestamp": "2026-09-21T09:30:00Z",
+  "phase": "Φ7_HANDOFF",
+  "status": "SUCCESS",
+  "orchestrator_node": "192.168.3.161",
+  "execution_node": "192.168.3.234",
+  "knowledge_base": "192.168.3.251:9922",
+  "notebook_id": "6813ab1c-ac22-4c3c-9c8e-9dd67e35da99",
+  "git_commit_node_234": "54e1f7e",
+  "step_1_repo_and_dossier": {
+    "status": "COMPLETED",
+    "remote_repo_path": "/home/vokov/projects/b-sdd-legal",
+    "active_rules_path": ".context/active_rules.md",
+    "active_rules_word_count": 291,
+    "active_rules_sla_budget": 500,
+    "dossier_source": "/home/vokov/olena/01_LEGAL_DOSSIER/",
+    "dossier_destination": "/home/vokov/projects/b-sdd-legal/dossier_benchmark/",
+    "dossier_size_mb": 12.3
+  },
+  "step_2_core_python_models": {
+    "status": "COMPLETED",
+    "standard_library_only": true,
+    "external_dependencies": [],
+    "models": {
+      "actors": {
+        "file": "src/legal/actors.py",
+        "classes": ["ProceduralStatus", "RelationType", "ActorEntity", "ActorRelation", "ActorMatrix"],
+        "invariant_l03_bona_fide_protection": {
+          "actor_id": "ACT-ADRIANO-MILLI",
+          "name": "Adriano MILLI",
+          "bona_fide_protection": true,
+          "procedural_status": "tiers_de_bonne_foi"
+        }
+      },
+      "timeline_calibrator": {
+        "file": "src/legal/timeline_calibrator.py",
+        "classes": ["BitemporalFactEvent", "TimelineCalibrator"],
+        "invariants": {
+          "invariant_l01_bitemporal": true,
+          "invariant_l04_worm_supersession": true
+        }
+      }
+    },
+    "tests": {
+      "test_file": "tests/test_legal_core.py",
+      "tests_count": 4,
+      "local_run_161": {"passed": 4, "failed": 0, "duration_sec": 0.155},
+      "remote_run_234": {"passed": 4, "failed": 0, "duration_sec": 0.065}
+    }
+  },
+  "step_3_frontend_skeleton": {
+    "status": "COMPLETED",
+    "ui_directory": "b-sdd-legal-ui",
+    "stack": "React 19 + Vite 6 + TypeScript + Tailwind CSS",
+    "theme": "Astryx Swiss Dark (100vh no-body-scroll)",
+    "dto_file": "b-sdd-legal-ui/src/lib/legal-types.ts",
+    "layout_zones": {
+      "zone_a": "Global Status & Dossier Selector",
+      "zone_b": "Actor Matrix with Adriano Milli Bona Fide Shield",
+      "zone_c": "Evidence Corpus / SHA-256 Benchmark Document Viewer",
+      "zone_d": "Dual-axis Timeline (Tv vs Tt) + WORM Calibration Panel"
+    },
+    "build_status": "BUILT_SUCCESSFULLY",
+    "dist_artifacts": [
+      "dist/index.html",
+      "dist/assets/index-1k2BPD0A.css",
+      "dist/assets/index-9TRtsmy-.js"
+    ]
+  },
+  "step_4_sync_configuration": {
+    "status": "COMPLETED",
+    "git_remote": {
+      "name": "legal_node",
+      "url": "ssh://vokov@192.168.3.234/home/vokov/projects/b-sdd-legal"
+    },
+    "sync_script": "scripts/sync_legal_core.sh",
+    "last_sync_verification": "SUCCESS"
+  },
+  "step_5_telemetry_and_delivery": {
+    "status": "DELIVERING",
+    "report_source_title": "INBOX_GEMINI_SPRINT_001_LEGAL_REPORT",
+    "target_notebook_id": "6813ab1c-ac22-4c3c-9c8e-9dd67e35da99",
+    "telegram_topic": "B-SDD-LEGAL"
+  }
+}
