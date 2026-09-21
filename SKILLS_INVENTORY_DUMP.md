@@ -1,6 +1,6 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP
 
-**Згенеровано:** 2026-09-21 10:41:20Z  
+**Згенеровано:** 2026-09-21 10:52:42Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
 **Загальна кількість скілів:** **48**  
