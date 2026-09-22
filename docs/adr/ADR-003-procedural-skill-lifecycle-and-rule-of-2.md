@@ -29,3 +29,5 @@ Chosen option: **Dynamic Skill Routing & The Rule of 2 Self-Authoring** (Option 
 - Pre-flight compiled active rules must always output a `RECOMMENDED PROCEDURAL SKILLS` block.
 - Operational workflows repeated >= 2 times must be proposed for crystallization into an agent skill.
 - Skills must follow standard agent skill format (`SKILL.md` with YAML metadata).
+- Cross-Reference (ADR-015): Every crystallized skill must maintain a paired `<skill_name>.drakon.json` visual schema alongside `SKILL.md` (Bi-directional Visual DRAKON Invariant) and specify its taxonomy (`SYSTEM_SKILL` or `PROJECT_SKILL`).
+

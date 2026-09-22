@@ -92,10 +92,14 @@ def main():
             if not s_path.exists():
                 lines.append(f"### ⚠️ `{s_name}` (MISSING)")
                 continue
-            name, desc, files = parse_skill_metadata(s_path)
+            name, desc, s_type, imm, has_drk, files = parse_skill_metadata(s_path)
             total_files_core += len(files)
+            drk_badge = "✅ Присутня" if has_drk else "⚠️ Очікує генерації"
+            tax_badge = f"`{s_type}`" + (" 🔒 [IMMUTABLE]" if imm else "")
             lines.append(f"### `{s_name}`")
             lines.append(f"- **Назва:** {name}")
+            lines.append(f"- **Таксономія (ADR-015):** {tax_badge}")
+            lines.append(f"- **ДРАКОН-схема (Rule of 2):** {drk_badge}")
             lines.append(f"- **Опис:** {desc}")
             lines.append(f"- **Шлях:** `~/.agents/skills/{s_name}`")
             lines.append(f"- **Кількість файлів коду/конфігів:** {len(files)}")
@@ -119,11 +123,12 @@ def main():
 
     for e_name in ext_skills:
         e_path = ext_dir / e_name
-        name, desc, files = parse_skill_metadata(e_path)
+        name, desc, s_type, imm, has_drk, files = parse_skill_metadata(e_path)
         short_desc = (desc[:117] + "...") if len(desc) > 120 else desc
         # sanitize pipe characters for markdown table
         short_desc = short_desc.replace("|", "\\|")
         lines.append(f"| `{e_name}` | {short_desc} |")
+
 
     lines.append("")
     lines.append("---")

@@ -14,6 +14,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+
 EXCLUDED_DIRS: Set[str] = {
     ".git",
     ".gitnexus",
@@ -72,11 +77,19 @@ def get_lang_for_ext(ext: str) -> str:
     return mapping.get(ext.lower(), "text")
 
 
-def parse_skill_metadata(skill_dir: Path) -> Tuple[str, str, List[Path]]:
-    """Extracts skill name, description, and list of relevant files."""
+def parse_skill_metadata(skill_dir: Path) -> Tuple[str, str, str, bool, bool, List[Path]]:
+    """Extracts skill name, description, type, immutable flag, drakon presence, and files."""
     skill_file = skill_dir / "SKILL.md"
     name = skill_dir.name
     desc = "No description provided."
+    skill_type = "PROJECT_SKILL"
+    immutable = False
+
+    # Check known system skills set
+    from src.core.drakon.skill_visual_bridge import KNOWN_SYSTEM_SKILLS
+    if name in KNOWN_SYSTEM_SKILLS:
+        skill_type = "SYSTEM_SKILL"
+        immutable = True
 
     if skill_file.exists():
         try:
@@ -89,6 +102,19 @@ def parse_skill_metadata(skill_dir: Path) -> Tuple[str, str, List[Path]]:
                 name_match = re.search(r"^name:\s*(.+)$", fm, re.MULTILINE)
                 if name_match:
                     name = name_match.group(1).strip().strip("\"'")
+
+                type_match = re.search(r"^type:\s*(.+)$", fm, re.MULTILINE)
+                if type_match:
+                    val = type_match.group(1).strip().strip("\"'").upper()
+                    if "SYSTEM" in val:
+                        skill_type = "SYSTEM_SKILL"
+                        immutable = True
+                    else:
+                        skill_type = "PROJECT_SKILL"
+
+                imm_match = re.search(r"^immutable:\s*(.+)$", fm, re.MULTILINE)
+                if imm_match:
+                    immutable = imm_match.group(1).strip().lower() in ("true", "1", "yes")
 
                 for i, line in enumerate(fm_lines):
                     if line.strip().startswith("description:"):
@@ -108,6 +134,8 @@ def parse_skill_metadata(skill_dir: Path) -> Tuple[str, str, List[Path]]:
         except Exception:
             pass
 
+    has_drakon = (skill_dir / f"{name}.drakon.json").exists() or (skill_dir / f"{skill_dir.name}.drakon.json").exists()
+
     # Collect valid files
     relevant_files: List[Path] = []
     for root, dirs, files in os.walk(skill_dir):
@@ -121,7 +149,7 @@ def parse_skill_metadata(skill_dir: Path) -> Tuple[str, str, List[Path]]:
             if ext in ALLOWED_EXTENSIONS or f == "SKILL.md":
                 relevant_files.append(Path(root) / f)
 
-    return name, desc, relevant_files
+    return name, desc, skill_type, immutable, has_drakon, relevant_files
 
 
 def generate_dump(source_dir: Path, output_file: Path) -> Tuple[int, int, int]:
@@ -137,16 +165,22 @@ def generate_dump(source_dir: Path, output_file: Path) -> Tuple[int, int, int]:
         if item.name.startswith("_") or item.name.startswith("."):
             continue
         if item.is_dir() and not item.is_symlink():
-            name, desc, files = parse_skill_metadata(item)
+            name, desc, s_type, imm, has_drk, files = parse_skill_metadata(item)
             skills_data.append({
                 "dir_name": item.name,
                 "name": name,
                 "description": desc,
+                "skill_type": s_type,
+                "immutable": imm,
+                "has_drakon": has_drk,
                 "files": files,
                 "path": item
             })
 
     total_skills = len(skills_data)
+    system_skills = [s for s in skills_data if s["skill_type"] == "SYSTEM_SKILL" or s["immutable"]]
+    project_skills = [s for s in skills_data if s not in system_skills]
+    drakon_count = sum(1 for s in skills_data if s["has_drakon"])
     total_files = sum(len(s["files"]) for s in skills_data)
     total_raw_bytes = 0
 
@@ -154,14 +188,15 @@ def generate_dump(source_dir: Path, output_file: Path) -> Tuple[int, int, int]:
 
     buf = []
     # ── HEADER ──────────────────────────────────────────────────────────────────
-    buf.append("# B-SDD SKILLS INVENTORY & ONTOLOGY DUMP")
+    buf.append("# B-SDD SKILLS INVENTORY & ONTOLOGY DUMP (ADR-015 TAXONOMY)")
     buf.append("")
     buf.append(f"**Згенеровано:** {now_iso}  ")
     buf.append(f"**Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  ")
     buf.append(f"**Джерело:** `{source_dir}`  ")
-    buf.append(f"**Загальна кількість скілів:** **{total_skills}**  ")
+    buf.append(f"**Загальна кількість скілів:** **{total_skills}** (🌟 **{len(system_skills)}** System Skills, 🛠️ **{len(project_skills)}** Project Skills)  ")
+    buf.append(f"**Покриття ДРАКОН-схемами (Rule of 2):** **{drakon_count}/{total_skills}** ({drakon_count/total_skills*100:.1f}%)  ")
     buf.append(f"**Загальна кількість файлів коду/конфігів:** **{total_files}**  ")
-    buf.append(f"**Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR)  ")
+    buf.append(f"**Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR, ADR-015)  ")
     buf.append("")
     buf.append("> [!NOTE]")
     buf.append("> Цей дамп містить повний зріз системних, інфраструктурних та доменних скілів.")
@@ -171,19 +206,19 @@ def generate_dump(source_dir: Path, output_file: Path) -> Tuple[int, int, int]:
     buf.append("---")
     buf.append("")
 
-    # ── TABLE OF CONTENTS ───────────────────────────────────────────────────────
-    buf.append("## Таблиця-Каталог Скілів (Skills Catalog)")
+    # ── TABLE OF CONTENTS: SYSTEM SKILLS ───────────────────────────────────────
+    buf.append(f"## 🌟 B-SDD System Skills (Core Infrastructure & Meta-Engine) — {len(system_skills)} скілів")
     buf.append("")
-    buf.append("| # | Назва скіла | Опис | Склад / Ресурси |")
-    buf.append("|---|---|---|---|")
+    buf.append("| # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |")
+    buf.append("|---|---|---|:---:|---|")
 
-    for i, s in enumerate(skills_data, 1):
+    for i, s in enumerate(system_skills, 1):
         anchor = f"skill-{re.sub(r'[^a-zA-Z0-9_-]', '-', s['name']).lower()}"
         clean_desc = s['description'].replace("|", "\\|").replace("\n", " ")
-        if len(clean_desc) > 160:
-            clean_desc = clean_desc[:157] + "..."
+        if len(clean_desc) > 140:
+            clean_desc = clean_desc[:137] + "..."
 
-        # Summarize auxiliary files
+        drk_badge = "✅" if s["has_drakon"] else "⚠️"
         aux_names = [f.relative_to(s['path']).as_posix() for f in s['files'] if f.name != "SKILL.md"]
         if aux_names:
             first_aux = aux_names[0]
@@ -192,12 +227,42 @@ def generate_dump(source_dir: Path, output_file: Path) -> Tuple[int, int, int]:
             else:
                 res_str = f"`SKILL.md`, `{first_aux}`"
         else:
-            res_str = "`SKILL.md` (1 файл)"
+            res_str = "`SKILL.md`"
 
-        buf.append(f"| {i} | [**{s['name']}**](#{anchor}) | {clean_desc} | {res_str} |")
+        buf.append(f"| {i} | [**{s['name']}**](#{anchor}) | {clean_desc} | {drk_badge} | {res_str} |")
 
     buf.append("")
     buf.append("---")
+    buf.append("")
+
+    # ── TABLE OF CONTENTS: PROJECT DOMAIN SKILLS ────────────────────────────────
+    buf.append(f"## 🛠️ Project Domain Skills — {len(project_skills)} скілів")
+    buf.append("")
+    buf.append("| # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |")
+    buf.append("|---|---|---|:---:|---|")
+
+    for i, s in enumerate(project_skills, 1):
+        anchor = f"skill-{re.sub(r'[^a-zA-Z0-9_-]', '-', s['name']).lower()}"
+        clean_desc = s['description'].replace("|", "\\|").replace("\n", " ")
+        if len(clean_desc) > 140:
+            clean_desc = clean_desc[:137] + "..."
+
+        drk_badge = "✅" if s["has_drakon"] else "⚠️"
+        aux_names = [f.relative_to(s['path']).as_posix() for f in s['files'] if f.name != "SKILL.md"]
+        if aux_names:
+            first_aux = aux_names[0]
+            if len(aux_names) > 1:
+                res_str = f"`SKILL.md`, `{first_aux}` +{len(aux_names)-1}"
+            else:
+                res_str = f"`SKILL.md`, `{first_aux}`"
+        else:
+            res_str = "`SKILL.md`"
+
+        buf.append(f"| {i} | [**{s['name']}**](#{anchor}) | {clean_desc} | {drk_badge} | {res_str} |")
+
+    buf.append("")
+    buf.append("---")
+
     buf.append("")
 
     # ── BODY: FULL SKILL CONTENT ────────────────────────────────────────────────

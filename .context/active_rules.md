@@ -20,7 +20,6 @@ MANDATORY INVARIANTS:
 - [CORE] Pre-flight compiled active rules must always output a `RECOMMENDED PROCEDURAL SKILLS` block. (Ref: docs/adr/ADR-003-procedural-skill-lifecycle-and-rule-of-2.md)
 - [CORE] Operational workflows repeated >= 2 times must be proposed for crystallization into an agent skill. (Ref: docs/adr/ADR-003-procedural-skill-lifecycle-and-rule-of-2.md)
 - [CORE] Skills must follow standard agent skill format (`SKILL.md` with YAML metadata). (Ref: docs/adr/ADR-003-procedural-skill-lifecycle-and-rule-of-2.md)
-- [CORE] Domain resolution must execute in sub-millisecond time (<1ms). (Ref: docs/adr/ADR-004-ast-impact-graph-routing.md)
 <!-- truncated: active rules exceeded word limit, lowest priority rules dropped -->
 
 RECOMMENDED PROCEDURAL SKILLS:

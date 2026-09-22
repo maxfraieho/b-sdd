@@ -210,4 +210,41 @@ def test_server_projects_ingest_endpoint(server):
         assert "# ADR-" in data["madr"]
 
 
+def test_server_skills_endpoint(server):
+    url = f"http://127.0.0.1:{TEST_PORT}/api/skills"
+    with urllib.request.urlopen(url) as resp:
+        assert resp.status == 200
+        data = json.loads(resp.read().decode("utf-8"))
+        assert "skills" in data
+        assert data["total"] > 0
+        assert data["system_skills_count"] > 0
+        assert any(s["name"] == "b-sdd" for s in data["skills"])
+        assert any(s["skill_type"] == "SYSTEM_SKILL" for s in data["skills"])
+
+
+def test_server_skill_drakon_get_and_put_endpoints(server):
+    # GET /api/skills/b-sdd/drakon
+    url = f"http://127.0.0.1:{TEST_PORT}/api/skills/b-sdd/drakon"
+    with urllib.request.urlopen(url) as resp:
+        assert resp.status == 200
+        schema = json.loads(resp.read().decode("utf-8"))
+        assert schema["name"] == "b-sdd"
+        assert len(schema["nodes"]) > 0
+
+    # PUT /api/skills/b-sdd/drakon
+    put_req = urllib.request.Request(
+        url,
+        data=json.dumps(schema).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="PUT"
+    )
+    with urllib.request.urlopen(put_req) as resp:
+        assert resp.status == 200
+        res = json.loads(resp.read().decode("utf-8"))
+        assert res["status"] == "ok"
+        assert res["skill"] == "b-sdd"
+        assert res["immutable"] is True
+
+
+
 

@@ -1,8 +1,11 @@
 ---
 name: b-sdd
 description: Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [architecture-designer, skill-creator]
 ---
-
 # B-SDD (Bitemporal Spec-Driven Development) Agent Skill
 
 When operating in any repository governed by the **B-SDD Framework**, you MUST follow this operational protocol:
@@ -49,3 +52,16 @@ Before committing or completing a task:
    - Zero external third-party dependencies in `src/`.
    - Supersession DAG integrity verified.
    - Procedural skill recommendations verified.
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `b-sdd.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: b-sdd
+  2. `[INSERTION]` CALL_SKILL(architecture-designer): Pre-Flight Phase (Always First)
+  3. `[ACTION]` Decision & Supersession Protocol (Changing Architecture)
+  4. `[INSERTION]` CALL_SKILL(skill-creator): The Rule of 2 (Autonomous Skill Crystallization)
+  5. `[ACTION]` Verification Gate (Before Any Commit)
+  6. `[END]` Завершення: b-sdd
+<!-- DRAKON_VISUAL_FLOW_END -->

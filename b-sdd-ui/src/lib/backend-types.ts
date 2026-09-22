@@ -294,3 +294,27 @@ export interface SymbolsSearchResponse {
     readonly indexed_count: number;
   }[];
 }
+
+// ---- B-SDD System Skills & DRAKON Visual Bridge (ADR-015) -----------------
+
+export type SkillType = 'SYSTEM_SKILL' | 'PROJECT_SKILL';
+
+export interface SkillDTO {
+  readonly name: string;
+  readonly description: string;
+  readonly skill_type: SkillType;
+  readonly category: string;
+  readonly immutable: boolean;
+  readonly has_drakon_schema: boolean;
+  readonly invoked_skills: readonly string[];
+  readonly drakon_path?: string | null;
+  readonly skill_md_path?: string | null;
+}
+
+export interface SkillsResponse {
+  readonly skills: readonly SkillDTO[];
+  readonly total: number;
+  readonly system_skills_count: number;
+  readonly project_skills_count: number;
+}
+

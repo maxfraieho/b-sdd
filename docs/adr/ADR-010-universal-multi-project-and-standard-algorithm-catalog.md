@@ -44,3 +44,5 @@ A curated library of canonical templates is packaged under `src/drakon/templates
 - ADR-010-INV-01: B-SDD framework must support universal repository context switching across any local workspace and remote GitHub project.
 - ADR-010-INV-02: Framework must provide an immutable catalog of standard canonical DRAKON algorithmic patterns and B-SDD operational engineering pipelines.
 - ADR-010-INV-03: All standard pipeline templates must pass 100% mathematical planarity and DAG validity gates before distribution.
+- ADR-010-INV-04: Cross-Reference (ADR-015): The standard algorithm catalog seamlessly unifies with B-SDD procedural skills via `<skill_name>.drakon.json` schemas and `CALL_SKILL` composition.
+

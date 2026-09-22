@@ -1,8 +1,11 @@
 ---
 name: b-sdd-sprint-closure
 description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [b-sdd]
 ---
-
 # B-SDD Sprint Closure & Distillation Skill
 
 The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated 10-stage protocol for finalizing discrete sprints under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, AST knowledge graph currency in GitNexus, bitemporal Tripartite ontology and WORM ledger synchronization in Utopia DB, and telemetric callback to the orchestrating supervisor.
@@ -143,3 +146,20 @@ Or via the skill runner:
 - **INV-CLOSURE-03:** AST graph on host 184 must be re-indexed to match the exact sealed commit hash.
 - **INV-CLOSURE-04:** Utopia DB on host 251 must record an immutable WORM ledger snapshot for the sprint.
 - **INV-CLOSURE-05:** Zero external pip dependencies in core runtime or closure scripts (ADR-002 Pure Stdlib).
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `b-sdd-sprint-closure.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: b-sdd-sprint-closure
+  2. `[ACTION]` When to Use
+  3. `[INSERTION]` CALL_SKILL(b-sdd): The 10-Stage Discrete Sprint Closure Protocol
+  4. `[ACTION]` Stage 1: GitNexus Lock & Shadow Cleaner
+  5. `[INSERTION]` CALL_SKILL(b-sdd): Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (H
+  6. `[INSERTION]` CALL_SKILL(b-sdd): Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt
+  7. `[ACTION]` Stage 4: Active Skills Inventory Dump
+  8. `[INSERTION]` CALL_SKILL(b-sdd): Stage 5: NotebookLM SSoT Pruning & Synchronization
+  9. `[ACTION]` Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Co
+  10. `[END]` Завершення: b-sdd-sprint-closure
+<!-- DRAKON_VISUAL_FLOW_END -->

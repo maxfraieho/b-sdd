@@ -78,13 +78,34 @@ def stage_3_code_dump() -> bool:
     return False
 
 
+def stage_immutability_barrier() -> bool:
+    """Enforce ADR-015-INV-02: Prevent deletion, corruption, or mutability of core system skills."""
+    log_stage(4, "System Skills Immutability & Non-Deletion Barrier (ADR-015)")
+    try:
+        from src.core.drakon.skill_visual_bridge import verify_system_skills_immutability
+        valid, violations = verify_system_skills_immutability()
+        if not valid:
+            print("❌ [CRITICAL INVARIANT BREACH: ADR-015-INV-02] System skills violated:", file=sys.stderr)
+            for v in violations:
+                print(f"   - {v}", file=sys.stderr)
+            return False
+        print("✓ All B-SDD core system skills verified immutable and intact.")
+        return True
+    except Exception as e:
+        print(f"[WARN] Immutability barrier check error: {e}", file=sys.stderr)
+        return False
+
+
 def stage_4_skills_dump() -> bool:
     log_stage(4, "Active Skills Inventory Dump")
+    # First enforce immutability barrier
+    stage_immutability_barrier()
     skills_script = ROOT / "scripts" / "dump_skills.py"
     if skills_script.exists():
         res = subprocess.run([sys.executable, str(skills_script)], cwd=str(ROOT))
         return res.returncode == 0
     return False
+
 
 
 def stage_5_notebooklm_sync() -> bool:

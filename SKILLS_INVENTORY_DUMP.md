@@ -1,11 +1,12 @@
-# B-SDD SKILLS INVENTORY & ONTOLOGY DUMP
+# B-SDD SKILLS INVENTORY & ONTOLOGY DUMP (ADR-015 TAXONOMY)
 
-**Згенеровано:** 2026-09-22 07:27:31Z  
+**Згенеровано:** 2026-09-22 07:59:53Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
-**Загальна кількість скілів:** **55**  
-**Загальна кількість файлів коду/конфігів:** **237**  
-**Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR)  
+**Загальна кількість скілів:** **55** (🌟 **30** System Skills, 🛠️ **25** Project Skills)  
+**Покриття ДРАКОН-схемами (Rule of 2):** **55/55** (100.0%)  
+**Загальна кількість файлів коду/конфігів:** **292**  
+**Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR, ADR-015)  
 
 > [!NOTE]
 > Цей дамп містить повний зріз системних, інфраструктурних та доменних скілів.
@@ -14,65 +15,72 @@
 
 ---
 
-## Таблиця-Каталог Скілів (Skills Catalog)
+## 🌟 B-SDD System Skills (Core Infrastructure & Meta-Engine) — 30 скілів
 
-| # | Назва скіла | Опис | Склад / Ресурси |
-|---|---|---|---|
-| 1 | [**api-designer**](#skill-api-designer) | Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, ... | `SKILL.md`, `references/error-handling.md` +4 |
-| 2 | [**architecture-designer**](#skill-architecture-designer) | Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams,... | `SKILL.md`, `references/adr-template.md` +4 |
-| 3 | [**ast-grep**](#skill-ast-grep) | Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) pat... | `SKILL.md`, `README.md` +1 |
-| 4 | [**astryx-scaffolder**](#skill-astryx-scaffolder) | Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces. | `SKILL.md`, `scripts/scaffold_component.py` |
-| 5 | [**b-sdd**](#skill-b-sdd) | Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework. | `SKILL.md` (1 файл) |
-| 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump... | `SKILL.md`, `scripts/sprint_closure.py` |
-| 7 | [**brainstorming**](#skill-brainstorming) | Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questionin... | `SKILL.md` (1 файл) |
-| 8 | [**caveman**](#skill-caveman) | Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity lev... | `SKILL.md`, `README.md` |
-| 9 | [**cli-developer**](#skill-cli-developer) | Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars... | `SKILL.md`, `references/design-patterns.md` +4 |
-| 10 | [**code-documenter**](#skill-code-documenter) | Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use... | `SKILL.md`, `references/api-docs-fastapi-django.md` +7 |
-| 11 | [**code-reviewer**](#skill-code-reviewer) | Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming iss... | `SKILL.md`, `references/common-issues.md` +5 |
-| 12 | [**codebase-design**](#skill-codebase-design) | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a... | `SKILL.md`, `DEEPENING.md` +1 |
-| 13 | [**condition-based-waiting**](#skill-condition-based-waiting) | Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for... | `SKILL.md`, `example.ts` |
-| 14 | [**defense-in-depth**](#skill-defense-in-depth) | Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to mak... | `SKILL.md` (1 файл) |
-| 15 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow. | `SKILL.md`, `scripts/hitl-loop.template.sh` |
-| 16 | [**drakon-compiler**](#skill-drakon-compiler) | Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict ... | `SKILL.md`, `scripts/compile_drakon.py` |
-| 17 | [**executing-plans**](#skill-executing-plans) | Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes ... | `SKILL.md` (1 файл) |
-| 18 | [**find-skills**](#skill-find-skills) | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express ... | `SKILL.md` (1 файл) |
-| 19 | [**frontend-design**](#skill-frontend-design) | Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or appli... | `SKILL.md`, `LICENSE.txt` |
-| 20 | [**grill-with-docs**](#skill-grill-with-docs) | A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go. | `SKILL.md` (1 файл) |
-| 21 | [**handoff**](#skill-handoff) | Compact the current conversation into a handoff document for another agent to pick up. | `SKILL.md` (1 файл) |
-| 22 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | `SKILL.md`, `HTML-REPORT.md` |
-| 23 | [**intent-continuity**](#skill-intent-continuity) | Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization. | `SKILL.md` (1 файл) |
-| 24 | [**investigate-first**](#skill-investigate-first) | Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked... | `SKILL.md`, `agents/openai.yaml` |
-| 25 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to... | `SKILL.md`, `scripts/bsdd_to_kindle.py` +6 |
-| 26 | [**laya-decision-router**](#skill-laya-decision-router) | Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing. | `SKILL.md` (1 файл) |
-| 27 | [**make-interfaces-feel-better**](#skill-make-interfaces-feel-better) | Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover s... | `SKILL.md`, `animations.md` +3 |
-| 28 | [**mcp-builder**](#skill-mcp-builder) | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use whe... | `SKILL.md`, `LICENSE.txt` +8 |
-| 29 | [**notebooklm**](#skill-notebooklm) | Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact type... | `SKILL.md` (1 файл) |
-| 30 | [**notebooklm-gitnexus-copilot**](#skill-notebooklm-gitnexus-copilot) | Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic... | `SKILL.md` (1 файл) |
-| 31 | [**root-cause-tracing**](#skill-root-cause-tracing) | Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, add... | `SKILL.md`, `find-polluter.sh` |
-| 32 | [**safe-refactor**](#skill-safe-refactor) | Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits. | `SKILL.md`, `agents/openai.yaml` |
-| 33 | [**session-distiller**](#skill-session-distiller) | Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007). | `SKILL.md` (1 файл) |
-| 34 | [**skill-audit**](#skill-skill-audit) | Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing ne... | `SKILL.md` (1 файл) |
-| 35 | [**skill-creator**](#skill-skill-creator) | Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capa... | `SKILL.md`, `LICENSE.txt` +5 |
-| 36 | [**subagent-driven-development**](#skill-subagent-driven-development) | Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between task... | `SKILL.md` (1 файл) |
-| 37 | [**surgical-patch**](#skill-surgical-patch) | Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests ma... | `SKILL.md`, `agents/openai.yaml` |
-| 38 | [**systematic-debugging**](#skill-systematic-debugging) | Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysi... | `SKILL.md`, `CREATION-LOG.md` +4 |
-| 39 | [**test-driven-development**](#skill-test-driven-development) | Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures te... | `SKILL.md` (1 файл) |
-| 40 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production polluti... | `SKILL.md` (1 файл) |
-| 41 | [**theme-factory**](#skill-theme-factory) | Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors... | `SKILL.md`, `LICENSE.txt` +10 |
-| 42 | [**to-spec**](#skill-to-spec) | Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed. | `SKILL.md` (1 файл) |
-| 43 | [**to-tickets**](#skill-to-tickets) | Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker —... | `SKILL.md` (1 файл) |
-| 44 | [**using-git-worktrees**](#skill-using-git-worktrees) | Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with sma... | `SKILL.md` (1 файл) |
-| 45 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge... | `SKILL.md`, `scripts/sync_utopia.py` +1 |
-| 46 | [**vercel-composition-patterns**](#skill-vercel-composition-patterns) | React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing r... | `SKILL.md`, `AGENTS.md` +9 |
-| 47 | [**vercel-react-best-practices**](#skill-vercel-react-best-practices) | React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.j... | `SKILL.md`, `AGENTS.md` +71 |
-| 48 | [**verification-before-completion**](#skill-verification-before-completion) | Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output... | `SKILL.md` (1 файл) |
-| 49 | [**wayfinder**](#skill-wayfinder) | Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a ... | `SKILL.md` (1 файл) |
-| 50 | [**web-artifacts-builder**](#skill-web-artifacts-builder) | Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use ... | `SKILL.md`, `LICENSE.txt` +2 |
-| 51 | [**web-design-guidelines**](#skill-web-design-guidelines) | Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my si... | `SKILL.md` (1 файл) |
-| 52 | [**webapp-testing**](#skill-webapp-testing) | Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing... | `SKILL.md`, `LICENSE.txt` +4 |
-| 53 | [**writing-great-skills**](#skill-writing-great-skills) | Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable. | `SKILL.md`, `GLOSSARY.md` |
-| 54 | [**writing-plans**](#skill-writing-plans) | Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans ... | `SKILL.md` (1 файл) |
-| 55 | [**writing-skills**](#skill-writing-skills) | Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with suba... | `SKILL.md`, `anthropic-best-practices.md` +1 |
+| # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |
+|---|---|---|:---:|---|
+| 1 | [**architecture-designer**](#skill-architecture-designer) | Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create ar... | ✅ | `SKILL.md`, `architecture-designer.drakon.json` +5 |
+| 2 | [**astryx-scaffolder**](#skill-astryx-scaffolder) | Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbenc... | ✅ | `SKILL.md`, `astryx-scaffolder.drakon.json` +1 |
+| 3 | [**b-sdd**](#skill-b-sdd) | Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework. | ✅ | `SKILL.md`, `b-sdd.drakon.json` |
+| 4 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words)... | ✅ | `SKILL.md`, `b-sdd-sprint-closure.drakon.json` +1 |
+| 5 | [**code-reviewer**](#skill-code-reviewer) | Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1... | ✅ | `SKILL.md`, `code-reviewer.drakon.json` +6 |
+| 6 | [**codebase-design**](#skill-codebase-design) | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportuni... | ✅ | `SKILL.md`, `DEEPENING.md` +2 |
+| 7 | [**condition-based-waiting**](#skill-condition-based-waiting) | Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition... | ✅ | `SKILL.md`, `condition-based-waiting.drakon.json` +1 |
+| 8 | [**defense-in-depth**](#skill-defense-in-depth) | Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data p... | ✅ | `SKILL.md`, `defense-in-depth.drakon.json` |
+| 9 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/thr... | ✅ | `SKILL.md`, `diagnosing-bugs.drakon.json` +1 |
+| 10 | [**drakon-compiler**](#skill-drakon-compiler) | Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C... | ✅ | `SKILL.md`, `drakon-compiler.drakon.json` +1 |
+| 11 | [**find-skills**](#skill-find-skills) | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that ... | ✅ | `SKILL.md`, `find-skills.drakon.json` |
+| 12 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | ✅ | `SKILL.md`, `HTML-REPORT.md` +1 |
+| 13 | [**intent-continuity**](#skill-intent-continuity) | Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synch... | ✅ | `SKILL.md`, `intent-continuity.drakon.json` |
+| 14 | [**investigate-first**](#skill-investigate-first) | Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations nee... | ✅ | `SKILL.md`, `investigate-first.drakon.json` +1 |
+| 15 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatch... | ✅ | `SKILL.md`, `kindle-release-pipeline.drakon.json` +7 |
+| 16 | [**laya-decision-router**](#skill-laya-decision-router) | Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing. | ✅ | `SKILL.md`, `laya-decision-router.drakon.json` |
+| 17 | [**root-cause-tracing**](#skill-root-cause-tracing) | Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward thr... | ✅ | `SKILL.md`, `find-polluter.sh` +1 |
+| 18 | [**safe-refactor**](#skill-safe-refactor) | Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracke... | ✅ | `SKILL.md`, `safe-refactor.drakon.json` +1 |
+| 19 | [**session-distiller**](#skill-session-distiller) | Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006... | ✅ | `SKILL.md`, `session-distiller.drakon.json` |
+| 20 | [**skill-audit**](#skill-skill-audit) | Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run... | ✅ | `SKILL.md`, `skill-audit.drakon.json` |
+| 21 | [**skill-creator**](#skill-skill-creator) | Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that e... | ✅ | `SKILL.md`, `LICENSE.txt` +6 |
+| 22 | [**surgical-patch**](#skill-surgical-patch) | Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and ta... | ✅ | `SKILL.md`, `surgical-patch.drakon.json` +1 |
+| 23 | [**systematic-debugging**](#skill-systematic-debugging) | Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigat... | ✅ | `SKILL.md`, `CREATION-LOG.md` +5 |
+| 24 | [**test-driven-development**](#skill-test-driven-development) | Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code... | ✅ | `SKILL.md`, `test-driven-development.drakon.json` |
+| 25 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior... | ✅ | `SKILL.md`, `testing-anti-patterns.drakon.json` |
+| 26 | [**using-git-worktrees**](#skill-using-git-worktrees) | Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated gi... | ✅ | `SKILL.md`, `using-git-worktrees.drakon.json` |
+| 27 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent... | ✅ | `SKILL.md`, `utopia-intent-ledger.drakon.json` +2 |
+| 28 | [**verification-before-completion**](#skill-verification-before-completion) | Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands a... | ✅ | `SKILL.md`, `verification-before-completion.drakon.json` |
+| 29 | [**writing-great-skills**](#skill-writing-great-skills) | Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable. | ✅ | `SKILL.md`, `GLOSSARY.md` +1 |
+| 30 | [**writing-skills**](#skill-writing-skills) | Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation ... | ✅ | `SKILL.md`, `anthropic-best-practices.md` +2 |
+
+---
+
+## 🛠️ Project Domain Skills — 25 скілів
+
+| # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |
+|---|---|---|:---:|---|
+| 1 | [**api-designer**](#skill-api-designer) | Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, ver... | ✅ | `SKILL.md`, `api-designer.drakon.json` +5 |
+| 2 | [**ast-grep**](#skill-ast-grep) | Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract S... | ✅ | `SKILL.md`, `README.md` +2 |
+| 3 | [**brainstorming**](#skill-brainstorming) | Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through coll... | ✅ | `SKILL.md`, `brainstorming.drakon.json` |
+| 4 | [**caveman**](#skill-caveman) | Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Su... | ✅ | `SKILL.md`, `README.md` +1 |
+| 5 | [**cli-developer**](#skill-cli-developer) | Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, disp... | ✅ | `SKILL.md`, `cli-developer.drakon.json` +5 |
+| 6 | [**code-documenter**](#skill-code-documenter) | Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, ... | ✅ | `SKILL.md`, `code-documenter.drakon.json` +8 |
+| 7 | [**executing-plans**](#skill-executing-plans) | Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews c... | ✅ | `SKILL.md`, `executing-plans.drakon.json` |
+| 8 | [**frontend-design**](#skill-frontend-design) | Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web compone... | ✅ | `SKILL.md`, `LICENSE.txt` +1 |
+| 9 | [**grill-with-docs**](#skill-grill-with-docs) | A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go. | ✅ | `SKILL.md`, `grill-with-docs.drakon.json` |
+| 10 | [**handoff**](#skill-handoff) | Compact the current conversation into a handoff document for another agent to pick up. | ✅ | `SKILL.md`, `handoff.drakon.json` |
+| 11 | [**make-interfaces-feel-better**](#skill-make-interfaces-feel-better) | Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing... | ✅ | `SKILL.md`, `animations.md` +4 |
+| 12 | [**mcp-builder**](#skill-mcp-builder) | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-des... | ✅ | `SKILL.md`, `LICENSE.txt` +9 |
+| 13 | [**notebooklm**](#skill-notebooklm) | Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, genera... | ✅ | `SKILL.md`, `notebooklm.drakon.json` |
+| 14 | [**notebooklm-gitnexus-copilot**](#skill-notebooklm-gitnexus-copilot) | Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM ... | ✅ | `SKILL.md`, `notebooklm-gitnexus-copilot.drakon.json` |
+| 15 | [**subagent-driven-development**](#skill-subagent-driven-development) | Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code... | ✅ | `SKILL.md`, `subagent-driven-development.drakon.json` |
+| 16 | [**theme-factory**](#skill-theme-factory) | Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-se... | ✅ | `SKILL.md`, `LICENSE.txt` +11 |
+| 17 | [**to-spec**](#skill-to-spec) | Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've alrea... | ✅ | `SKILL.md`, `to-spec.drakon.json` |
+| 18 | [**to-tickets**](#skill-to-tickets) | Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the ... | ✅ | `SKILL.md`, `to-tickets.drakon.json` |
+| 19 | [**vercel-composition-patterns**](#skill-vercel-composition-patterns) | React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libra... | ✅ | `SKILL.md`, `AGENTS.md` +10 |
+| 20 | [**vercel-react-best-practices**](#skill-vercel-react-best-practices) | React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refa... | ✅ | `SKILL.md`, `AGENTS.md` +72 |
+| 21 | [**wayfinder**](#skill-wayfinder) | Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and re... | ✅ | `SKILL.md`, `wayfinder.drakon.json` |
+| 22 | [**web-artifacts-builder**](#skill-web-artifacts-builder) | Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind C... | ✅ | `SKILL.md`, `LICENSE.txt` +3 |
+| 23 | [**web-design-guidelines**](#skill-web-design-guidelines) | Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review ... | ✅ | `SKILL.md`, `web-design-guidelines.drakon.json` |
+| 24 | [**webapp-testing**](#skill-webapp-testing) | Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI... | ✅ | `SKILL.md`, `LICENSE.txt` +5 |
+| 25 | [**writing-plans**](#skill-writing-plans) | Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive i... | ✅ | `SKILL.md`, `writing-plans.drakon.json` |
 
 ---
 
@@ -83,25 +91,17 @@
 
 **Каталог:** `~/.agents/skills/api-designer`  
 **Опис:** Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.  
-**Файлів у складі:** 6  
+**Файлів у складі:** 7  
 
-#### Файл: `api-designer/SKILL.md` (7,734 байт)
+#### Файл: `api-designer/SKILL.md` (7,979 байт)
 ````markdown
 ---
 name: api-designer
 description: Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.
-license: MIT
-metadata:
-  author: https://github.com/Jeffallan
-  version: "1.1.0"
-  domain: api-architecture
-  triggers: API design, REST API, OpenAPI, API specification, API architecture, resource modeling, API versioning, GraphQL schema, API documentation
-  role: architect
-  scope: design
-  output-format: specification
-  related-skills: graphql-architect, fastapi-expert, nestjs-expert, spring-boot-engineer, security-reviewer
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # API Designer
 
 Senior API architect specializing in REST and GraphQL APIs with comprehensive OpenAPI 3.1 specifications.
@@ -305,6 +305,185 @@ When delivering an API design, provide:
 
 REST architecture, OpenAPI 3.1, GraphQL, HTTP semantics, JSON:API, HATEOAS, OAuth 2.0, JWT, RFC 7807 Problem Details, API versioning patterns, pagination strategies, rate limiting, webhook design, SDK generation
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `api-designer.drakon.json`
+- **Total Algorithmic Nodes:** 9
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: api-designer
+  2. `[ACTION]` Reference Guide
+  3. `[ACTION]` MUST DO
+  4. `[ACTION]` MUST NOT DO
+  5. `[ACTION]` OpenAPI 3.1 Resource Endpoint (copy-paste starter)
+  6. `[ACTION]` RFC 7807 Error Response (copy-paste)
+  7. `[ACTION]` Output Checklist
+  8. `[ACTION]` Knowledge Reference
+  9. `[END]` Завершення: api-designer
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `api-designer/api-designer.drakon.json` (4,958 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "api-designer",
+  "category": "bssd_project_skill",
+  "description": "Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: api-designer",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Reference Guide",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Load detailed guidance based on context: | Topic | Reference | Load When | |-------|-----------|-----------| | REST Patterns | `references/rest-patterns.md` | Resource design, HTTP"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "MUST DO",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "- Follow REST principles (resource-oriented, proper HTTP methods) - Use consistent naming conventions (snake_case or camelCase — pick one, apply everywhere) - Include comprehensive"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "MUST NOT DO",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "- Use verbs in resource URIs (use `/users/{id}`, not `/getUser/{id}`) - Return inconsistent response structures - Skip error code documentation - Ignore HTTP status code semantics "
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "OpenAPI 3.1 Resource Endpoint (copy-paste starter)",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "openapi: \"3.1.0\" info: title: Example API version: \"1.1.0\" paths: /users: get: summary: List users operationId: listUsers tags: [Users] parameters: - name: cursor in: query schema:"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "RFC 7807 Error Response (copy-paste)",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "{ \"type\": \"https://api.example.com/errors/validation-error\", \"title\": \"Validation Error\", \"status\": 422, \"detail\": \"The 'email' field must be a valid email address.\", \"instance\": \""
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Output Checklist",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "When delivering an API design, provide: 1. Resource model and relationships (diagram or table) 2. Endpoint specifications with URIs and HTTP methods 3. OpenAPI 3.1 specification (Y"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Knowledge Reference",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "REST architecture, OpenAPI 3.1, GraphQL, HTTP semantics, JSON:API, HATEOAS, OAuth 2.0, JWT, RFC 7807 Problem Details, API versioning patterns, pagination strategies, rate limiting,"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: api-designer",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0
+    }
+  ],
+  "meta": {
+    "skill_name": "api-designer",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `api-designer/references/error-handling.md` (11,580 байт)
@@ -2924,25 +3103,17 @@ Avoid these mistakes:
 
 **Каталог:** `~/.agents/skills/architecture-designer`  
 **Опис:** Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.  
-**Файлів у складі:** 6  
+**Файлів у складі:** 7  
 
-#### Файл: `architecture-designer/SKILL.md` (4,644 байт)
+#### Файл: `architecture-designer/SKILL.md` (4,941 байт)
 ````markdown
 ---
 name: architecture-designer
 description: Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.
-license: MIT
-metadata:
-  author: https://github.com/Jeffallan
-  version: "1.1.1"
-  domain: api-architecture
-  triggers: architecture, system design, design pattern, microservices, scalability, ADR, technical design, infrastructure
-  role: expert
-  scope: design
-  output-format: document
-  related-skills: fullstack-guardian, devops-engineer, secure-code-guardian, microservices-architect, code-reviewer
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Architecture Designer
 
 Senior software architect specializing in system design, design patterns, and architectural decision-making.
@@ -3045,7 +3216,202 @@ Use PostgreSQL as the primary datastore for the Order Service.
 Consistency and query flexibility are prioritised over unlimited horizontal write scalability.
 ```
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `architecture-designer.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: architecture-designer
+  2. `[ACTION]` Role Definition
+  3. `[ACTION]` When to Use This Skill
+  4. `[ACTION]` Reference Guide
+  5. `[ACTION]` MUST DO
+  6. `[ACTION]` MUST NOT DO
+  7. `[ACTION]` Output Templates
+  8. `[ACTION]` Architecture Diagram (Mermaid)
+  9. `[ACTION]` ADR Example
+  10. `[END]` Завершення: architecture-designer
+<!-- DRAKON_VISUAL_FLOW_END -->
 
+````
+
+#### Файл: `architecture-designer/architecture-designer.drakon.json` (5,636 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "architecture-designer",
+  "category": "bssd_system_skill",
+  "description": "Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: architecture-designer",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Role Definition",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "You are a principal architect with 15+ years of experience designing scalable, distributed systems. You make pragmatic trade-offs, document decisions with ADRs, and prioritize long"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "When to Use This Skill",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "- Designing new system architecture - Choosing between architectural patterns - Reviewing existing architecture - Creating Architecture Decision Records (ADRs) - Planning for scala"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Reference Guide",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Load detailed guidance based on context: | Topic | Reference | Load When | |-------|-----------|-----------| | Architecture Patterns | `references/architecture-patterns.md` | Choos"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "MUST DO",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "- Document all significant decisions with ADRs - Consider non-functional requirements explicitly - Evaluate trade-offs, not just benefits - Plan for failure modes - Consider operat"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "MUST NOT DO",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "- Over-engineer for hypothetical scale - Choose technology without evaluating alternatives - Ignore operational costs - Design without understanding requirements - Skip security co"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Output Templates",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "When designing architecture, provide: 1. Requirements summary (functional + non-functional) 2. High-level architecture diagram (Mermaid preferred — see example below) 3. Key decisi"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Architecture Diagram (Mermaid)",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "graph TD Client[\"Client (Web/Mobile)\"] --> Gateway[\"API Gateway\"] Gateway --> AuthSvc[\"Auth Service\"] Gateway --> OrderSvc[\"Order Service\"] OrderSvc --> DB[(\"Orders DB\\n(PostgreSQL"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "ADR Example",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "# ADR-001: Use PostgreSQL for Order Storage"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: architecture-designer",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "architecture-designer",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `architecture-designer/references/adr-template.md` (2,752 байт)
@@ -3621,7 +3987,7 @@ When to Avoid:
 
 **Каталог:** `~/.agents/skills/ast-grep`  
 **Опис:** Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.  
-**Файлів у складі:** 3  
+**Файлів у складі:** 4  
 
 #### Файл: `ast-grep/README.md` (6,134 байт)
 ````markdown
@@ -3843,13 +4209,15 @@ For issues with:
 
 ````
 
-#### Файл: `ast-grep/SKILL.md` (9,434 байт)
+#### Файл: `ast-grep/SKILL.md` (10,142 байт)
 ````markdown
 ---
 name: ast-grep
 description: Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # ast-grep Code Search
 
 ## Overview
@@ -4169,6 +4537,202 @@ Contains detailed documentation for ast-grep rule syntax:
 
 Load these references when detailed rule syntax information is needed.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `ast-grep.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: ast-grep
+  2. `[ACTION]` Overview
+  3. `[ACTION]` When to Use This Skill
+  4. `[ACTION]` General Workflow
+  5. `[ACTION]` Step 1: Understand the Query
+  6. `[ACTION]` Step 2: Create Example Code
+  7. `[ACTION]` Step 3: Write the ast-grep Rule
+  8. `[ACTION]` Step 4: Test the Rule
+  9. `[ACTION]` Step 5: Search the Codebase
+  10. `[END]` Завершення: ast-grep
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `ast-grep/ast-grep.drakon.json` (5,569 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "ast-grep",
+  "category": "bssd_project_skill",
+  "description": "Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: ast-grep",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "This skill helps translate natural language queries into ast-grep rules for structural code search. ast-grep uses Abstract Syntax Tree (AST) patterns to match code based on its str"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "When to Use This Skill",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Use this skill when users: - Need to search for code patterns using structural matching (e.g., \"find all async functions that don't have error handling\") - Want to locate specific "
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "General Workflow",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Follow this process to help users write effective ast-grep rules:"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Step 1: Understand the Query",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Clearly understand what the user wants to find. Ask clarifying questions if needed: - What specific code pattern or structure are they looking for? - Which programming language? - "
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Step 2: Create Example Code",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Write a simple code snippet that represents what the user wants to match. Save this to a temporary file for testing. **Example:** If searching for \"async functions that use await\","
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Step 3: Write the ast-grep Rule",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Translate the pattern into an ast-grep rule. Start simple and add complexity as needed. **Key principles:** - Always use `stopBy: end` for relational rules (`inside`, `has`) to ens"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Step 4: Test the Rule",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "Use ast-grep CLI to verify the rule matches the example code. There are two main approaches: **Option A: Test with inline rules (for quick iterations)** echo \"async function test()"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Step 5: Search the Codebase",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Once the rule matches the example code correctly, search the actual codebase: **For simple pattern searches:** ast-grep run --pattern 'console.log($ARG)' --lang javascript /path/to"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: ast-grep",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "ast-grep",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `ast-grep/references/rule_reference.md` (10,697 байт)
@@ -4480,15 +5044,18 @@ rule:
 
 **Каталог:** `~/.agents/skills/astryx-scaffolder`  
 **Опис:** Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `astryx-scaffolder/SKILL.md` (1,603 байт)
+#### Файл: `astryx-scaffolder/SKILL.md` (2,300 байт)
 ````markdown
 ---
 name: astryx-scaffolder
 description: Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [b-sdd]
 ---
-
 # Astryx Cockpit Scaffolder Skill
 
 Generates and validates user interface components, DRAKON diagram canvas widgets, and telemetry panels for the Astryx Sovereign Workbench Cockpit adhering to the Astryx Design System (ADR-009, ADR-010).
@@ -4521,6 +5088,135 @@ python3 ~/.agents/skills/astryx-scaffolder/scripts/scaffold_component.py --name 
 - **ADR-009 (Astryx Design System):** Enforces layout stability, zone isolation, and visual consistency.
 - **ADR-010 (Universal Multi-Project & Standard Algorithm Catalog):** Seamless integration with multi-project state management.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `astryx-scaffolder.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: astryx-scaffolder
+  2. `[ACTION]` Zones Architecture:
+  3. `[ACTION]` Ergonomic Standards: Keyboard-first shortcuts, responsive de
+  4. `[INSERTION]` CALL_SKILL(b-sdd): A. Scaffold a Canvas or Telemetry Component
+  5. `[ACTION]` Invariants & Architecture Compliance
+  6. `[END]` Завершення: astryx-scaffolder
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `astryx-scaffolder/astryx-scaffolder.drakon.json` (3,218 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "astryx-scaffolder",
+  "category": "bssd_system_skill",
+  "description": "Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: astryx-scaffolder",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Zones Architecture:",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "- **Zone A:** Sovereign Project & Mesh Leases Switcher. - **Zone B:** Multi-Tenant DRAKON Visual Canvas with $C=0, X=0$ planarity guarantees. - **Zone C:** Live ADR Inspector & Bit"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Ergonomic Standards: Keyboard-first shortcuts, responsive de",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "---"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): A. Scaffold a Canvas or Telemetry Component",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "python3 ~/.agents/skills/astryx-scaffolder/scripts/scaffold_component.py --name DrakonVisualFlow --category canvas --output-dir b-sdd-ui/src/components ---"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Invariants & Architecture Compliance",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "- **ADR-009 (Astryx Design System):** Enforces layout stability, zone isolation, and visual consistency. - **ADR-010 (Universal Multi-Project & Standard Algorithm Catalog):** Seaml"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: astryx-scaffolder",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "astryx-scaffolder",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `astryx-scaffolder/scripts/scaffold_component.py` (2,225 байт)
@@ -4603,15 +5299,18 @@ if __name__ == "__main__":
 
 **Каталог:** `~/.agents/skills/b-sdd`  
 **Опис:** Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `b-sdd/SKILL.md` (3,445 байт)
+#### Файл: `b-sdd/SKILL.md` (4,251 байт)
 ````markdown
 ---
 name: b-sdd
 description: Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [find-skills, skill-creator]
 ---
-
 # B-SDD (Bitemporal Spec-Driven Development) Agent Skill
 
 When operating in any repository governed by the **B-SDD Framework**, you MUST follow this operational protocol:
@@ -4670,8 +5369,170 @@ Before committing or completing a task:
      `INBOX_GEMINI_<SPRINT_ID>_<STEP>_REPORT`
    - Локального збереження у `logs/*.json` НЕДОСТАТНЬО. Агент зобов'язаний виконати виклик `notebooklm/sources_add_text` перед відправкою події успіху.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `b-sdd.drakon.json`
+- **Total Algorithmic Nodes:** 8
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: b-sdd
+  2. `[INSERTION]` CALL_SKILL(find-skills): Pre-Flight Phase (Always First)
+  3. `[ACTION]` Decision & Supersession Protocol (Changing Architecture)
+  4. `[INSERTION]` CALL_SKILL(skill-creator): The Rule of 2 (Autonomous Skill Crystallization)
+  5. `[ACTION]` Verification Gate (Before Any Commit)
+  6. `[ACTION]` Roles Separation:
+  7. `[ACTION]` Mandatory Step Exit Gate:
+  8. `[END]` Завершення: b-sdd
+<!-- DRAKON_VISUAL_FLOW_END -->
 
+````
 
+#### Файл: `b-sdd/b-sdd.drakon.json` (4,528 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "b-sdd",
+  "category": "bssd_system_skill",
+  "description": "Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: b-sdd",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(find-skills): Pre-Flight Phase (Always First)",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "find-skills"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Before planning or writing code: 1. Ensure `.context/active_rules.md` is compiled. If starting fresh, invoke `./run_agy.sh` or run: python3 -m src.cli.main compile 2. Read `.contex"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Decision & Supersession Protocol (Changing Architecture)",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "When introducing a new architecture pattern or retiring an old one: 1. Do NOT delete old ADRs or leave conflicting rules in the repo. 2. Create a new ADR using the CLI or template:"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(skill-creator): The Rule of 2 (Autonomous Skill Crystallization)",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "skill-creator"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "If you observe or execute an operational sequence, diagnostic workflow, or API integration that repeats **$\\ge 2$ times** without a standardized agent skill: - Stop and propose cre"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Verification Gate (Before Any Commit)",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Before committing or completing a task: 1. Run the automated architecture fitness suite: pytest -v tests/test_architecture_fitness.py 2. Ensure all 5 criteria pass: - Compile laten"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Roles Separation:",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "- **Telegram:** Passive HITL window for the Human Operator only. - **Gemini Spark:** Autonomous Chief Architect & Sprint Orchestrator."
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Mandatory Step Exit Gate:",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "- Жоден крок спринту (Scout / Contract / Impl / Fitness) НЕ вважається завершеним, доки звітний JSON та лог тестів не опубліковано у NotebookLM (ID: `205ee2ec-e0d2-4ba6-badf-44f2de"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: b-sdd",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "b-sdd",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -4681,15 +5542,18 @@ Before committing or completing a task:
 
 **Каталог:** `~/.agents/skills/b-sdd-sprint-closure`  
 **Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `b-sdd-sprint-closure/SKILL.md` (7,100 байт)
+#### Файл: `b-sdd-sprint-closure/SKILL.md` (8,146 байт)
 ````markdown
 ---
 name: b-sdd-sprint-closure
 description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [b-sdd]
 ---
-
 # B-SDD Sprint Closure & Distillation Skill
 
 The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated 10-stage protocol for finalizing discrete sprints under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, AST knowledge graph currency in GitNexus, bitemporal Tripartite ontology and WORM ledger synchronization in Utopia DB, and telemetric callback to the orchestrating supervisor.
@@ -4831,6 +5695,206 @@ Or via the skill runner:
 - **INV-CLOSURE-04:** Utopia DB on host 251 must record an immutable WORM ledger snapshot for the sprint.
 - **INV-CLOSURE-05:** Zero external pip dependencies in core runtime or closure scripts (ADR-002 Pure Stdlib).
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `b-sdd-sprint-closure.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: b-sdd-sprint-closure
+  2. `[ACTION]` When to Use
+  3. `[INSERTION]` CALL_SKILL(b-sdd): The 10-Stage Discrete Sprint Closure Protocol
+  4. `[ACTION]` Stage 1: GitNexus Lock & Shadow Cleaner
+  5. `[INSERTION]` CALL_SKILL(b-sdd): Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (H
+  6. `[INSERTION]` CALL_SKILL(b-sdd): Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt
+  7. `[ACTION]` Stage 4: Active Skills Inventory Dump
+  8. `[INSERTION]` CALL_SKILL(b-sdd): Stage 5: NotebookLM SSoT Pruning & Synchronization
+  9. `[ACTION]` Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Co
+  10. `[END]` Завершення: b-sdd-sprint-closure
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `b-sdd-sprint-closure/b-sdd-sprint-closure.drakon.json` (6,065 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "b-sdd-sprint-closure",
+  "category": "bssd_system_skill",
+  "description": "Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: b-sdd-sprint-closure",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "When to Use",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "- When all sprint implementation tasks, specifications, and test suites are 100% completed. - At the formal sprint closure phase ($\\Phi_6 \\to \\Phi_7$). - When sealing release tags,"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): The 10-Stage Discrete Sprint Closure Protocol",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "┌────────────────────────────────────────────────────────────────────────────────────────┐ │                        B-SDD SPRINT CLOSURE LIFECYCLE (Φ6 ──► Φ7)                      "
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Stage 1: GitNexus Lock & Shadow Cleaner",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Removes orphaned locks and shadow files (`lbug.shadow`, `lbug.wal.checkpoint`, `*.lock`) locally and on remote AST host `192.168.3.184`: python3 scripts/gitnexus_cleaner.py"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (H",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Triggers full AST re-indexing inside the `gitnexus-server` container on host `192.168.3.184`: ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 \"docker exec -t gitnexus-server gi"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Synthesizes a unified Plain Text dump of the repository (code only, no binaries/caches/markdown): python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Stage 4: Active Skills Inventory Dump",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md` and root `SKILLS_INVENTORY_DUMP.md`: python3 scripts/dump_skills.py"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Stage 5: NotebookLM SSoT Pruning & Synchronization",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`. 1. Prune stale code dump (`sources_delete`). 2. Prune transient test step reports and duplicate documents. 3. Uploa"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Co",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`):"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: b-sdd-sprint-closure",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "b-sdd-sprint-closure",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `b-sdd-sprint-closure/scripts/sprint_closure.py` (376 байт)
@@ -4861,15 +5925,18 @@ if __name__ == "__main__":
 
 **Каталог:** `~/.agents/skills/brainstorming`  
 **Опис:** Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `brainstorming/SKILL.md` (2,563 байт)
+#### Файл: `brainstorming/SKILL.md` (3,159 байт)
 ````markdown
 ---
 name: brainstorming
 description: Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes
+type: PROJECT_SKILL
+category: general
+immutable: false
+invoked_skills: [using-git-worktrees]
 ---
-
 # Brainstorming Ideas Into Designs
 
 ## Overview
@@ -4920,6 +5987,135 @@ Start by understanding the current project context, then ask questions one at a 
 - **Incremental validation** - Present design in sections, validate each
 - **Be flexible** - Go back and clarify when something doesn't make sense
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `brainstorming.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: brainstorming
+  2. `[ACTION]` Overview
+  3. `[ACTION]` The Process
+  4. `[INSERTION]` CALL_SKILL(using-git-worktrees): After the Design
+  5. `[ACTION]` Key Principles
+  6. `[END]` Завершення: brainstorming
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `brainstorming/brainstorming.drakon.json` (3,434 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "brainstorming",
+  "category": "bssd_project_skill",
+  "description": "Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: brainstorming",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Help turn ideas into fully formed designs and specs through natural collaborative dialogue. Start by understanding the current project context, then ask questions one at a time to "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "The Process",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "**Understanding the idea:** - Check out the current project state first (files, docs, recent commits) - Ask questions one at a time to refine the idea - Prefer multiple choice ques"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(using-git-worktrees): After the Design",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "using-git-worktrees"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "**Documentation:** - Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md` - Use elements-of-style:writing-clearly-and-concisely skill if available - Commit the d"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Key Principles",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "- **One question at a time** - Don't overwhelm with multiple questions - **Multiple choice preferred** - Easier to answer than open-ended when possible - **YAGNI ruthlessly** - Rem"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: brainstorming",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "brainstorming",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -4929,7 +6125,7 @@ Start by understanding the current project context, then ask questions one at a 
 
 **Каталог:** `~/.agents/skills/caveman`  
 **Опис:** Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity levels: lite, full (default), ultra, wenyan-lite, wenyan-full, wenyan-ultra. Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens", "be brief", or invokes /caveman. Also auto-triggers when token efficiency is requested.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
 #### Файл: `caveman/README.md` (1,898 байт)
 ````markdown
@@ -4984,18 +6180,15 @@ Caveman (ultra):
 
 ````
 
-#### Файл: `caveman/SKILL.md` (6,216 байт)
+#### Файл: `caveman/SKILL.md` (6,724 байт)
 ````markdown
 ---
 name: caveman
-description: >
-  Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman
-  while keeping full technical accuracy. Supports intensity levels: lite, full (default), ultra,
-  wenyan-lite, wenyan-full, wenyan-ultra.
-  Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens",
-  "be brief", or invokes /caveman. Also auto-triggers when token efficiency is requested.
+description: Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity levels: lite, full (default), ultra, wenyan-lite, wenyan-full, wenyan-ultra. Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens", "be brief", or invokes /caveman. Also auto-triggers when token efficiency is requested.
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 Respond terse like smart caveman. All technical substance stay. Only fluff die.
 
 ## Persistence
@@ -5074,6 +6267,152 @@ Example — destructive op:
 ## Boundaries
 
 Persisted outside chat: write normal prose — code, comments, commits, docs, issue/PR/MR text, memory files, third-party messages (/caveman-compress exempt). "stop caveman" or "normal mode": revert. Level persist until changed or session end.
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `caveman.drakon.json`
+- **Total Algorithmic Nodes:** 7
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: caveman
+  2. `[ACTION]` Persistence
+  3. `[ACTION]` Rules
+  4. `[ACTION]` Intensity
+  5. `[ACTION]` Auto-Clarity
+  6. `[ACTION]` Boundaries
+  7. `[END]` Завершення: caveman
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `caveman/caveman.drakon.json` (4,004 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "caveman",
+  "category": "bssd_project_skill",
+  "description": "Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity levels: lite, full (default), ultra, wenyan-lite, wenyan-full, wenyan-ultra. Use when user says \"caveman mode\", \"talk like caveman\", \"use caveman\", \"less tokens\", \"be brief\", or invokes /caveman. Also auto-triggers when token efficiency is requested.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: caveman",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Persistence",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift. Still active if unsure. Off only: \"stop caveman\" / \"normal mode\". Default: **full**. Switch: `/caveman lite|full"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Rules",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Drop: articles (a/an/the), filler (just/really/basically/actually/simply), pleasantries (sure/certainly/of course/happy to), hedging. Fragments OK. Short synonyms (big not extensiv"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Intensity",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "| Level | What change | |-------|------------| | **lite** | No filler/hedging. Keep articles + full sentences. Professional but tight | | **full** | Drop articles, fragments OK, sh"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Auto-Clarity",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Drop caveman when: - Security warnings - Irreversible action confirmations - Multi-step sequences where fragment order or omitted conjunctions risk misread - Compression itself cre"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Boundaries",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Persisted outside chat: write normal prose — code, comments, commits, docs, issue/PR/MR text, memory files, third-party messages (/caveman-compress exempt). \"stop caveman\" or \"norm"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: caveman",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    }
+  ],
+  "meta": {
+    "skill_name": "caveman",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -5083,25 +6422,17 @@ Persisted outside chat: write normal prose — code, comments, commits, docs, is
 
 **Каталог:** `~/.agents/skills/cli-developer`  
 **Опис:** Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars and spinners, generating bash/zsh/fish completion scripts, CLI design, shell completions, and cross-platform terminal applications using commander, click, typer, or cobra.  
-**Файлів у складі:** 6  
+**Файлів у складі:** 7  
 
-#### Файл: `cli-developer/SKILL.md` (4,525 байт)
+#### Файл: `cli-developer/SKILL.md` (4,776 байт)
 ````markdown
 ---
 name: cli-developer
 description: Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars and spinners, generating bash/zsh/fish completion scripts, CLI design, shell completions, and cross-platform terminal applications using commander, click, typer, or cobra.
-license: MIT
-metadata:
-  author: https://github.com/Jeffallan
-  version: "1.1.0"
-  domain: devops
-  triggers: CLI, command-line, terminal app, argument parsing, shell completion, interactive prompt, progress bar, commander, click, typer, cobra
-  role: specialist
-  scope: implementation
-  output-format: code
-  related-skills: devops-engineer
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # CLI Developer
 
 ## Core Workflow
@@ -5201,6 +6532,168 @@ When implementing CLI features, provide:
 
 CLI frameworks (commander, yargs, oclif, click, typer, argparse, cobra, viper), terminal UI (chalk, inquirer, rich, bubbletea), testing (snapshot testing, E2E), distribution (npm, pip, homebrew, releases), performance optimization
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `cli-developer.drakon.json`
+- **Total Algorithmic Nodes:** 8
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: cli-developer
+  2. `[ACTION]` Reference Guide
+  3. `[ACTION]` Node.js (commander)
+  4. `[ACTION]` MUST DO
+  5. `[ACTION]` MUST NOT DO
+  6. `[ACTION]` Output Templates
+  7. `[ACTION]` Knowledge Reference
+  8. `[END]` Завершення: cli-developer
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `cli-developer/cli-developer.drakon.json` (4,490 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "cli-developer",
+  "category": "bssd_project_skill",
+  "description": "Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars and spinners, generating bash/zsh/fish completion scripts, CLI design, shell completions, and cross-platform terminal applications using commander, click, typer, or cobra.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: cli-developer",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Reference Guide",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Load detailed guidance based on context: | Topic | Reference | Load When | |-------|-----------|-----------| | Design Patterns | `references/design-patterns.md` | Subcommands, flag"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Node.js (commander)",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "#!/usr/bin/env node // npm install commander const { program } = require('commander'); program .name('mytool') .description('Example CLI') .version('1.0.0'); program .command('gree"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "MUST DO",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "- Keep startup time under 50ms - Provide clear, actionable error messages - Support `--help` and `--version` flags - Use consistent flag naming conventions - Handle SIGINT (Ctrl+C)"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "MUST NOT DO",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "- **Block on synchronous I/O unnecessarily** — use async reads or stream processing instead. - **Print to stdout when output will be piped** — write logs/diagnostics to stderr. - *"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Output Templates",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "When implementing CLI features, provide: 1. Command structure (main entry point, subcommands) 2. Configuration handling (files, env vars, flags) 3. Core implementation with error h"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Knowledge Reference",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "CLI frameworks (commander, yargs, oclif, click, typer, argparse, cobra, viper), terminal UI (chalk, inquirer, rich, bubbletea), testing (snapshot testing, E2E), distribution (npm, "
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: cli-developer",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "cli-developer",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `cli-developer/references/design-patterns.md` (5,249 байт)
@@ -7249,25 +8742,17 @@ SEE ALSO
 
 **Каталог:** `~/.agents/skills/code-documenter`  
 **Опис:** Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use when adding docstrings to functions or classes, creating API documentation, building documentation sites, or writing tutorials and user guides. Invoke for OpenAPI/Swagger specs, JSDoc, doc portals, getting started guides.  
-**Файлів у складі:** 9  
+**Файлів у складі:** 10  
 
-#### Файл: `code-documenter/SKILL.md` (5,404 байт)
+#### Файл: `code-documenter/SKILL.md` (5,788 байт)
 ````markdown
 ---
 name: code-documenter
 description: Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use when adding docstrings to functions or classes, creating API documentation, building documentation sites, or writing tutorials and user guides. Invoke for OpenAPI/Swagger specs, JSDoc, doc portals, getting started guides.
-license: MIT
-metadata:
-  author: https://github.com/Jeffallan
-  version: "1.1.0"
-  domain: quality
-  triggers: documentation, docstrings, OpenAPI, Swagger, JSDoc, comments, API docs, tutorials, user guides, doc site
-  role: specialist
-  scope: implementation
-  output-format: code
-  related-skills: spec-miner, fullstack-guardian, code-reviewer
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # Code Documenter
 
 Documentation specialist for inline documentation, API specs, documentation sites, and developer guides.
@@ -7401,6 +8886,202 @@ Depending on the task, provide:
 
 Google/NumPy/Sphinx docstrings, JSDoc, OpenAPI 3.0/3.1, AsyncAPI, gRPC/protobuf, FastAPI, Django, NestJS, Express, GraphQL, Docusaurus, MkDocs, VitePress, Swagger UI, Redoc, Stoplight
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `code-documenter.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: code-documenter
+  2. `[ACTION]` When to Use This Skill
+  3. `[ACTION]` Validate - Test all code examples compile/run:
+  4. `[ACTION]` Google-style Docstring (Python)
+  5. `[ACTION]` NumPy-style Docstring (Python)
+  6. `[ACTION]` JSDoc (TypeScript)
+  7. `[ACTION]` Reference Guide
+  8. `[ACTION]` MUST DO
+  9. `[ACTION]` MUST NOT DO
+  10. `[END]` Завершення: code-documenter
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `code-documenter/code-documenter.drakon.json` (5,632 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "code-documenter",
+  "category": "bssd_project_skill",
+  "description": "Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use when adding docstrings to functions or classes, creating API documentation, building documentation sites, or writing tutorials and user guides. Invoke for OpenAPI/Swagger specs, JSDoc, doc portals, getting started guides.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: code-documenter",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "When to Use This Skill",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Applies to any task involving code documentation, API specs, or developer-facing guides. See the reference table below for specific sub-topics."
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Validate - Test all code examples compile/run:",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "- Python: `python -m doctest file.py` for doctest blocks; `pytest --doctest-modules` for module-wide checks - TypeScript/JavaScript: `tsc --noEmit` to confirm typed examples compil"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Google-style Docstring (Python)",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "def fetch_user(user_id: int, active_only: bool = True) -> dict: \"\"\"Fetch a single user record by ID. Args: user_id: Unique identifier for the user. active_only: When True, raise an"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "NumPy-style Docstring (Python)",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "def compute_similarity(vec_a: np.ndarray, vec_b: np.ndarray) -> float: \"\"\"Compute cosine similarity between two vectors. Parameters ---------- vec_a : np.ndarray First input vector"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "JSDoc (TypeScript)",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "/** * Fetches a paginated list of products from the catalog. * * @param {string} categoryId - The category to filter by. * @param {number} [page=1] - Page number (1-indexed). * @pa"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Reference Guide",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Load detailed guidance based on context: | Topic | Reference | Load When | |-------|-----------|-----------| | Python Docstrings | `references/python-docstrings.md` | Google, NumPy"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "MUST DO",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "- Ask for format preference before starting - Detect framework for correct API doc strategy - Document all public functions/classes - Include parameter types and descriptions - Doc"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "MUST NOT DO",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "- Assume docstring format without asking - Apply wrong API doc strategy for framework - Write inaccurate or untested documentation - Skip error documentation - Document obvious get"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: code-documenter",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "code-documenter",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `code-documenter/references/api-docs-fastapi-django.md` (4,148 байт)
@@ -9621,26 +11302,17 @@ Credit card, PayPal, wire transfer (annual plans only).
 
 **Каталог:** `~/.agents/skills/code-reviewer`  
 **Опис:** Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming issues, and architectural concerns, then produces a structured review report with prioritized, actionable feedback. Use when reviewing pull requests, conducting code quality audits, identifying refactoring opportunities, or checking for security issues. Invoke for PR reviews, code quality checks, refactoring suggestions, review code, code quality. Complements specialized skills (security-reviewer, test-master) by providing broad-scope review across correctness, performance, maintainability, and test coverage in a single pass.  
-**Файлів у складі:** 7  
+**Файлів у складі:** 8  
 
-#### Файл: `code-reviewer/SKILL.md` (5,089 байт)
+#### Файл: `code-reviewer/SKILL.md` (5,511 байт)
 ````markdown
 ---
 name: code-reviewer
 description: Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming issues, and architectural concerns, then produces a structured review report with prioritized, actionable feedback. Use when reviewing pull requests, conducting code quality audits, identifying refactoring opportunities, or checking for security issues. Invoke for PR reviews, code quality checks, refactoring suggestions, review code, code quality. Complements specialized skills (security-reviewer, test-master) by providing broad-scope review across correctness, performance, maintainability, and test coverage in a single pass.
-license: MIT
-allowed-tools: Read, Grep, Glob
-metadata:
-  author: https://github.com/Jeffallan
-  version: "1.1.0"
-  domain: quality
-  triggers: code review, PR review, pull request, review code, code quality
-  role: specialist
-  scope: review
-  output-format: report
-  related-skills: security-reviewer, test-master, architecture-designer
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Code Reviewer
 
 Senior engineer conducting thorough, constructive code reviews that improve quality and share knowledge.
@@ -9745,6 +11417,202 @@ Code review report must include:
 
 SOLID, DRY, KISS, YAGNI, design patterns, OWASP Top 10, language idioms, testing patterns
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `code-reviewer.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: code-reviewer
+  2. `[ACTION]` When to Use This Skill
+  3. `[ACTION]` Feedback — Produce a categorized report using the Output Tem
+  4. `[ACTION]` Reference Guide
+  5. `[ACTION]` N+1 Query — Bad vs Good
+  6. `[ACTION]` Magic Number — Bad vs Good
+  7. `[ACTION]` Security: SQL Injection — Bad vs Good
+  8. `[ACTION]` MUST DO
+  9. `[ACTION]` MUST NOT DO
+  10. `[END]` Завершення: code-reviewer
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `code-reviewer/code-reviewer.drakon.json` (5,888 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "code-reviewer",
+  "category": "bssd_system_skill",
+  "description": "Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming issues, and architectural concerns, then produces a structured review report with prioritized, actionable feedback. Use when reviewing pull requests, conducting code quality audits, identifying refactoring opportunities, or checking for security issues. Invoke for PR reviews, code quality checks, refactoring suggestions, review code, code quality. Complements specialized skills (security-reviewer, test-master) by providing broad-scope review across correctness, performance, maintainability, and test coverage in a single pass.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: code-reviewer",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "When to Use This Skill",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "- Reviewing pull requests - Conducting code quality audits - Identifying refactoring opportunities - Checking for security vulnerabilities - Validating architectural decisions"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Feedback — Produce a categorized report using the Output Tem",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "> **Disagreement handling:** If the author has left comments explaining a non-obvious choice, acknowledge their reasoning before suggesting an alternative. Never block on style pre"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Reference Guide",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Load detailed guidance based on context: <!-- Spec Compliance and Receiving Feedback rows adapted from obra/superpowers by Jesse Vincent (@obra), MIT License --> | Topic | Referenc"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "N+1 Query — Bad vs Good",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "# BAD: query inside loop for user in users: orders = Order.objects.filter(user=user)  # N+1 # GOOD: prefetch in bulk users = User.objects.prefetch_related('orders').all()"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Magic Number — Bad vs Good",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "# BAD if status == 3: ... # GOOD ORDER_STATUS_SHIPPED = 3 if status == ORDER_STATUS_SHIPPED: ..."
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Security: SQL Injection — Bad vs Good",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "# BAD: string interpolation in query cursor.execute(f\"SELECT * FROM users WHERE id = {user_id}\") # GOOD: parameterized query cursor.execute(\"SELECT * FROM users WHERE id = %s\", [us"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "MUST DO",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "- Summarize PR intent before reviewing (see Workflow step 1) - Provide specific, actionable feedback - Include code examples in suggestions - Praise good patterns - Prioritize feed"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "MUST NOT DO",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "- Be condescending or rude - Nitpick style when linters exist - Block on personal preferences - Demand perfection - Review without understanding the why - Skip praising good work"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: code-reviewer",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "code-reviewer",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `code-reviewer/references/common-issues.md` (2,999 байт)
@@ -10763,7 +12631,7 @@ All requirements verified:
 
 **Каталог:** `~/.agents/skills/codebase-design`  
 **Опис:** Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.  
-**Файлів у складі:** 3  
+**Файлів у складі:** 4  
 
 #### Файл: `codebase-design/DEEPENING.md` (2,559 байт)
 ````markdown
@@ -10856,13 +12724,15 @@ After comparing, give your own recommendation: which design you think is stronge
 
 ````
 
-#### Файл: `codebase-design/SKILL.md` (6,488 байт)
+#### Файл: `codebase-design/SKILL.md` (7,215 байт)
 ````markdown
 ---
 name: codebase-design
 description: Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Codebase Design
 
 Design **deep modules**: a lot of behaviour behind a small interface, placed at a clean seam, testable through that interface. Use this language and these principles wherever code is being designed or restructured. The aim is leverage for callers, locality for maintainers, and testability for everyone.
@@ -10973,6 +12843,202 @@ Good interfaces make testing natural:
 - **Deepening a cluster given its dependencies** — see [DEEPENING.md](DEEPENING.md): dependency categories, seam discipline, and replace-don't-layer testing.
 - **Exploring alternative interfaces** — see [DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md): spin up parallel sub-agents to design the interface several radically different ways, then compare on depth, locality, and seam placement.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `codebase-design.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: codebase-design
+  2. `[ACTION]` Glossary
+  3. `[ACTION]` Deep vs shallow
+  4. `[ACTION]` Principles
+  5. `[ACTION]` Designing for testability
+  6. `[ACTION]` Accept dependencies, don't create them.
+  7. `[ACTION]` Return results, don't produce side effects.
+  8. `[ACTION]` Relationships
+  9. `[ACTION]` Rejected framings
+  10. `[END]` Завершення: codebase-design
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `codebase-design/codebase-design.drakon.json` (5,428 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "codebase-design",
+  "category": "bssd_system_skill",
+  "description": "Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: codebase-design",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Glossary",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Use these terms exactly — don't substitute \"component,\" \"service,\" \"API,\" or \"boundary.\" Consistent language is the whole point. **Module** — anything with an interface and an impl"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Deep vs shallow",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "**Deep module** = small interface + lots of implementation: ┌─────────────────────┐ │   Small Interface   │  ← Few methods, simple params ├─────────────────────┤ │                 "
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Principles",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "- **Depth is a property of the interface, not the implementation.** A deep module can be internally composed of small, mockable, swappable parts — they just aren't part of the inte"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Designing for testability",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Good interfaces make testing natural:"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Accept dependencies, don't create them.",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "// Testable function processOrder(order, paymentGateway) {} // Hard to test function processOrder(order) { const gateway = new StripeGateway(); }"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Return results, don't produce side effects.",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "// Testable function calculateDiscount(cart): Discount {} // Hard to test function applyDiscount(cart): void { cart.total -= discount; }"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Relationships",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "- A **Module** has exactly one **Interface** (the surface it presents to callers and tests). - **Depth** is a property of a **Module**, measured against its **Interface**. - A **Se"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Rejected framings",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "- **Depth as ratio of implementation-lines to interface-lines** (Ousterhout): rewards padding the implementation. We use depth-as-leverage instead. - **\"Interface\" as the TypeScrip"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: codebase-design",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "codebase-design",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -10982,15 +13048,17 @@ Good interfaces make testing natural:
 
 **Каталог:** `~/.agents/skills/condition-based-waiting`  
 **Опис:** Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for actual state changes, eliminating flaky tests from timing guesses  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `condition-based-waiting/SKILL.md` (3,749 байт)
+#### Файл: `condition-based-waiting/SKILL.md` (4,454 байт)
 ````markdown
 ---
 name: condition-based-waiting
 description: Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for actual state changes, eliminating flaky tests from timing guesses
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Condition-Based Waiting
 
 ## Overview
@@ -11107,6 +13175,202 @@ From debugging session (2025-10-03):
 - Execution time: 40% faster
 - No more race conditions
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `condition-based-waiting.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: condition-based-waiting
+  2. `[ACTION]` Overview
+  3. `[ACTION]` When to Use
+  4. `[ACTION]` Core Pattern
+  5. `[ACTION]` Quick Patterns
+  6. `[ACTION]` Implementation
+  7. `[ACTION]` Common Mistakes
+  8. `[ACTION]` When Arbitrary Timeout IS Correct
+  9. `[ACTION]` Real-World Impact
+  10. `[END]` Завершення: condition-based-waiting
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `condition-based-waiting/condition-based-waiting.drakon.json` (5,472 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "condition-based-waiting",
+  "category": "bssd_system_skill",
+  "description": "Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for actual state changes, eliminating flaky tests from timing guesses",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: condition-based-waiting",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Flaky tests often guess at timing with arbitrary delays. This creates race conditions where tests pass on fast machines but fail under load or in CI. **Core principle:** Wait for t"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "When to Use",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "digraph when_to_use { \"Test uses setTimeout/sleep?\" [shape=diamond]; \"Testing timing behavior?\" [shape=diamond]; \"Document WHY timeout needed\" [shape=box]; \"Use condition-based wai"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Core Pattern",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "// ❌ BEFORE: Guessing at timing await new Promise(r => setTimeout(r, 50)); const result = getResult(); expect(result).toBeDefined(); // ✅ AFTER: Waiting for condition await waitFor"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Quick Patterns",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "| Scenario | Pattern | |----------|---------| | Wait for event | `waitFor(() => events.find(e => e.type === 'DONE'))` | | Wait for state | `waitFor(() => machine.state === 'ready')"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Implementation",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Generic polling function: async function waitFor<T>( condition: () => T | undefined | null | false, description: string, timeoutMs = 5000 ): Promise<T> { const startTime = Date.now"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Common Mistakes",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "**❌ Polling too fast:** `setTimeout(check, 1)` - wastes CPU **✅ Fix:** Poll every 10ms **❌ No timeout:** Loop forever if condition never met **✅ Fix:** Always include timeout with "
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "When Arbitrary Timeout IS Correct",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "// Tool ticks every 100ms - need 2 ticks to verify partial output await waitForEvent(manager, 'TOOL_STARTED'); // First: wait for condition await new Promise(r => setTimeout(r, 200"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Real-World Impact",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "From debugging session (2025-10-03): - Fixed 15 flaky tests across 3 files - Pass rate: 60% → 100% - Execution time: 40% faster - No more race conditions"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: condition-based-waiting",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "condition-based-waiting",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `condition-based-waiting/example.ts` (5,054 байт)
@@ -11279,15 +13543,17 @@ export function waitForEventMatch(
 
 **Каталог:** `~/.agents/skills/defense-in-depth`  
 **Опис:** Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to make bugs structurally impossible  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `defense-in-depth/SKILL.md` (3,883 байт)
+#### Файл: `defense-in-depth/SKILL.md` (4,632 байт)
 ````markdown
 ---
 name: defense-in-depth
 description: Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to make bugs structurally impossible
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Defense-in-Depth Validation
 
 ## Overview
@@ -11411,6 +13677,202 @@ All four layers were necessary. During testing, each layer caught bugs the other
 
 **Don't stop at one validation point.** Add checks at every layer.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `defense-in-depth.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: defense-in-depth
+  2. `[ACTION]` Overview
+  3. `[ACTION]` Why Multiple Layers
+  4. `[ACTION]` Layer 1: Entry Point Validation
+  5. `[ACTION]` Layer 2: Business Logic Validation
+  6. `[ACTION]` Layer 3: Environment Guards
+  7. `[ACTION]` Layer 4: Debug Instrumentation
+  8. `[ACTION]` Applying the Pattern
+  9. `[ACTION]` Example from Session
+  10. `[END]` Завершення: defense-in-depth
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `defense-in-depth/defense-in-depth.drakon.json` (5,325 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "defense-in-depth",
+  "category": "bssd_system_skill",
+  "description": "Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to make bugs structurally impossible",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: defense-in-depth",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "When you fix a bug caused by invalid data, adding validation at one place feels sufficient. But that single check can be bypassed by different code paths, refactoring, or mocks. **"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Why Multiple Layers",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Single validation: \"We fixed the bug\" Multiple layers: \"We made the bug impossible\" Different layers catch different cases: - Entry validation catches most bugs - Business logic ca"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Layer 1: Entry Point Validation",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "**Purpose:** Reject obviously invalid input at API boundary function createProject(name: string, workingDirectory: string) { if (!workingDirectory || workingDirectory.trim() === ''"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Layer 2: Business Logic Validation",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "**Purpose:** Ensure data makes sense for this operation function initializeWorkspace(projectDir: string, sessionId: string) { if (!projectDir) { throw new Error('projectDir require"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Layer 3: Environment Guards",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "**Purpose:** Prevent dangerous operations in specific contexts async function gitInit(directory: string) { // In tests, refuse git init outside temp directories if (process.env.NOD"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Layer 4: Debug Instrumentation",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "**Purpose:** Capture context for forensics async function gitInit(directory: string) { const stack = new Error().stack; logger.debug('About to git init', { directory, cwd: process."
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Applying the Pattern",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "When you find a bug:"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Example from Session",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Bug: Empty `projectDir` caused `git init` in source code **Data flow:** 1. Test setup → empty string 2. `Project.create(name, '')` 3. `WorkspaceManager.createWorkspace('')` 4. `git"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: defense-in-depth",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "defense-in-depth",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -11420,15 +13882,17 @@ All four layers were necessary. During testing, each layer caught bugs the other
 
 **Каталог:** `~/.agents/skills/diagnosing-bugs`  
 **Опис:** Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `diagnosing-bugs/SKILL.md` (8,536 байт)
+#### Файл: `diagnosing-bugs/SKILL.md` (9,353 байт)
 ````markdown
 ---
 name: diagnosing-bugs
 description: Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Diagnosing Bugs
 
 A discipline for hard bugs. Skip phases only when explicitly justified.
@@ -11559,6 +14023,202 @@ Required before declaring done:
 
 **Then ask: what would have prevented this bug?** If the answer involves architectural change (no good test seam, tangled callers, hidden coupling) hand off to the `/improve-codebase-architecture` skill with the specifics. Make the recommendation **after** the fix is in, not before — you have more information now than when you started.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `diagnosing-bugs.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: diagnosing-bugs
+  2. `[ACTION]` Phase 1 — Build a feedback loop
+  3. `[ACTION]` HITL bash script. Last resort. If a human must click, drive 
+  4. `[ACTION]` Tighten the loop
+  5. `[ACTION]` Non-deterministic bugs
+  6. `[ACTION]` When you genuinely cannot build a loop
+  7. `[ACTION]` Completion criterion — a tight loop that goes red
+  8. `[ACTION]` Phase 2 — Reproduce + minimise
+  9. `[ACTION]` Minimise
+  10. `[END]` Завершення: diagnosing-bugs
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `diagnosing-bugs/diagnosing-bugs.drakon.json` (5,408 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "diagnosing-bugs",
+  "category": "bssd_system_skill",
+  "description": "Diagnosis loop for hard bugs and performance regressions. Use when the user says \"diagnose\"/\"debug this\", or reports something broken/throwing/failing/slow.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: diagnosing-bugs",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Phase 1 — Build a feedback loop",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "**This is the skill.** Everything else is mechanical. If you have a **tight** pass/fail signal for the bug — one that goes red on _this_ bug — you will find the cause; bisection, h"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "HITL bash script. Last resort. If a human must click, drive ",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Build the right feedback loop, and the bug is 90% fixed."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Tighten the loop",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Treat the loop as a product. Once you have _a_ loop, **tighten** it: - Can I make it faster? (Cache setup, skip unrelated init, narrow the test scope.) - Can I make the signal shar"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Non-deterministic bugs",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "The goal is not a clean repro but a **higher reproduction rate**. Loop the trigger 100×, parallelise, add stress, narrow timing windows, inject sleeps. A 50%-flake bug is debuggabl"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "When you genuinely cannot build a loop",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Stop and say so explicitly. List what you tried. Ask the user for: (a) access to whatever environment reproduces it, (b) a captured artifact (HAR file, log dump, core dump, screen "
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Completion criterion — a tight loop that goes red",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Phase 1 is done when the loop is **tight** and **red-capable**: you can name **one command** — a script path, a test invocation, a curl — that you have **already run at least once*"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Phase 2 — Reproduce + minimise",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "Run the loop. Watch it go red — the bug appears. Confirm: - [ ] The loop produces the failure mode the **user** described — not a different failure that happens to be nearby. Wrong"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Minimise",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Once it's red, shrink the repro to the **smallest scenario that still goes red**. Cut inputs, callers, config, data, and steps **one at a time**, re-running the loop after each cut"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: diagnosing-bugs",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "diagnosing-bugs",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `diagnosing-bugs/scripts/hitl-loop.template.sh` (1,164 байт)
@@ -11614,15 +14274,17 @@ printf 'ERROR_MSG=%s\n' "$ERROR_MSG"
 
 **Каталог:** `~/.agents/skills/drakon-compiler`  
 **Опис:** Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict skewer alignment.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `drakon-compiler/SKILL.md` (1,810 байт)
+#### Файл: `drakon-compiler/SKILL.md` (2,494 байт)
 ````markdown
 ---
 name: drakon-compiler
 description: Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict skewer alignment.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # DRAKON Algorithm Compiler Skill
 
 Compiles visual algorithm diagrams designed using the DRAKON visual language into formal Intermediate Representation (IR) and prompt-budgeted macro-prompts for LLM code generation.
@@ -11657,6 +14319,134 @@ python3 ~/.agents/skills/drakon-compiler/scripts/compile_drakon.py --input path/
 - **ADR-002 (Pure Stdlib Core):** Compiler implementation relies strictly on Python Standard Library.
 - **ADR-008 (DRAKON Visual Logic):** Preserves deterministic topological ordering and eliminates structural hallucination during LLM code synthesis.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `drakon-compiler.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: drakon-compiler
+  2. `[ACTION]` Intermediate Representation (IR): Diagrams are transformed i
+  3. `[ACTION]` A. Compile DRAKON Diagram to Executable Macro-Prompt
+  4. `[ACTION]` B. Verify Planarity & Topological Invariants Only
+  5. `[ACTION]` Invariants & Architecture Compliance
+  6. `[END]` Завершення: drakon-compiler
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `drakon-compiler/drakon-compiler.drakon.json` (3,134 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "drakon-compiler",
+  "category": "bssd_system_skill",
+  "description": "Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict skewer alignment.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: drakon-compiler",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Intermediate Representation (IR): Diagrams are transformed i",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "---"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "A. Compile DRAKON Diagram to Executable Macro-Prompt",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "python3 ~/.agents/skills/drakon-compiler/scripts/compile_drakon.py --input path/to/diagram.drakon.json --output path/to/prompt.md"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "B. Verify Planarity & Topological Invariants Only",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "python3 ~/.agents/skills/drakon-compiler/scripts/compile_drakon.py --input path/to/diagram.drakon.json --verify-only ---"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Invariants & Architecture Compliance",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "- **ADR-002 (Pure Stdlib Core):** Compiler implementation relies strictly on Python Standard Library. - **ADR-008 (DRAKON Visual Logic):** Preserves deterministic topological order"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: drakon-compiler",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "drakon-compiler",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `drakon-compiler/scripts/compile_drakon.py` (2,417 байт)
@@ -11738,15 +14528,17 @@ if __name__ == "__main__":
 
 **Каталог:** `~/.agents/skills/executing-plans`  
 **Опис:** Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes tasks in batches, reports for review between batches  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `executing-plans/SKILL.md` (2,276 байт)
+#### Файл: `executing-plans/SKILL.md` (2,998 байт)
 ````markdown
 ---
 name: executing-plans
 description: Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes tasks in batches, reports for review between batches
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # Executing Plans
 
 ## Overview
@@ -11819,6 +14611,202 @@ After all tasks complete and verified:
 - Between batches: just report and wait
 - Stop when blocked, don't guess
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `executing-plans.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: executing-plans
+  2. `[ACTION]` Overview
+  3. `[ACTION]` Step 1: Load and Review Plan
+  4. `[ACTION]` Step 2: Execute Batch
+  5. `[ACTION]` Step 3: Report
+  6. `[ACTION]` Step 4: Continue
+  7. `[ACTION]` Step 5: Complete Development
+  8. `[ACTION]` When to Stop and Ask for Help
+  9. `[ACTION]` When to Revisit Earlier Steps
+  10. `[END]` Завершення: executing-plans
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `executing-plans/executing-plans.drakon.json` (5,310 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "executing-plans",
+  "category": "bssd_project_skill",
+  "description": "Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes tasks in batches, reports for review between batches",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: executing-plans",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Load plan, review critically, execute tasks in batches, report for review between batches. **Core principle:** Batch execution with checkpoints for architect review. **Announce at "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Step 1: Load and Review Plan",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "1. Read plan file 2. Review critically - identify any questions or concerns about the plan 3. If concerns: Raise them with your human partner before starting 4. If no concerns: Cre"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Step 2: Execute Batch",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "**Default: First 3 tasks** For each task: 1. Mark as in_progress 2. Follow each step exactly (plan has bite-sized steps) 3. Run verifications as specified 4. Mark as completed"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Step 3: Report",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "When batch complete: - Show what was implemented - Show verification output - Say: \"Ready for feedback.\""
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Step 4: Continue",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Based on feedback: - Apply changes if needed - Execute next batch - Repeat until complete"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Step 5: Complete Development",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "After all tasks complete and verified: - Announce: \"I'm using the finishing-a-development-branch skill to complete this work.\" - **REQUIRED SUB-SKILL:** Use superpowers:finishing-a"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "When to Stop and Ask for Help",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "**STOP executing immediately when:** - Hit a blocker mid-batch (missing dependency, test fails, instruction unclear) - Plan has critical gaps preventing starting - You don't unders"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "When to Revisit Earlier Steps",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "**Return to Review (Step 1) when:** - Partner updates the plan based on your feedback - Fundamental approach needs rethinking **Don't force through blockers** - stop and ask."
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: executing-plans",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "executing-plans",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -11828,15 +14816,17 @@ After all tasks complete and verified:
 
 **Каталог:** `~/.agents/skills/find-skills`  
 **Опис:** Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `find-skills/SKILL.md` (5,446 байт)
+#### Файл: `find-skills/SKILL.md` (6,230 байт)
 ````markdown
 ---
 name: find-skills
 description: Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Find Skills
 
 This skill helps you discover and install skills from the open agent skills ecosystem.
@@ -11975,6 +14965,202 @@ If this is something you do often, you could create your own skill:
 npx skills init my-xyz-skill
 ```
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `find-skills.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: find-skills
+  2. `[ACTION]` When to Use This Skill
+  3. `[ACTION]` What is the Skills CLI?
+  4. `[ACTION]` Step 1: Understand What They Need
+  5. `[ACTION]` Step 2: Check the Leaderboard First
+  6. `[ACTION]` Step 3: Search for Skills
+  7. `[ACTION]` Step 4: Verify Quality Before Recommending
+  8. `[ACTION]` Step 5: Present Options to the User
+  9. `[ACTION]` Step 6: Offer to Install
+  10. `[END]` Завершення: find-skills
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `find-skills/find-skills.drakon.json` (5,537 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "find-skills",
+  "category": "bssd_system_skill",
+  "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: find-skills",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "When to Use This Skill",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Use this skill when the user: - Asks \"how do I do X\" where X might be a common task with an existing skill - Says \"find a skill for X\" or \"is there a skill for X\" - Asks \"can you d"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "What is the Skills CLI?",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "The Skills CLI (`npx skills`) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent capabilities with specialized knowledge, wor"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Step 1: Understand What They Need",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "When a user asks for help with something, identify: 1. The domain (e.g., React, testing, design, deployment) 2. The specific task (e.g., writing tests, creating animations, reviewi"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Step 2: Check the Leaderboard First",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Before running a CLI search, check the [skills.sh leaderboard](https://skills.sh/) to see if a well-known skill already exists for the domain. The leaderboard ranks skills by total"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Step 3: Search for Skills",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "If the leaderboard doesn't cover the user's need, run the find command: npx skills find [query] For example: - User asks \"how do I make my React app faster?\" → `npx skills find rea"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Step 4: Verify Quality Before Recommending",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "**Do not recommend a skill based solely on search results.** Always verify:"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Step 5: Present Options to the User",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "When you find relevant skills, present them to the user with: 1. The skill name and what it does 2. The install count and source 3. The install command they can run 4. A link to le"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Step 6: Offer to Install",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "If the user wants to proceed, you can install the skill for them: npx skills add <owner/repo@skill> -g -y The `-g` flag installs globally (user-level) and `-y` skips confirmation p"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: find-skills",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "find-skills",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -11984,7 +15170,7 @@ npx skills init my-xyz-skill
 
 **Каталог:** `~/.agents/skills/frontend-design`  
 **Опис:** Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
 #### Файл: `frontend-design/LICENSE.txt` (10,174 байт)
 ````text
@@ -12168,14 +15354,15 @@ npx skills init my-xyz-skill
 
 ````
 
-#### Файл: `frontend-design/SKILL.md` (4,275 байт)
+#### Файл: `frontend-design/SKILL.md` (4,726 байт)
 ````markdown
 ---
 name: frontend-design
 description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.
-license: Complete terms in LICENSE.txt
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
 
 The user provides frontend requirements: a component, page, application, or interface to build. They may include context about the purpose, audience, or technical constraints.
@@ -12213,6 +15400,100 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 
 Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `frontend-design.drakon.json`
+- **Total Algorithmic Nodes:** 4
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: frontend-design
+  2. `[ACTION]` Design Thinking
+  3. `[ACTION]` Frontend Aesthetics Guidelines
+  4. `[END]` Завершення: frontend-design
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `frontend-design/frontend-design.drakon.json` (2,310 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "frontend-design",
+  "category": "bssd_project_skill",
+  "description": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: frontend-design",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Design Thinking",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Before coding, understand the context and commit to a BOLD aesthetic direction: - **Purpose**: What problem does this interface solve? Who uses it? - **Tone**: Pick an extreme: bru"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Frontend Aesthetics Guidelines",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Focus on: - **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: frontend-design",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    }
+  ],
+  "meta": {
+    "skill_name": "frontend-design",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -12222,18 +15503,149 @@ Remember: Claude is capable of extraordinary creative work. Don't hold back, sho
 
 **Каталог:** `~/.agents/skills/grill-with-docs`  
 **Опис:** A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `grill-with-docs/SKILL.md` (245 байт)
+#### Файл: `grill-with-docs/SKILL.md` (865 байт)
 ````markdown
 ---
 name: grill-with-docs
 description: A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
-disable-model-invocation: true
+type: PROJECT_SKILL
+category: general
+immutable: false
+invoked_skills: [test-driven-development]
 ---
-
 Run a `/grilling` session, using the `/domain-modeling` skill.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `grill-with-docs.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: grill-with-docs
+  2. `[ACTION]` Intake & Invariant Check
+  3. `[ACTION]` Core Execution Flow
+  4. `[INSERTION]` CALL_SKILL(test-driven-development): Verification & Testing
+  5. `[ACTION]` Handoff & Artifact Output
+  6. `[END]` Завершення: grill-with-docs
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `grill-with-docs/grill-with-docs.drakon.json` (2,862 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "grill-with-docs",
+  "category": "bssd_project_skill",
+  "description": "A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: grill-with-docs",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Intake & Invariant Check",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Initialize grill-with-docs and verify architectural preconditions."
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Core Execution Flow",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Execute core procedural operations for grill-with-docs."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(test-driven-development): Verification & Testing",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "test-driven-development"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Verify results against ADR contracts and negative constraints."
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Handoff & Artifact Output",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Commit state changes and produce telemetry or handoff notes."
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: grill-with-docs",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "grill-with-docs",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -12243,17 +15655,18 @@ Run a `/grilling` session, using the `/domain-modeling` skill.
 
 **Каталог:** `~/.agents/skills/handoff`  
 **Опис:** Compact the current conversation into a handoff document for another agent to pick up.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `handoff/SKILL.md` (879 байт)
+#### Файл: `handoff/SKILL.md` (1,418 байт)
 ````markdown
 ---
 name: handoff
 description: Compact the current conversation into a handoff document for another agent to pick up.
-argument-hint: "What will the next session be used for?"
-disable-model-invocation: true
+type: PROJECT_SKILL
+category: general
+immutable: false
+invoked_skills: [test-driven-development]
 ---
-
 Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS - not the current workspace.
 
 Include a "suggested skills" section in the document, which suggests skills that the agent should invoke.
@@ -12264,6 +15677,135 @@ Redact any sensitive information, such as API keys, passwords, or personally ide
 
 If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `handoff.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: handoff
+  2. `[ACTION]` Intake & Invariant Check
+  3. `[ACTION]` Core Execution Flow
+  4. `[INSERTION]` CALL_SKILL(test-driven-development): Verification & Testing
+  5. `[ACTION]` Handoff & Artifact Output
+  6. `[END]` Завершення: handoff
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `handoff/handoff.drakon.json` (2,794 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "handoff",
+  "category": "bssd_project_skill",
+  "description": "Compact the current conversation into a handoff document for another agent to pick up.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: handoff",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Intake & Invariant Check",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Initialize handoff and verify architectural preconditions."
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Core Execution Flow",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Execute core procedural operations for handoff."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(test-driven-development): Verification & Testing",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "test-driven-development"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Verify results against ADR contracts and negative constraints."
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Handoff & Artifact Output",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Commit state changes and produce telemetry or handoff notes."
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: handoff",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "handoff",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -12273,7 +15815,7 @@ If the user passed arguments, treat them as a description of what the next sessi
 
 **Каталог:** `~/.agents/skills/improve-codebase-architecture`  
 **Опис:** Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
 #### Файл: `improve-codebase-architecture/HTML-REPORT.md` (6,685 байт)
 ````markdown
@@ -12403,14 +15945,16 @@ No hedging, no throat-clearing, no "it's worth noting that…". If a sentence co
 
 ````
 
-#### Файл: `improve-codebase-architecture/SKILL.md` (5,421 байт)
+#### Файл: `improve-codebase-architecture/SKILL.md` (6,056 байт)
 ````markdown
 ---
 name: improve-codebase-architecture
 description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
-disable-model-invocation: true
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [codebase-design]
 ---
-
 # Improve Codebase Architecture
 
 Surface architectural friction and propose **deepening opportunities** — refactors that turn shallow modules into deep ones. The aim is testability and AI-navigability.
@@ -12472,6 +16016,119 @@ Side effects happen inline as decisions crystallize — run the `/domain-modelin
 - **User rejects the candidate with a load-bearing reason?** Offer an ADR, framed as: _"Want me to record this as an ADR so future architecture reviews don't re-suggest it?"_ Only offer when the reason would actually be needed by a future explorer to avoid re-suggesting the same thing — skip ephemeral reasons ("not worth it right now") and self-evident ones.
 - **Want to explore alternative interfaces for the deepened module?** Run the `/codebase-design` skill and use its design-it-twice parallel sub-agent pattern.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `improve-codebase-architecture.drakon.json`
+- **Total Algorithmic Nodes:** 5
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: improve-codebase-architecture
+  2. `[ACTION]` Explore
+  3. `[INSERTION]` CALL_SKILL(codebase-design): Present candidates as an HTML report
+  4. `[INSERTION]` CALL_SKILL(codebase-design): Grilling loop
+  5. `[END]` Завершення: improve-codebase-architecture
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `improve-codebase-architecture/improve-codebase-architecture.drakon.json` (2,924 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "improve-codebase-architecture",
+  "category": "bssd_system_skill",
+  "description": "Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: improve-codebase-architecture",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Explore",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Read the project's domain glossary (`CONTEXT.md`) and any ADRs in the area you're touching first. Then use the Agent tool with `subagent_type=Explore` to walk the codebase. Don't f"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(codebase-design): Present candidates as an HTML report",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "codebase-design"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Write a self-contained HTML file to the OS temp directory so nothing lands in the repo. Resolve the temp dir from `$TMPDIR`, falling back to `/tmp` (or `%TEMP%` on Windows), and wr"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(codebase-design): Grilling loop",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "codebase-design"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Once the user picks a candidate, run the `/grilling` skill to walk the design tree with them — constraints, dependencies, the shape of the deepened module, what sits behind the sea"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: improve-codebase-architecture",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    }
+  ],
+  "meta": {
+    "skill_name": "improve-codebase-architecture",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -12481,15 +16138,17 @@ Side effects happen inline as decisions crystallize — run the `/domain-modelin
 
 **Каталог:** `~/.agents/skills/intent-continuity`  
 **Опис:** Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `intent-continuity/SKILL.md` (1,896 байт)
+#### Файл: `intent-continuity/SKILL.md` (2,357 байт)
 ````markdown
 ---
 name: intent-continuity
 description: Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Intent Continuity Agent Skill
 
 ## Operational Mandate
@@ -12507,6 +16166,83 @@ Guarantee that all generated, modified, or refactored code strictly complies wit
 3. **Phase 3: Implementation**: Author code strictly within the boundaries of active constraints and specifications in `specs/`.
 4. **Phase 4: Post-Implementation Gate**: Execute `pytest tests/test_architecture_fitness.py`. All tests must pass before committing or proposing diffs.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `intent-continuity.drakon.json`
+- **Total Algorithmic Nodes:** 3
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: intent-continuity
+  2. `[ACTION]` Operational Mandate
+  3. `[END]` Завершення: intent-continuity
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `intent-continuity/intent-continuity.drakon.json` (1,692 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "intent-continuity",
+  "category": "bssd_system_skill",
+  "description": "Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: intent-continuity",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Operational Mandate",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Guarantee that all generated, modified, or refactored code strictly complies with active architectural invariants declared in `.context/active_rules.md`, ADRs, SDD specifications, "
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: intent-continuity",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    }
+  ],
+  "meta": {
+    "skill_name": "intent-continuity",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -12516,15 +16252,18 @@ Guarantee that all generated, modified, or refactored code strictly complies wit
 
 **Каталог:** `~/.agents/skills/investigate-first`  
 **Опис:** Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked hypotheses.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `investigate-first/SKILL.md` (688 байт)
+#### Файл: `investigate-first/SKILL.md` (1,406 байт)
 ````markdown
 ---
 name: investigate-first
 description: Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked hypotheses.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [session-distiller, test-driven-development]
 ---
-
 # Investigate first
 
 Gather evidence before changing product code.
@@ -12537,6 +16276,136 @@ Gather evidence before changing product code.
 
 Report cause and proof. Make no fix unless task authorizes implementation.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `investigate-first.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: investigate-first
+  2. `[ACTION]` Intake & Invariant Check
+  3. `[ACTION]` Core Execution Flow
+  4. `[INSERTION]` CALL_SKILL(test-driven-development): Verification & Testing
+  5. `[INSERTION]` CALL_SKILL(session-distiller): Handoff & Artifact Output
+  6. `[END]` Завершення: investigate-first
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `investigate-first/investigate-first.drakon.json` (3,011 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "investigate-first",
+  "category": "bssd_system_skill",
+  "description": "Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked hypotheses.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: investigate-first",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Intake & Invariant Check",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Initialize investigate-first and verify architectural preconditions."
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Core Execution Flow",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Execute core procedural operations for investigate-first."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(test-driven-development): Verification & Testing",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "test-driven-development"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Verify results against ADR contracts and negative constraints."
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(session-distiller): Handoff & Artifact Output",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "session-distiller"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Commit state changes and produce telemetry or handoff notes."
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: investigate-first",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "investigate-first",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `investigate-first/agents/openai.yaml` (202 байт)
@@ -12555,15 +16424,18 @@ interface:
 
 **Каталог:** `~/.agents/skills/kindle-release-pipeline`  
 **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.  
-**Файлів у складі:** 8  
+**Файлів у складі:** 9  
 
-#### Файл: `kindle-release-pipeline/SKILL.md` (6,936 байт)
+#### Файл: `kindle-release-pipeline/SKILL.md` (7,978 байт)
 ````markdown
 ---
 name: kindle-release-pipeline
 description: Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [b-sdd]
 ---
-
 # Kindle Release Pipeline Skill
 
 Autonomous delivery pipeline for compiling B-SDD project documentation, Architectural Decision Records (ADR-001..ADR-028), and sprint ledgers into standard **EPUB 3.0** ebooks and delivering them directly to **Amazon Kindle** (`tukroschu@kindle.com`).
@@ -12653,6 +16525,205 @@ curl -s -X POST https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book \
 3. **Multipart Binary Field Mapping (`data0`):**
    - При надсиланні файлу через multipart/form-data (`curl -F data=@...`), n8n призначає індекс масиву: бінарна властивість називається `data0`, а не `data`. У параметрі `attachmentsBinary` вузла Gmail обов'язково вказувати `property: data0`.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `kindle-release-pipeline.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: kindle-release-pipeline
+  2. `[INSERTION]` CALL_SKILL(b-sdd): Core Architecture & Workflow
+  3. `[ACTION]` Compilation Phase (Host 184 Batch Service):
+  4. `[ACTION]` Delivery Transport (n8n Kindle Dispatcher):
+  5. `[ACTION]` Amazon Invariant (Anti-E009):
+  6. `[ACTION]` Configuration & Credentials
+  7. `[INSERTION]` CALL_SKILL(b-sdd): Крок 1. Компіляція книги EPUB 3.0 (Хост 184)
+  8. `[INSERTION]` CALL_SKILL(b-sdd): Крок 2. Реальна відправка книги на Kindle
+  9. `[ACTION]` Помилка `invalid_grant: Token has been expired or revoked`:
+  10. `[END]` Завершення: kindle-release-pipeline
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `kindle-release-pipeline/kindle-release-pipeline.drakon.json` (6,368 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "kindle-release-pipeline",
+  "category": "bssd_system_skill",
+  "description": "Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: kindle-release-pipeline",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Core Architecture & Workflow",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "┌─────────────────────────────────┐      ┌─────────────────────────────────┐      ┌─────────────────────────────────┐ │   B-SDD Architecture Source     │      │   EPUB 3.0 Compilat"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Compilation Phase (Host 184 Batch Service):",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Converts markdown chapters and codebase specifications into standard EPUB 3.0 with navigation tables (NCX/NAV) and Kindle-compatible typography via `md_to_embeddings_service_v4.py`"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Delivery Transport (n8n Kindle Dispatcher):",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Dispatches the binary `.epub` through n8n workflow `B-SDD Kindle Dispatcher` (`GC5pv2TIYbKHj2Ch`) on Oracle VM `100.66.97.93` / `https://n8n.exodus.pp.ua/webhook/dispatch-kindle-bo"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Amazon Invariant (Anti-E009):",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Amazon Send-to-Kindle rejects emails containing multiple recipients or CC fields with error `E009`. Delivery **MUST ALWAYS BE EXCLUSIVELY TO** `tukroschu@kindle.com` without any CC"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Configuration & Credentials",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "| Параметр | Значення | Примітка | | :--- | :--- | :--- | | **Одержувач** | `tukroschu@kindle.com` | Авторизований Amazon Send-to-Kindle акаунт | | **Відправник** | `tukroschu@gmai"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Крок 1. Компіляція книги EPUB 3.0 (Хост 184)",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Запусти віддалену збірку через існуючий batch-сервіс: ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 \"cd /home/vokov/projects/resume && ./run_md_service.sh --batch --source /h"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Крок 2. Реальна відправка книги на Kindle",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "Використай перевірену утиліту `scripts/dispatch_kindle_book.sh`: /home/vokov/projects/b-sdd/scripts/dispatch_kindle_book.sh \\ /home/vokov/projects/b-sdd/b_sdd_architecture_vol2.epu"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Помилка `invalid_grant: Token has been expired or revoked`:",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "- Статичні токени в `~/.vydra-survey-profiles/gmail_token.json` мають властивість втрачати авторизацію або блокуватися Google через невикористання. - **Вирішення:** Транспорт перев"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: kindle-release-pipeline",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "kindle-release-pipeline",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `kindle-release-pipeline/scripts/bsdd_to_kindle.py` (3,785 байт)
@@ -13725,15 +17796,18 @@ if __name__ == "__main__":
 
 **Каталог:** `~/.agents/skills/laya-decision-router`  
 **Опис:** Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `laya-decision-router/SKILL.md` (6,215 байт)
+#### Файл: `laya-decision-router/SKILL.md` (7,236 байт)
 ````markdown
 ---
 name: laya-decision-router
 description: Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [b-sdd, intent-continuity, skill-creator]
 ---
-
 # Laya Decision Router: System 1 Pre-Flight Classification & Guardrail Engine
 
 The **Laya Decision Router** provides sub-40ms non-autoregressive System 1 inference offloaded to Google Pixel 7 (Podroid Alpine VM at `192.168.3.251:9623`). It acts as the fast-path cognitive gatekeeper for the B-SDD supervisor and AGI orchestrators, performing instantaneous task domain classification, ADR invariant violation risk assessment, and procedural skill routing from the 48 Golden Core catalog.
@@ -13851,6 +17925,205 @@ Before completing any task utilizing Laya Decision Router:
 2. Verify pure standard library compliance (zero 3rd-party dependencies in `src/`).
 3. Verify closed-loop report generation and delivery to NotebookLM (Invariant FL-01).
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `laya-decision-router.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: laya-decision-router
+  2. `[ACTION]` When to Invoke Laya
+  3. `[ACTION]` Fast Branch Approval: Resolving categorical DRAKON questions
+  4. `[INSERTION]` CALL_SKILL(b-sdd): A. CLI Invocation
+  5. `[INSERTION]` CALL_SKILL(intent-continuity): B. Programmatic Python Invocation (Pure Standard Library - A
+  6. `[ACTION]` Interpretation of Primitives: `choice`, `score`, and `noul`
+  7. `[ACTION]` Decision Matrix
+  8. `[INSERTION]` CALL_SKILL(skill-creator): Domain & Golden Core Skill Mapping
+  9. `[ACTION]` Graceful Degradation & Fallback (ADR-002)
+  10. `[END]` Завершення: laya-decision-router
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `laya-decision-router/laya-decision-router.drakon.json` (5,435 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "laya-decision-router",
+  "category": "bssd_system_skill",
+  "description": "Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: laya-decision-router",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "When to Invoke Laya",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Invoke the Laya Decision Router when:"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Fast Branch Approval: Resolving categorical DRAKON questions",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "---"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): A. CLI Invocation",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "From the repository root (`~/projects/b-sdd`): python3 -m src.core.laya_client --state '{\"sprint\": \"sprint_025\", \"task\": \"deploy feature\"}' --questions '{}' Additional CLI options:"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(intent-continuity): B. Programmatic Python Invocation (Pure Standard Library - A",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "intent-continuity"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "from src.core.laya_client import get_laya_client client = get_laya_client() # High-speed pre-flight prediction & routing decision_capsule = client.predict( instruction_name=\"OUTBOX"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Interpretation of Primitives: `choice`, `score`, and `noul`",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "The Laya decision engine operates on three mathematical primitives: | Primitive | Type | Values | Semantic Meaning | |---|---|---|---| | `choice` | `string` | `PROCEED`, `HALT_FOR_"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Decision Matrix",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "- **`choice: \"PROCEED\"` (`noul: true`, `score: >= 0.90`):** The request satisfies all architectural invariants with zero blockers. Immediate execution permitted without human inter"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(skill-creator): Domain & Golden Core Skill Mapping",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "skill-creator"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "Laya classifies incoming tasks into four distinct domains and injects targeted skills: | Domain | Focus Areas | Recommended Golden Core Skills | |---|---|---| | `core` | ADRs, DRAK"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Graceful Degradation & Fallback (ADR-002)",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Google Pixel 7 may suspend background VM execution during aggressive Android power management. - **Zero-Crash Resilience:** `LayaClient` NEVER throws unhandled connection exception"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: laya-decision-router",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "laya-decision-router",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -13860,15 +18133,17 @@ Before completing any task utilizing Laya Decision Router:
 
 **Каталог:** `~/.agents/skills/make-interfaces-feel-better`  
 **Опис:** Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover states, shadows, borders, typography, micro-interactions, enter/exit animations, or any visual detail work. Triggers on UI polish, design details, "make it feel better", "feels off", stagger animations, border radius, optical alignment, font smoothing, tabular numbers, image outlines, box shadows.  
-**Файлів у складі:** 5  
+**Файлів у складі:** 6  
 
-#### Файл: `make-interfaces-feel-better/SKILL.md` (7,803 байт)
+#### Файл: `make-interfaces-feel-better/SKILL.md` (8,585 байт)
 ````markdown
 ---
 name: make-interfaces-feel-better
 description: Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover states, shadows, borders, typography, micro-interactions, enter/exit animations, or any visual detail work. Triggers on UI polish, design details, "make it feel better", "feels off", stagger animations, border radius, optical alignment, font smoothing, tabular numbers, image outlines, box shadows.
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # Details that make interfaces feel better
 
 Great interfaces rarely come from a single thing. It's usually a collection of small details that compound into a great experience. Apply these principles when building or reviewing UI code.
@@ -14012,6 +18287,23 @@ Rows should cite the specific file and the specific property that changed when i
 - [surfaces.md](surfaces.md) — Border radius, optical alignment, shadows, image outlines
 - [animations.md](animations.md) — Interruptible animations, enter/exit transitions, icon animations, scale on press
 - [performance.md](performance.md) — Transition specificity, `will-change` usage
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `make-interfaces-feel-better.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: make-interfaces-feel-better
+  2. `[ACTION]` Quick Reference
+  3. `[ACTION]` Concentric Border Radius
+  4. `[ACTION]` Optical Over Geometric Alignment
+  5. `[ACTION]` Shadows Over Borders
+  6. `[ACTION]` Interruptible Animations
+  7. `[ACTION]` Split and Stagger Enter Animations
+  8. `[ACTION]` Subtle Exit Animations
+  9. `[ACTION]` Contextual Icon Animations
+  10. `[END]` Завершення: make-interfaces-feel-better
+<!-- DRAKON_VISUAL_FLOW_END -->
 
 ````
 
@@ -14397,6 +18689,185 @@ Don't use `initial={false}` when the component relies on its `initial` prop to s
 
 Verify the component still looks right on a full page refresh before applying this.
 
+````
+
+#### Файл: `make-interfaces-feel-better/make-interfaces-feel-better.drakon.json` (5,452 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "make-interfaces-feel-better",
+  "category": "bssd_project_skill",
+  "description": "Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover states, shadows, borders, typography, micro-interactions, enter/exit animations, or any visual detail work. Triggers on UI polish, design details, \"make it feel better\", \"feels off\", stagger animations, border radius, optical alignment, font smoothing, tabular numbers, image outlines, box shadows.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: make-interfaces-feel-better",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Quick Reference",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "| Category | When to Use | | --- | --- | | [Typography](typography.md) | Text wrapping, font smoothing, tabular numbers | | [Surfaces](surfaces.md) | Border radius, optical alignme"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Concentric Border Radius",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Outer radius = inner radius + padding. Mismatched radii on nested elements is the most common thing that makes interfaces feel off."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Optical Over Geometric Alignment",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "When geometric centering looks off, align optically. Buttons with icons, play triangles, and asymmetric icons all need manual adjustment."
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Shadows Over Borders",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Layer multiple transparent `box-shadow` values for natural depth. Shadows adapt to any background; solid borders don't."
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Interruptible Animations",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Use CSS transitions for interactive state changes — they can be interrupted mid-animation. Reserve keyframes for staged sequences that run once."
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Split and Stagger Enter Animations",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Don't animate a single container. Break content into semantic chunks and stagger each with ~100ms delay."
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Subtle Exit Animations",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "Use a small fixed `translateY` instead of full height. Exits should be softer than enters."
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Contextual Icon Animations",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Animate icons with `opacity`, `scale`, and `blur` instead of toggling visibility. Use exactly these values: scale from `0.25` to `1`, opacity from `0` to `1`, blur from `4px` to `0"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: make-interfaces-feel-better",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "make-interfaces-feel-better",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `make-interfaces-feel-better/performance.md` (2,884 байт)
@@ -14900,7 +19371,7 @@ Some fonts (like Inter) change the visual appearance of numerals with this prope
 
 **Каталог:** `~/.agents/skills/mcp-builder`  
 **Опис:** Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).  
-**Файлів у складі:** 10  
+**Файлів у складі:** 11  
 
 #### Файл: `mcp-builder/LICENSE.txt` (11,357 байт)
 ````text
@@ -15108,14 +19579,15 @@ Some fonts (like Inter) change the visual appearance of numerals with this prope
    limitations under the License.
 ````
 
-#### Файл: `mcp-builder/SKILL.md` (9,092 байт)
+#### Файл: `mcp-builder/SKILL.md` (9,817 байт)
 ````markdown
 ---
 name: mcp-builder
 description: Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).
-license: Complete terms in LICENSE.txt
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # MCP Server Development Guide
 
 ## Overview
@@ -15347,6 +19819,202 @@ Load these resources as needed during development:
   - Example questions and answers
   - Running an evaluation with the provided scripts
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `mcp-builder.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: mcp-builder
+  2. `[ACTION]` Overview
+  3. `[ACTION]` 🚀 High-Level Workflow
+  4. `[ACTION]` Phase 1: Deep Research and Planning
+  5. `[ACTION]` Phase 2: Implementation
+  6. `[ACTION]` Phase 3: Review and Test
+  7. `[ACTION]` Phase 4: Create Evaluations
+  8. `[ACTION]` Answer Verification: Solve each question yourself to verify 
+  9. `[ACTION]` 📚 Documentation Library
+  10. `[END]` Завершення: mcp-builder
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `mcp-builder/mcp-builder.drakon.json` (5,345 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "mcp-builder",
+  "category": "bssd_project_skill",
+  "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: mcp-builder",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Create MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. The quality of an MCP server is measured by how well it"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "🚀 High-Level Workflow",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Creating a high-quality MCP server involves four main phases:"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Phase 1: Deep Research and Planning",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "#### 1.1 Understand Modern MCP Design **API Coverage vs. Workflow Tools:** Balance comprehensive API endpoint coverage with specialized workflow tools. Workflow tools can be more c"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Phase 2: Implementation",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "#### 2.1 Set Up Project Structure See language-specific guides for project setup: - [⚡ TypeScript Guide](./reference/node_mcp_server.md) - Project structure, package.json, tsconfig"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Phase 3: Review and Test",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "#### 3.1 Code Quality Review for: - No duplicated code (DRY principle) - Consistent error handling - Full type coverage - Clear tool descriptions #### 3.2 Build and Test **TypeScri"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Phase 4: Create Evaluations",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "After implementing your MCP server, create comprehensive evaluations to test its effectiveness. **Load [✅ Evaluation Guide](./reference/evaluation.md) for complete evaluation guide"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Answer Verification: Solve each question yourself to verify ",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "#### 4.3 Evaluation Requirements Ensure each question is: - **Independent**: Not dependent on other questions - **Read-only**: Only non-destructive operations required - **Complex*"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "📚 Documentation Library",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Load these resources as needed during development:"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: mcp-builder",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "mcp-builder",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `mcp-builder/reference/evaluation.md` (21,663 байт)
@@ -18481,13 +23149,16 @@ mcp>=1.1.0
 
 **Каталог:** `~/.agents/skills/notebooklm`  
 **Опис:** Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact types, download in multiple formats. Activates on explicit /notebooklm or intent like "create a podcast about X  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `notebooklm/SKILL.md` (25,133 байт)
+#### Файл: `notebooklm/SKILL.md` (25,837 байт)
 ````markdown
 ---
 name: notebooklm
-description: Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact types, download in multiple formats. Activates on explicit /notebooklm or intent like "create a podcast about X"
+description: Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact types, download in multiple formats. Activates on explicit /notebooklm or intent like "create a podcast about X
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
 <!-- notebooklm-py v0.3.3 -->
 
@@ -19049,6 +23720,202 @@ notebooklm language --help     # Language settings
 **Check version:** `notebooklm --version`
 **Update skill:** `notebooklm skill install`
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `notebooklm.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: notebooklm
+  2. `[ACTION]` Installation
+  3. `[ACTION]` Prerequisites
+  4. `[ACTION]` CI/CD, Multiple Accounts, and Parallel Agents
+  5. `[ACTION]` Agent Setup Verification
+  6. `[ACTION]` When This Skill Activates
+  7. `[ACTION]` Autonomy Rules
+  8. `[ACTION]` Quick Reference
+  9. `[ACTION]` Command Output Formats
+  10. `[END]` Завершення: notebooklm
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `notebooklm/notebooklm.drakon.json` (5,540 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "notebooklm",
+  "category": "bssd_project_skill",
+  "description": "Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact types, download in multiple formats. Activates on explicit /notebooklm or intent like \"create a podcast about X",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: notebooklm",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Installation",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "**From PyPI (Recommended):** pip install notebooklm-py **From GitHub (use latest release tag, NOT main branch):** # Get the latest release tag (using curl) LATEST_TAG=$(curl -s htt"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Prerequisites",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "**IMPORTANT:** Before using any command, you MUST authenticate: notebooklm login          # Opens browser for Google OAuth notebooklm list           # Verify authentication works I"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "CI/CD, Multiple Accounts, and Parallel Agents",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "For automated environments, multiple accounts, or parallel agent workflows: | Variable | Purpose | |----------|---------| | `NOTEBOOKLM_HOME` | Custom config directory (default: `~"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Agent Setup Verification",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Before starting workflows, verify the CLI is ready: 1. `notebooklm status` → Should show \"Authenticated as: email@...\" 2. `notebooklm list --json` → Should return valid JSON (even "
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "When This Skill Activates",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "**Explicit:** User says \"/notebooklm\", \"use notebooklm\", or mentions the tool by name **Intent detection:** Recognize requests like: - \"Create a podcast about [topic]\" - \"Summarize"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Autonomy Rules",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "**Run automatically (no confirmation):** - `notebooklm status` - check context - `notebooklm auth check` - diagnose auth issues - `notebooklm list` - list notebooks - `notebooklm s"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Quick Reference",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "| Task | Command | |------|---------| | Authenticate | `notebooklm login` | | Diagnose auth issues | `notebooklm auth check` | | Diagnose auth (full) | `notebooklm auth check --tes"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Command Output Formats",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Commands with `--json` return structured data for parsing: **Create notebook:** $ notebooklm create \"Research\" --json {\"id\": \"abc123de-...\", \"title\": \"Research\"} **Add source:** $ "
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: notebooklm",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "notebooklm",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -19058,15 +23925,17 @@ notebooklm language --help     # Language settings
 
 **Каталог:** `~/.agents/skills/notebooklm-gitnexus-copilot`  
 **Опис:** Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic work packet execution where NotebookLM drafts exact code snippets from 100% full-code context. Use for refactoring, feature implementation, and architectural reviews.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `notebooklm-gitnexus-copilot/SKILL.md` (6,644 байт)
+#### Файл: `notebooklm-gitnexus-copilot/SKILL.md` (7,504 байт)
 ````markdown
 ---
 name: notebooklm-gitnexus-copilot
 description: Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic work packet execution where NotebookLM drafts exact code snippets from 100% full-code context. Use for refactoring, feature implementation, and architectural reviews.
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # NotebookLM & GitNexus Full-Code Copilot
 
 ## Identity & Core Concept
@@ -19220,6 +24089,202 @@ call_mcp_tool("notebooklm", "chat_ask", {
 4. **Iterative Mirror Sync**: Enforce `rsync -av --delete src/ .lovable/src/` after every atomic packet modification.
 5. **Mermaid Diagrams for External Content**: Because NotebookLM cannot directly follow external links/URLs, always synthesize external documentation, links, or API topologies into structured **Mermaid diagrams** (flowchart, sequenceDiagram, etc.) and text summaries prior to querying NotebookLM.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `notebooklm-gitnexus-copilot.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: notebooklm-gitnexus-copilot
+  2. `[ACTION]` Identity & Core Concept
+  3. `[ACTION]` 🎯 Dual Execution Modes
+  4. `[ACTION]` 🛠️ The 6-Step Atomic Packet Methodology
+  5. `[ACTION]` Step 1: Full-Code PDF Aggregation
+  6. `[ACTION]` Step 2: GitNexus Code Intelligence Analysis
+  7. `[ACTION]` Step 3: NotebookLM MCP Initialization
+  8. `[ACTION]` Create Notebook:
+  9. `[ACTION]` Upload GitNexus & Architectural Context (Text Source):
+  10. `[END]` Завершення: notebooklm-gitnexus-copilot
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `notebooklm-gitnexus-copilot/notebooklm-gitnexus-copilot.drakon.json` (5,581 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "notebooklm-gitnexus-copilot",
+  "category": "bssd_project_skill",
+  "description": "Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic work packet execution where NotebookLM drafts exact code snippets from 100% full-code context. Use for refactoring, feature implementation, and architectural reviews.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: notebooklm-gitnexus-copilot",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Identity & Core Concept",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "This skill defines an advanced, token-efficient, agentic pair-programming methodology that integrates **Google NotebookLM MCP**, **GitNexus Code Intelligence**, and **Full-Code PDF"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "🎯 Dual Execution Modes",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "| Mode | Command Flag | Ideal For | Output Content | | :--- | :--- | :--- | :--- | | **Full-Code Mode** *(Recommended for coding)* | *(omit `--structure-only`)* | Writing exact fea"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "🛠️ The 6-Step Atomic Packet Methodology",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "flowchart TD A[Step 1: Full-Code PDF Aggregation] --> B[Step 2: GitNexus Graph Analysis] B --> C[Step 3: NotebookLM Initialization] C --> D[Step 4: Atomic Packet Breakdown] D --> E"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Step 1: Full-Code PDF Aggregation",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Generate a 100% full-code PDF artifact of the repository: # Full-Code Generation (for active coding & refactoring): /home/vokov/resume/run_md_service.sh --batch \\ --source /path/to"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Step 2: GitNexus Code Intelligence Analysis",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Map call graphs, cross-community processes, and symbol definitions: # In project root: npx gitnexus analyze Extract symbol references and execution flows: - Target repository URL: "
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Step 3: NotebookLM MCP Initialization",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Create a dedicated NotebookLM notebook and upload all grounded sources:"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Create Notebook:",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "call_mcp_tool(\"notebooklm\", \"notebooks_create\", { \"title\": \"<Project Name> Full-Code Copilot\" })"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Upload GitNexus & Architectural Context (Text Source):",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "call_mcp_tool(\"notebooklm\", \"sources_add_text\", { \"notebook_id\": \"<notebook_id>\", \"title\": \"GitNexus Index & Architecture Reference\", \"content\": \"# Project: <repo_name>\\nGitNexus U"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: notebooklm-gitnexus-copilot",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "notebooklm-gitnexus-copilot",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -19229,15 +24294,18 @@ call_mcp_tool("notebooklm", "chat_ask", {
 
 **Каталог:** `~/.agents/skills/root-cause-tracing`  
 **Опис:** Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, adding instrumentation when needed, to identify source of invalid data or incorrect behavior  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `root-cause-tracing/SKILL.md` (5,602 байт)
+#### Файл: `root-cause-tracing/SKILL.md` (6,371 байт)
 ````markdown
 ---
 name: root-cause-tracing
 description: Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, adding instrumentation when needed, to identify source of invalid data or incorrect behavior
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [defense-in-depth]
 ---
-
 # Root Cause Tracing
 
 ## Overview
@@ -19408,6 +24476,23 @@ From debugging session (2025-10-03):
 - Added 4 layers of defense
 - 1847 tests passed, zero pollution
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `root-cause-tracing.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: root-cause-tracing
+  2. `[ACTION]` Overview
+  3. `[INSERTION]` CALL_SKILL(defense-in-depth): When to Use
+  4. `[ACTION]` Observe the Symptom
+  5. `[ACTION]` Find Immediate Cause
+  6. `[ACTION]` Ask: What Called This?
+  7. `[ACTION]` Keep Tracing Up
+  8. `[ACTION]` Find Original Trigger
+  9. `[ACTION]` Adding Stack Traces
+  10. `[END]` Завершення: root-cause-tracing
+<!-- DRAKON_VISUAL_FLOW_END -->
+
 ````
 
 #### Файл: `root-cause-tracing/find-polluter.sh` (1,520 байт)
@@ -19478,6 +24563,186 @@ exit 0
 
 ````
 
+#### Файл: `root-cause-tracing/root-cause-tracing.drakon.json` (5,322 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "root-cause-tracing",
+  "category": "bssd_system_skill",
+  "description": "Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, adding instrumentation when needed, to identify source of invalid data or incorrect behavior",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: root-cause-tracing",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Bugs often manifest deep in the call stack (git init in wrong directory, file created in wrong location, database opened with wrong path). Your instinct is to fix where the error a"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(defense-in-depth): When to Use",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "defense-in-depth"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "digraph when_to_use { \"Bug appears deep in stack?\" [shape=diamond]; \"Can trace backwards?\" [shape=diamond]; \"Fix at symptom point\" [shape=box]; \"Trace to original trigger\" [shape=b"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Observe the Symptom",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Error: git init failed in /Users/jesse/project/packages/core"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Find Immediate Cause",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "**What code directly causes this?** await execFileAsync('git', ['init'], { cwd: projectDir });"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Ask: What Called This?",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "WorktreeManager.createSessionWorktree(projectDir, sessionId) → called by Session.initializeWorkspace() → called by Session.create() → called by test at Project.create()"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Keep Tracing Up",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "**What value was passed?** - `projectDir = ''` (empty string!) - Empty string as `cwd` resolves to `process.cwd()` - That's the source code directory!"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Find Original Trigger",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "**Where did empty string come from?** const context = setupCoreTest(); // Returns { tempDir: '' } Project.create('name', context.tempDir); // Accessed before beforeEach!"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Adding Stack Traces",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "When you can't trace manually, add instrumentation: // Before the problematic operation async function gitInit(directory: string) { const stack = new Error().stack; console.error('"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: root-cause-tracing",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "root-cause-tracing",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
+````
+
 ---
 
 <a id="skill-safe-refactor"></a>
@@ -19485,15 +24750,18 @@ exit 0
 
 **Каталог:** `~/.agents/skills/safe-refactor`  
 **Опис:** Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `safe-refactor/SKILL.md` (705 байт)
+#### Файл: `safe-refactor/SKILL.md` (1,411 байт)
 ````markdown
 ---
 name: safe-refactor
 description: Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [session-distiller, test-driven-development]
 ---
-
 # Safe refactor
 
 Define behavior-preservation boundary and establish verification before structural edits.
@@ -19506,6 +24774,136 @@ Define behavior-preservation boundary and establish verification before structur
 
 Run same proof after change. Stop when behavior matches and requested structure is achieved.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `safe-refactor.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: safe-refactor
+  2. `[ACTION]` Intake & Invariant Check
+  3. `[ACTION]` Core Execution Flow
+  4. `[INSERTION]` CALL_SKILL(test-driven-development): Verification & Testing
+  5. `[INSERTION]` CALL_SKILL(session-distiller): Handoff & Artifact Output
+  6. `[END]` Завершення: safe-refactor
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `safe-refactor/safe-refactor.drakon.json` (2,974 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "safe-refactor",
+  "category": "bssd_system_skill",
+  "description": "Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: safe-refactor",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Intake & Invariant Check",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Initialize safe-refactor and verify architectural preconditions."
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Core Execution Flow",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Execute core procedural operations for safe-refactor."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(test-driven-development): Verification & Testing",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "test-driven-development"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Verify results against ADR contracts and negative constraints."
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(session-distiller): Handoff & Artifact Output",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "session-distiller"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Commit state changes and produce telemetry or handoff notes."
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: safe-refactor",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "safe-refactor",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `safe-refactor/agents/openai.yaml` (201 байт)
@@ -19524,15 +24922,18 @@ interface:
 
 **Каталог:** `~/.agents/skills/session-distiller`  
 **Опис:** Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007).  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `session-distiller/SKILL.md` (1,506 байт)
+#### Файл: `session-distiller/SKILL.md` (2,064 байт)
 ````markdown
 ---
 name: session-distiller
 description: Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007).
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [b-sdd]
 ---
-
 # Session Distiller (B-SDD Session Compactor & Handoff Protocol)
 
 The **Session Distiller** crystallizes raw multi-turn agent conversations (transcripts) into structured architectural decisions, modified seams, and sprint-to-sprint handoffs conforming to **ADR-006** and **ADR-007**.
@@ -19560,6 +24961,118 @@ python3 -m src.cli.main handoff --prompt "Next sprint directive"
 - **Fitness Gate Integration:** Verifies architecture fitness gates before finalizing handoff payloads.
 - **Dual-Output Artifacts:** Produces both machine-readable JSON (`.context/sprint_handoff.json`) and human/LLM-readable markdown (`.context/next_sprint.md`).
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `session-distiller.drakon.json`
+- **Total Algorithmic Nodes:** 5
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: session-distiller
+  2. `[ACTION]` When to Use
+  3. `[INSERTION]` CALL_SKILL(b-sdd): Invocation
+  4. `[ACTION]` Core Invariants
+  5. `[END]` Завершення: session-distiller
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `session-distiller/session-distiller.drakon.json` (2,787 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "session-distiller",
+  "category": "bssd_system_skill",
+  "description": "Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007).",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: session-distiller",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "When to Use",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "- At the end of a sprint (Phase $\\Phi_6 \\to \\Phi_7$ Sprint Closure). - When context budget is nearing exhaustion and requires distillation into `.context/session_distillation.md`. "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Invocation",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "b-sdd"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "From the repository root (`~/projects/b-sdd`): # Generate session distillation python3 -m src.cli.main distill --json # Generate full sprint handoff python3 -m src.cli.main handoff"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Core Invariants",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "- **ADR-002 Pure Stdlib:** Uses 100% Python Standard Library without external pip dependencies. - **Fitness Gate Integration:** Verifies architecture fitness gates before finalizin"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: session-distiller",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    }
+  ],
+  "meta": {
+    "skill_name": "session-distiller",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -19569,15 +25082,17 @@ python3 -m src.cli.main handoff --prompt "Next sprint directive"
 
 **Каталог:** `~/.agents/skills/skill-audit`  
 **Опис:** Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing new skills, before sharing skills upstream, or during periodic skill maintenance.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `skill-audit/SKILL.md` (2,160 байт)
+#### Файл: `skill-audit/SKILL.md` (2,837 байт)
 ````markdown
 ---
 name: skill-audit
 description: Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing new skills, before sharing skills upstream, or during periodic skill maintenance.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Skill Audit
 
 ## Audit checklist per skill
@@ -19642,6 +25157,202 @@ A skill is a stub if:
 
 Action: fill with concrete guidance or remove.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `skill-audit.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: skill-audit
+  2. `[ACTION]` Structure
+  3. `[ACTION]` Metadata quality
+  4. `[ACTION]` Instruction quality
+  5. `[ACTION]` Safety
+  6. `[ACTION]` Skill Audit Report — <date>
+  7. `[ACTION]` Issues requiring action:
+  8. `[ACTION]` Running the audit
+  9. `[ACTION]` Stubs to fix
+  10. `[END]` Завершення: skill-audit
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `skill-audit/skill-audit.drakon.json` (5,301 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "skill-audit",
+  "category": "bssd_system_skill",
+  "description": "Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing new skills, before sharing skills upstream, or during periodic skill maintenance.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: skill-audit",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Structure",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "- [ ] Has `SKILL.md` (not just a bare `.md` file) - [ ] SKILL.md has valid YAML frontmatter block (--- delimiters)"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Metadata quality",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "- [ ] `name:` field present and matches directory name - [ ] `description:` field present, specific (not generic placeholder) - [ ] Description tells Claude WHEN to use the skill ("
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Instruction quality",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "- [ ] Has actual instructions (not empty after frontmatter) - [ ] Not just a stub (more than 3 lines of content) - [ ] Instructions are actionable (tell Claude what to DO) - [ ] Ha"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Safety",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "- [ ] No shell injection patterns (backtick execution in description) - [ ] No hardcoded secrets or credentials - [ ] No aggressive permission escalation"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Skill Audit Report — <date>",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "| Skill | Structure | Metadata | Instructions | Safety | Overall | |-------|-----------|----------|--------------|--------|---------| | skill-name | PASS/FAIL | PASS/FAIL | PASS/FA"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Issues requiring action:",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "- [skill-name] STUB: description is placeholder text - [skill-name] MISSING: no instructions after frontmatter"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Running the audit",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "for dir in ~/.claude/skills/*/; do skill=$(basename \"$dir\") skill_md=\"$dir/SKILL.md\" if [ ! -f \"$skill_md\" ]; then echo \"FAIL [$skill]: no SKILL.md\" continue fi lines=$(wc -l < \"$s"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Stubs to fix",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "A skill is a stub if: - description contains \"Replace with\" or \"template\" - Body after frontmatter is empty or < 5 lines - Instructions don't say when/how to use the skill Action: "
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: skill-audit",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "skill-audit",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -19651,7 +25362,7 @@ Action: fill with concrete guidance or remove.
 
 **Каталог:** `~/.agents/skills/skill-creator`  
 **Опис:** Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.  
-**Файлів у складі:** 7  
+**Файлів у складі:** 8  
 
 #### Файл: `skill-creator/LICENSE.txt` (11,357 байт)
 ````text
@@ -19859,14 +25570,15 @@ Action: fill with concrete guidance or remove.
    limitations under the License.
 ````
 
-#### Файл: `skill-creator/SKILL.md` (17,837 байт)
+#### Файл: `skill-creator/SKILL.md` (18,556 байт)
 ````markdown
 ---
 name: skill-creator
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
-license: Complete terms in LICENSE.txt
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Skill Creator
 
 This skill provides guidance for creating effective skills.
@@ -20218,6 +25930,202 @@ After testing the skill, users may request improvements. Often this happens righ
 3. Identify how SKILL.md or bundled resources should be updated
 4. Implement changes and test again
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `skill-creator.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: skill-creator
+  2. `[ACTION]` About Skills
+  3. `[ACTION]` What Skills Provide
+  4. `[ACTION]` Concise is Key
+  5. `[ACTION]` Set Appropriate Degrees of Freedom
+  6. `[ACTION]` Anatomy of a Skill
+  7. `[ACTION]` Progressive Disclosure Design Principle
+  8. `[ACTION]` Bundled resources - As needed by Claude (Unlimited because s
+  9. `[ACTION]` Quick start
+  10. `[END]` Завершення: skill-creator
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `skill-creator/skill-creator.drakon.json` (5,304 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "skill-creator",
+  "category": "bssd_system_skill",
+  "description": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: skill-creator",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "About Skills",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Skills are modular, self-contained packages that extend Claude's capabilities by providing specialized knowledge, workflows, and tools. Think of them as \"onboarding guides\" for spe"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "What Skills Provide",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "1. Specialized workflows - Multi-step procedures for specific domains 2. Tool integrations - Instructions for working with specific file formats or APIs 3. Domain expertise - Compa"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Concise is Key",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "The context window is a public good. Skills share the context window with everything else Claude needs: system prompt, conversation history, other Skills' metadata, and the actual "
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Set Appropriate Degrees of Freedom",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Match the level of specificity to the task's fragility and variability: **High freedom (text-based instructions)**: Use when multiple approaches are valid, decisions depend on cont"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Anatomy of a Skill",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Every skill consists of a required SKILL.md file and optional bundled resources: skill-name/ ├── SKILL.md (required) │   ├── YAML frontmatter metadata (required) │   │   ├── name: "
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Progressive Disclosure Design Principle",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Skills use a three-level loading system to manage context efficiently:"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Bundled resources - As needed by Claude (Unlimited because s",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "#### Progressive Disclosure Patterns Keep SKILL.md body to the essentials and under 500 lines to minimize context bloat. Split content into separate files when approaching this lim"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Quick start",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Extract text with pdfplumber: [code example]"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: skill-creator",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "skill-creator",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `skill-creator/references/output-patterns.md` (1,813 байт)
@@ -20868,15 +26776,18 @@ if __name__ == "__main__":
 
 **Каталог:** `~/.agents/skills/subagent-driven-development`  
 **Опис:** Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between tasks, enabling fast iteration with quality gates  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `subagent-driven-development/SKILL.md` (5,074 байт)
+#### Файл: `subagent-driven-development/SKILL.md` (5,893 байт)
 ````markdown
 ---
 name: subagent-driven-development
 description: Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between tasks, enabling fast iteration with quality gates
+type: PROJECT_SKILL
+category: general
+immutable: false
+invoked_skills: [code-reviewer]
 ---
-
 # Subagent-Driven Development
 
 Execute plan by dispatching fresh subagent per task, with code review after each.
@@ -21062,6 +26973,204 @@ Done!
 
 See code-reviewer template: requesting-code-review/code-reviewer.md
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `subagent-driven-development.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: subagent-driven-development
+  2. `[ACTION]` Overview
+  3. `[ACTION]` Load Plan
+  4. `[ACTION]` Execute Task with Subagent
+  5. `[INSERTION]` CALL_SKILL(code-reviewer): Review Subagent's Work
+  6. `[ACTION]` Apply Review Feedback
+  7. `[ACTION]` Mark Complete, Next Task
+  8. `[INSERTION]` CALL_SKILL(code-reviewer): Final Review
+  9. `[ACTION]` Complete Development
+  10. `[END]` Завершення: subagent-driven-development
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `subagent-driven-development/subagent-driven-development.drakon.json` (5,376 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "subagent-driven-development",
+  "category": "bssd_project_skill",
+  "description": "Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between tasks, enabling fast iteration with quality gates",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: subagent-driven-development",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "**vs. Executing Plans (parallel session):** - Same session (no context switch) - Fresh subagent per task (no context pollution) - Code review after each task (catch issues early) -"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Load Plan",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Read plan file, create TodoWrite with all tasks."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Execute Task with Subagent",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "For each task: **Dispatch fresh subagent:** Task tool (general-purpose): description: \"Implement Task N: [task name]\" prompt: | You are implementing Task N from [plan-file]. Read t"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(code-reviewer): Review Subagent's Work",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "code-reviewer"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "**Dispatch code-reviewer subagent:** Task tool (superpowers:code-reviewer): Use template at requesting-code-review/code-reviewer.md WHAT_WAS_IMPLEMENTED: [from subagent's report] P"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Apply Review Feedback",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "**If issues found:** - Fix Critical issues immediately - Fix Important issues before next task - Note Minor issues **Dispatch follow-up subagent if needed:** \"Fix issues from code "
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Mark Complete, Next Task",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "- Mark task as completed in TodoWrite - Move to next task - Repeat steps 2-5"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(code-reviewer): Final Review",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "code-reviewer"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "After all tasks complete, dispatch final code-reviewer: - Reviews entire implementation - Checks all plan requirements met - Validates overall architecture"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Complete Development",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "After final review passes: - Announce: \"I'm using the finishing-a-development-branch skill to complete this work.\" - **REQUIRED SUB-SKILL:** Use superpowers:finishing-a-development"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: subagent-driven-development",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "subagent-driven-development",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -21071,15 +27180,18 @@ See code-reviewer template: requesting-code-review/code-reviewer.md
 
 **Каталог:** `~/.agents/skills/surgical-patch`  
 **Опис:** Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests matter.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
-#### Файл: `surgical-patch/SKILL.md` (664 байт)
+#### Файл: `surgical-patch/SKILL.md` (1,373 байт)
 ````markdown
 ---
 name: surgical-patch
 description: Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests matter.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [session-distiller, test-driven-development]
 ---
-
 # Surgical patch
 
 Reproduce failure first when economical; otherwise capture strongest available evidence.
@@ -21092,6 +27204,136 @@ Reproduce failure first when economical; otherwise capture strongest available e
 
 Run focused proof plus nearest affected gate. Stop when failure is fixed and regression proof passes.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `surgical-patch.drakon.json`
+- **Total Algorithmic Nodes:** 6
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: surgical-patch
+  2. `[ACTION]` Intake & Invariant Check
+  3. `[ACTION]` Core Execution Flow
+  4. `[INSERTION]` CALL_SKILL(test-driven-development): Verification & Testing
+  5. `[INSERTION]` CALL_SKILL(session-distiller): Handoff & Artifact Output
+  6. `[END]` Завершення: surgical-patch
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `surgical-patch/surgical-patch.drakon.json` (2,986 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "surgical-patch",
+  "category": "bssd_system_skill",
+  "description": "Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests matter.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: surgical-patch",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Intake & Invariant Check",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Initialize surgical-patch and verify architectural preconditions."
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Core Execution Flow",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Execute core procedural operations for surgical-patch."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(test-driven-development): Verification & Testing",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "test-driven-development"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Verify results against ADR contracts and negative constraints."
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(session-distiller): Handoff & Artifact Output",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "session-distiller"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Commit state changes and produce telemetry or handoff notes."
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: surgical-patch",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "surgical-patch",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `surgical-patch/agents/openai.yaml` (194 байт)
@@ -21110,7 +27352,7 @@ interface:
 
 **Каталог:** `~/.agents/skills/systematic-debugging`  
 **Опис:** Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysis, hypothesis testing, implementation) that ensures understanding before attempting solutions  
-**Файлів у складі:** 6  
+**Файлів у складі:** 7  
 
 #### Файл: `systematic-debugging/CREATION-LOG.md` (4,268 байт)
 ````markdown
@@ -21236,13 +27478,15 @@ When encountering a bug:
 
 ````
 
-#### Файл: `systematic-debugging/SKILL.md` (9,988 байт)
+#### Файл: `systematic-debugging/SKILL.md` (10,710 байт)
 ````markdown
 ---
 name: systematic-debugging
 description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysis, hypothesis testing, implementation) that ensures understanding before attempting solutions
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Systematic Debugging
 
 ## Overview
@@ -21534,6 +27778,202 @@ From debugging sessions:
 - First-time fix rate: 95% vs 40%
 - New bugs introduced: Near zero vs common
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `systematic-debugging.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: systematic-debugging
+  2. `[ACTION]` Overview
+  3. `[ACTION]` The Iron Law
+  4. `[ACTION]` When to Use
+  5. `[ACTION]` The Four Phases
+  6. `[ACTION]` Phase 1: Root Cause Investigation
+  7. `[ACTION]` Read Error Messages Carefully
+  8. `[ACTION]` Reproduce Consistently
+  9. `[ACTION]` Check Recent Changes
+  10. `[END]` Завершення: systematic-debugging
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `systematic-debugging/systematic-debugging.drakon.json` (5,057 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "systematic-debugging",
+  "category": "bssd_system_skill",
+  "description": "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysis, hypothesis testing, implementation) that ensures understanding before attempting solutions",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: systematic-debugging",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Random fixes waste time and create new bugs. Quick patches mask underlying issues. **Core principle:** ALWAYS find root cause before attempting fixes. Symptom fixes are failure. **"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "The Iron Law",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST If you haven't completed Phase 1, you cannot propose fixes."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "When to Use",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Use for ANY technical issue: - Test failures - Bugs in production - Unexpected behavior - Performance problems - Build failures - Integration issues **Use this ESPECIALLY when:** -"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "The Four Phases",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "You MUST complete each phase before proceeding to the next."
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Phase 1: Root Cause Investigation",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "**BEFORE attempting ANY fix:**"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Read Error Messages Carefully",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "- Don't skip past errors or warnings - They often contain the exact solution - Read stack traces completely - Note line numbers, file paths, error codes"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Reproduce Consistently",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "- Can you trigger it reliably? - What are the exact steps? - Does it happen every time? - If not reproducible → gather more data, don't guess"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Check Recent Changes",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "- What changed that could cause this? - Git diff, recent commits - New dependencies, config changes - Environmental differences"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: systematic-debugging",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "systematic-debugging",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `systematic-debugging/test-academic.md` (653 байт)
@@ -21772,15 +28212,17 @@ Which do you choose? Be honest about what you would actually do with senior engi
 
 **Каталог:** `~/.agents/skills/test-driven-development`  
 **Опис:** Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures tests actually verify behavior by requiring failure first  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `test-driven-development/SKILL.md` (9,736 байт)
+#### Файл: `test-driven-development/SKILL.md` (10,464 байт)
 ````markdown
 ---
 name: test-driven-development
 description: Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures tests actually verify behavior by requiring failure first
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Test-Driven Development (TDD)
 
 ## Overview
@@ -22141,6 +28583,202 @@ Otherwise → not TDD
 
 No exceptions without your human partner's permission.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `test-driven-development.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: test-driven-development
+  2. `[ACTION]` Overview
+  3. `[ACTION]` When to Use
+  4. `[ACTION]` The Iron Law
+  5. `[ACTION]` Red-Green-Refactor
+  6. `[ACTION]` RED - Write Failing Test
+  7. `[ACTION]` Verify RED - Watch It Fail
+  8. `[ACTION]` GREEN - Minimal Code
+  9. `[ACTION]` Verify GREEN - Watch It Pass
+  10. `[END]` Завершення: test-driven-development
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `test-driven-development/test-driven-development.drakon.json` (5,502 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "test-driven-development",
+  "category": "bssd_system_skill",
+  "description": "Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures tests actually verify behavior by requiring failure first",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: test-driven-development",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Write the test first. Watch it fail. Write minimal code to pass. **Core principle:** If you didn't watch the test fail, you don't know if it tests the right thing. **Violating the "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "When to Use",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "**Always:** - New features - Bug fixes - Refactoring - Behavior changes **Exceptions (ask your human partner):** - Throwaway prototypes - Generated code - Configuration files Think"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "The Iron Law",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST Write code before the test? Delete it. Start over. **No exceptions:** - Don't keep it as \"reference\" - Don't \"adapt\" it while writin"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Red-Green-Refactor",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "digraph tdd_cycle { rankdir=LR; red [label=\"RED\\nWrite failing test\", shape=box, style=filled, fillcolor=\"#ffcccc\"]; verify_red [label=\"Verify fails\\ncorrectly\", shape=diamond]; gr"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "RED - Write Failing Test",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Write one minimal test showing what should happen. <Good> test('retries failed operations 3 times', async () => { let attempts = 0; const operation = () => { attempts++; if (attemp"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Verify RED - Watch It Fail",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "**MANDATORY. Never skip.** npm test path/to/test.test.ts Confirm: - Test fails (not errors) - Failure message is expected - Fails because feature missing (not typos) **Test passes?"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "GREEN - Minimal Code",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "Write simplest code to pass the test. <Good> async function retryOperation<T>(fn: () => Promise<T>): Promise<T> { for (let i = 0; i < 3; i++) { try { return await fn(); } catch (e)"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Verify GREEN - Watch It Pass",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "**MANDATORY.** npm test path/to/test.test.ts Confirm: - Test passes - Other tests still pass - Output pristine (no errors, warnings) **Test fails?** Fix code, not test. **Other tes"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: test-driven-development",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "test-driven-development",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -22150,15 +28788,17 @@ No exceptions without your human partner's permission.
 
 **Каталог:** `~/.agents/skills/testing-anti-patterns`  
 **Опис:** Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production pollution with test-only methods, and mocking without understanding dependencies  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `testing-anti-patterns/SKILL.md` (8,404 байт)
+#### Файл: `testing-anti-patterns/SKILL.md` (9,168 байт)
 ````markdown
 ---
 name: testing-anti-patterns
 description: Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production pollution with test-only methods, and mocking without understanding dependencies
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Testing Anti-Patterns
 
 ## Overview
@@ -22457,6 +29097,202 @@ If TDD reveals you're testing mock behavior, you've gone wrong.
 
 Fix: Test real behavior or question why you're mocking at all.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `testing-anti-patterns.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: testing-anti-patterns
+  2. `[ACTION]` Overview
+  3. `[ACTION]` The Iron Laws
+  4. `[ACTION]` Anti-Pattern 1: Testing Mock Behavior
+  5. `[ACTION]` Gate Function
+  6. `[ACTION]` Anti-Pattern 2: Test-Only Methods in Production
+  7. `[ACTION]` Gate Function
+  8. `[ACTION]` Anti-Pattern 3: Mocking Without Understanding
+  9. `[ACTION]` Gate Function
+  10. `[END]` Завершення: testing-anti-patterns
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `testing-anti-patterns/testing-anti-patterns.drakon.json` (5,507 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "testing-anti-patterns",
+  "category": "bssd_system_skill",
+  "description": "Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production pollution with test-only methods, and mocking without understanding dependencies",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: testing-anti-patterns",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Tests must verify real behavior, not mock behavior. Mocks are a means to isolate, not the thing being tested. **Core principle:** Test what the code does, not what the mocks do. **"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "The Iron Laws",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "1. NEVER test mock behavior 2. NEVER add test-only methods to production classes 3. NEVER mock without understanding dependencies"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Anti-Pattern 1: Testing Mock Behavior",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "**The violation:** // ❌ BAD: Testing that the mock exists test('renders sidebar', () => { render(<Page />); expect(screen.getByTestId('sidebar-mock')).toBeInTheDocument(); }); **Wh"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Gate Function",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "BEFORE asserting on any mock element: Ask: \"Am I testing real component behavior or just mock existence?\" IF testing mock existence: STOP - Delete the assertion or unmock the compo"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Anti-Pattern 2: Test-Only Methods in Production",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "**The violation:** // ❌ BAD: destroy() only used in tests class Session { async destroy() {  // Looks like production API! await this._workspaceManager?.destroyWorkspace(this.id); "
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Gate Function",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "BEFORE adding any method to production class: Ask: \"Is this only used by tests?\" IF yes: STOP - Don't add it Put it in test utilities instead Ask: \"Does this class own this resourc"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Anti-Pattern 3: Mocking Without Understanding",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "**The violation:** // ❌ BAD: Mock breaks test logic test('detects duplicate server', () => { // Mock prevents config write that test depends on! vi.mock('ToolCatalog', () => ({ dis"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Gate Function",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "BEFORE mocking any method: STOP - Don't mock yet 1. Ask: \"What side effects does the real method have?\" 2. Ask: \"Does this test depend on any of those side effects?\" 3. Ask: \"Do I "
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: testing-anti-patterns",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "testing-anti-patterns",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -22466,7 +29302,7 @@ Fix: Test real behavior or question why you're mocking at all.
 
 **Каталог:** `~/.agents/skills/theme-factory`  
 **Опис:** Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.  
-**Файлів у складі:** 12  
+**Файлів у складі:** 13  
 
 #### Файл: `theme-factory/LICENSE.txt` (11,357 байт)
 ````text
@@ -22674,15 +29510,15 @@ Fix: Test real behavior or question why you're mocking at all.
    limitations under the License.
 ````
 
-#### Файл: `theme-factory/SKILL.md` (3,124 байт)
+#### Файл: `theme-factory/SKILL.md` (3,685 байт)
 ````markdown
 ---
 name: theme-factory
 description: Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.
-license: Complete terms in LICENSE.txt
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
-
 # Theme Factory Skill
 
 This skill provides a curated collection of professional font and color themes themes, each with carefully selected color palettes and font pairings. Once a theme is chosen, it can be applied to any artifact.
@@ -22736,6 +29572,168 @@ After a preferred theme is selected:
 ## Create your Own Theme
 To handle cases where none of the existing themes work for an artifact, create a custom theme. Based on provided inputs, generate a new theme similar to the ones above. Give the theme a similar name describing what the font/color combinations represent. Use any basic description provided to choose appropriate colors/fonts. After generating the theme, show it for review and verification. Following that, apply the theme as described above.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `theme-factory.drakon.json`
+- **Total Algorithmic Nodes:** 8
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: theme-factory
+  2. `[ACTION]` Purpose
+  3. `[ACTION]` Usage Instructions
+  4. `[ACTION]` Themes Available
+  5. `[ACTION]` Theme Details
+  6. `[ACTION]` Application Process
+  7. `[ACTION]` Create your Own Theme
+  8. `[END]` Завершення: theme-factory
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `theme-factory/theme-factory.drakon.json` (4,195 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "theme-factory",
+  "category": "bssd_project_skill",
+  "description": "Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: theme-factory",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Purpose",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "To apply consistent, professional styling to presentation slide decks, use this skill. Each theme includes: - A cohesive color palette with hex codes - Complementary font pairings "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Usage Instructions",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "To apply styling to a slide deck or other artifact:"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Themes Available",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "The following 10 themes are available, each showcased in `theme-showcase.pdf`:"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Theme Details",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Each theme is defined in the `themes/` directory with complete specifications including: - Cohesive color palette with hex codes - Complementary font pairings for headers and body "
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Application Process",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "After a preferred theme is selected: 1. Read the corresponding theme file from the `themes/` directory 2. Apply the specified colors and fonts consistently throughout the deck 3. E"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Create your Own Theme",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "To handle cases where none of the existing themes work for an artifact, create a custom theme. Based on provided inputs, generate a new theme similar to the ones above. Give the th"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: theme-factory",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "theme-factory",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `theme-factory/themes/arctic-frost.md` (544 байт)
@@ -22985,16 +29983,17 @@ Tech startups, software launches, innovation showcases, AI/ML presentations, dig
 
 **Каталог:** `~/.agents/skills/to-spec`  
 **Опис:** Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `to-spec/SKILL.md` (3,073 байт)
+#### Файл: `to-spec/SKILL.md` (3,677 байт)
 ````markdown
 ---
 name: to-spec
 description: Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.
-disable-model-invocation: true
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 This skill takes the current conversation context and codebase understanding and produces a spec (you may know this document as a PRD). Do NOT interview the user — just synthesize what you already know.
 
 The issue tracker and triage label vocabulary should have been provided to you — run `/setup-matt-pocock-skills` if not.
@@ -23065,6 +30064,202 @@ Any further notes about the feature.
 
 </spec-template>
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `to-spec.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: to-spec
+  2. `[ACTION]` Process
+  3. `[ACTION]` Problem Statement
+  4. `[ACTION]` Solution
+  5. `[ACTION]` User Stories
+  6. `[ACTION]` Implementation Decisions
+  7. `[ACTION]` Testing Decisions
+  8. `[ACTION]` Out of Scope
+  9. `[ACTION]` Further Notes
+  10. `[END]` Завершення: to-spec
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `to-spec/to-spec.drakon.json` (4,851 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "to-spec",
+  "category": "bssd_project_skill",
+  "description": "Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: to-spec",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Process",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "1. Explore the repo to understand the current state of the codebase, if you haven't already. Use the project's domain glossary vocabulary throughout the spec, and respect any ADRs "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Problem Statement",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "The problem that the user is facing, from the user's perspective."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Solution",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "The solution to the problem, from the user's perspective."
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "User Stories",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "A LONG, numbered list of user stories. Each user story should be in the format of: 1. As an <actor>, I want a <feature>, so that <benefit> <user-story-example> 1. As a mobile bank "
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Implementation Decisions",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "A list of implementation decisions that were made. This can include: - The modules that will be built/modified - The interfaces of those modules that will be modified - Technical c"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Testing Decisions",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "A list of testing decisions that were made. Include: - A description of what makes a good test (only test external behavior, not implementation details) - Which modules will be tes"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Out of Scope",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "A description of the things that are out of scope for this spec."
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Further Notes",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Any further notes about the feature. </spec-template>"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: to-spec",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "to-spec",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -23074,16 +30269,17 @@ Any further notes about the feature.
 
 **Каталог:** `~/.agents/skills/to-tickets`  
 **Опис:** Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker — edges as text in a local file, or native blocking links on a real tracker.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `to-tickets/SKILL.md` (5,788 байт)
+#### Файл: `to-tickets/SKILL.md` (6,449 байт)
 ````markdown
 ---
 name: to-tickets
 description: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker — edges as text in a local file, or native blocking links on a real tracker.
-disable-model-invocation: true
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # To Tickets
 
 Break a plan, spec, or conversation into a set of **tickets** — tracer-bullet vertical slices, each declaring the tickets that **block** it.
@@ -23193,6 +30389,202 @@ In either form, avoid specific file paths or code snippets — they go stale fas
 Work the frontier one ticket at a time with `/implement`, clearing context between tickets.
 </content>
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `to-tickets.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: to-tickets
+  2. `[ACTION]` Gather context
+  3. `[ACTION]` Explore the codebase (optional)
+  4. `[ACTION]` Draft vertical slices
+  5. `[ACTION]` Quiz the user
+  6. `[ACTION]` Publish the tickets to the configured tracker
+  7. `[ACTION]` <Ticket title>
+  8. `[ACTION]` <Ticket title>
+  9. `[ACTION]` Parent
+  10. `[END]` Завершення: to-tickets
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `to-tickets/to-tickets.drakon.json` (5,279 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "to-tickets",
+  "category": "bssd_project_skill",
+  "description": "Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker — edges as text in a local file, or native blocking links on a real tracker.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: to-tickets",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Gather context",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Work from whatever is already in the conversation context. If the user passes a reference (a spec path, an issue number or URL) as an argument, fetch it and read its full body and "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Explore the codebase (optional)",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "If you have not already explored the codebase, do so to understand the current state of the code. Ticket titles and descriptions should use the project's domain glossary vocabulary"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Draft vertical slices",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "Break the work into **tracer bullet** tickets. <vertical-slice-rules> - Each slice cuts a narrow but COMPLETE path through every layer (schema, API, UI, tests) — vertical, NOT a ho"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Quiz the user",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Present the proposed breakdown as a numbered list. For each ticket, show: - **Title**: short descriptive name - **Blocked by**: which other tickets (if any) must complete first - *"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Publish the tickets to the configured tracker",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Publish the approved tickets. **How** depends on the tracker `/setup-matt-pocock-skills` configured — the tickets are the same either way, only the shape of the blocking edges chan"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "<Ticket title>",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "**What to build:** the end-to-end behaviour this ticket makes work, from the user's perspective — not a layer-by-layer implementation list. **Blocked by:** the titles of the ticket"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "<Ticket title>",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "... </tickets-file-template> <issue-template>"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Parent",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "A reference to the parent issue on the tracker (if the source was an existing issue, otherwise omit this section)."
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: to-tickets",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "to-tickets",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -23202,15 +30594,17 @@ Work the frontier one ticket at a time with `/implement`, clearing context betwe
 
 **Каталог:** `~/.agents/skills/using-git-worktrees`  
 **Опис:** Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `using-git-worktrees/SKILL.md` (5,509 байт)
+#### Файл: `using-git-worktrees/SKILL.md` (6,290 байт)
 ````markdown
 ---
 name: using-git-worktrees
 description: Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Using Git Worktrees
 
 ## Overview
@@ -23420,6 +30814,202 @@ Ready to implement auth feature
 - **finishing-a-development-branch** - REQUIRED for cleanup after work complete
 - **executing-plans** or **subagent-driven-development** - Work happens in this worktree
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `using-git-worktrees.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: using-git-worktrees
+  2. `[ACTION]` Overview
+  3. `[ACTION]` Directory Selection Process
+  4. `[ACTION]` Check Existing Directories
+  5. `[ACTION]` Check CLAUDE.md
+  6. `[ACTION]` Ask User
+  7. `[ACTION]` For Project-Local Directories (.worktrees or worktrees)
+  8. `[ACTION]` For Global Directory (~/.config/superpowers/worktrees)
+  9. `[ACTION]` Detect Project Name
+  10. `[END]` Завершення: using-git-worktrees
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `using-git-worktrees/using-git-worktrees.drakon.json` (5,063 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "using-git-worktrees",
+  "category": "bssd_system_skill",
+  "description": "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: using-git-worktrees",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Git worktrees create isolated workspaces sharing the same repository, allowing work on multiple branches simultaneously without switching. **Core principle:** Systematic directory "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Directory Selection Process",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Follow this priority order:"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Check Existing Directories",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "# Check in priority order ls -d .worktrees 2>/dev/null     # Preferred (hidden) ls -d worktrees 2>/dev/null      # Alternative **If found:** Use that directory. If both exist, `.wo"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Check CLAUDE.md",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "grep -i \"worktree.*director\" CLAUDE.md 2>/dev/null **If preference specified:** Use it without asking."
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Ask User",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "If no directory exists and no CLAUDE.md preference: No worktree directory found. Where should I create worktrees? 1. .worktrees/ (project-local, hidden) 2. ~/.config/superpowers/wo"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "For Project-Local Directories (.worktrees or worktrees)",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "**MUST verify .gitignore before creating worktree:** # Check if directory pattern in .gitignore grep -q \"^\\.worktrees/$\" .gitignore || grep -q \"^worktrees/$\" .gitignore **If NOT in"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "For Global Directory (~/.config/superpowers/worktrees)",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "No .gitignore verification needed - outside project entirely."
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Detect Project Name",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "project=$(basename \"$(git rev-parse --show-toplevel)\")"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: using-git-worktrees",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "using-git-worktrees",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -23429,15 +31019,17 @@ Ready to implement auth feature
 
 **Каталог:** `~/.agents/skills/utopia-intent-ledger`  
 **Опис:** Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge graph.  
-**Файлів у складі:** 3  
+**Файлів у складі:** 4  
 
-#### Файл: `utopia-intent-ledger/SKILL.md` (1,884 байт)
+#### Файл: `utopia-intent-ledger/SKILL.md` (2,681 байт)
 ````markdown
 ---
 name: utopia-intent-ledger
 description: Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge graph.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Utopia Intent Ledger Skill
 
 Manages bitemporal Write-Once-Read-Many (WORM) ledger operations, enforces tripartite ADR ontology contracts (Data, Skill, Spec), and performs synchronized ledger writes to Utopia DB on node `192.168.3.251:9922`.
@@ -23476,6 +31068,168 @@ python3 ~/.agents/skills/utopia-intent-ledger/scripts/validate_ontology.py
 - **ADR-001 (Bitemporal Intent Graph):** Dual-timeline persistence guarantees non-destructive rollbacks and time-travel audits.
 - **ADR-002 (Pure Stdlib Core):** Ledger drivers use pure Python standard library HTTP/JSON handling.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `utopia-intent-ledger.drakon.json`
+- **Total Algorithmic Nodes:** 8
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: utopia-intent-ledger
+  2. `[ACTION]` Bitemporal Dimensions: Every intent record tracks two indepe
+  3. `[ACTION]` Tripartite ADR Taxonomy:
+  4. `[ACTION]` WORM Immutability: Superseded decisions are never physically
+  5. `[ACTION]` A. Synchronize ADRs with Utopia DB Node (.251)
+  6. `[ACTION]` B. Validate Tripartite ADR Ontology
+  7. `[ACTION]` Invariants & Architecture Compliance
+  8. `[END]` Завершення: utopia-intent-ledger
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `utopia-intent-ledger/utopia-intent-ledger.drakon.json` (4,129 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "utopia-intent-ledger",
+  "category": "bssd_system_skill",
+  "description": "Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge graph.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: utopia-intent-ledger",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Bitemporal Dimensions: Every intent record tracks two indepe",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "- **System Time (Tx):** The exact immutable moment the transaction was logged into the physical ledger. - **Valid Time (Vt):** The real-world window during which the architectural "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Tripartite ADR Taxonomy:",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "- **Data ADR:** Schema definitions, message shapes, data contracts. - **Skill ADR:** Operational agent capabilities, tools, and execution procedures. - **Spec ADR:** Functional req"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "WORM Immutability: Superseded decisions are never physically",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "---"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "A. Synchronize ADRs with Utopia DB Node (.251)",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "python3 ~/.agents/skills/utopia-intent-ledger/scripts/sync_utopia.py"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "B. Validate Tripartite ADR Ontology",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "python3 ~/.agents/skills/utopia-intent-ledger/scripts/validate_ontology.py ---"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Invariants & Architecture Compliance",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "- **ADR-001 (Bitemporal Intent Graph):** Dual-timeline persistence guarantees non-destructive rollbacks and time-travel audits. - **ADR-002 (Pure Stdlib Core):** Ledger drivers use"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: utopia-intent-ledger",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "utopia-intent-ledger",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `utopia-intent-ledger/scripts/sync_utopia.py` (1,701 байт)
@@ -23580,7 +31334,7 @@ if __name__ == "__main__":
 
 **Каталог:** `~/.agents/skills/vercel-composition-patterns`  
 **Опис:** React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.  
-**Файлів у складі:** 11  
+**Файлів у складі:** 12  
 
 #### Файл: `vercel-composition-patterns/AGENTS.md` (22,627 байт)
 ````markdown
@@ -24598,22 +32352,15 @@ lifting state, and composing internals.
 
 ````
 
-#### Файл: `vercel-composition-patterns/SKILL.md` (2,886 байт)
+#### Файл: `vercel-composition-patterns/SKILL.md` (3,582 байт)
 ````markdown
 ---
 name: vercel-composition-patterns
-description:
-  React composition patterns that scale. Use when refactoring components with
-  boolean prop proliferation, building flexible component libraries, or
-  designing reusable APIs. Triggers on tasks involving compound components,
-  render props, context providers, or component architecture. Includes React 19
-  API changes.
-license: MIT
-metadata:
-  author: vercel
-  version: '1.0.0'
+description: React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # React Composition Patterns
 
 Composition patterns for building flexible, maintainable React components. Avoid
@@ -24690,6 +32437,202 @@ Each rule file contains:
 
 For the complete guide with all rules expanded: `AGENTS.md`
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `vercel-composition-patterns.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: vercel-composition-patterns
+  2. `[ACTION]` When to Apply
+  3. `[ACTION]` Rule Categories by Priority
+  4. `[ACTION]` Component Architecture (HIGH)
+  5. `[ACTION]` State Management (MEDIUM)
+  6. `[ACTION]` Implementation Patterns (MEDIUM)
+  7. `[ACTION]` React 19 APIs (MEDIUM)
+  8. `[ACTION]` How to Use
+  9. `[ACTION]` Full Compiled Document
+  10. `[END]` Завершення: vercel-composition-patterns
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `vercel-composition-patterns/vercel-composition-patterns.drakon.json` (5,505 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "vercel-composition-patterns",
+  "category": "bssd_project_skill",
+  "description": "React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: vercel-composition-patterns",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "When to Apply",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Reference these guidelines when: - Refactoring components with many boolean props - Building reusable component libraries - Designing flexible component APIs - Reviewing component "
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Rule Categories by Priority",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "| Priority | Category                | Impact | Prefix          | | -------- | ----------------------- | ------ | --------------- | | 1        | Component Architecture  | HIGH   | "
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Component Architecture (HIGH)",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "- `architecture-avoid-boolean-props` - Don't add boolean props to customize behavior; use composition - `architecture-compound-components` - Structure complex components with share"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "State Management (MEDIUM)",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "- `state-decouple-implementation` - Provider is the only place that knows how state is managed - `state-context-interface` - Define generic interface with state, actions, meta for "
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Implementation Patterns (MEDIUM)",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "- `patterns-explicit-variants` - Create explicit variant components instead of boolean modes - `patterns-children-over-render-props` - Use children for composition instead of rende"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "React 19 APIs (MEDIUM)",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "> **⚠️ React 19+ only.** Skip this section if using React 18 or earlier. - `react19-no-forwardref` - Don't use `forwardRef`; use `use()` instead of `useContext()`"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "How to Use",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "Read individual rule files for detailed explanations and code examples: rules/architecture-avoid-boolean-props.md rules/state-context-interface.md Each rule file contains: - Brief "
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Full Compiled Document",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "For the complete guide with all rules expanded: `AGENTS.md`"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: vercel-composition-patterns",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "vercel-composition-patterns",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `vercel-composition-patterns/rules/architecture-avoid-boolean-props.md` (2,267 байт)
@@ -25609,7 +33552,7 @@ nested inside each other—they just need to be within the same provider.
 
 **Каталог:** `~/.agents/skills/vercel-react-best-practices`  
 **Опис:** React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.  
-**Файлів у складі:** 73  
+**Файлів у складі:** 74  
 
 #### Файл: `vercel-react-best-practices/AGENTS.md` (108,261 байт)
 ````markdown
@@ -29554,17 +37497,15 @@ Originally created by [@shuding](https://x.com/shuding) at [Vercel](https://verc
 
 ````
 
-#### Файл: `vercel-react-best-practices/SKILL.md` (7,251 байт)
+#### Файл: `vercel-react-best-practices/SKILL.md` (8,015 байт)
 ````markdown
 ---
 name: vercel-react-best-practices
 description: React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.
-license: MIT
-metadata:
-  author: vercel
-  version: "1.0.0"
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # Vercel React Best Practices
 
 Comprehensive performance optimization guide for React and Next.js applications, maintained by Vercel. Contains 70 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
@@ -29706,6 +37647,202 @@ Each rule file contains:
 
 For the complete guide with all rules expanded: `AGENTS.md`
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `vercel-react-best-practices.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: vercel-react-best-practices
+  2. `[ACTION]` When to Apply
+  3. `[ACTION]` Rule Categories by Priority
+  4. `[ACTION]` Eliminating Waterfalls (CRITICAL)
+  5. `[ACTION]` Bundle Size Optimization (CRITICAL)
+  6. `[ACTION]` Server-Side Performance (HIGH)
+  7. `[ACTION]` Client-Side Data Fetching (MEDIUM-HIGH)
+  8. `[ACTION]` Re-render Optimization (MEDIUM)
+  9. `[ACTION]` Rendering Performance (MEDIUM)
+  10. `[END]` Завершення: vercel-react-best-practices
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `vercel-react-best-practices/vercel-react-best-practices.drakon.json` (5,717 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "vercel-react-best-practices",
+  "category": "bssd_project_skill",
+  "description": "React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: vercel-react-best-practices",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "When to Apply",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Reference these guidelines when: - Writing new React components or Next.js pages - Implementing data fetching (client or server-side) - Reviewing code for performance issues - Refa"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Rule Categories by Priority",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "| Priority | Category | Impact | Prefix | |----------|----------|--------|--------| | 1 | Eliminating Waterfalls | CRITICAL | `async-` | | 2 | Bundle Size Optimization | CRITICAL |"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Eliminating Waterfalls (CRITICAL)",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "- `async-cheap-condition-before-await` - Check cheap sync conditions before awaiting flags or remote values - `async-defer-await` - Move await into branches where actually used - `"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Bundle Size Optimization (CRITICAL)",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "- `bundle-barrel-imports` - Import directly, avoid barrel files - `bundle-analyzable-paths` - Prefer statically analyzable import and file-system paths to avoid broad bundles and t"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Server-Side Performance (HIGH)",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "- `server-auth-actions` - Authenticate server actions like API routes - `server-cache-react` - Use React.cache() for per-request deduplication - `server-cache-lru` - Use LRU cache "
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Client-Side Data Fetching (MEDIUM-HIGH)",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "- `client-swr-dedup` - Use SWR for automatic request deduplication - `client-event-listeners` - Deduplicate global event listeners - `client-passive-event-listeners` - Use passive "
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Re-render Optimization (MEDIUM)",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "- `rerender-defer-reads` - Don't subscribe to state only used in callbacks - `rerender-memo` - Extract expensive work into memoized components - `rerender-memo-with-default-value` "
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Rendering Performance (MEDIUM)",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "- `rendering-animate-svg-wrapper` - Animate div wrapper, not SVG element - `rendering-content-visibility` - Use content-visibility for long lists - `rendering-hoist-jsx` - Extract "
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: vercel-react-best-practices",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "vercel-react-best-practices",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `vercel-react-best-practices/rules/advanced-effect-event-deps.md` (1,802 байт)
@@ -33990,15 +42127,17 @@ function Profile({ name }: { name: string }) {
 
 **Каталог:** `~/.agents/skills/verification-before-completion`  
 **Опис:** Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `verification-before-completion/SKILL.md` (4,201 байт)
+#### Файл: `verification-before-completion/SKILL.md` (4,925 байт)
 ````markdown
 ---
 name: verification-before-completion
 description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 # Verification Before Completion
 
 ## Overview
@@ -34134,6 +42273,202 @@ Run the command. Read the output. THEN claim the result.
 
 This is non-negotiable.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `verification-before-completion.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: verification-before-completion
+  2. `[ACTION]` Overview
+  3. `[ACTION]` The Iron Law
+  4. `[ACTION]` The Gate Function
+  5. `[ACTION]` Common Failures
+  6. `[ACTION]` Red Flags - STOP
+  7. `[ACTION]` Rationalization Prevention
+  8. `[ACTION]` Key Patterns
+  9. `[ACTION]` Why This Matters
+  10. `[END]` Завершення: verification-before-completion
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `verification-before-completion/verification-before-completion.drakon.json` (5,514 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "verification-before-completion",
+  "category": "bssd_system_skill",
+  "description": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: verification-before-completion",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Claiming work is complete without verification is dishonesty, not efficiency. **Core principle:** Evidence before claims, always. **Violating the letter of this rule is violating t"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "The Iron Law",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE If you haven't run the verification command in this message, you cannot claim it passes."
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "The Gate Function",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "BEFORE claiming any status or expressing satisfaction: 1. IDENTIFY: What command proves this claim? 2. RUN: Execute the FULL command (fresh, complete) 3. READ: Full output, check e"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Common Failures",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "| Claim | Requires | Not Sufficient | |-------|----------|----------------| | Tests pass | Test command output: 0 failures | Previous run, \"should pass\" | | Linter clean | Linter o"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Red Flags - STOP",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "- Using \"should\", \"probably\", \"seems to\" - Expressing satisfaction before verification (\"Great!\", \"Perfect!\", \"Done!\", etc.) - About to commit/push/PR without verification - Trusti"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Rationalization Prevention",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "| Excuse | Reality | |--------|---------| | \"Should work now\" | RUN the verification | | \"I'm confident\" | Confidence ≠ evidence | | \"Just this once\" | No exceptions | | \"Linter pa"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Key Patterns",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "**Tests:** ✅ [Run test command] [See: 34/34 pass] \"All tests pass\" ❌ \"Should pass now\" / \"Looks correct\" **Regression tests (TDD Red-Green):** ✅ Write → Run (pass) → Revert fix → R"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Why This Matters",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "From 24 failure memories: - your human partner said \"I don't believe you\" - trust broken - Undefined functions shipped - would crash - Missing requirements shipped - incomplete fea"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: verification-before-completion",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "verification-before-completion",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -34143,16 +42478,17 @@ This is non-negotiable.
 
 **Каталог:** `~/.agents/skills/wayfinder`  
 **Опис:** Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `wayfinder/SKILL.md` (11,503 байт)
+#### Файл: `wayfinder/SKILL.md` (12,098 байт)
 ````markdown
 ---
 name: wayfinder
 description: Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.
-disable-model-invocation: true
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 A loose idea has arrived — too big for one agent session, and wrapped in fog: the way from here to the **destination** isn't visible yet. Wayfinding is about finding that way, not charging at the destination. This skill charts the way as a **shared map** on the repo's issue tracker, then works its tickets one at a time until the route is clear.
 
 The destination varies per effort, and naming it is the first act of charting — it shapes every ticket. It might be a spec to hand off and iterate on, a decision to lock before planning starts, or a change made in place like a data-structure migration. The map is domain-agnostic — engineering work, course content, whatever fits the shape.
@@ -34275,6 +42611,202 @@ User invokes with a map (URL or number). A ticket is **optional** — without on
 
 The user may run unblocked tickets in parallel, so expect other sessions to be editing the tracker concurrently.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `wayfinder.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: wayfinder
+  2. `[ACTION]` Plan, don't do
+  3. `[ACTION]` Refer by name
+  4. `[ACTION]` The Map
+  5. `[ACTION]` The map body
+  6. `[ACTION]` Destination
+  7. `[ACTION]` Notes
+  8. `[ACTION]` Decisions so far
+  9. `[ACTION]` Not yet specified
+  10. `[END]` Завершення: wayfinder
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `wayfinder/wayfinder.drakon.json` (5,175 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "wayfinder",
+  "category": "bssd_project_skill",
+  "description": "Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: wayfinder",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Plan, don't do",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Wayfinder is **planning** by default: each ticket resolves a decision, and the map is done when the way is clear — nothing left to decide before someone goes and does the thing. Th"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Refer by name",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Every map and ticket is an issue, so it has a **name** — its title. In everything the human reads — narration, the map's Decisions-so-far — refer to it by that name, never by a bar"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "The Map",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "The map is a single issue on this repo's issue tracker, labelled `wayfinder:map` — the canonical artifact. Its tickets are child issues of the map. The map is an **index**, not a s"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "The map body",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "The whole map at low resolution, loaded once per session. Open tickets are **not** listed — they are open child issues, found by query."
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Destination",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "<what reaching the end of this map looks like — the spec, decision, or change this effort is finding its way to. One or two lines; every session orients to it before choosing a tic"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Notes",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "<domain; skills every session should consult; standing preferences for this effort>"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Decisions so far",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "<!-- the index — one line per closed ticket: enough to judge relevance, then zoom the link for the detail the ticket holds --> - [<closed ticket title>](link) — <one-line gist of t"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Not yet specified",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "<!-- see \"Fog of war\": in-scope fog you can't ticket yet; graduates as the frontier advances -->"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: wayfinder",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "wayfinder",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -34284,7 +42816,7 @@ The user may run unblocked tickets in parallel, so expect other sessions to be e
 
 **Каталог:** `~/.agents/skills/web-artifacts-builder`  
 **Опис:** Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.  
-**Файлів у складі:** 4  
+**Файлів у складі:** 5  
 
 #### Файл: `web-artifacts-builder/LICENSE.txt` (11,357 байт)
 ````text
@@ -34492,14 +43024,15 @@ The user may run unblocked tickets in parallel, so expect other sessions to be e
    limitations under the License.
 ````
 
-#### Файл: `web-artifacts-builder/SKILL.md` (3,087 байт)
+#### Файл: `web-artifacts-builder/SKILL.md` (3,803 байт)
 ````markdown
 ---
 name: web-artifacts-builder
 description: Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.
-license: Complete terms in LICENSE.txt
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # Web Artifacts Builder
 
 To build powerful frontend claude.ai artifacts, follow these steps:
@@ -34568,6 +43101,186 @@ To test/visualize the artifact, use available tools (including other Skills or b
 ## Reference
 
 - **shadcn/ui components**: https://ui.shadcn.com/docs/components
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `web-artifacts-builder.drakon.json`
+- **Total Algorithmic Nodes:** 9
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: web-artifacts-builder
+  2. `[ACTION]` Design & Style Guidelines
+  3. `[ACTION]` Step 1: Initialize Project
+  4. `[ACTION]` Step 2: Develop Your Artifact
+  5. `[ACTION]` Step 3: Bundle to Single HTML File
+  6. `[ACTION]` Step 4: Share Artifact with User
+  7. `[ACTION]` Step 5: Testing/Visualizing the Artifact (Optional)
+  8. `[ACTION]` Reference
+  9. `[END]` Завершення: web-artifacts-builder
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `web-artifacts-builder/web-artifacts-builder.drakon.json` (4,823 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "web-artifacts-builder",
+  "category": "bssd_project_skill",
+  "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: web-artifacts-builder",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Design & Style Guidelines",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "VERY IMPORTANT: To avoid what is often referred to as \"AI slop\", avoid using excessive centered layouts, purple gradients, uniform rounded corners, and Inter font."
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Step 1: Initialize Project",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Run the initialization script to create a new React project: bash scripts/init-artifact.sh <project-name> cd <project-name> This creates a fully configured project with: - ✅ React "
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Step 2: Develop Your Artifact",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "To build the artifact, edit the generated files. See **Common Development Tasks** below for guidance."
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Step 3: Bundle to Single HTML File",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "To bundle the React app into a single HTML artifact: bash scripts/bundle-artifact.sh This creates `bundle.html` - a self-contained artifact with all JavaScript, CSS, and dependenci"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Step 4: Share Artifact with User",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Finally, share the bundled HTML file in conversation with the user so they can view it as an artifact."
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Step 5: Testing/Visualizing the Artifact (Optional)",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Note: This is a completely optional step. Only perform if necessary or requested. To test/visualize the artifact, use available tools (including other Skills or built-in tools like"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Reference",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "- **shadcn/ui components**: https://ui.shadcn.com/docs/components"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: web-artifacts-builder",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0
+    }
+  ],
+  "meta": {
+    "skill_name": "web-artifacts-builder",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `web-artifacts-builder/scripts/bundle-artifact.sh` (1,517 байт)
@@ -34962,19 +43675,17 @@ echo "  import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/di
 
 **Каталог:** `~/.agents/skills/web-design-guidelines`  
 **Опис:** Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `web-design-guidelines/SKILL.md` (1,231 байт)
+#### Файл: `web-design-guidelines/SKILL.md` (1,664 байт)
 ````markdown
 ---
 name: web-design-guidelines
 description: Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".
-metadata:
-  author: vercel
-  version: "1.0.0"
-  argument-hint: <file-or-pattern>
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # Web Interface Guidelines
 
 Review files for compliance with Web Interface Guidelines.
@@ -35006,6 +43717,117 @@ When a user provides a file or pattern argument:
 
 If no files specified, ask the user which files to review.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `web-design-guidelines.drakon.json`
+- **Total Algorithmic Nodes:** 5
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: web-design-guidelines
+  2. `[ACTION]` How It Works
+  3. `[ACTION]` Guidelines Source
+  4. `[ACTION]` Usage
+  5. `[END]` Завершення: web-design-guidelines
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `web-design-guidelines/web-design-guidelines.drakon.json` (2,794 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "web-design-guidelines",
+  "category": "bssd_project_skill",
+  "description": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: web-design-guidelines",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "How It Works",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "1. Fetch the latest guidelines from the source URL below 2. Read the specified files (or prompt user for files/pattern) 3. Check against all rules in the fetched guidelines 4. Outp"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Guidelines Source",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "Fetch fresh guidelines before each review: https://raw.githubusercontent.com/vercel-labs/web-interface-guidelines/main/command.md Use WebFetch to retrieve the latest rules. The fet"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Usage",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "When a user provides a file or pattern argument: 1. Fetch guidelines from the source URL above 2. Read the specified files 3. Apply all rules from the fetched guidelines 4. Output "
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: web-design-guidelines",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    }
+  ],
+  "meta": {
+    "skill_name": "web-design-guidelines",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -35015,7 +43837,7 @@ If no files specified, ask the user which files to review.
 
 **Каталог:** `~/.agents/skills/webapp-testing`  
 **Опис:** Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.  
-**Файлів у складі:** 6  
+**Файлів у складі:** 7  
 
 #### Файл: `webapp-testing/LICENSE.txt` (11,357 байт)
 ````text
@@ -35223,14 +44045,15 @@ If no files specified, ask the user which files to review.
    limitations under the License.
 ````
 
-#### Файл: `webapp-testing/SKILL.md` (3,913 байт)
+#### Файл: `webapp-testing/SKILL.md` (4,515 байт)
 ````markdown
 ---
 name: webapp-testing
 description: Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.
-license: Complete terms in LICENSE.txt
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # Web Application Testing
 
 To test local web applications, write native Python Playwright scripts.
@@ -35321,6 +44144,169 @@ with sync_playwright() as p:
   - `element_discovery.py` - Discovering buttons, links, and inputs on a page
   - `static_html_automation.py` - Using file:// URLs for local HTML
   - `console_logging.py` - Capturing console logs during automation
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `webapp-testing.drakon.json`
+- **Total Algorithmic Nodes:** 8
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: webapp-testing
+  2. `[ACTION]` Decision Tree: Choosing Your Approach
+  3. `[ACTION]` Example: Using with_server.py
+  4. `[ACTION]` Inspect rendered DOM:
+  5. `[ACTION]` Common Pitfall
+  6. `[ACTION]` Best Practices
+  7. `[ACTION]` Reference Files
+  8. `[END]` Завершення: webapp-testing
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `webapp-testing/webapp-testing.drakon.json` (4,342 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "webapp-testing",
+  "category": "bssd_project_skill",
+  "description": "Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: webapp-testing",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Decision Tree: Choosing Your Approach",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "User task → Is it static HTML? ├─ Yes → Read HTML file directly to identify selectors │         ├─ Success → Write Playwright script using selectors │         └─ Fails/Incomplete →"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Example: Using with_server.py",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "To start a server, run `--help` first, then use the helper: **Single server:** python scripts/with_server.py --server \"npm run dev\" --port 5173 -- python your_automation.py **Multi"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Inspect rendered DOM:",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "page.screenshot(path='/tmp/inspect.png', full_page=True) content = page.content() page.locator('button').all()"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Common Pitfall",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "❌ **Don't** inspect the DOM before waiting for `networkidle` on dynamic apps ✅ **Do** wait for `page.wait_for_load_state('networkidle')` before inspection"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Best Practices",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "- **Use bundled scripts as black boxes** - To accomplish a task, consider whether one of the scripts available in `scripts/` can help. These scripts handle common, complex workflow"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Reference Files",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "- **examples/** - Examples showing common patterns: - `element_discovery.py` - Discovering buttons, links, and inputs on a page - `static_html_automation.py` - Using file:// URLs f"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: webapp-testing",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "webapp-testing",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 #### Файл: `webapp-testing/examples/console_logging.py` (1,027 байт)
@@ -35560,7 +44546,7 @@ if __name__ == '__main__':
 
 **Каталог:** `~/.agents/skills/writing-great-skills`  
 **Опис:** Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.  
-**Файлів у складі:** 2  
+**Файлів у складі:** 3  
 
 #### Файл: `writing-great-skills/GLOSSARY.md` (18,488 байт)
 ````markdown
@@ -35768,14 +44754,15 @@ _Avoid_: redundant instruction, restating the obvious, belaboring
 
 ````
 
-#### Файл: `writing-great-skills/SKILL.md` (9,414 байт)
+#### Файл: `writing-great-skills/SKILL.md` (10,117 байт)
 ````markdown
 ---
 name: writing-great-skills
 description: Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.
-disable-model-invocation: true
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
 ---
-
 A skill exists to wrangle determinism out of a stochastic system. **Predictability** — the agent taking the same _process_ every run, not producing the same output — is the root virtue; every lever below serves it.
 
 **Bold terms** are defined in [`GLOSSARY.md`](GLOSSARY.md); look them up there for the full meaning.
@@ -35854,6 +44841,202 @@ Use these to diagnose issues the user may be having with the skill.
 - **No-op** — a line the model already obeys by default, so you pay load to say nothing. The test: does it change behaviour versus the default? A weak leading word (_be thorough_ when the agent is already thorough-ish) is a no-op; the fix is a stronger word (_relentless_), not a different technique.
 - **Negation** — steering by prohibition backfires: _don't think of an elephant_ names the elephant and makes it more available, not less. Prompt the **positive** — state the target behaviour so the banned one is never spoken; keep a prohibition only as a hard guardrail you can't phrase positively, and even then pair it with what to do instead.
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `writing-great-skills.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: writing-great-skills
+  2. `[ACTION]` Invocation
+  3. `[ACTION]` Writing the description
+  4. `[ACTION]` Information hierarchy
+  5. `[ACTION]` External reference — reference pushed out of `SKILL.md` into
+  6. `[ACTION]` When to split
+  7. `[ACTION]` Pruning
+  8. `[ACTION]` Leading words
+  9. `[ACTION]` Failure modes
+  10. `[END]` Завершення: writing-great-skills
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `writing-great-skills/writing-great-skills.drakon.json` (5,407 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "writing-great-skills",
+  "category": "bssd_system_skill",
+  "description": "Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: writing-great-skills",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Invocation",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Two choices, trading different costs: - A **model-invoked** skill keeps a **description**, so the agent can fire it autonomously _and_ other skills can reach it (you can still type"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Writing the description",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "A model-invoked **description** does two jobs — state what the skill is, and list the **branches** that should trigger it. Every word increases **context load**, so a description e"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Information hierarchy",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "A skill is built from two content types — **steps** and **reference** — that mix freely: a skill can be all steps, all reference, or both. The core decision is which to use and whe"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "External reference — reference pushed out of `SKILL.md` into",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "A demanding completion criterion drives thorough **legwork** — the digging the agent does within the work — whether the skill has steps or not, since \"every rule applied\" binds fla"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "When to split",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "**Granularity** is how finely you divide skills, and each cut spends one of the two loads, so split only when the cut earns it. Two cuts: - **By invocation** — split off a **model-"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Pruning",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Keep each meaning in a **single source of truth**: one authoritative place, so changing the behaviour is a one-place edit. Check every line for **relevance**: does it still bear on"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Leading words",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "A **leading word** is a compact concept already living in the model's pretraining that the agent thinks with while running the skill (e.g. _lesson_, _fog of war_, _tracer bullets_)"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Failure modes",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "Use these to diagnose issues the user may be having with the skill. - **Premature completion** — ending a step before it's genuinely done, attention slipping to _being done_. Defen"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: writing-great-skills",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "writing-great-skills",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -35863,15 +45046,17 @@ Use these to diagnose issues the user may be having with the skill.
 
 **Каталог:** `~/.agents/skills/writing-plans`  
 **Опис:** Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans with exact file paths, complete code examples, and verification steps assuming engineer has minimal domain knowledge  
-**Файлів у складі:** 1  
+**Файлів у складі:** 2  
 
-#### Файл: `writing-plans/SKILL.md` (3,453 байт)
+#### Файл: `writing-plans/SKILL.md` (4,064 байт)
 ````markdown
 ---
 name: writing-plans
 description: Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans with exact file paths, complete code examples, and verification steps assuming engineer has minimal domain knowledge
+type: PROJECT_SKILL
+category: general
+immutable: false
 ---
-
 # Writing Plans
 
 ## Overview
@@ -35984,6 +45169,168 @@ After saving the plan, offer execution choice:
 - Guide them to open new session in worktree
 - **REQUIRED SUB-SKILL:** New session uses superpowers:executing-plans
 
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `writing-plans.drakon.json`
+- **Total Algorithmic Nodes:** 8
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: writing-plans
+  2. `[ACTION]` Overview
+  3. `[ACTION]` Bite-Sized Task Granularity
+  4. `[ACTION]` Plan Document Header
+  5. `[ACTION]` Task N: [Component Name]
+  6. `[ACTION]` Remember
+  7. `[ACTION]` Execution Handoff
+  8. `[END]` Завершення: writing-plans
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `writing-plans/writing-plans.drakon.json` (4,457 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "writing-plans",
+  "category": "bssd_project_skill",
+  "description": "Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans with exact file paths, complete code examples, and verification steps assuming engineer has minimal domain knowledge",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: writing-plans",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Bite-Sized Task Granularity",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "**Each step is one action (2-5 minutes):** - \"Write the failing test\" - step - \"Run it to make sure it fails\" - step - \"Implement the minimal code to make the test pass\" - step - \""
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "Plan Document Header",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "**Every plan MUST start with this header:** # [Feature Name] Implementation Plan > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-b"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Task N: [Component Name]",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "**Files:** - Create: `exact/path/to/file.py` - Modify: `exact/path/to/existing.py:123-145` - Test: `tests/exact/path/to/test.py` **Step 1: Write the failing test** def test_specifi"
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "action",
+      "label": "Remember",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "- Exact file paths always - Complete code in plan (not \"add validation\") - Exact commands with expected output - Reference relevant skills with @ syntax - DRY, YAGNI, TDD, frequent"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Execution Handoff",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "After saving the plan, offer execution choice: **\"Plan complete and saved to `docs/plans/<filename>.md`. Two execution options:** **1. Subagent-Driven (this session)** - I dispatch"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: writing-plans",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "writing-plans",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---
@@ -35993,15 +45340,18 @@ After saving the plan, offer execution choice:
 
 **Каталог:** `~/.agents/skills/writing-skills`  
 **Опис:** Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with subagents before writing, iterating until bulletproof against rationalization  
-**Файлів у складі:** 3  
+**Файлів у складі:** 4  
 
-#### Файл: `writing-skills/SKILL.md` (20,819 байт)
+#### Файл: `writing-skills/SKILL.md` (21,632 байт)
 ````markdown
 ---
 name: writing-skills
 description: Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with subagents before writing, iterating until bulletproof against rationalization
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [condition-based-waiting, test-driven-development]
 ---
-
 # Writing Skills
 
 ## Overview
@@ -36619,6 +45969,23 @@ Same cycle: RED (baseline) → GREEN (write skill) → REFACTOR (close loopholes
 Same benefits: Better quality, fewer surprises, bulletproof results.
 
 If you follow TDD for code, follow it for skills. It's the same discipline applied to documentation.
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `writing-skills.drakon.json`
+- **Total Algorithmic Nodes:** 10
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: writing-skills
+  2. `[INSERTION]` CALL_SKILL(test-driven-development): Overview
+  3. `[ACTION]` What is a Skill?
+  4. `[ACTION]` TDD Mapping for Skills
+  5. `[ACTION]` When to Create a Skill
+  6. `[INSERTION]` CALL_SKILL(condition-based-waiting): Technique
+  7. `[ACTION]` Pattern
+  8. `[ACTION]` Reference
+  9. `[ACTION]` Directory Structure
+  10. `[END]` Завершення: writing-skills
+<!-- DRAKON_VISUAL_FLOW_END -->
 
 ````
 
@@ -37967,6 +47334,187 @@ When designing a skill, ask:
 4. **Am I combining too many?** (Don't use all seven)
 5. **Is this ethical?** (Serves user's genuine interests?)
 
+````
+
+#### Файл: `writing-skills/writing-skills.drakon.json` (5,282 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "writing-skills",
+  "category": "bssd_system_skill",
+  "description": "Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with subagents before writing, iterating until bulletproof against rationalization",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: writing-skills",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(test-driven-development): Overview",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "test-driven-development"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "**Writing skills IS Test-Driven Development applied to process documentation.** **Personal skills live in agent-specific directories (`~/.claude/skills` for Claude Code, `~/.codex/"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "What is a Skill?",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "A **skill** is a reference guide for proven techniques, patterns, or tools. Skills help future Claude instances find and apply effective approaches. **Skills are:** Reusable techni"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "action",
+      "label": "TDD Mapping for Skills",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "| TDD Concept | Skill Creation | |-------------|----------------| | **Test case** | Pressure scenario with subagent | | **Production code** | Skill document (SKILL.md) | | **Test f"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "When to Create a Skill",
+      "edges": {
+        "down": "step_5",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "**Create when:** - Technique wasn't intuitively obvious to you - You'd reference this again across projects - Pattern applies broadly (not project-specific) - Others would benefit "
+    },
+    {
+      "node_id": "step_5",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(condition-based-waiting): Technique",
+      "edges": {
+        "down": "step_6",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "condition-based-waiting"
+      },
+      "x": 0.0,
+      "y": 10.0,
+      "instructions": "Concrete method with steps to follow (condition-based-waiting, root-cause-tracing)"
+    },
+    {
+      "node_id": "step_6",
+      "node_type": "action",
+      "label": "Pattern",
+      "edges": {
+        "down": "step_7",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0,
+      "instructions": "Way of thinking about problems (flatten-with-flags, test-invariants)"
+    },
+    {
+      "node_id": "step_7",
+      "node_type": "action",
+      "label": "Reference",
+      "edges": {
+        "down": "step_8",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0,
+      "instructions": "API docs, syntax guides, tool documentation (office docs)"
+    },
+    {
+      "node_id": "step_8",
+      "node_type": "action",
+      "label": "Directory Structure",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0,
+      "instructions": "skills/ skill-name/ SKILL.md              # Main reference (required) supporting-file.*     # Only if needed **Flat namespace** - all skills in one searchable namespace **Separate "
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: writing-skills",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    }
+  ],
+  "meta": {
+    "skill_name": "writing-skills",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
 ````
 
 ---

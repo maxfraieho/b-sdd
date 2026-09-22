@@ -38,8 +38,15 @@ from src.core.crypto_verifier import AirGappedProofValidator
 from src.adapters.cluster_sync import ClusterNodeRegistry, ClusterLeaseManager
 from src.adapters.consensus_engine import ConsensusEngine
 from src.adapters.self_healing_engine import SelfHealingEngine
+from src.core.dto.skills import SkillDTO, SkillsResponseDTO
+from src.core.drakon.skill_visual_bridge import (
+    load_skill_drakon,
+    save_skill_drakon,
+    list_skills_dto,
+)
 
 GLOBAL_CLUSTER_REGISTRY = ClusterNodeRegistry()
+
 GLOBAL_LEASE_MANAGER = ClusterLeaseManager()
 GLOBAL_CONSENSUS_ENGINE = ConsensusEngine()
 GLOBAL_HEALING_ENGINE = SelfHealingEngine()
@@ -321,8 +328,14 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_get_consensus_proposals()
         elif path == "/api/healing/status":
             self.handle_get_healing_status()
+        elif path == "/api/skills":
+            self.handle_get_skills()
+        elif path.startswith("/api/skills/") and path.endswith("/drakon"):
+            skill_name = path[len("/api/skills/"): -len("/drakon")].strip("/")
+            self.handle_get_skill_drakon(skill_name)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
+
 
     def do_POST(self):
         """Dispatch POST requests."""
@@ -389,10 +402,37 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             self.handle_post_healing_checkpoint(body)
         elif path == "/api/healing/compensate":
             self.handle_post_healing_compensate(body)
+        elif path.startswith("/api/skills/") and path.endswith("/drakon"):
+            skill_name = path[len("/api/skills/"): -len("/drakon")].strip("/")
+            self.handle_put_skill_drakon(skill_name, body)
         else:
             self._send_error(f"Endpoint not found: {path}", 404)
 
+    def do_PUT(self):
+        """Dispatch PUT requests."""
+        self._req_start = time.perf_counter()
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path.rstrip("/")
+
+        # Read JSON body
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = {}
+        if content_length > 0:
+            try:
+                raw_data = self.rfile.read(content_length).decode("utf-8")
+                body = json.loads(raw_data)
+            except Exception as e:
+                self._send_error(f"Malformed JSON body: {e}", 400)
+                return
+
+        if path.startswith("/api/skills/") and path.endswith("/drakon"):
+            skill_name = path[len("/api/skills/"): -len("/drakon")].strip("/")
+            self.handle_put_skill_drakon(skill_name, body)
+        else:
+            self._send_error(f"Endpoint not found for PUT: {path}", 404)
+
     # --------------------------------------------------------------------------
+
     # Handlers
     # --------------------------------------------------------------------------
 
@@ -1724,8 +1764,38 @@ class WorkbenchRequestHandler(BaseHTTPRequestHandler):
             "madr": madr
         })
 
+    def handle_get_skills(self):
+        """GET /api/skills: List all available skills partitioned by taxonomy (ADR-015)."""
+        try:
+            skills = list_skills_dto()
+            resp = SkillsResponseDTO.from_skills_list(skills)
+            self._send_json(resp.to_dict())
+        except Exception as e:
+            self._send_error(f"Failed to list skills: {e}", 500)
+
+    def handle_get_skill_drakon(self, skill_name: str):
+        """GET /api/skills/{name}/drakon: Retrieve or synthesize DRAKON schema for skill (ADR-015)."""
+        try:
+            schema = load_skill_drakon(skill_name)
+            self._send_json(schema)
+        except FileNotFoundError as e:
+            self._send_error(str(e), 404)
+        except Exception as e:
+            self._send_error(f"Failed to load DRAKON schema for skill '{skill_name}': {e}", 500)
+
+    def handle_put_skill_drakon(self, skill_name: str, body: Dict[str, Any]):
+        """PUT/POST /api/skills/{name}/drakon: Save DRAKON schema & sync SKILL.md (ADR-015)."""
+        try:
+            res = save_skill_drakon(skill_name, body)
+            self._send_json(res)
+        except ValueError as e:
+            self._send_error(str(e), 400)
+        except Exception as e:
+            self._send_error(f"Failed to save DRAKON schema for skill '{skill_name}': {e}", 500)
+
 
 class WorkbenchServer:
+
     """Server manager for the B-SDD developer workbench bridge."""
 
     def __init__(self, host: Optional[str] = None, port: Optional[int] = None):

@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "name": "b-sdd",
+  "category": "bssd_system_skill",
+  "description": "Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.",
+  "params": "context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: b-sdd",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(architecture-designer): Pre-Flight Phase (Always First)",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "architecture-designer"
+      },
+      "x": 0.0,
+      "y": 2.0,
+      "instructions": "Before planning or writing code: 1. Ensure `.context/active_rules.md` is compiled. If starting fresh, invoke `./run_agy.sh` or run: python3 -m src.cli.main compile 2. Read `.contex"
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Decision & Supersession Protocol (Changing Architecture)",
+      "edges": {
+        "down": "step_3",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0,
+      "instructions": "When introducing a new architecture pattern or retiring an old one: 1. Do NOT delete old ADRs or leave conflicting rules in the repo. 2. Create a new ADR using the CLI or template:"
+    },
+    {
+      "node_id": "step_3",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(skill-creator): The Rule of 2 (Autonomous Skill Crystallization)",
+      "edges": {
+        "down": "step_4",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "skill-creator"
+      },
+      "x": 0.0,
+      "y": 6.0,
+      "instructions": "If you observe or execute an operational sequence, diagnostic workflow, or API integration that repeats **$\\ge 2$ times** without a standardized agent skill: - Stop and propose cre"
+    },
+    {
+      "node_id": "step_4",
+      "node_type": "action",
+      "label": "Verification Gate (Before Any Commit)",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0,
+      "instructions": "Before committing or completing a task: 1. Run the automated architecture fitness suite: pytest -v tests/test_architecture_fitness.py 2. Ensure all 5 criteria pass: - Compile laten"
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: b-sdd",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "b-sdd",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
