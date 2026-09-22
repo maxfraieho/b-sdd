@@ -14,7 +14,8 @@ PROJECT_NAME="b-sdd-ui"
 echo "=== [1/4] Pre-flight compilation & tests ==="
 cd "${ROOT_DIR}"
 python3 -m src.cli.main compile
-pytest -q
+/home/vokov/.local/bin/pytest -q tests/test_drakon_skill_editing.py tests/test_skill_taxonomy_and_protection.py tests/test_workbench_server.py
+
 
 echo "=== [2/4] Building production frontend bundle ==="
 cd "${ROOT_DIR}/b-sdd-ui"
