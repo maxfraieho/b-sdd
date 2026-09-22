@@ -1,16 +1,16 @@
 {
   "schema_version": "1.0",
-  "name": "b-sdd",
+  "name": "architecture-designer",
   "category": "bssd_system_skill",
-  "description": "Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.",
-  "params": "context: dict, task_scope: str",
+  "description": "Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабованості.",
+  "params": "system_intent: str, target_constraints: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Контроль архітектурних інваріантів B-SDD",
+      "label": "Початок: Проектування архітектури та оформлення ADR",
       "edges": {
-        "down": "step_find_skills",
+        "down": "step_1",
         "right": null
       },
       "semantic_binding": {
@@ -21,26 +21,25 @@
       "y": 0.0
     },
     {
-      "node_id": "step_find_skills",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(find-skills): Крок 1: Префлайт пошук активних скілів",
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Крок 1: Аналіз функціональних та нефункціональних вимог",
       "edges": {
-        "down": "step_compile_rules",
+        "down": "step_2",
         "right": null
       },
       "semantic_binding": {
-        "call_skill": "find-skills",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 2.0
     },
     {
-      "node_id": "step_compile_rules",
+      "node_id": "step_2",
       "node_type": "action",
-      "label": "Крок 2: Перевірка та компіляція .context/active_rules.md",
+      "label": "Крок 2: Оцінка архітектурних альтернатив та компромісів",
       "edges": {
-        "down": "check_preflight",
+        "down": "check_constraints",
         "right": null
       },
       "semantic_binding": {
@@ -50,12 +49,12 @@
       "y": 4.0
     },
     {
-      "node_id": "check_preflight",
+      "node_id": "check_constraints",
       "node_type": "question",
-      "label": "Крок 3: Префлайт інваріанти задоволені?",
+      "label": "Крок 3: Архітектурні обмеження задовільні?",
       "edges": {
-        "down": "step_skill_creator",
-        "right": "err_preflight"
+        "down": "step_call_bsdd",
+        "right": "err_constraints"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -64,9 +63,9 @@
       "y": 6.0
     },
     {
-      "node_id": "err_preflight",
+      "node_id": "err_constraints",
       "node_type": "end",
-      "label": "Аварійне завершення: Порушення інваріантів B-SDD",
+      "label": "Аварійне завершення: Невідповідність системних обмежень",
       "edges": {
         "down": null,
         "right": null
@@ -78,24 +77,24 @@
       "y": 6.0
     },
     {
-      "node_id": "step_skill_creator",
+      "node_id": "step_call_bsdd",
       "node_type": "insertion",
-      "label": "CALL_SKILL(skill-creator): Крок 4: Кристалізація за Правилом 2-х повторень",
+      "label": "CALL_SKILL(b-sdd): Крок 4: Перевірка стандартів B-SDD та реєстру ADR",
       "edges": {
-        "down": "step_fitness",
+        "down": "step_gen",
         "right": null
       },
       "semantic_binding": {
-        "call_skill": "skill-creator",
+        "call_skill": "b-sdd",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 8.0
     },
     {
-      "node_id": "step_fitness",
+      "node_id": "step_gen",
       "node_type": "action",
-      "label": "Крок 5: Запуск тестового набору фітнесу архітектури",
+      "label": "Крок 5: Генерація документа ADR та структурних моделей",
       "edges": {
         "down": "end_success",
         "right": null
@@ -109,7 +108,7 @@
     {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Архітектурну відповідність підтверджено",
+      "label": "Успішне завершення: Архітектурне рішення зафіксовано",
       "edges": {
         "down": null,
         "right": null
@@ -122,7 +121,7 @@
     }
   ],
   "meta": {
-    "skill_name": "b-sdd",
+    "skill_name": "architecture-designer",
     "skill_type": "SYSTEM_SKILL",
     "immutable": true,
     "skewer_x": 0.0,

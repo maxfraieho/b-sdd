@@ -1,6 +1,6 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP (ADR-015 TAXONOMY)
 
-**Згенеровано:** 2026-09-22 10:19:37Z  
+**Згенеровано:** 2026-09-22 11:07:41Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
 **Загальна кількість скілів:** **59** (🌟 **34** System Skills, 🛠️ **25** Project Skills)  
@@ -19,13 +19,13 @@
 
 | # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |
 |---|---|---|:---:|---|
-| 1 | [**architecture-designer**](#skill-architecture-designer) | Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create ar... | ✅ | `SKILL.md`, `architecture-designer.drakon.json` +5 |
-| 2 | [**astryx-scaffolder**](#skill-astryx-scaffolder) | Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbenc... | ✅ | `SKILL.md`, `astryx-scaffolder.drakon.json` +1 |
-| 3 | [**b-sdd**](#skill-b-sdd) | Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework. | ✅ | `SKILL.md`, `b-sdd.drakon.json` |
-| 4 | [**b-sdd-kindle-docs**](#skill-b-sdd-kindle-docs) | Autonomous pipeline for compiling B-SDD architecture documentation and operator handbook into standard EPUB 3.0 ebooks and dispatching th... | ✅ | `SKILL.md`, `b-sdd-kindle-docs.drakon.json` +2 |
-| 5 | [**b-sdd-notebooklm-sync**](#skill-b-sdd-notebooklm-sync) | Autonomous pipeline for synchronizing B-SDD codebase dumps, active bitemporal ADRs from Utopia DB (.251), comprehensive 10-chapter docume... | ✅ | `SKILL.md`, `b-sdd-notebooklm-sync.drakon.json` +1 |
-| 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words)... | ✅ | `SKILL.md`, `b-sdd-sprint-closure.drakon.json` +1 |
-| 7 | [**b-sdd-ui-export**](#skill-b-sdd-ui-export) | Autonomous pipeline for synthesizing Gemini Spark-optimized structured plain-text dumps of Astryx Cockpit UI (b-sdd-ui), staging into wor... | ✅ | `SKILL.md`, `b-sdd-ui-export.drakon.json` |
+| 1 | [**architecture-designer**](#skill-architecture-designer) | Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабо... | ✅ | `SKILL.md`, `architecture-designer.drakon.json` +5 |
+| 2 | [**astryx-scaffolder**](#skill-astryx-scaffolder) | Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища опер... | ✅ | `SKILL.md`, `astryx-scaffolder.drakon.json` +1 |
+| 3 | [**b-sdd**](#skill-b-sdd) | Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правило... | ✅ | `SKILL.md`, `b-sdd.drakon.json` |
+| 4 | [**b-sdd-kindle-docs**](#skill-b-sdd-kindle-docs) | Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184. | ✅ | `SKILL.md`, `b-sdd-kindle-docs.drakon.json` +2 |
+| 5 | [**b-sdd-notebooklm-sync**](#skill-b-sdd-notebooklm-sync) | Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google Noteboo... | ✅ | `SKILL.md`, `b-sdd-notebooklm-sync.drakon.json` +1 |
+| 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та... | ✅ | `SKILL.md`, `b-sdd-sprint-closure.drakon.json` +1 |
+| 7 | [**b-sdd-ui-export**](#skill-b-sdd-ui-export) | Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM. | ✅ | `SKILL.md`, `b-sdd-ui-export.drakon.json` |
 | 8 | [**cloudflare-pages-expert**](#skill-cloudflare-pages-expert) | Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages чер... | ✅ | `SKILL.md`, `cloudflare-pages-expert.drakon.json` |
 | 9 | [**code-reviewer**](#skill-code-reviewer) | Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1... | ✅ | `SKILL.md`, `code-reviewer.drakon.json` +6 |
 | 10 | [**codebase-design**](#skill-codebase-design) | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportuni... | ✅ | `SKILL.md`, `DEEPENING.md` +2 |
@@ -60,9 +60,9 @@
 
 | # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |
 |---|---|---|:---:|---|
-| 1 | [**api-designer**](#skill-api-designer) | Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, ver... | ✅ | `SKILL.md`, `api-designer.drakon.json` +5 |
-| 2 | [**ast-grep**](#skill-ast-grep) | Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract S... | ✅ | `SKILL.md`, `README.md` +2 |
-| 3 | [**brainstorming**](#skill-brainstorming) | Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through coll... | ✅ | `SKILL.md`, `brainstorming.drakon.json` |
+| 1 | [**api-designer**](#skill-api-designer) | Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів. | ✅ | `SKILL.md`, `api-designer.drakon.json` +5 |
+| 2 | [**ast-grep**](#skill-ast-grep) | Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST). | ✅ | `SKILL.md`, `README.md` +2 |
+| 3 | [**brainstorming**](#skill-brainstorming) | Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду. | ✅ | `SKILL.md`, `brainstorming.drakon.json` |
 | 4 | [**caveman**](#skill-caveman) | Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Su... | ✅ | `SKILL.md`, `README.md` +1 |
 | 5 | [**cli-developer**](#skill-cli-developer) | Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, disp... | ✅ | `SKILL.md`, `cli-developer.drakon.json` +5 |
 | 6 | [**code-documenter**](#skill-code-documenter) | Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, ... | ✅ | `SKILL.md`, `code-documenter.drakon.json` +8 |
@@ -94,252 +94,153 @@
 ### [1/59] Скіл: `api-designer`
 
 **Каталог:** `~/.agents/skills/api-designer`  
-**Опис:** Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.  
+**Опис:** Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів.  
 **Файлів у складі:** 7  
 
-#### Файл: `api-designer/SKILL.md` (7,979 байт)
+#### Файл: `api-designer/SKILL.md` (5,165 байт)
 ````markdown
 ---
 name: api-designer
-description: Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.
+description: Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів.
 type: PROJECT_SKILL
-category: general
+category: api-design
 immutable: false
+invoked_skills: []
 ---
+
 # API Designer
+Скіл для проектування масштабованих, консистентних інтерфейсів прикладного програмування (REST та GraphQL) з повною специфікацією згідно зі стандартом OpenAPI 3.1. Забезпечує моделювання життєвого циклу ресурсів, стандартизацію обробки помилок за RFC 7807, стратегії пагінації та версіонування.
 
-Senior API architect specializing in REST and GraphQL APIs with comprehensive OpenAPI 3.1 specifications.
+--------------------------------------------------------------------------------
 
-## Core Workflow
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: Відповідає ADR-015 (таксономія скілів) та ADR-016 (алгоритмічний псевдокод та ДРАКОН-ізоморфізм).
+Negative Invariants
+:
+NEVER
+ використовувати дієслова в шляхах ресурсів URIs (заборонено 
+/getUser/{id}
+, дозволено 
+/users/{id}
+).
+NEVER
+ повертати нетипізовані або неузгоджені структури помилок (обов'язкове дотримання RFC 7807 Problem Details).
+NEVER
+ ігнорувати семантику HTTP-статусів (заборонено повертати 200 OK з тілом 
+{"error": ...}
+).
+NEVER
+ публікувати API без попередньої перевірки валідності схеми лінтером Redocly (
+npx @redocly/cli lint
+).
+NEVER
+ створювати незворотні зміни без зміни версії або плану депрекації.
 
-1. **Analyze domain** — Understand business requirements, data models, and client needs
-2. **Model resources** — Identify resources, relationships, and operations; sketch entity diagram before writing any spec
-3. **Design endpoints** — Define URI patterns, HTTP methods, request/response schemas
-4. **Specify contract** — Create OpenAPI 3.1 spec; validate before proceeding: `npx @redocly/cli lint openapi.yaml`
-5. **Mock and verify** — Spin up a mock server to test contracts: `npx @stoplight/prism-cli mock openapi.yaml`
-6. **Plan evolution** — Design versioning, deprecation, and backward-compatibility strategy
+--------------------------------------------------------------------------------
 
-## Reference Guide
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteApiDesigner
+INPUT:
+    domain_requirements: dict
+    api_style: str ("REST" | "GraphQL")
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+    spec_path: str
 
-Load detailed guidance based on context:
+BEGIN
+    TRY
+        ASSERT domain_requirements != null
+        ASSERT api_style IN ["REST", "GraphQL"]
 
-| Topic | Reference | Load When |
-|-------|-----------|-----------|
-| REST Patterns | `references/rest-patterns.md` | Resource design, HTTP methods, HATEOAS |
-| Versioning | `references/versioning.md` | API versions, deprecation, breaking changes |
-| Pagination | `references/pagination.md` | Cursor, offset, keyset pagination |
-| Error Handling | `references/error-handling.md` | Error responses, RFC 7807, status codes |
-| OpenAPI | `references/openapi.md` | OpenAPI 3.1, documentation, code generation |
+        // STEP 1: Main vertical spine - Resource Modeling (X=0.0, Y=2.0)
+        EXECUTE ModelDomainResources(domain_requirements)
 
-## Constraints
+        // STEP 2: Main vertical spine - Endpoints & Schema Design (X=0.0, Y=4.0)
+        EXECUTE DesignEndpointsAndSchemas(api_style)
 
-### MUST DO
-- Follow REST principles (resource-oriented, proper HTTP methods)
-- Use consistent naming conventions (snake_case or camelCase — pick one, apply everywhere)
-- Include comprehensive OpenAPI 3.1 specification
-- Design proper error responses with actionable messages (RFC 7807)
-- Implement pagination for all collection endpoints
-- Version APIs with clear deprecation policies
-- Document authentication and authorization
-- Provide request/response examples
+        // STEP 3: Question Node - Schema Linting Verification (X=0.0, Y=6.0)
+        IF ValidateOpenApiSpec() THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+            LOG_ERROR("OpenAPI 3.1 specification linting failed")
+            HALT_AND_DEGRADE("INVALID_SPECIFICATION_SCHEMA")
+        FI
 
-### MUST NOT DO
-- Use verbs in resource URIs (use `/users/{id}`, not `/getUser/{id}`)
-- Return inconsistent response structures
-- Skip error code documentation
-- Ignore HTTP status code semantics
-- Design APIs without a versioning strategy
-- Expose implementation details in the API surface
-- Create breaking changes without a migration path
-- Omit rate limiting considerations
+        // STEP 4: Main vertical spine - Mock Server Verification (X=0.0, Y=8.0)
+        EXECUTE RunContractMockVerification()
 
-## Templates
+        // STEP 5: Verification & Telemetry (X=0.0, Y=10.0)
+        ASSERT VerifyBackwardCompatibility()
+        EMIT_TELEMETRY(status="SUCCESS", api_style=api_style)
+        RETURN Status="SUCCESS"
 
-### OpenAPI 3.1 Resource Endpoint (copy-paste starter)
+    CATCH Error AS e
+        LOG_CRITICAL("API design process failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
 
-```yaml
-openapi: "3.1.0"
-info:
-  title: Example API
-  version: "1.1.0"
-paths:
-  /users:
-    get:
-      summary: List users
-      operationId: listUsers
-      tags: [Users]
-      parameters:
-        - name: cursor
-          in: query
-          schema: { type: string }
-          description: Opaque cursor for pagination
-        - name: limit
-          in: query
-          schema: { type: integer, default: 20, maximum: 100 }
-      responses:
-        "200":
-          description: Paginated list of users
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [data, pagination]
-                properties:
-                  data:
-                    type: array
-                    items: { $ref: "#/components/schemas/User" }
-                  pagination:
-                    $ref: "#/components/schemas/CursorPage"
-        "400": { $ref: "#/components/responses/BadRequest" }
-        "401": { $ref: "#/components/responses/Unauthorized" }
-        "429": { $ref: "#/components/responses/TooManyRequests" }
-  /users/{id}:
-    get:
-      summary: Get a user
-      operationId: getUser
-      tags: [Users]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string, format: uuid }
-      responses:
-        "200":
-          description: User found
-          content:
-            application/json:
-              schema: { $ref: "#/components/schemas/User" }
-        "404": { $ref: "#/components/responses/NotFound" }
+text
 
-components:
-  schemas:
-    User:
-      type: object
-      required: [id, email, created_at]
-      properties:
-        id:    { type: string, format: uuid, readOnly: true }
-        email: { type: string, format: email }
-        name:  { type: string }
-        created_at: { type: string, format: date-time, readOnly: true }
-
-    CursorPage:
-      type: object
-      required: [next_cursor, has_more]
-      properties:
-        next_cursor: { type: string, nullable: true }
-        has_more:    { type: boolean }
-
-    Problem:                       # RFC 7807 Problem Details
-      type: object
-      required: [type, title, status]
-      properties:
-        type:     { type: string, format: uri, example: "https://api.example.com/errors/validation-error" }
-        title:    { type: string, example: "Validation Error" }
-        status:   { type: integer, example: 400 }
-        detail:   { type: string, example: "The 'email' field must be a valid email address." }
-        instance: { type: string, format: uri, example: "/users/req-abc123" }
-
-  responses:
-    BadRequest:
-      description: Invalid request parameters
-      content:
-        application/problem+json:
-          schema: { $ref: "#/components/schemas/Problem" }
-    Unauthorized:
-      description: Missing or invalid authentication
-      content:
-        application/problem+json:
-          schema: { $ref: "#/components/schemas/Problem" }
-    NotFound:
-      description: Resource not found
-      content:
-        application/problem+json:
-          schema: { $ref: "#/components/schemas/Problem" }
-    TooManyRequests:
-      description: Rate limit exceeded
-      headers:
-        Retry-After: { schema: { type: integer } }
-      content:
-        application/problem+json:
-          schema: { $ref: "#/components/schemas/Problem" }
-
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-security:
-  - BearerAuth: []
-```
-
-### RFC 7807 Error Response (copy-paste)
-
-```json
-{
-  "type": "https://api.example.com/errors/validation-error",
-  "title": "Validation Error",
-  "status": 422,
-  "detail": "The 'email' field must be a valid email address.",
-  "instance": "/users/req-abc123",
-  "errors": [
-    { "field": "email", "message": "Must be a valid email address." }
-  ]
-}
-```
-
-- Always use `Content-Type: application/problem+json` for error responses.
-- `type` must be a stable, documented URI — never a generic string.
-- `detail` must be human-readable and actionable.
-- Extend with `errors[]` for field-level validation failures.
-
-## Output Checklist
-
-When delivering an API design, provide:
-1. Resource model and relationships (diagram or table)
-2. Endpoint specifications with URIs and HTTP methods
-3. OpenAPI 3.1 specification (YAML)
-4. Authentication and authorization flows
-5. Error response catalog (all 4xx/5xx with `type` URIs)
-6. Pagination and filtering patterns
-7. Versioning and deprecation strategy
-8. Validation result: `npx @redocly/cli lint openapi.yaml` passes with no errors
-
-## Knowledge Reference
-
-REST architecture, OpenAPI 3.1, GraphQL, HTTP semantics, JSON:API, HATEOAS, OAuth 2.0, JWT, RFC 7807 Problem Details, API versioning patterns, pagination strategies, rate limiting, webhook design, SDK generation
+--------------------------------------------------------------------------------
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `api-designer.drakon.json`
-- **Total Algorithmic Nodes:** 9
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: api-designer
-  2. `[ACTION]` Reference Guide
-  3. `[ACTION]` MUST DO
-  4. `[ACTION]` MUST NOT DO
-  5. `[ACTION]` OpenAPI 3.1 Resource Endpoint (copy-paste starter)
-  6. `[ACTION]` RFC 7807 Error Response (copy-paste)
-  7. `[ACTION]` Output Checklist
-  8. `[ACTION]` Knowledge Reference
-  9. `[END]` Завершення: api-designer
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ api-designer.drakon.json
+Total Algorithmic Nodes:
+ 7
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Проектування API та OpenAPI специфікації
+[ACTION] Крок 1: Аналіз домену та моделювання сутностей
+[ACTION] Крок 2: Опис ендпоінтів та схем запитів/відповідей
+[QUESTION] Крок 3: Специфікація OpenAPI валідна (linting pass)?
+[ACTION] Крок 4: Запуск мок-сервера та валідація контрактів
+[END] Успішне завершення: Специфікацію API узгоджено та верифіковано
+[END] Аварійне завершення: Помилка валідації схеми API (X=4.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+4. Operational Guide & CLI Execution
+Валідація OpenAPI 3.1 специфікації:
+npx @redocly/cli lint openapi.yaml
+
+bash
+Запуск локального мок-сервера контрактів:
+npx @stoplight/prism-cli mock openapi.yaml --port 4010
+
+bash
+Еталонний шаблон помилки RFC 7807 (JSON):
+{
+  "type": "https://api.b-sdd.local/errors/validation-error",
+  "title": "Validation Error",
+  "status": 422,
+  "detail": "Field 'identifier' violates format constraints.",
+  "instance": "/errors/req_10827"
+}
+
+json
+
 
 ````
 
-#### Файл: `api-designer/api-designer.drakon.json` (4,958 байт)
+#### Файл: `api-designer/api-designer.drakon.json` (3,090 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "api-designer",
   "category": "bssd_project_skill",
-  "description": "Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.",
-  "params": "context: dict",
+  "description": "Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів.",
+  "params": "domain_requirements: dict, api_style: str",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: api-designer",
+      "label": "Початок: Проектування API та OpenAPI специфікації",
       "edges": {
         "down": "step_1",
         "right": null
@@ -354,129 +255,86 @@ REST architecture, OpenAPI 3.1, GraphQL, HTTP semantics, JSON:API, HATEOAS, OAut
     {
       "node_id": "step_1",
       "node_type": "action",
-      "label": "Reference Guide",
+      "label": "Крок 1: Аналіз домену та моделювання сутностей",
       "edges": {
         "down": "step_2",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 2.0,
-      "instructions": "Load detailed guidance based on context: | Topic | Reference | Load When | |-------|-----------|-----------| | REST Patterns | `references/rest-patterns.md` | Resource design, HTTP"
+      "y": 2.0
     },
     {
       "node_id": "step_2",
       "node_type": "action",
-      "label": "MUST DO",
+      "label": "Крок 2: Опис ендпоінтів та схем запитів/відповідей",
       "edges": {
-        "down": "step_3",
+        "down": "check_lint",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 4.0,
-      "instructions": "- Follow REST principles (resource-oriented, proper HTTP methods) - Use consistent naming conventions (snake_case or camelCase — pick one, apply everywhere) - Include comprehensive"
+      "y": 4.0
     },
     {
-      "node_id": "step_3",
-      "node_type": "action",
-      "label": "MUST NOT DO",
+      "node_id": "check_lint",
+      "node_type": "question",
+      "label": "Крок 3: Специфікація OpenAPI валідна (linting pass)?",
       "edges": {
-        "down": "step_4",
-        "right": null
+        "down": "step_mock",
+        "right": "err_lint"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 6.0,
-      "instructions": "- Use verbs in resource URIs (use `/users/{id}`, not `/getUser/{id}`) - Return inconsistent response structures - Skip error code documentation - Ignore HTTP status code semantics "
+      "y": 6.0
     },
     {
-      "node_id": "step_4",
-      "node_type": "action",
-      "label": "OpenAPI 3.1 Resource Endpoint (copy-paste starter)",
-      "edges": {
-        "down": "step_5",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 8.0,
-      "instructions": "openapi: \"3.1.0\" info: title: Example API version: \"1.1.0\" paths: /users: get: summary: List users operationId: listUsers tags: [Users] parameters: - name: cursor in: query schema:"
-    },
-    {
-      "node_id": "step_5",
-      "node_type": "action",
-      "label": "RFC 7807 Error Response (copy-paste)",
-      "edges": {
-        "down": "step_6",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 10.0,
-      "instructions": "{ \"type\": \"https://api.example.com/errors/validation-error\", \"title\": \"Validation Error\", \"status\": 422, \"detail\": \"The 'email' field must be a valid email address.\", \"instance\": \""
-    },
-    {
-      "node_id": "step_6",
-      "node_type": "action",
-      "label": "Output Checklist",
-      "edges": {
-        "down": "step_7",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 12.0,
-      "instructions": "When delivering an API design, provide: 1. Resource model and relationships (diagram or table) 2. Endpoint specifications with URIs and HTTP methods 3. OpenAPI 3.1 specification (Y"
-    },
-    {
-      "node_id": "step_7",
-      "node_type": "action",
-      "label": "Knowledge Reference",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 14.0,
-      "instructions": "REST architecture, OpenAPI 3.1, GraphQL, HTTP semantics, JSON:API, HATEOAS, OAuth 2.0, JWT, RFC 7807 Problem Details, API versioning patterns, pagination strategies, rate limiting,"
-    },
-    {
-      "node_id": "end",
+      "node_id": "err_lint",
       "node_type": "end",
-      "label": "Завершення: api-designer",
+      "label": "Аварійне завершення: Помилка валідації схеми API",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_mock",
+      "node_type": "action",
+      "label": "Крок 4: Запуск мок-сервера та валідація контрактів",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 16.0
+      "y": 8.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Специфікацію API узгоджено та верифіковано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
     }
   ],
   "meta": {
@@ -488,6 +346,7 @@ REST architecture, OpenAPI 3.1, GraphQL, HTTP semantics, JSON:API, HATEOAS, OAut
     "crossings_count": 0
   }
 }
+
 ````
 
 #### Файл: `api-designer/references/error-handling.md` (11,580 байт)
@@ -3106,152 +2965,139 @@ Avoid these mistakes:
 ### [2/59] Скіл: `architecture-designer`
 
 **Каталог:** `~/.agents/skills/architecture-designer`  
-**Опис:** Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.  
+**Опис:** Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабованості.  
 **Файлів у складі:** 7  
 
-#### Файл: `architecture-designer/SKILL.md` (4,941 байт)
+#### Файл: `architecture-designer/SKILL.md` (5,103 байт)
 ````markdown
 ---
 name: architecture-designer
-description: Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.
+description: Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабованості.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
+invoked_skills: [b-sdd]
 ---
+
 # Architecture Designer
+Системний скіл ядра B-SDD для формування архітектурних концептів, структурного моделювання розподілених систем, створення та супроводу реєстру рішень (ADR) згідно з бітемпоральними нормами.
 
-Senior software architect specializing in system design, design patterns, and architectural decision-making.
+--------------------------------------------------------------------------------
 
-## Role Definition
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: Відповідає ADR-015 (системний рівень ядра), ADR-016 (стандартизація псевдокоду), ADR-008 (планарність графів).
+Negative Invariants
+:
+NEVER
+ змінювати архітектурний паттерн без генерації або оновлення відповідного ADR.
+NEVER
+ видаляти старі ADR без оформлення статусу 
+SUPERSEDED
+ або створення зв'язку правонаступництва.
+NEVER
+ приймати технологічні рішення без явної фіксації відкинутих альтернатив (Negative Selection / Trade-offs).
+NEVER
+ проектувати компоненти без урахування моделі відмов та ізоляції зон відповідальності.
 
-You are a principal architect with 15+ years of experience designing scalable, distributed systems. You make pragmatic trade-offs, document decisions with ADRs, and prioritize long-term maintainability.
+--------------------------------------------------------------------------------
 
-## When to Use This Skill
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteArchitectureDesigner
+INPUT:
+    system_intent: str
+    target_constraints: dict
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+    adr_path: str
 
-- Designing new system architecture
-- Choosing between architectural patterns
-- Reviewing existing architecture
-- Creating Architecture Decision Records (ADRs)
-- Planning for scalability
-- Evaluating technology choices
+BEGIN
+    TRY
+        ASSERT system_intent != ""
+        ASSERT target_constraints != null
 
-## Core Workflow
+        // STEP 1: Main vertical spine - Requirements Analysis (X=0.0, Y=2.0)
+        EXECUTE AnalyzeFunctionalAndNonFunctionalRequirements(system_intent, target_constraints)
 
-1. **Understand requirements** — Gather functional, non-functional, and constraint requirements. _Verify full requirements coverage before proceeding._
-2. **Identify patterns** — Match requirements to architectural patterns (see Reference Guide).
-3. **Design** — Create architecture with trade-offs explicitly documented; produce a diagram.
-4. **Document** — Write ADRs for all key decisions.
-5. **Review** — Validate with stakeholders. _If review fails, return to step 3 with recorded feedback._
+        // STEP 2: Main vertical spine - Evaluate Trade-offs (X=0.0, Y=4.0)
+        EXECUTE EvaluateArchitecturalAlternatives(target_constraints)
 
-## Reference Guide
+        // STEP 3: Question Node - Constraint Satisfiability Check (X=0.0, Y=6.0)
+        IF CheckFeasibilityAndConstraints() THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+            LOG_ERROR("Architecture constraints cannot be satisfied")
+            HALT_AND_DEGRADE("INCOMPATIBLE_CONSTRAINTS")
+        FI
 
-Load detailed guidance based on context:
+        // STEP 4: Sub-skill composition - Enforce B-SDD Invariants (X=0.0, Y=8.0)
+        CALL_SKILL(b-sdd, {action: "verify_adr_standards"})
 
-| Topic | Reference | Load When |
-|-------|-----------|-----------|
-| Architecture Patterns | `references/architecture-patterns.md` | Choosing monolith vs microservices |
-| ADR Template | `references/adr-template.md` | Documenting decisions |
-| System Design | `references/system-design.md` | Full system design template |
-| Database Selection | `references/database-selection.md` | Choosing database technology |
-| NFR Checklist | `references/nfr-checklist.md` | Gathering non-functional requirements |
+        // STEP 5: Main vertical spine - Draft ADR & Structural Model (X=0.0, Y=10.0)
+        EXECUTE GenerateAdrDocumentAndDrakonModel()
 
-## Constraints
+        // STEP 6: Verification & Completion (X=0.0, Y=12.0)
+        ASSERT VerifyBitemporalRegistryConsistency()
+        EMIT_TELEMETRY(status="SUCCESS")
+        RETURN Status="SUCCESS"
 
-### MUST DO
-- Document all significant decisions with ADRs
-- Consider non-functional requirements explicitly
-- Evaluate trade-offs, not just benefits
-- Plan for failure modes
-- Consider operational complexity
-- Review with stakeholders before finalizing
+    CATCH Error AS e
+        LOG_CRITICAL("Architecture design failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
 
-### MUST NOT DO
-- Over-engineer for hypothetical scale
-- Choose technology without evaluating alternatives
-- Ignore operational costs
-- Design without understanding requirements
-- Skip security considerations
+text
 
-## Output Templates
-
-When designing architecture, provide:
-1. Requirements summary (functional + non-functional)
-2. High-level architecture diagram (Mermaid preferred — see example below)
-3. Key decisions with trade-offs (ADR format — see example below)
-4. Technology recommendations with rationale
-5. Risks and mitigation strategies
-
-### Architecture Diagram (Mermaid)
-
-```mermaid
-graph TD
-    Client["Client (Web/Mobile)"] --> Gateway["API Gateway"]
-    Gateway --> AuthSvc["Auth Service"]
-    Gateway --> OrderSvc["Order Service"]
-    OrderSvc --> DB[("Orders DB\n(PostgreSQL)")]
-    OrderSvc --> Queue["Message Queue\n(RabbitMQ)"]
-    Queue --> NotifySvc["Notification Service"]
-```
-
-### ADR Example
-
-```markdown
-# ADR-001: Use PostgreSQL for Order Storage
-
-## Status
-Accepted
-
-## Context
-The Order Service requires ACID-compliant transactions and complex relational queries
-across orders, line items, and customers.
-
-## Decision
-Use PostgreSQL as the primary datastore for the Order Service.
-
-## Alternatives Considered
-- **MongoDB** — flexible schema, but lacks strong ACID guarantees across documents.
-- **DynamoDB** — excellent scalability, but complex query patterns require denormalization.
-
-## Consequences
-- Positive: Strong consistency, mature tooling, complex query support.
-- Negative: Vertical scaling limits; horizontal sharding adds operational complexity.
-
-## Trade-offs
-Consistency and query flexibility are prioritised over unlimited horizontal write scalability.
-```
+--------------------------------------------------------------------------------
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `architecture-designer.drakon.json`
-- **Total Algorithmic Nodes:** 10
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: architecture-designer
-  2. `[ACTION]` Role Definition
-  3. `[ACTION]` When to Use This Skill
-  4. `[ACTION]` Reference Guide
-  5. `[ACTION]` MUST DO
-  6. `[ACTION]` MUST NOT DO
-  7. `[ACTION]` Output Templates
-  8. `[ACTION]` Architecture Diagram (Mermaid)
-  9. `[ACTION]` ADR Example
-  10. `[END]` Завершення: architecture-designer
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ architecture-designer.drakon.json
+Total Algorithmic Nodes:
+ 8
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Проектування архітектури та оформлення ADR
+[ACTION] Крок 1: Аналіз функціональних та нефункціональних вимог
+[ACTION] Крок 2: Оцінка архітектурних альтернатив та компромісів
+[QUESTION] Крок 3: Архітектурні обмеження задовільні?
+[INSERTION] CALL_SKILL(b-sdd): Крок 4: Перевірка стандартів B-SDD та реєстру ADR
+[ACTION] Крок 5: Генерація документа ADR та структурних моделей
+[END] Успішне завершення: Архітектурне рішення зафіксовано
+[END] Аварійне завершення: Невідповідність системних обмежень (X=4.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+4. Operational Guide & CLI Execution
+Створення нового ADR через інструментарій проєкту:
+python3 -m src.cli.main adr new --title "Adopt Distributed Bus Pattern" --status PROPOSED
+
+bash
+Перевірка архітектурної відповідності кодової бази:
+pytest -v tests/test_architecture_fitness.py
+
+bash
+
 
 ````
 
-#### Файл: `architecture-designer/architecture-designer.drakon.json` (5,636 байт)
+#### Файл: `architecture-designer/architecture-designer.drakon.json` (3,618 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "architecture-designer",
   "category": "bssd_system_skill",
-  "description": "Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.",
-  "params": "context: dict",
+  "description": "Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабованості.",
+  "params": "system_intent: str, target_constraints: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: architecture-designer",
+      "label": "Початок: Проектування архітектури та оформлення ADR",
       "edges": {
         "down": "step_1",
         "right": null
@@ -3266,145 +3112,101 @@ Consistency and query flexibility are prioritised over unlimited horizontal writ
     {
       "node_id": "step_1",
       "node_type": "action",
-      "label": "Role Definition",
+      "label": "Крок 1: Аналіз функціональних та нефункціональних вимог",
       "edges": {
         "down": "step_2",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 2.0,
-      "instructions": "You are a principal architect with 15+ years of experience designing scalable, distributed systems. You make pragmatic trade-offs, document decisions with ADRs, and prioritize long"
+      "y": 2.0
     },
     {
       "node_id": "step_2",
       "node_type": "action",
-      "label": "When to Use This Skill",
+      "label": "Крок 2: Оцінка архітектурних альтернатив та компромісів",
       "edges": {
-        "down": "step_3",
+        "down": "check_constraints",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 4.0,
-      "instructions": "- Designing new system architecture - Choosing between architectural patterns - Reviewing existing architecture - Creating Architecture Decision Records (ADRs) - Planning for scala"
+      "y": 4.0
     },
     {
-      "node_id": "step_3",
-      "node_type": "action",
-      "label": "Reference Guide",
+      "node_id": "check_constraints",
+      "node_type": "question",
+      "label": "Крок 3: Архітектурні обмеження задовільні?",
       "edges": {
-        "down": "step_4",
-        "right": null
+        "down": "step_call_bsdd",
+        "right": "err_constraints"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 6.0,
-      "instructions": "Load detailed guidance based on context: | Topic | Reference | Load When | |-------|-----------|-----------| | Architecture Patterns | `references/architecture-patterns.md` | Choos"
+      "y": 6.0
     },
     {
-      "node_id": "step_4",
-      "node_type": "action",
-      "label": "MUST DO",
-      "edges": {
-        "down": "step_5",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 8.0,
-      "instructions": "- Document all significant decisions with ADRs - Consider non-functional requirements explicitly - Evaluate trade-offs, not just benefits - Plan for failure modes - Consider operat"
-    },
-    {
-      "node_id": "step_5",
-      "node_type": "action",
-      "label": "MUST NOT DO",
-      "edges": {
-        "down": "step_6",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 10.0,
-      "instructions": "- Over-engineer for hypothetical scale - Choose technology without evaluating alternatives - Ignore operational costs - Design without understanding requirements - Skip security co"
-    },
-    {
-      "node_id": "step_6",
-      "node_type": "action",
-      "label": "Output Templates",
-      "edges": {
-        "down": "step_7",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 12.0,
-      "instructions": "When designing architecture, provide: 1. Requirements summary (functional + non-functional) 2. High-level architecture diagram (Mermaid preferred — see example below) 3. Key decisi"
-    },
-    {
-      "node_id": "step_7",
-      "node_type": "action",
-      "label": "Architecture Diagram (Mermaid)",
-      "edges": {
-        "down": "step_8",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 14.0,
-      "instructions": "graph TD Client[\"Client (Web/Mobile)\"] --> Gateway[\"API Gateway\"] Gateway --> AuthSvc[\"Auth Service\"] Gateway --> OrderSvc[\"Order Service\"] OrderSvc --> DB[(\"Orders DB\\n(PostgreSQL"
-    },
-    {
-      "node_id": "step_8",
-      "node_type": "action",
-      "label": "ADR Example",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 16.0,
-      "instructions": "# ADR-001: Use PostgreSQL for Order Storage"
-    },
-    {
-      "node_id": "end",
+      "node_id": "err_constraints",
       "node_type": "end",
-      "label": "Завершення: architecture-designer",
+      "label": "Аварійне завершення: Невідповідність системних обмежень",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_call_bsdd",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Крок 4: Перевірка стандартів B-SDD та реєстру ADR",
+      "edges": {
+        "down": "step_gen",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 18.0
+      "y": 8.0
+    },
+    {
+      "node_id": "step_gen",
+      "node_type": "action",
+      "label": "Крок 5: Генерація документа ADR та структурних моделей",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Архітектурне рішення зафіксовано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
     }
   ],
   "meta": {
@@ -3416,6 +3218,7 @@ Consistency and query flexibility are prioritised over unlimited horizontal writ
     "crossings_count": 0
   }
 }
+
 ````
 
 #### Файл: `architecture-designer/references/adr-template.md` (2,752 байт)
@@ -3990,7 +3793,7 @@ When to Avoid:
 ### [3/59] Скіл: `ast-grep`
 
 **Каталог:** `~/.agents/skills/ast-grep`  
-**Опис:** Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.  
+**Опис:** Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST).  
 **Файлів у складі:** 4  
 
 #### Файл: `ast-grep/README.md` (6,134 байт)
@@ -4213,366 +4016,153 @@ For issues with:
 
 ````
 
-#### Файл: `ast-grep/SKILL.md` (10,142 байт)
+#### Файл: `ast-grep/SKILL.md` (4,813 байт)
 ````markdown
 ---
 name: ast-grep
-description: Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.
+description: Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST).
 type: PROJECT_SKILL
-category: general
+category: code-analysis
 immutable: false
+invoked_skills: []
 ---
-# ast-grep Code Search
 
-## Overview
-
-This skill helps translate natural language queries into ast-grep rules for structural code search. ast-grep uses Abstract Syntax Tree (AST) patterns to match code based on its structure rather than just text, enabling powerful and precise code search across large codebases.
-
-## When to Use This Skill
-
-Use this skill when users:
-- Need to search for code patterns using structural matching (e.g., "find all async functions that don't have error handling")
-- Want to locate specific language constructs (e.g., "find all function calls with specific parameters")
-- Request searches that require understanding code structure rather than just text
-- Ask to search for code with particular AST characteristics
-- Need to perform complex code queries that traditional text search cannot handle
-
-## General Workflow
-
-Follow this process to help users write effective ast-grep rules:
-
-### Step 1: Understand the Query
-
-Clearly understand what the user wants to find. Ask clarifying questions if needed:
-- What specific code pattern or structure are they looking for?
-- Which programming language?
-- Are there specific edge cases or variations to consider?
-- What should be included or excluded from matches?
-
-### Step 2: Create Example Code
-
-Write a simple code snippet that represents what the user wants to match. Save this to a temporary file for testing.
-
-**Example:**
-If searching for "async functions that use await", create a test file:
-
-```javascript
-// test_example.js
-async function example() {
-  const result = await fetchData();
-  return result;
-}
-```
-
-### Step 3: Write the ast-grep Rule
-
-Translate the pattern into an ast-grep rule. Start simple and add complexity as needed.
-
-**Key principles:**
-- Always use `stopBy: end` for relational rules (`inside`, `has`) to ensure search goes to the end of the direction
-- Use `pattern` for simple structures
-- Use `kind` with `has`/`inside` for complex structures
-- Break complex queries into smaller sub-rules using `all`, `any`, or `not`
-
-**Example rule file (test_rule.yml):**
-```yaml
-id: async-with-await
-language: javascript
-rule:
-  kind: function_declaration
-  has:
-    pattern: await $EXPR
-    stopBy: end
-```
-
-See `references/rule_reference.md` for comprehensive rule documentation.
-
-### Step 4: Test the Rule
-
-Use ast-grep CLI to verify the rule matches the example code. There are two main approaches:
-
-**Option A: Test with inline rules (for quick iterations)**
-```bash
-echo "async function test() { await fetch(); }" | ast-grep scan --inline-rules "id: test
-language: javascript
-rule:
-  kind: function_declaration
-  has:
-    pattern: await \$EXPR
-    stopBy: end" --stdin
-```
-
-**Option B: Test with rule files (recommended for complex rules)**
-```bash
-ast-grep scan --rule test_rule.yml test_example.js
-```
-
-**Debugging if no matches:**
-1. Simplify the rule (remove sub-rules)
-2. Add `stopBy: end` to relational rules if not present
-3. Use `--debug-query` to understand the AST structure (see below)
-4. Check if `kind` values are correct for the language
-
-### Step 5: Search the Codebase
-
-Once the rule matches the example code correctly, search the actual codebase:
-
-**For simple pattern searches:**
-```bash
-ast-grep run --pattern 'console.log($ARG)' --lang javascript /path/to/project
-```
-
-**For complex rule-based searches:**
-```bash
-ast-grep scan --rule my_rule.yml /path/to/project
-```
-
-**For inline rules (without creating files):**
-```bash
-ast-grep scan --inline-rules "id: my-rule
-language: javascript
-rule:
-  pattern: \$PATTERN" /path/to/project
-```
-
-## ast-grep CLI Commands
-
-### Inspect Code Structure (--debug-query)
-
-Dump the AST structure to understand how code is parsed:
-
-```bash
-ast-grep run --pattern 'async function example() { await fetch(); }' \
-  --lang javascript \
-  --debug-query=cst
-```
-
-**Available formats:**
-- `cst`: Concrete Syntax Tree (shows all nodes including punctuation)
-- `ast`: Abstract Syntax Tree (shows only named nodes)
-- `pattern`: Shows how ast-grep interprets your pattern
-
-**Use this to:**
-- Find the correct `kind` values for nodes
-- Understand the structure of code you want to match
-- Debug why patterns aren't matching
-
-**Example:**
-```bash
-# See the structure of your target code
-ast-grep run --pattern 'class User { constructor() {} }' \
-  --lang javascript \
-  --debug-query=cst
-
-# See how ast-grep interprets your pattern
-ast-grep run --pattern 'class $NAME { $$$BODY }' \
-  --lang javascript \
-  --debug-query=pattern
-```
-
-### Test Rules (scan with --stdin)
-
-Test a rule against code snippet without creating files:
-
-```bash
-echo "const x = await fetch();" | ast-grep scan --inline-rules "id: test
-language: javascript
-rule:
-  pattern: await \$EXPR" --stdin
-```
-
-**Add --json for structured output:**
-```bash
-echo "const x = await fetch();" | ast-grep scan --inline-rules "..." --stdin --json
-```
-
-### Search with Patterns (run)
-
-Simple pattern-based search for single AST node matches:
-
-```bash
-# Basic pattern search
-ast-grep run --pattern 'console.log($ARG)' --lang javascript .
-
-# Search specific files
-ast-grep run --pattern 'class $NAME' --lang python /path/to/project
-
-# JSON output for programmatic use
-ast-grep run --pattern 'function $NAME($$$)' --lang javascript --json .
-```
-
-**When to use:**
-- Simple, single-node matches
-- Quick searches without complex logic
-- When you don't need relational rules (inside/has)
-
-### Search with Rules (scan)
-
-YAML rule-based search for complex structural queries:
-
-```bash
-# With rule file
-ast-grep scan --rule my_rule.yml /path/to/project
-
-# With inline rules
-ast-grep scan --inline-rules "id: find-async
-language: javascript
-rule:
-  kind: function_declaration
-  has:
-    pattern: await \$EXPR
-    stopBy: end" /path/to/project
-
-# JSON output
-ast-grep scan --rule my_rule.yml --json /path/to/project
-```
-
-**When to use:**
-- Complex structural searches
-- Relational rules (inside, has, precedes, follows)
-- Composite logic (all, any, not)
-- When you need the power of full YAML rules
-
-**Tip:** For relational rules (inside/has), always add `stopBy: end` to ensure complete traversal.
-
-## Tips for Writing Effective Rules
-
-### Always Use stopBy: end
-
-For relational rules, always use `stopBy: end` unless there's a specific reason not to:
-
-```yaml
-has:
-  pattern: await $EXPR
-  stopBy: end
-```
-
-This ensures the search traverses the entire subtree rather than stopping at the first non-matching node.
-
-### Start Simple, Then Add Complexity
-
-Begin with the simplest rule that could work:
-1. Try a `pattern` first
-2. If that doesn't work, try `kind` to match the node type
-3. Add relational rules (`has`, `inside`) as needed
-4. Combine with composite rules (`all`, `any`, `not`) for complex logic
-
-### Use the Right Rule Type
-
-- **Pattern**: For simple, direct code matching (e.g., `console.log($ARG)`)
-- **Kind + Relational**: For complex structures (e.g., "function containing await")
-- **Composite**: For logical combinations (e.g., "function with await but not in try-catch")
-
-### Debug with AST Inspection
-
-When rules don't match:
-1. Use `--debug-query=cst` to see the actual AST structure
-2. Check if metavariables are being detected correctly
-3. Verify the node `kind` matches what you expect
-4. Ensure relational rules are searching in the right direction
-
-### Escaping in Inline Rules
-
-When using `--inline-rules`, escape metavariables in shell commands:
-- Use `\$VAR` instead of `$VAR` (shell interprets `$` as variable)
-- Or use single quotes: `'$VAR'` works in most shells
-
-**Example:**
-```bash
-# Correct: escaped $
-ast-grep scan --inline-rules "rule: {pattern: 'console.log(\$ARG)'}" .
-
-# Or use single quotes
-ast-grep scan --inline-rules 'rule: {pattern: "console.log($ARG)"}' .
-```
-
-## Common Use Cases
-
-### Find Functions with Specific Content
-
-Find async functions that use await:
-```bash
-ast-grep scan --inline-rules "id: async-await
-language: javascript
-rule:
-  all:
-    - kind: function_declaration
-    - has:
-        pattern: await \$EXPR
-        stopBy: end" /path/to/project
-```
-
-### Find Code Inside Specific Contexts
-
-Find console.log inside class methods:
-```bash
-ast-grep scan --inline-rules "id: console-in-class
-language: javascript
-rule:
-  pattern: console.log(\$\$\$)
-  inside:
-    kind: method_definition
-    stopBy: end" /path/to/project
-```
-
-### Find Code Missing Expected Patterns
-
-Find async functions without try-catch:
-```bash
-ast-grep scan --inline-rules "id: async-no-trycatch
-language: javascript
-rule:
-  all:
-    - kind: function_declaration
-    - has:
-        pattern: await \$EXPR
-        stopBy: end
-    - not:
-        has:
-          pattern: try { \$\$\$ } catch (\$E) { \$\$\$ }
-          stopBy: end" /path/to/project
-```
-
-## Resources
-
-### references/
-Contains detailed documentation for ast-grep rule syntax:
-- `rule_reference.md`: Comprehensive ast-grep rule documentation covering atomic rules, relational rules, composite rules, and metavariables
-
-Load these references when detailed rule syntax information is needed.
+# ast-grep
+Скіл для виконання структурного пошуку та аналізу коду на основі синтаксичного дерева AST через CLI утиліту 
+ast-grep
+ (
+sg
+). Дозволяє точно знаходити патерни коду, структурні дефекти та сигнатури функцій незалежно від форматування коду.
+
+--------------------------------------------------------------------------------
+
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: Відповідає нормам ADR-015 та ADR-016.
+Negative Invariants
+:
+NEVER
+ використовувати текстовий regex-пошук там, де потрібне структурне розуміння синтаксису (вкладення, область видимості).
+NEVER
+ застосовувати правила без вказівки параметра 
+stopBy: end
+ для реляційних селекторів (
+inside
+, 
+has
+), якщо потрібен глибокий пошук.
+NEVER
+ виконувати масові структурні заміни (
+ast-grep scan --rewrite
+) без попереднього сухого прогону в режимі верифікації (
+--dry-run
+ або git diff перевірка).
+
+--------------------------------------------------------------------------------
+
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteAstGrep
+INPUT:
+    pattern: str
+    target_path: str
+    language: str
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+    matches: list
+
+BEGIN
+    TRY
+        ASSERT pattern != ""
+        ASSERT target_path != ""
+        ASSERT language != ""
+
+        // STEP 1: Main vertical spine - Query Debugging & CST Check (X=0.0, Y=2.0)
+        EXECUTE DebugAstQueryPattern(pattern, language)
+
+        // STEP 2: Main vertical spine - Execute Search / Scan (X=0.0, Y=4.0)
+        EXECUTE RunAstGrepScan(pattern, target_path, language)
+
+        // STEP 3: Question Node - Matches Validity Check (X=0.0, Y=6.0)
+        IF ValidateSearchResults() THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+            LOG_ERROR("AST pattern returned invalid or malformed matches")
+            HALT_AND_DEGRADE("INVALID_AST_MATCHES")
+        FI
+
+        // STEP 4: Main vertical spine - Format & Export Matches (X=0.0, Y=8.0)
+        EXECUTE FormatStructuredOutput(format="json")
+
+        // STEP 5: Verification & Telemetry (X=0.0, Y=10.0)
+        EMIT_TELEMETRY(status="SUCCESS")
+        RETURN Status="SUCCESS"
+
+    CATCH Error AS e
+        LOG_CRITICAL("ast-grep execution failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
+
+text
+
+--------------------------------------------------------------------------------
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `ast-grep.drakon.json`
-- **Total Algorithmic Nodes:** 10
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: ast-grep
-  2. `[ACTION]` Overview
-  3. `[ACTION]` When to Use This Skill
-  4. `[ACTION]` General Workflow
-  5. `[ACTION]` Step 1: Understand the Query
-  6. `[ACTION]` Step 2: Create Example Code
-  7. `[ACTION]` Step 3: Write the ast-grep Rule
-  8. `[ACTION]` Step 4: Test the Rule
-  9. `[ACTION]` Step 5: Search the Codebase
-  10. `[END]` Завершення: ast-grep
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ ast-grep.drakon.json
+Total Algorithmic Nodes:
+ 7
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Структурний аналіз коду через ast-grep
+[ACTION] Крок 1: Верифікація патерну через CST/AST парсинг
+[ACTION] Крок 2: Виконання сканування цільової директорії
+[QUESTION] Крок 3: Синтаксичні збіги валідні та знайдені?
+[ACTION] Крок 4: Форматування результатів у структурований JSON
+[END] Успішне завершення: Структурний аналіз завершено
+[END] Аварійне завершення: Помилка синтаксичного патерну (X=4.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+4. Operational Guide & CLI Execution
+Перевірка синтаксичного дерева AST через debug-query:
+ast-grep run --pattern 'async function $NAME($$$ARGS) { $$$BODY }' --lang javascript --debug-query=cst
+
+bash
+Пошук структурного патерну з виводом у JSON:
+ast-grep run --pattern 'console.log($ARG)' --lang javascript --json .
+
+bash
+Виконання складного інлайн-правила:
+ast-grep scan --inline-rules "id: async-catch
+language: typescript
+rule:
+  pattern: await $EXPR
+  inside:
+    kind: try_statement
+    stopBy: end" src/
+
+bash
+
 
 ````
 
-#### Файл: `ast-grep/ast-grep.drakon.json` (5,569 байт)
+#### Файл: `ast-grep/ast-grep.drakon.json` (3,075 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "ast-grep",
   "category": "bssd_project_skill",
-  "description": "Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.",
-  "params": "context: dict",
+  "description": "Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST).",
+  "params": "pattern: str, target_path: str, language: str",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: ast-grep",
+      "label": "Початок: Структурний аналіз коду через ast-grep",
       "edges": {
         "down": "step_1",
         "right": null
@@ -4587,145 +4177,86 @@ Load these references when detailed rule syntax information is needed.
     {
       "node_id": "step_1",
       "node_type": "action",
-      "label": "Overview",
+      "label": "Крок 1: Верифікація патерну через CST/AST парсинг",
       "edges": {
         "down": "step_2",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 2.0,
-      "instructions": "This skill helps translate natural language queries into ast-grep rules for structural code search. ast-grep uses Abstract Syntax Tree (AST) patterns to match code based on its str"
+      "y": 2.0
     },
     {
       "node_id": "step_2",
       "node_type": "action",
-      "label": "When to Use This Skill",
+      "label": "Крок 2: Виконання сканування цільової директорії",
       "edges": {
-        "down": "step_3",
+        "down": "check_matches",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 4.0,
-      "instructions": "Use this skill when users: - Need to search for code patterns using structural matching (e.g., \"find all async functions that don't have error handling\") - Want to locate specific "
+      "y": 4.0
     },
     {
-      "node_id": "step_3",
-      "node_type": "action",
-      "label": "General Workflow",
+      "node_id": "check_matches",
+      "node_type": "question",
+      "label": "Крок 3: Синтаксичні збіги валідні та знайдені?",
       "edges": {
-        "down": "step_4",
-        "right": null
+        "down": "step_format",
+        "right": "err_matches"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 6.0,
-      "instructions": "Follow this process to help users write effective ast-grep rules:"
+      "y": 6.0
     },
     {
-      "node_id": "step_4",
-      "node_type": "action",
-      "label": "Step 1: Understand the Query",
-      "edges": {
-        "down": "step_5",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 8.0,
-      "instructions": "Clearly understand what the user wants to find. Ask clarifying questions if needed: - What specific code pattern or structure are they looking for? - Which programming language? - "
-    },
-    {
-      "node_id": "step_5",
-      "node_type": "action",
-      "label": "Step 2: Create Example Code",
-      "edges": {
-        "down": "step_6",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 10.0,
-      "instructions": "Write a simple code snippet that represents what the user wants to match. Save this to a temporary file for testing. **Example:** If searching for \"async functions that use await\","
-    },
-    {
-      "node_id": "step_6",
-      "node_type": "action",
-      "label": "Step 3: Write the ast-grep Rule",
-      "edges": {
-        "down": "step_7",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 12.0,
-      "instructions": "Translate the pattern into an ast-grep rule. Start simple and add complexity as needed. **Key principles:** - Always use `stopBy: end` for relational rules (`inside`, `has`) to ens"
-    },
-    {
-      "node_id": "step_7",
-      "node_type": "action",
-      "label": "Step 4: Test the Rule",
-      "edges": {
-        "down": "step_8",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 14.0,
-      "instructions": "Use ast-grep CLI to verify the rule matches the example code. There are two main approaches: **Option A: Test with inline rules (for quick iterations)** echo \"async function test()"
-    },
-    {
-      "node_id": "step_8",
-      "node_type": "action",
-      "label": "Step 5: Search the Codebase",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 16.0,
-      "instructions": "Once the rule matches the example code correctly, search the actual codebase: **For simple pattern searches:** ast-grep run --pattern 'console.log($ARG)' --lang javascript /path/to"
-    },
-    {
-      "node_id": "end",
+      "node_id": "err_matches",
       "node_type": "end",
-      "label": "Завершення: ast-grep",
+      "label": "Аварійне завершення: Помилка синтаксичного патерну",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_format",
+      "node_type": "action",
+      "label": "Крок 4: Форматування результатів у структурований JSON",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 18.0
+      "y": 8.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Структурний аналіз завершено",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
     }
   ],
   "meta": {
@@ -4737,6 +4268,7 @@ Load these references when detailed rule syntax information is needed.
     "crossings_count": 0
   }
 }
+
 ````
 
 #### Файл: `ast-grep/references/rule_reference.md` (10,697 байт)
@@ -5047,79 +4579,144 @@ rule:
 ### [4/59] Скіл: `astryx-scaffolder`
 
 **Каталог:** `~/.agents/skills/astryx-scaffolder`  
-**Опис:** Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.  
+**Опис:** Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища оператора.  
 **Файлів у складі:** 3  
 
-#### Файл: `astryx-scaffolder/SKILL.md` (2,300 байт)
+#### Файл: `astryx-scaffolder/SKILL.md` (5,105 байт)
 ````markdown
 ---
 name: astryx-scaffolder
-description: Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.
+description: Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища оператора.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
 invoked_skills: [b-sdd]
 ---
-# Astryx Cockpit Scaffolder Skill
 
-Generates and validates user interface components, DRAKON diagram canvas widgets, and telemetry panels for the Astryx Sovereign Workbench Cockpit adhering to the Astryx Design System (ADR-009, ADR-010).
+# Astryx Scaffolder
+Системний скіл проєкту B-SDD для створення UI-компонентів робочого місця оператора (Astryx Cockpit / Copilot). Відповідає за дотримання ергономічних вимог ADR-009 (Astryx Design System) та ADR-010 (мультипроєктне перемикання), генерацію планарних віджетів полотна ДРАКОН з гарантіями 
+C=0, X=0
+.
 
----
+--------------------------------------------------------------------------------
 
-## 1. Design System Principles
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: ADR-008 (планарність), ADR-009 (дизайн-система Astryx), ADR-015 (системний скіл), ADR-016.
+Negative Invariants
+:
+NEVER
+ порушувати зональну ізоляцію: Zone A (проєкти), Zone B (полотно ДРАКОН), Zone C (ADR/телеметрія).
+NEVER
+ генерувати компоненти без підтримки темної теми та клавіатурної ергономіки (keyboard-first).
+NEVER
+ підключати зовнішні важкі CSS-бібліотеки, що конфліктують з Tailwind/shadcn та CSS-змінними теми.
+NEVER
+ ігнорувати валідацію планарності генерованих canvas-елементів.
 
-1. **Astryx Visual Palette:** High-contrast dark theme optimized for low-latency operations, deep slates, cyan highlights, and emerald status beacons.
-2. **Zones Architecture:**
-   - **Zone A:** Sovereign Project & Mesh Leases Switcher.
-   - **Zone B:** Multi-Tenant DRAKON Visual Canvas with $C=0, X=0$ planarity guarantees.
-   - **Zone C:** Live ADR Inspector & Bitemporal Timeline.
-   - **Zone D:** Real-time HITL Execution Terminal & Telemetry Monitor.
-3. **Ergonomic Standards:** Keyboard-first shortcuts, responsive desktop/tablet layouts, and zero external runtime dependencies on unverified CDNs.
+--------------------------------------------------------------------------------
 
----
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteAstryxScaffolder
+INPUT:
+    component_name: str
+    component_zone: str ("A" | "B" | "C")
+    category: str ("canvas" | "telemetry" | "workbench")
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+    output_path: str
 
-## 2. Usage & Commands
+BEGIN
+    TRY
+        ASSERT component_name != ""
+        ASSERT component_zone IN ["A", "B", "C"]
 
-### A. Scaffold a Canvas or Telemetry Component
-```bash
-python3 ~/.agents/skills/astryx-scaffolder/scripts/scaffold_component.py --name DrakonVisualFlow --category canvas --output-dir b-sdd-ui/src/components
-```
+        // STEP 1: Main vertical spine - Zone & Layout Verification (X=0.0, Y=2.0)
+        EXECUTE ValidateZoneConstraints(component_zone, category)
 
----
+        // STEP 2: Sub-skill composition - Enforce B-SDD Ergonomic Invariants (X=0.0, Y=4.0)
+        CALL_SKILL(b-sdd, {action: "verify_design_tokens", zone: component_zone})
 
-## 3. Invariants & Architecture Compliance
+        // STEP 3: Question Node - Token & Theme Compliance (X=0.0, Y=6.0)
+        IF VerifyAstryxDesignTokens() THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+            LOG_ERROR("Component violates Astryx Design System tokens")
+            HALT_AND_DEGRADE("DESIGN_TOKEN_VIOLATION")
+        FI
 
-- **ADR-009 (Astryx Design System):** Enforces layout stability, zone isolation, and visual consistency.
-- **ADR-010 (Universal Multi-Project & Standard Algorithm Catalog):** Seamless integration with multi-project state management.
+        // STEP 4: Main vertical spine - Component Scaffolding (X=0.0, Y=8.0)
+        EXECUTE ScaffoldUiComponent(component_name, category)
+
+        // STEP 5: Verification & Telemetry (X=0.0, Y=10.0)
+        ASSERT VerifyComponentExport(component_name)
+        EMIT_TELEMETRY(status="SUCCESS", component=component_name)
+        RETURN Status="SUCCESS"
+
+    CATCH Error AS e
+        LOG_CRITICAL("Astryx scaffolding failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
+
+text
+
+--------------------------------------------------------------------------------
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `astryx-scaffolder.drakon.json`
-- **Total Algorithmic Nodes:** 6
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: astryx-scaffolder
-  2. `[ACTION]` Zones Architecture:
-  3. `[ACTION]` Ergonomic Standards: Keyboard-first shortcuts, responsive de
-  4. `[INSERTION]` CALL_SKILL(b-sdd): A. Scaffold a Canvas or Telemetry Component
-  5. `[ACTION]` Invariants & Architecture Compliance
-  6. `[END]` Завершення: astryx-scaffolder
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ astryx-scaffolder.drakon.json
+Total Algorithmic Nodes:
+ 7
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Генерація компонента Astryx Cockpit
+[ACTION] Крок 1: Перевірка зональних обмежень (Zone A/B/C)
+[INSERTION] CALL_SKILL(b-sdd): Крок 2: Перевірка токенів дизайн-системи ADR-009
+[QUESTION] Крок 3: Токени та темна тема відповідають стандарту?
+[ACTION] Крок 4: Створення вихідного коду компонента та тестів
+[END] Успішне завершення: Компонент успішно згенеровано
+[END] Аварійне завершення: Порушення токенів Astryx (X=4.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+4. Operational Guide & CLI Execution
+Генерація віджета візуального полотна ДРАКОН:
+python3 ~/.agents/skills/astryx-scaffolder/scripts/scaffold_component.py \
+  --name DrakonVisualFlow \
+  --category canvas \
+  --zone B \
+  --output-dir b-sdd-ui/src/components
+
+bash
+Генерація панелі телеметрії оператора:
+python3 ~/.agents/skills/astryx-scaffolder/scripts/scaffold_component.py \
+  --name MeshTelemetryInspector \
+  --category telemetry \
+  --zone C \
+  --output-dir b-sdd-ui/src/components
+
+bash
+
 
 ````
 
-#### Файл: `astryx-scaffolder/astryx-scaffolder.drakon.json` (3,218 байт)
+#### Файл: `astryx-scaffolder/astryx-scaffolder.drakon.json` (3,202 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "astryx-scaffolder",
   "category": "bssd_system_skill",
-  "description": "Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.",
-  "params": "context: dict",
+  "description": "Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища оператора.",
+  "params": "component_name: str, component_zone: str, category: str",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: astryx-scaffolder",
+      "label": "Початок: Генерація компонента Astryx Cockpit",
       "edges": {
         "down": "step_1",
         "right": null
@@ -5134,78 +4731,83 @@ python3 ~/.agents/skills/astryx-scaffolder/scripts/scaffold_component.py --name 
     {
       "node_id": "step_1",
       "node_type": "action",
-      "label": "Zones Architecture:",
+      "label": "Крок 1: Перевірка зональних обмежень (Zone A/B/C)",
       "edges": {
-        "down": "step_2",
+        "down": "step_call_bsdd",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 2.0,
-      "instructions": "- **Zone A:** Sovereign Project & Mesh Leases Switcher. - **Zone B:** Multi-Tenant DRAKON Visual Canvas with $C=0, X=0$ planarity guarantees. - **Zone C:** Live ADR Inspector & Bit"
+      "y": 2.0
     },
     {
-      "node_id": "step_2",
-      "node_type": "action",
-      "label": "Ergonomic Standards: Keyboard-first shortcuts, responsive de",
-      "edges": {
-        "down": "step_3",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 4.0,
-      "instructions": "---"
-    },
-    {
-      "node_id": "step_3",
+      "node_id": "step_call_bsdd",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): A. Scaffold a Canvas or Telemetry Component",
+      "label": "CALL_SKILL(b-sdd): Крок 2: Перевірка токенів дизайн-системи ADR-009",
       "edges": {
-        "down": "step_4",
+        "down": "check_tokens",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 6.0,
-      "instructions": "python3 ~/.agents/skills/astryx-scaffolder/scripts/scaffold_component.py --name DrakonVisualFlow --category canvas --output-dir b-sdd-ui/src/components ---"
-    },
-    {
-      "node_id": "step_4",
-      "node_type": "action",
-      "label": "Invariants & Architecture Compliance",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
+        "call_skill": "b-sdd",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0,
-      "instructions": "- **ADR-009 (Astryx Design System):** Enforces layout stability, zone isolation, and visual consistency. - **ADR-010 (Universal Multi-Project & Standard Algorithm Catalog):** Seaml"
+      "y": 4.0
     },
     {
-      "node_id": "end",
+      "node_id": "check_tokens",
+      "node_type": "question",
+      "label": "Крок 3: Токени та темна тема відповідають стандарту?",
+      "edges": {
+        "down": "step_scaffold",
+        "right": "err_tokens"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "err_tokens",
       "node_type": "end",
-      "label": "Завершення: astryx-scaffolder",
+      "label": "Аварійне завершення: Порушення токенів Astryx",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_scaffold",
+      "node_type": "action",
+      "label": "Крок 4: Створення вихідного коду компонента та тестів",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Компонент успішно згенеровано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
         "severity": "normal"
       },
       "x": 0.0,
@@ -5221,6 +4823,7 @@ python3 ~/.agents/skills/astryx-scaffolder/scripts/scaffold_component.py --name 
     "crossings_count": 0
   }
 }
+
 ````
 
 #### Файл: `astryx-scaffolder/scripts/scaffold_component.py` (2,225 байт)
@@ -5302,144 +4905,145 @@ if __name__ == "__main__":
 ### [5/59] Скіл: `b-sdd`
 
 **Каталог:** `~/.agents/skills/b-sdd`  
-**Опис:** Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.  
+**Опис:** Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.  
 **Файлів у складі:** 2  
 
-#### Файл: `b-sdd/SKILL.md` (6,056 байт)
+#### Файл: `b-sdd/SKILL.md` (5,032 байт)
 ````markdown
 ---
 name: b-sdd
-description: Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.
+description: Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
 invoked_skills: [find-skills, skill-creator]
 ---
-# B-SDD (Bitemporal Spec-Driven Development) Agent Skill
 
-When operating in any repository governed by the **B-SDD Framework**, you MUST follow this operational protocol:
+# B-SDD (Bitemporal Spec-Driven Development) Core Skill
+Фундаментальний системний скіл оркестрації життєвого циклу B-SDD. Забезпечує дотримання інваріантів перед початком написання коду (Pre-Flight Phase), процедуру суперсесії архітектурних рішень, кристалізацію нових скілів за «Правилом 2-х повторень» та фінальний верифікаційний бар'єр перед коммітом.
 
-## 1. Pre-Flight Phase (Always First)
-Before planning or writing code:
-1. Ensure `.context/active_rules.md` is compiled. If starting fresh, invoke `./run_agy.sh` or run:
-   ```bash
-   python3 -m src.cli.main compile
-   ```
-2. Read `.context/active_rules.md`. These are **MANDATORY ARCHITECTURAL INVARIANTS**. You must never violate or bypass them.
-3. Check the `RECOMMENDED PROCEDURAL SKILLS` section at the bottom of `.context/active_rules.md`.
-   - If a recommended skill matches your task (e.g. `architecture-designer`, `safe-refactor`), activate and follow its playbook.
-   - If a needed capability is absent, invoke `find-skills` to locate it.
+--------------------------------------------------------------------------------
 
-## 2. Decision & Supersession Protocol (Changing Architecture)
-When introducing a new architecture pattern or retiring an old one:
-1. Do NOT delete old ADRs or leave conflicting rules in the repo.
-2. Create a new ADR using the CLI or template:
-   ```bash
-   python3 -m src.cli.main adr new "Your Decision Title" --component <domain> --supersedes ADR-XXX
-   ```
-3. Ensure the new ADR contains a `## Invariants` section and explicit `* **Supersedes:** ADR-XXX`.
-4. Synchronize with Utopia DB:
-   ```bash
-   python3 -m src.cli.main sync
-   ```
-   This atomically marks the old decision as `superseded` (`valid_to = NOW`) and prevents any agent from resurrecting deprecated patterns.
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: Ключовий скіл системи. Керує виконанням ADR-001—ADR-020, ADR-015 (Taxonomy), ADR-016 (Pseudocode/DRAKON).
+Negative Invariants
+:
+NEVER
+ починати генерацію коду без наявності скомпільованого 
+.context/active_rules.md
+ (<500 слів).
+NEVER
+ видаляти старі ADR або залишати суперечливі формулювання в репозиторії.
+NEVER
+ повторювати операційний ланцюжок 
+\ge 2
+ разів без ініціації кристалізації нового скіла (Rule of 2).
+NEVER
+ виконувати комміт або закривати задачу без проходження тесту фітнесу архітектури (
+pytest tests/test_architecture_fitness.py
+).
 
-## 3. The Rule of 2 (Autonomous Skill Crystallization)
-If you observe or execute an operational sequence, diagnostic workflow, or API integration that repeats **$\ge 2$ times** without a standardized agent skill:
-- Stop and propose creating a permanent skill.
-- Use `skill-creator` to scaffold and test `.agents/skills/<new-skill>/SKILL.md`.
+--------------------------------------------------------------------------------
 
-## 4. Verification Gate (Before Any Commit)
-Before committing or completing a task:
-1. Run the automated architecture fitness suite:
-   ```bash
-   pytest -v tests/test_architecture_fitness.py
-   ```
-2. Ensure all 5 criteria pass:
-   - Compile latency < 50ms.
-   - Context word count < 500 words.
-   - Zero external third-party dependencies in `src/`.
-   - Supersession DAG integrity verified.
-   - Procedural skill recommendations verified.
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteBSdd
+INPUT:
+    context: dict
+    task_scope: str
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
 
-## 5. Invariant FL-01: Closed-Loop Orchestration & Artifact Delivery
-### INVARIANT FL-01: CLOSED-LOOP ORCHESTRATION & ARTIFACT DELIVERY
-1. **Roles Separation:**
-   - **Telegram:** Passive HITL window for the Human Operator only.
-   - **Gemini Spark:** Autonomous Chief Architect & Sprint Orchestrator.
-2. **Mandatory Step Exit Gate:**
-   - Жоден крок спринту (Scout / Contract / Impl / Fitness) НЕ вважається завершеним, доки звітний JSON та лог тестів не опубліковано у NotebookLM (ID: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`).
-   - Назва джерела в NotebookLM повинна строго відповідати конвенції:
-     `INBOX_GEMINI_<SPRINT_ID>_<STEP>_REPORT`
-   - Локального збереження у `logs/*.json` НЕДОСТАТНЬО. Агент зобов'язаний виконати виклик `notebooklm/sources_add_text` перед відправкою події успіху.
-
-<!-- ALGORITHMIC_PSEUDOCODE_START -->
-## 📐 Канонічний алгоритмічний псевдокод (B-SDD ADR-016 Standard)
-
-> [!IMPORTANT]
-> Цей псевдокод є 1:1 текстовим ізоморфізмом планарної ДРАКОН-схеми `b-sdd.drakon.json`.
-
-```text
-ALGORITHM BSdd(context: dict)
 BEGIN
     TRY
-        // Preconditions verification
-        ASSERT ValidatePreconditions('b-sdd')
+        ASSERT context != null
 
-        // Main Flow Spine: Початок: b-sdd
-        STEP 1: CALL_SKILL(find-skills, context)
-        // CALL_SKILL(find-skills): Pre-Flight Phase (Always First)
-        STEP 2: Decision & Supersession Protocol (Changing Architecture)
-        // Detail: When introducing a new architecture pattern or retiring an old one: 1. Do NOT delete old ADRs or leave conflicting rules
-        STEP 3: CALL_SKILL(skill-creator, context)
-        // CALL_SKILL(skill-creator): The Rule of 2 (Autonomous Skill Crystallization)
-        STEP 4: Verification Gate (Before Any Commit)
-        // Detail: Before committing or completing a task: 1. Run the automated architecture fitness suite: pytest -v tests/test_architectu
-        STEP 5: Roles Separation:
-        // Detail: - **Telegram:** Passive HITL window for the Human Operator only. - **Gemini Spark:** Autonomous Chief Architect & Sprint
-        STEP 6: Mandatory Step Exit Gate:
-        // Detail: - Жоден крок спринту (Scout / Contract / Impl / Fitness) НЕ вважається завершеним, доки звітний JSON та лог тестів не оп
-        RETURN Success('Завершення: b-sdd')
-    CATCH Exception AS e
-        LOG_CRITICAL('❌ Execution failed: ' + e.Message)
-        HALT_AND_DEGRADE('Fallback for b-sdd')
+        // STEP 1: Sub-skill composition - Pre-flight skill lookup (X=0.0, Y=2.0)
+        CALL_SKILL(find-skills, {query: task_scope})
+
+        // STEP 2: Main vertical spine - Check & Compile Active Rules (X=0.0, Y=4.0)
+        EXECUTE EnsureActiveRulesCompiled()
+
+        // STEP 3: Question Node - Pre-Flight Gate Verification (X=0.0, Y=6.0)
+        IF VerifyPreconditions() THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+            LOG_ERROR("B-SDD pre-flight verification failed")
+            HALT_AND_DEGRADE("PREFLIGHT_VERIFICATION_FAILED")
+        FI
+
+        // STEP 4: Sub-skill composition - Check Rule of 2 (X=0.0, Y=8.0)
+        IF CheckPatternRepetitionGte2() THEN
+            CALL_SKILL(skill-creator, {trigger: "rule_of_2", context: context})
+        FI
+
+        // STEP 5: Main vertical spine - Run Architecture Fitness Suite (X=0.0, Y=10.0)
+        EXECUTE RunArchitectureFitnessSuite()
+
+        // STEP 6: Verification & Completion (X=0.0, Y=12.0)
+        ASSERT VerifyFitnessLatencyAndMemory()
+        EMIT_TELEMETRY(status="SUCCESS")
+        RETURN Status="SUCCESS"
+
+    CATCH Error AS e
+        LOG_CRITICAL("B-SDD invariant violation: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
     END
 END
-```
-<!-- ALGORITHMIC_PSEUDOCODE_END -->
+
+text
+
+--------------------------------------------------------------------------------
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `b-sdd.drakon.json`
-- **Total Algorithmic Nodes:** 8
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: b-sdd
-  2. `[INSERTION]` CALL_SKILL(find-skills): Pre-Flight Phase (Always First)
-  3. `[ACTION]` Decision & Supersession Protocol (Changing Architecture)
-  4. `[INSERTION]` CALL_SKILL(skill-creator): The Rule of 2 (Autonomous Skill Crystallization)
-  5. `[ACTION]` Verification Gate (Before Any Commit)
-  6. `[ACTION]` Roles Separation:
-  7. `[ACTION]` Mandatory Step Exit Gate:
-  8. `[END]` Завершення: b-sdd
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ b-sdd.drakon.json
+Total Algorithmic Nodes:
+ 8
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Контроль архітектурних інваріантів B-SDD
+[INSERTION] CALL_SKILL(find-skills): Крок 1: Префлайт пошук активних скілів
+[ACTION] Крок 2: Перевірка та компіляція .context/active_rules.md
+[QUESTION] Крок 3: Префлайт інваріанти задоволені?
+[INSERTION] CALL_SKILL(skill-creator): Крок 4: Кристалізація за Правилом 2-х повторень
+[ACTION] Крок 5: Запуск тестового набору фітнесу архітектури
+[END] Успішне завершення: Архітектурну відповідність підтверджено
+[END] Аварійне завершення: Порушення інваріантів B-SDD (X=4.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+4. Operational Guide & CLI Execution
+Префлайт компіляція правил:
+python3 -m src.cli.main compile
+
+bash
+Запуск архітектурного фітнес-сьюту:
+pytest -v tests/test_architecture_fitness.py
+
+bash
+
 
 ````
 
-#### Файл: `b-sdd/b-sdd.drakon.json` (4,528 байт)
+#### Файл: `b-sdd/b-sdd.drakon.json` (3,657 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "b-sdd",
   "category": "bssd_system_skill",
-  "description": "Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.",
-  "params": "context: dict",
+  "description": "Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.",
+  "params": "context: dict, task_scope: str",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: b-sdd",
+      "label": "Початок: Контроль архітектурних інваріантів B-SDD",
       "edges": {
-        "down": "step_1",
+        "down": "step_find_skills",
         "right": null
       },
       "semantic_binding": {
@@ -5450,117 +5054,104 @@ END
       "y": 0.0
     },
     {
-      "node_id": "step_1",
+      "node_id": "step_find_skills",
       "node_type": "insertion",
-      "label": "CALL_SKILL(find-skills): Pre-Flight Phase (Always First)",
+      "label": "CALL_SKILL(find-skills): Крок 1: Префлайт пошук активних скілів",
       "edges": {
-        "down": "step_2",
+        "down": "step_compile_rules",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "find-skills"
-      },
-      "x": 0.0,
-      "y": 2.0,
-      "instructions": "Before planning or writing code: 1. Ensure `.context/active_rules.md` is compiled. If starting fresh, invoke `./run_agy.sh` or run: python3 -m src.cli.main compile 2. Read `.contex"
-    },
-    {
-      "node_id": "step_2",
-      "node_type": "action",
-      "label": "Decision & Supersession Protocol (Changing Architecture)",
-      "edges": {
-        "down": "step_3",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
+        "call_skill": "find-skills",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 4.0,
-      "instructions": "When introducing a new architecture pattern or retiring an old one: 1. Do NOT delete old ADRs or leave conflicting rules in the repo. 2. Create a new ADR using the CLI or template:"
+      "y": 2.0
     },
     {
-      "node_id": "step_3",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(skill-creator): The Rule of 2 (Autonomous Skill Crystallization)",
-      "edges": {
-        "down": "step_4",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "skill-creator"
-      },
-      "x": 0.0,
-      "y": 6.0,
-      "instructions": "If you observe or execute an operational sequence, diagnostic workflow, or API integration that repeats **$\\ge 2$ times** without a standardized agent skill: - Stop and propose cre"
-    },
-    {
-      "node_id": "step_4",
+      "node_id": "step_compile_rules",
       "node_type": "action",
-      "label": "Verification Gate (Before Any Commit)",
+      "label": "Крок 2: Перевірка та компіляція .context/active_rules.md",
       "edges": {
-        "down": "step_5",
+        "down": "check_preflight",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0,
-      "instructions": "Before committing or completing a task: 1. Run the automated architecture fitness suite: pytest -v tests/test_architecture_fitness.py 2. Ensure all 5 criteria pass: - Compile laten"
+      "y": 4.0
     },
     {
-      "node_id": "step_5",
-      "node_type": "action",
-      "label": "Roles Separation:",
+      "node_id": "check_preflight",
+      "node_type": "question",
+      "label": "Крок 3: Префлайт інваріанти задоволені?",
       "edges": {
-        "down": "step_6",
-        "right": null
+        "down": "step_skill_creator",
+        "right": "err_preflight"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0,
-      "instructions": "- **Telegram:** Passive HITL window for the Human Operator only. - **Gemini Spark:** Autonomous Chief Architect & Sprint Orchestrator."
+      "y": 6.0
     },
     {
-      "node_id": "step_6",
-      "node_type": "action",
-      "label": "Mandatory Step Exit Gate:",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 12.0,
-      "instructions": "- Жоден крок спринту (Scout / Contract / Impl / Fitness) НЕ вважається завершеним, доки звітний JSON та лог тестів не опубліковано у NotebookLM (ID: `205ee2ec-e0d2-4ba6-badf-44f2de"
-    },
-    {
-      "node_id": "end",
+      "node_id": "err_preflight",
       "node_type": "end",
-      "label": "Завершення: b-sdd",
+      "label": "Аварійне завершення: Порушення інваріантів B-SDD",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_skill_creator",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(skill-creator): Крок 4: Кристалізація за Правилом 2-х повторень",
+      "edges": {
+        "down": "step_fitness",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "skill-creator",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 14.0
+      "y": 8.0
+    },
+    {
+      "node_id": "step_fitness",
+      "node_type": "action",
+      "label": "Крок 5: Запуск тестового набору фітнесу архітектури",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Архітектурну відповідність підтверджено",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
     }
   ],
   "meta": {
@@ -5572,6 +5163,7 @@ END
     "crossings_count": 0
   }
 }
+
 ````
 
 ---
@@ -5580,142 +5172,166 @@ END
 ### [6/59] Скіл: `b-sdd-kindle-docs`
 
 **Каталог:** `~/.agents/skills/b-sdd-kindle-docs`  
-**Опис:** Autonomous pipeline for compiling B-SDD architecture documentation and operator handbook into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via the send-to-kindle repository on host 192.168.3.184.  
+**Опис:** Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.  
 **Файлів у складі:** 4  
 
-#### Файл: `b-sdd-kindle-docs/SKILL.md` (6,985 байт)
+#### Файл: `b-sdd-kindle-docs/SKILL.md` (5,688 байт)
 ````markdown
 ---
 name: b-sdd-kindle-docs
-description: Autonomous pipeline for compiling B-SDD architecture documentation and operator handbook into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via the send-to-kindle repository on host 192.168.3.184.
+description: Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
 invoked_skills: [b-sdd]
 ---
-# B-SDD Kindle Documentation Skill
 
-Autonomous delivery pipeline for compiling B-SDD project documentation, architectural decision records (ADR-001..020), and operator handbooks into standard **EPUB 3.0** ebooks and delivering them directly to **Amazon Kindle** (`tukroschu@kindle.com`) via headless Google Gmail API OAuth2 on remote host **192.168.3.184**.
+# B-SDD Kindle Docs Pipeline
+Системний скіл для автоматизованого збирання 10 розділів посібника оператора B-SDD (
+docs/user_guide/
+) у валідний формат електронної книги EPUB 3.0 та її доставки на Amazon Kindle (
+tukroschu@kindle.com
+) з дублюванням на Gmail через сервіс 
+send-to-kindle
+ на вузлі 
+192.168.3.184
+.
 
----
+--------------------------------------------------------------------------------
 
-## 1. Core Architecture & Workflow
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: ADR-015 (системний скіл), ADR-016 (алгоритмічний псевдокод), ADR-002 (Pure Stdlib).
+Negative Invariants
+:
+NEVER
+ виконувати компіляцію на несинхронізованому стані git між хостами 
+.161
+ та 
+.184
+.
+NEVER
+ надсилати пошкоджені або неповні EPUB-файли (менше 10 розділів або відсутність TOC).
+NEVER
+ зберігати вхідні облікові дані пошти у відкритому вигляді всередині коду (використовувати pre-authorized OAuth2 або токени оточення).
 
-```
-┌───────────────────────────┐      ┌───────────────────────────┐      ┌───────────────────────────┐
-│   B-SDD Documentation     │      │   Remote Node .184        │      │   Amazon Kindle & Gmail   │
-│   docs/user_guide/        │ ───► │   send-to-kindle repo     │ ───► │   tukroschu@kindle.com    │
-│   (10 Sequenced Chapters) │      │   bsdd_to_kindle.py       │      │   tukroschu@gmail.com     │
-└───────────────────────────┘      └───────────────────────────┘      └───────────────────────────┘
-```
+--------------------------------------------------------------------------------
 
-1. **Source Content (`docs/user_guide/`):** 10 structured Markdown chapters covering the B-SDD manifesto, 7-phase HITL lifecycle, DRAKON planar visual algorithms ($C=0, X=0$), sovereign mesh & leases, agent consensus, self-healing AST, Astryx Cockpit UI, ADR registry (001-020), and operator CLI.
-2. **Compiler (`md_to_epub.py`):** Converts Markdown into standard EPUB 3.0 with table of contents (NCX/NAV) and Kindle-compatible typography.
-3. **Execution Node (`192.168.3.184`):** Uses `/home/vokov/projects/send-to-kindle` (cloned from `https://github.com/maxfraieho/send-to-kindle`).
-4. **Delivery (`send_digest.py`):** Uses pre-authorized headless OAuth2 credentials in `~/.vydra-survey-profiles/gmail_token.json` to dispatch the book to Amazon Send-to-Kindle (`tukroschu@kindle.com`) with an automatic backup copy to `tukroschu@gmail.com`.
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteBSddKindleDocs
+INPUT:
+    recipient_email: str ("tukroschu@kindle.com")
+    dry_run: bool
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+    epub_path: str
 
----
+BEGIN
+    TRY
+        ASSERT recipient_email != ""
 
-## 2. Configuration & Credentials
+        // STEP 1: Sub-skill composition - Verify B-SDD state (X=0.0, Y=2.0)
+        CALL_SKILL(b-sdd, {action: "verify_cluster_git_sync"})
 
-- **Execution Server:** Host `192.168.3.184`
-- **Sender Address:** `tukroschu@gmail.com`
-- **Recipient Address:** `tukroschu@kindle.com`
-- **Backup Address:** `tukroschu@gmail.com`
-- **Secrets Directory:** `~/.vydra-survey-profiles/` on `192.168.3.184`
-  - `gmail_token.json` (OAuth2 token with `gmail.send` scope)
-  - `gmail_client_secret.json` (Desktop Client credentials)
-- **Attachment Limit:** 25 MB (Amazon Send-to-Kindle limit)
+        // STEP 2: Main vertical spine - Sync Git State to .184 (X=0.0, Y=4.0)
+        EXECUTE SyncCodebaseToAggregatorHost("192.168.3.184")
 
----
+        // STEP 3: Question Node - Remote Codebase Readiness (X=0.0, Y=6.0)
+        IF VerifyRemoteClusterSync("192.168.3.184") THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+            LOG_ERROR("Git state sync between .161 and .184 failed")
+            HALT_AND_DEGRADE("CLUSTER_SYNC_FAILED")
+        FI
 
-## 3. Standard Execution Commands
+        // STEP 4: Main vertical spine - Compile EPUB 3.0 (X=0.0, Y=8.0)
+        EXECUTE CompileEpubHandbook("docs/user_guide/")
 
-### A. One-Command Autonomous Remote Dispatch (Recommended)
-To pull latest changes, compile the handbook, and dispatch to Kindle in one step:
-```bash
-bash /home/vokov/.agents/skills/b-sdd-kindle-docs/scripts/dispatch_on_184.sh
-```
+        // STEP 5: Question Node - EPUB Validation Check (X=0.0, Y=10.0)
+        IF ValidateEpubIntegrity(min_chapters=10) THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=10.0): Failure/Degradation
+            LOG_ERROR("EPUB compilation failed integrity or completeness check")
+            HALT_AND_DEGRADE("INVALID_EPUB_ARTIFACT")
+        FI
 
-### B. Direct SSH Command on Node .184
-```bash
-ssh 192.168.3.184 "cd /home/vokov/projects/send-to-kindle && \
-  uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib \
-    python3 bsdd_to_kindle.py"
-```
+        // STEP 6: Main vertical spine - Dispatch to Kindle (X=0.0, Y=12.0)
+        IF NOT dry_run THEN
+            EXECUTE DispatchEmailViaOauth(recipient_email)
+        FI
 
-### C. Dry-Run Mode (Compile and Verify Without Emailing)
-```bash
-ssh 192.168.3.184 "cd /home/vokov/projects/send-to-kindle && \
-  uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib \
-    python3 bsdd_to_kindle.py --dry-run"
-```
+        // STEP 7: Verification & Telemetry (X=0.0, Y=14.0)
+        EMIT_TELEMETRY(status="SUCCESS", recipient=recipient_email)
+        RETURN Status="SUCCESS"
 
-### D. Custom Recipient or Source Directory
-```bash
-ssh 192.168.3.184 "cd /home/vokov/projects/send-to-kindle && \
-  uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib \
-    python3 bsdd_to_kindle.py --source /path/to/other/docs --to custom@kindle.com"
-```
+    CATCH Error AS e
+        LOG_CRITICAL("Kindle docs pipeline failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
 
----
+text
 
-## 4. Book Chapters Structure (`docs/user_guide/`)
-
-The compiled EPUB automatically orders chapters using natural sorting:
-- **Chapter 01:** Маніфест, математична модель та фундаментальні принципи B-SDD
-- **Chapter 02:** Життєвий цикл розробки: Фази Φ1–Φ7 та ланцюжки спринтів
-- **Chapter 03:** Візуальні алгоритми ДРАКОН: Чому планарність рятує ШІ від галюцинацій
-- **Chapter 04:** Статичний інтелект коду GitNexus, AST-граф та крос-репозиторна навігація
-- **Chapter 05:** Суверенна мережа вузлів, кластерна синхронізація та розподілені лізи
-- **Chapter 06:** Децентралізований консенсус агентів та 2/3 кворум голосування
-- **Chapter 07:** Автономне самозцілення та компенсаційні відкати (Self-Healing AST)
-- **Chapter 08:** Операторський кокпіт Astryx Workbench UI
-- **Chapter 09:** Канонічний реєстр архітектурних рішень (ADR-001 — ADR-020, ADR-FE-001)
-- **Chapter 10:** Практичний довідник оператора, CLI та доставка на Kindle
-
----
-
-## 5. Amazon Kindle Delivery Rules & Troubleshooting
-
-1. **Amazon Verification Email:** Amazon Send-to-Kindle occasionally sends an email with the subject *"Verify your Kindle document"* to `tukroschu@gmail.com`. Click **"Verify Request"** within 48 hours to allow the document to sync.
-2. **Approved E-mail List:** Ensure `tukroschu@gmail.com` is in Amazon's Approved Personal Document E-mail List (*Manage Your Content and Devices* -> *Preferences* -> *Personal Document Settings*).
-3. **Kindle Device Sync:** Ensure the device is connected to Wi-Fi and tap **Settings -> Sync Your Kindle**.
+--------------------------------------------------------------------------------
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `b-sdd-kindle-docs.drakon.json`
-- **Total Algorithmic Nodes:** 10
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: b-sdd-kindle-docs
-  2. `[ACTION]` Core Architecture & Workflow
-  3. `[ACTION]` Delivery (`send_digest.py`): Uses pre-authorized headless OA
-  4. `[ACTION]` Configuration & Credentials
-  5. `[INSERTION]` CALL_SKILL(b-sdd): A. One-Command Autonomous Remote Dispatch (Recommended)
-  6. `[ACTION]` B. Direct SSH Command on Node .184
-  7. `[ACTION]` C. Dry-Run Mode (Compile and Verify Without Emailing)
-  8. `[ACTION]` D. Custom Recipient or Source Directory
-  9. `[ACTION]` Book Chapters Structure (`docs/user_guide/`)
-  10. `[END]` Завершення: b-sdd-kindle-docs
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ b-sdd-kindle-docs.drakon.json
+Total Algorithmic Nodes:
+ 9
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Компіляція та доставка документації на Kindle
+[INSERTION] CALL_SKILL(b-sdd): Крок 1: Верифікація стану кластера та синхронізації
+[ACTION] Крок 2: Синхронізація git-репозиторію на вузол 192.168.3.184
+[QUESTION] Крок 3: Синхронізація з віддаленим вузлом успішна?
+[ACTION] Крок 4: Збирання 10 розділів посібника у формат EPUB 3.0
+[QUESTION] Крок 5: EPUB-файл валідний та містить 10 розділів?
+[ACTION] Крок 6: Відправка на Kindle через send_digest.py
+[END] Успішне завершення: Документацію доставлено на Kindle
+[END] Аварійне завершення: Помилка компіляції або доставки (X=4.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+4. Operational Guide & CLI Execution
+Автономний запуск збірки та відправки з хоста .161:
+bash /home/vokov/.agents/skills/b-sdd-kindle-docs/scripts/dispatch_on_184.sh
+
+bash
+Виконання прямої команди через SSH на вузлі .184:
+ssh 192.168.3.184 "cd /home/vokov/projects/send-to-kindle && \
+  uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib \
+  python3 bsdd_to_kindle.py"
+
+bash
+Запуск у режимі Dry-Run (без відправки email):
+ssh 192.168.3.184 "cd /home/vokov/projects/send-to-kindle && \
+  uv run --with ebooklib --with markdown python3 bsdd_to_kindle.py --dry-run"
+
+bash
+
 
 ````
 
-#### Файл: `b-sdd-kindle-docs/b-sdd-kindle-docs.drakon.json` (5,815 байт)
+#### Файл: `b-sdd-kindle-docs/b-sdd-kindle-docs.drakon.json` (3,922 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "b-sdd-kindle-docs",
   "category": "bssd_system_skill",
-  "description": "Autonomous pipeline for compiling B-SDD architecture documentation and operator handbook into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via the send-to-kindle repository on host 192.168.3.184.",
-  "params": "context: dict",
+  "description": "Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.",
+  "params": "recipient_email: str, dry_run: bool",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: b-sdd-kindle-docs",
+      "label": "Початок: Компіляція та доставка документації на Kindle",
       "edges": {
-        "down": "step_1",
+        "down": "step_call_bsdd",
         "right": null
       },
       "semantic_binding": {
@@ -5726,148 +5342,117 @@ The compiled EPUB automatically orders chapters using natural sorting:
       "y": 0.0
     },
     {
-      "node_id": "step_1",
-      "node_type": "action",
-      "label": "Core Architecture & Workflow",
-      "edges": {
-        "down": "step_2",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 2.0,
-      "instructions": "┌───────────────────────────┐      ┌───────────────────────────┐      ┌───────────────────────────┐ │   B-SDD Documentation     │      │   Remote Node .184        │      │   Amazon"
-    },
-    {
-      "node_id": "step_2",
-      "node_type": "action",
-      "label": "Delivery (`send_digest.py`): Uses pre-authorized headless OA",
-      "edges": {
-        "down": "step_3",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 4.0,
-      "instructions": "---"
-    },
-    {
-      "node_id": "step_3",
-      "node_type": "action",
-      "label": "Configuration & Credentials",
-      "edges": {
-        "down": "step_4",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 6.0,
-      "instructions": "- **Execution Server:** Host `192.168.3.184` - **Sender Address:** `tukroschu@gmail.com` - **Recipient Address:** `tukroschu@kindle.com` - **Backup Address:** `tukroschu@gmail.com`"
-    },
-    {
-      "node_id": "step_4",
+      "node_id": "step_call_bsdd",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): A. One-Command Autonomous Remote Dispatch (Recommended)",
+      "label": "CALL_SKILL(b-sdd): Крок 1: Верифікація стану кластера та синхронізації",
       "edges": {
-        "down": "step_5",
+        "down": "step_sync_git",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 8.0,
-      "instructions": "To pull latest changes, compile the handbook, and dispatch to Kindle in one step: bash /home/vokov/.agents/skills/b-sdd-kindle-docs/scripts/dispatch_on_184.sh"
-    },
-    {
-      "node_id": "step_5",
-      "node_type": "action",
-      "label": "B. Direct SSH Command on Node .184",
-      "edges": {
-        "down": "step_6",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
+        "call_skill": "b-sdd",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0,
-      "instructions": "ssh 192.168.3.184 \"cd /home/vokov/projects/send-to-kindle && \\ uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib \\ python3 bsdd_to_"
+      "y": 2.0
     },
     {
-      "node_id": "step_6",
+      "node_id": "step_sync_git",
       "node_type": "action",
-      "label": "C. Dry-Run Mode (Compile and Verify Without Emailing)",
+      "label": "Крок 2: Синхронізація git-репозиторію на вузол 192.168.3.184",
       "edges": {
-        "down": "step_7",
+        "down": "check_sync",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0,
-      "instructions": "ssh 192.168.3.184 \"cd /home/vokov/projects/send-to-kindle && \\ uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib \\ python3 bsdd_to_"
+      "y": 4.0
     },
     {
-      "node_id": "step_7",
-      "node_type": "action",
-      "label": "D. Custom Recipient or Source Directory",
+      "node_id": "check_sync",
+      "node_type": "question",
+      "label": "Крок 3: Синхронізація з віддаленим вузлом успішна?",
       "edges": {
-        "down": "step_8",
-        "right": null
+        "down": "step_compile_epub",
+        "right": "err_kindle"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 14.0,
-      "instructions": "ssh 192.168.3.184 \"cd /home/vokov/projects/send-to-kindle && \\ uv run --with ebooklib --with markdown --with google-api-python-client --with google-auth-oauthlib \\ python3 bsdd_to_"
+      "y": 6.0
     },
     {
-      "node_id": "step_8",
-      "node_type": "action",
-      "label": "Book Chapters Structure (`docs/user_guide/`)",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 16.0,
-      "instructions": "The compiled EPUB automatically orders chapters using natural sorting: - **Chapter 01:** Маніфест, математична модель та фундаментальні принципи B-SDD - **Chapter 02:** Життєвий ци"
-    },
-    {
-      "node_id": "end",
+      "node_id": "err_kindle",
       "node_type": "end",
-      "label": "Завершення: b-sdd-kindle-docs",
+      "label": "Аварійне завершення: Помилка компіляції або доставки",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_compile_epub",
+      "node_type": "action",
+      "label": "Крок 4: Збирання 10 розділів посібника у формат EPUB 3.0",
+      "edges": {
+        "down": "check_epub",
+        "right": null
+      },
+      "semantic_binding": {
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 18.0
+      "y": 8.0
+    },
+    {
+      "node_id": "check_epub",
+      "node_type": "question",
+      "label": "Крок 5: EPUB-файл валідний та містить 10 розділів?",
+      "edges": {
+        "down": "step_dispatch",
+        "right": "err_kindle"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "step_dispatch",
+      "node_type": "action",
+      "label": "Крок 6: Відправка на Kindle через send_digest.py",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Документацію доставлено на Kindle",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
     }
   ],
   "meta": {
@@ -5879,6 +5464,7 @@ The compiled EPUB automatically orders chapters using natural sorting:
     "crossings_count": 0
   }
 }
+
 ````
 
 #### Файл: `b-sdd-kindle-docs/scripts/bsdd_to_kindle.py` (3,785 байт)
@@ -6011,178 +5597,161 @@ echo "=== [3/3] Execution complete ==="
 ### [7/59] Скіл: `b-sdd-notebooklm-sync`
 
 **Каталог:** `~/.agents/skills/b-sdd-notebooklm-sync`  
-**Опис:** Autonomous pipeline for synchronizing B-SDD codebase dumps, active bitemporal ADRs from Utopia DB (.251), comprehensive 10-chapter documentation (.txt), and strategic dossiers into Google NotebookLM project notebooks, pruning obsolete sources, and generating Deep Dive audio overviews.  
+**Опис:** Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google NotebookLM.  
 **Файлів у складі:** 3  
 
-#### Файл: `b-sdd-notebooklm-sync/SKILL.md` (8,438 байт)
+#### Файл: `b-sdd-notebooklm-sync/SKILL.md` (5,302 байт)
 ````markdown
 ---
 name: b-sdd-notebooklm-sync
-description: Autonomous pipeline for synchronizing B-SDD codebase dumps, active bitemporal ADRs from Utopia DB (.251), comprehensive 10-chapter documentation (.txt), and strategic dossiers into Google NotebookLM project notebooks, pruning obsolete sources, and generating Deep Dive audio overviews.
+description: Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google NotebookLM.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
 invoked_skills: [b-sdd]
 ---
-# B-SDD NotebookLM Autonomous Synchronization Skill
 
-Autonomous pipeline for synchronizing the **B-SDD** codebase, active bitemporal architecture decision records from **Utopia DB**, 10-chapter Ukrainian operator documentation, and strategic planning dossiers into Google NotebookLM notebooks via the NotebookLM MCP server (`http://192.168.3.184:8002/mcp`).
+# B-SDD NotebookLM Sync
+Системний скіл проєкту B-SDD для синхронізації знань у хмарний блокнот Google NotebookLM (ID: 
+205ee2ec-e0d2-4ba6-badf-44f2de02c7e2
+). Забезпечує вивантаження чистого дампа кодової бази (
+b-sdd_code_dump.txt
+), реєстру канонічних ADR з бази даних Utopia DB на вузлі 
+.251
+, повного 10-роздільного посібника оператора та оновлення аудіооглядів Deep Dive.
+
+--------------------------------------------------------------------------------
+
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: ADR-015 (системний скіл ядра), ADR-016, ADR-003.
+Negative Invariants
+:
+NEVER
+ завантажувати бінарні артефакти або папки 
+node_modules
+, 
+.git
+, 
+dist
+, 
+__pycache__
+ у текстовий дамп коду.
+NEVER
+ перезаписувати джерела NotebookLM без попереднього очищення застарілих версій аналогічних документів.
+NEVER
+ передавати ADR без бітемпоральних міток 
+valid_from
+ та перевірки активного статусу (
+valid_to = 'infinity'
+).
+
+--------------------------------------------------------------------------------
+
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteBSddNotebooklmSync
+INPUT:
+    notebook_id: str ("205ee2ec-e0d2-4ba6-badf-44f2de02c7e2")
+    force_audio: bool
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+
+BEGIN
+    TRY
+        ASSERT notebook_id != ""
+
+        // STEP 1: Sub-skill composition - Enforce B-SDD cluster integrity (X=0.0, Y=2.0)
+        CALL_SKILL(b-sdd, {action: "verify_cluster_hosts"})
+
+        // STEP 2: Main vertical spine - Extract Code Dump (--code-only) (X=0.0, Y=4.0)
+        EXECUTE GenerateCodeDump(source="/home/vokov/projects/b-sdd", output="/home/vokov/b-sdd_code_dump.txt")
+
+        // STEP 3: Main vertical spine - Query Active ADRs from Utopia DB (X=0.0, Y=6.0)
+        EXECUTE QueryUtopiaDbActiveAdrs("192.168.3.251")
+
+        // STEP 4: Question Node - Artifacts Integrity Check (X=0.0, Y=8.0)
+        IF VerifyStagedSourcesIntegrity() THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=8.0): Failure/Degradation
+            LOG_ERROR("Staged NotebookLM sources failed integrity check")
+            HALT_AND_DEGRADE("INVALID_STAGED_SOURCES")
+        FI
+
+        // STEP 5: Main vertical spine - Prune and Ingest via MCP (X=0.0, Y=10.0)
+        EXECUTE IngestSourcesViaNotebookLmMcp(notebook_id)
+
+        // STEP 6: Main vertical spine - Audio Overview Generation (X=0.0, Y=12.0)
+        IF force_audio THEN
+            EXECUTE TriggerNotebookLmAudioDeepDive(notebook_id, lang="uk")
+        FI
+
+        // STEP 7: Verification & Telemetry (X=0.0, Y=14.0)
+        EMIT_TELEMETRY(status="SUCCESS", notebook_id=notebook_id)
+        RETURN Status="SUCCESS"
+
+    CATCH Error AS e
+        LOG_CRITICAL("NotebookLM sync failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
+
+text
+
+--------------------------------------------------------------------------------
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ b-sdd-notebooklm-sync.drakon.json
+Total Algorithmic Nodes:
+ 8
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Синхронізація артефактів B-SDD у NotebookLM
+[INSERTION] CALL_SKILL(b-sdd): Крок 1: Верифікація стану кластера
+[ACTION] Крок 2: Генерація чистого текстового дампа кодової бази (--code-only)
+[ACTION] Крок 3: Вивантаження активних бітемпоральних ADR з Utopia DB (.251)
+[QUESTION] Крок 4: Сформовані файли-джерела валідні?
+[ACTION] Крок 5: Очищення застарілих та завантаження нових джерел через MCP
+[END] Успішне завершення: Синхронізацію знань у NotebookLM виконано
+[END] Аварійне завершення: Помилка формування джерел (X=4.0)
+<!-- DRAKON_VISUAL_FLOW_END -->
 
 ---
 
-## 1. System Topology & Architecture
-
-```
-┌─────────────────────────────────┐
-│        Node .161 (Source)       │
-│  /home/vokov/projects/b-sdd     │
-│  Git repository (main)          │
-│  docs/user_guide/ (01..10 .md)  │
-└────────────────┬────────────────┘
-                 │ git push / scp
-                 ▼
-┌─────────────────────────────────┐       ┌─────────────────────────────────┐
-│     Node .184 (Aggregator)      │       │     Node .251 (Utopia DB)       │
-│  /home/vokov/projects/resume    │       │  192.168.3.251:9922 (SSH)       │
-│  run_md_service.sh --code-only  │       │  PostgreSQL container utopia-db │
-│  NotebookLM MCP Server (:8002)  │       │  intent_store.intent_nodes      │
-└────────────────┬────────────────┘       └────────────────┬────────────────┘
-                 │                                         │
-                 │ Ingest & Prune via MCP                  │
-                 ▼                                         ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                           Google NotebookLM                               │
-│  Notebook: "B-SDD Methodology, Multi-Session Handoff & Architecture"      │
-│  ID: 205ee2ec-e0d2-4ba6-badf-44f2de02c7e2                                │
-│  • Pure Code Dump (.TXT) without docs/markdown                            │
-│  • Utopia DB Canonical ADR Registry (ADR-001..020, ADR-FE-001)            │
-│  • B-SDD Handbook: Complete 10 Chapters (.TXT)                            │
-│  • Strategic Brainstorming Dossiers (Sprints 021-025+)                    │
-│  • Audio Deep Dive Podcast (generate_audio in Ukrainian)                  │
-└───────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 2. Key Components & Paths
-
-| Component | Node / Host | Path / Port | Purpose |
-|---|---|---|---|
-| **B-SDD Local Codebase** | `192.168.3.161` | `/home/vokov/projects/b-sdd` | Primary development repository |
-| **B-SDD Remote Mirror** | `192.168.3.184` | `/home/vokov/projects/b-sdd` | Synchronized git mirror on .184 |
-| **Code Aggregator Service** | `192.168.3.184` | `/home/vokov/projects/resume/run_md_service.sh` | Aggregates code into `.txt`/`.pdf`/`.md` with `--code-only` |
-| **Python Aggregator Script** | `192.168.3.184` | `/home/vokov/projects/resume/md_to_embeddings_service_v4.py` | v4.4.1 engine with CLI & interactive support |
-| **NotebookLM MCP Server** | `192.168.3.184` | `http://192.168.3.184:8002/mcp` | FastMCP server for NotebookLM operations |
-| **Utopia DB Instance** | `192.168.3.251` | Port `9922` (SSH, user `root`, pass `podroid`) | PostgreSQL container `utopia-db`, schema `intent_store` |
-| **Target Notebook ID** | NotebookLM Cloud | `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2` | B-SDD Methodology & Architecture Notebook |
-
----
-
-## 3. Pure Code Extraction Mode (`--code-only`)
-
-The code aggregator service on `192.168.3.184` supports the `--code-only` flag to extract pure source code, completely excluding markdown files (`.md`), plain text notes (`.txt`), documentation files, and build artifacts:
-
-### Command Syntax (Batch Mode):
-```bash
+4. Operational Guide & CLI Execution
+Пакетна генерація дампа коду на хості .184:
 ssh vokov@192.168.3.184 "/home/vokov/projects/resume/run_md_service.sh \
   --batch \
   --source /home/vokov/projects/b-sdd \
   --output /home/vokov/b-sdd_code_dump.txt \
   --code-only"
-```
 
-### Included Extensions:
-- Python (`.py`), TypeScript/React (`.ts`, `.tsx`), JavaScript (`.js`, `.jsx`)
-- Shell scripts (`.sh`, `.bat`), Data/Config (`.json`, `.yml`, `.yaml`, `.sql`, `.toml`)
-- Web templates (`.html`, `.css`, `.vue`, `.svelte`)
-
-### Excluded Extensions & Directories:
-- `.md`, `.txt`, `.rst`, `.adoc`, `.pdf`, `.epub`, `.docx`
-- Service folders: `.git`, `.gitnexus`, `node_modules`, `venv`, `__pycache__`, `.pytest_cache`, `.vscode`, `dist`, `build`
-
----
-
-## 4. Execution Workflow
-
-### Step 1: Push & Pull Cluster Git State
-Ensure all local changes on `.161` are pushed and pulled to `.184`:
-```bash
-cd /home/vokov/projects/b-sdd
-git push origin main
-ssh vokov@192.168.3.184 "cd /home/vokov/projects/b-sdd && git stash || true && git pull origin main"
-```
-
-### Step 2: Compile User Guide (.txt) & Invariants
-Concatenate all 10 chapters in `docs/user_guide/` into a single plain-text document:
-```bash
+bash
+Компільована доставка посібника оператора:
 bash /home/vokov/.agents/skills/b-sdd-notebooklm-sync/scripts/sync_notebooklm.sh
-```
 
-### Step 3: Query Active ADRs from Utopia DB (.251)
-Extract active, non-superseded ADR records (`valid_to = 'infinity'`) from Utopia DB:
-```bash
-sshpass -p podroid ssh -p 9922 root@192.168.3.251 \
-  "docker exec -i \$(docker ps -q -f name=utopia-db) psql -U utopia -d utopia \
-   -c \"SELECT intent_key, component, rule_type, target_key, status FROM intent_store.intent_nodes WHERE valid_to = 'infinity' AND tx_to = 'infinity' ORDER BY intent_key;\""
-```
+bash
 
-### Step 4: Prune Obsolete Sources in NotebookLM
-1. Call `sources_list(notebook_id="205ee2ec-e0d2-4ba6-badf-44f2de02c7e2")`.
-2. Delete outdated drafts or superseded sprint reports via `sources_delete(notebook_id, source_id)`.
-
-### Step 5: Ingest Fresh Sources via MCP
-Using `sources_add_file` with files on host `.184`:
-- Codebase Dump: `/home/vokov/b-sdd_code_dump.txt`
-- User Guide: `/home/vokov/b_sdd_user_guide.txt`
-- Canonical ADR Registry: `/home/vokov/utopia_canonical_adrs.txt`
-- Brainstorming Dossier: `/home/vokov/b_sdd_brainstorming_dossier_gemini_pro.txt`
-
-Rename sources to canonical titles using `sources_rename`.
-
-### Step 6: Trigger & Poll Audio Overview
-```python
-generate_audio(
-    notebook_id="205ee2ec-e0d2-4ba6-badf-44f2de02c7e2",
-    instructions="Детальний аналітичний розбір методології B-SDD, суверенного кластера (.161, .184, .251), реєстру ADR-001—ADR-020, посібника оператора та дорожньої карти Sprints 021–025.",
-    language="uk"
-)
-```
-Check progress with `artifacts_poll_status(notebook_id, task_id)` until status is `completed`.
-
-<!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `b-sdd-notebooklm-sync.drakon.json`
-- **Total Algorithmic Nodes:** 10
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: b-sdd-notebooklm-sync
-  2. `[INSERTION]` CALL_SKILL(b-sdd): System Topology & Architecture
-  3. `[INSERTION]` CALL_SKILL(b-sdd): Key Components & Paths
-  4. `[ACTION]` Pure Code Extraction Mode (`--code-only`)
-  5. `[INSERTION]` CALL_SKILL(b-sdd): Command Syntax (Batch Mode):
-  6. `[ACTION]` Included Extensions:
-  7. `[ACTION]` Excluded Extensions & Directories:
-  8. `[INSERTION]` CALL_SKILL(b-sdd): Step 1: Push & Pull Cluster Git State
-  9. `[INSERTION]` CALL_SKILL(b-sdd): Step 2: Compile User Guide (.txt) & Invariants
-  10. `[END]` Завершення: b-sdd-notebooklm-sync
-<!-- DRAKON_VISUAL_FLOW_END -->
 
 ````
 
-#### Файл: `b-sdd-notebooklm-sync/b-sdd-notebooklm-sync.drakon.json` (6,005 байт)
+#### Файл: `b-sdd-notebooklm-sync/b-sdd-notebooklm-sync.drakon.json` (3,617 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "b-sdd-notebooklm-sync",
   "category": "bssd_system_skill",
-  "description": "Autonomous pipeline for synchronizing B-SDD codebase dumps, active bitemporal ADRs from Utopia DB (.251), comprehensive 10-chapter documentation (.txt), and strategic dossiers into Google NotebookLM project notebooks, pruning obsolete sources, and generating Deep Dive audio overviews.",
-  "params": "context: dict",
+  "description": "Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google NotebookLM.",
+  "params": "notebook_id: str, force_audio: bool",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: b-sdd-notebooklm-sync",
+      "label": "Початок: Синхронізація артефактів B-SDD у NotebookLM",
       "edges": {
-        "down": "step_1",
+        "down": "step_call_bsdd",
         "right": null
       },
       "semantic_binding": {
@@ -6193,152 +5762,103 @@ Check progress with `artifacts_poll_status(notebook_id, task_id)` until status i
       "y": 0.0
     },
     {
-      "node_id": "step_1",
+      "node_id": "step_call_bsdd",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): System Topology & Architecture",
+      "label": "CALL_SKILL(b-sdd): Крок 1: Верифікація стану кластера",
       "edges": {
-        "down": "step_2",
+        "down": "step_code_dump",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 2.0,
-      "instructions": "┌─────────────────────────────────┐ │        Node .161 (Source)       │ │  /home/vokov/projects/b-sdd     │ │  Git repository (main)          │ │  docs/user_guide/ (01..10 .md)  │ "
-    },
-    {
-      "node_id": "step_2",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Key Components & Paths",
-      "edges": {
-        "down": "step_3",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 4.0,
-      "instructions": "| Component | Node / Host | Path / Port | Purpose | |---|---|---|---| | **B-SDD Local Codebase** | `192.168.3.161` | `/home/vokov/projects/b-sdd` | Primary development repository |"
-    },
-    {
-      "node_id": "step_3",
-      "node_type": "action",
-      "label": "Pure Code Extraction Mode (`--code-only`)",
-      "edges": {
-        "down": "step_4",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
+        "call_skill": "b-sdd",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 6.0,
-      "instructions": "The code aggregator service on `192.168.3.184` supports the `--code-only` flag to extract pure source code, completely excluding markdown files (`.md`), plain text notes (`.txt`), "
+      "y": 2.0
     },
     {
-      "node_id": "step_4",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Command Syntax (Batch Mode):",
-      "edges": {
-        "down": "step_5",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 8.0,
-      "instructions": "ssh vokov@192.168.3.184 \"/home/vokov/projects/resume/run_md_service.sh \\ --batch \\ --source /home/vokov/projects/b-sdd \\ --output /home/vokov/b-sdd_code_dump.txt \\ --code-only\""
-    },
-    {
-      "node_id": "step_5",
+      "node_id": "step_code_dump",
       "node_type": "action",
-      "label": "Included Extensions:",
+      "label": "Крок 2: Генерація чистого текстового дампа кодової бази (--code-only)",
       "edges": {
-        "down": "step_6",
+        "down": "step_utopia_adrs",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0,
-      "instructions": "- Python (`.py`), TypeScript/React (`.ts`, `.tsx`), JavaScript (`.js`, `.jsx`) - Shell scripts (`.sh`, `.bat`), Data/Config (`.json`, `.yml`, `.yaml`, `.sql`, `.toml`) - Web templa"
+      "y": 4.0
     },
     {
-      "node_id": "step_6",
+      "node_id": "step_utopia_adrs",
       "node_type": "action",
-      "label": "Excluded Extensions & Directories:",
+      "label": "Крок 3: Вивантаження активних бітемпоральних ADR з Utopia DB (.251)",
       "edges": {
-        "down": "step_7",
+        "down": "check_staged",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0,
-      "instructions": "- `.md`, `.txt`, `.rst`, `.adoc`, `.pdf`, `.epub`, `.docx` - Service folders: `.git`, `.gitnexus`, `node_modules`, `venv`, `__pycache__`, `.pytest_cache`, `.vscode`, `dist`, `build"
+      "y": 6.0
     },
     {
-      "node_id": "step_7",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Step 1: Push & Pull Cluster Git State",
+      "node_id": "check_staged",
+      "node_type": "question",
+      "label": "Крок 4: Сформовані файли-джерела валідні?",
       "edges": {
-        "down": "step_8",
-        "right": null
+        "down": "step_mcp_ingest",
+        "right": "err_staged"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
+        "severity": "normal"
       },
       "x": 0.0,
-      "y": 14.0,
-      "instructions": "Ensure all local changes on `.161` are pushed and pulled to `.184`: cd /home/vokov/projects/b-sdd git push origin main ssh vokov@192.168.3.184 \"cd /home/vokov/projects/b-sdd && git"
+      "y": 8.0
     },
     {
-      "node_id": "step_8",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Step 2: Compile User Guide (.txt) & Invariants",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 16.0,
-      "instructions": "Concatenate all 10 chapters in `docs/user_guide/` into a single plain-text document: bash /home/vokov/.agents/skills/b-sdd-notebooklm-sync/scripts/sync_notebooklm.sh"
-    },
-    {
-      "node_id": "end",
+      "node_id": "err_staged",
       "node_type": "end",
-      "label": "Завершення: b-sdd-notebooklm-sync",
+      "label": "Аварійне завершення: Помилка формування джерел",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_mcp_ingest",
+      "node_type": "action",
+      "label": "Крок 5: Очищення застарілих та завантаження нових джерел через MCP",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 18.0
+      "y": 10.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Синхронізацію знань у NotebookLM виконано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
     }
   ],
   "meta": {
@@ -6350,6 +5870,7 @@ Check progress with `artifacts_poll_status(notebook_id, task_id)` until status i
     "crossings_count": 0
   }
 }
+
 ````
 
 #### Файл: `b-sdd-notebooklm-sync/scripts/sync_notebooklm.sh` (3,637 байт)
@@ -6434,232 +5955,167 @@ echo "==========================================================================
 ### [8/59] Скіл: `b-sdd-sprint-closure`
 
 **Каталог:** `~/.agents/skills/b-sdd-sprint-closure`  
-**Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.  
+**Опис:** Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та синхронізація з Utopia DB і NotebookLM.  
 **Файлів у складі:** 3  
 
-#### Файл: `b-sdd-sprint-closure/SKILL.md` (10,053 байт)
+#### Файл: `b-sdd-sprint-closure/SKILL.md` (6,420 байт)
 ````markdown
 ---
 name: b-sdd-sprint-closure
-description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
+description: Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та синхронізація з Utopia DB і NotebookLM.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
 invoked_skills: [b-sdd, cloudflare-pages-expert, b-sdd-ui-export, b-sdd-notebooklm-sync]
 ---
-# B-SDD Sprint Closure & Distillation Skill
 
-The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated discrete sprint closure and distillation protocol under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, AST knowledge graph currency in GitNexus, frontend deployment to Cloudflare Pages, bitemporal Tripartite ontology and WORM ledger synchronization in Utopia DB, dual code dumps in Google NotebookLM, and telemetric callback to the orchestrating supervisor.
+# B-SDD Sprint Closure & Distillation
+Системний скіл ядра для повного життєвого циклу закриття спринту в парадигмі B-SDD. Реалізує перехід 
+\Phi_6 \to \Phi_7
+ (Implementation 
+\to
+ Distillation & Handoff): зачистку тіньових артефактів, оновлення графа знань GitNexus, публікацію вебінтерфейсу Astryx Cockpit у Cloudflare Pages, синхронізацію WORM-леджеру в Utopia DB та надсилання телеметричного вебхука оператору.
 
----
+--------------------------------------------------------------------------------
 
-## 1. When to Use
-- When all sprint implementation tasks, specifications, and test suites are 100% completed.
-- At the formal sprint closure phase ($\Phi_6 \to \Phi_7$).
-- When sealing release tags, compiling active rules into `.context/active_rules.md`, updating GitNexus AST graph, publishing the Astryx UI to Cloudflare Pages, and committing WORM audit snapshots into Utopia DB.
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: ADR-005 (компактність правил <500 слів), ADR-007 (хендоф), ADR-015 (бар'єр незмінності скілів), ADR-016.
+Negative Invariants
+:
+NEVER
+ закривати спринт, якщо тестовий набір або фітнес-перевірка завершилися з помилкою.
+NEVER
+ залишати неспресовані правила в 
+.context/active_rules.md
+ (обмеження строго до 500 слів).
+NEVER
+ створювати релізний тег 
+sprint_XXX_done
+ без попереднього пушу змін у гілку 
+main
+.
+NEVER
+ пропускати крок фіксації WORM-знімку в базі даних Utopia DB на вузлі 
+.251
+.
 
----
+--------------------------------------------------------------------------------
 
-## 2. The Sprint Closure & Distillation Lifecycle
-
-```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                        B-SDD SPRINT CLOSURE LIFECYCLE (Φ6 ──► Φ7)                      │
-└────────────────────────────────────────────────────────────────────────────────────────┘
-  [1. Cleaner]           python3 scripts/gitnexus_cleaner.py (cleans lbug.shadow on .184)
-       │
-  [2. GitNexus Sync]     docker exec gitnexus-server gitnexus analyze /projects/b-sdd (.184)
-       │
-  [3. Code Dumps]        dump_codebase.py (b-sdd_code_dump.txt) &
-                         CALL_SKILL(b-sdd-ui-export): dump_ui_codebase.py (b-sdd-ui_code_dump.txt)
-       │
-  [3.5. Deploy UI]       CALL_SKILL(cloudflare-pages-expert): deploy_cloudflare_pages.sh
-       │
-  [4. Skills Dump]       python3 scripts/dump_skills.py & Immutability Barrier (ADR-015)
-       │
-  [5. NotebookLM Sync]   CALL_SKILL(b-sdd-notebooklm-sync): Updates dual code dumps in SSoT Notebook
-       │
-  [6. Rules Compile]     python3 -m src.cli.main compile (<500 words, ADR-005)
-       │
-  [7. Utopia DB Sync]    Tripartite (ADR + Spec + Skill) sync & WORM ledger commit on .251
-       │
-  [8. Handoff]           ./run_b_sdd.sh --handoff --prompt "<Next Sprint Directive>" (ADR-007)
-       │
-  [9. Git Sealing]       git tag -a sprint_XXX_done & git push origin main sprint_XXX_done
-       │
-  [10. Callback]         POST http://100.66.97.93:5678/webhook/bsdd-supervisor-result
-```
-
-### Stage 1: GitNexus Lock & Shadow Cleaner
-Removes orphaned locks and shadow files (`lbug.shadow`, `lbug.wal.checkpoint`, `*.lock`) locally and on remote AST host `192.168.3.184`:
-```bash
-python3 scripts/gitnexus_cleaner.py
-```
-
-### Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (Host .184)
-Triggers full AST re-indexing inside the `gitnexus-server` container on host `192.168.3.184`:
-```bash
-ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 "docker exec -t gitnexus-server gitnexus analyze /projects/b-sdd"
-```
-
-### Stage 3: Dual Codebase Text Dumps Generation
-1. **Backend Code Dump**:
-   ```bash
-   python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt
-   ```
-2. **Astryx Cockpit UI Code Dump (via `b-sdd-ui-export`)**:
-   ```bash
-   python3 scripts/dump_ui_codebase.py --source b-sdd-ui --output b-sdd-ui_code_dump.txt --sync-remote
-   ```
-
-### Stage 3.5: Astryx Cockpit Cloudflare Pages Production Deployment (via `cloudflare-pages-expert`)
-Builds production bundle and publishes live to Cloudflare Pages:
-```bash
-bash scripts/deploy_cloudflare_pages.sh
-# Verifies HTTP 200 at https://b-sdd-ui.pages.dev
-```
-
-### Stage 4: Active Skills Inventory & Immutability Barrier
-Verifies that all core system skills remain intact and immutable per ADR-015, then refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md`:
-```bash
-python3 scripts/dump_skills.py
-```
-
-### Stage 5: NotebookLM SSoT Dual Dumps Update (via `b-sdd-notebooklm-sync`)
-Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`.
-Synchronizes both `b-sdd_code_dump.txt` and `b-sdd-ui_code_dump.txt` into Google NotebookLM via the MCP server on host `.184`.
-
-### Stage 6: Rules Compilation & Budget Enforcement (ADR-005)
-Recompiles active rules snapshot and verifies word budget:
-```bash
-python3 -m src.cli.main compile
-test $(wc -w < .context/active_rules.md) -lt 500
-```
-
-### Stage 7: Utopia DB Tripartite Ontology Sync & WORM Ledger Commit (Host .251)
-Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`) and records immutable commit in `intent_store.worm_ledger`.
-
-### Stage 8: Discrete Sprint Handoff Synthesis (ADR-007)
-Generates atomic handoff artifacts (`.context/sprint_handoff.json` and `.context/next_sprint.md`).
-
-### Stage 9: Git Sealing & Release Tagging
-```bash
-git tag -a sprint_XXX_done -m "sprint_XXX: sealed and distilled"
-git push origin main sprint_XXX_done
-```
-
-### Stage 10: Telemetric Callback to Supervisor Webhook
-Dispatches POST payload to n8n supervisor webhook (`http://100.66.97.93:5678/webhook/bsdd-supervisor-result`).
-
----
-
-## 3. Algorithmic Workflow (ADR-016 Standard)
-
-```text
-ALGORITHM ExecuteSprintClosure
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteBSddSprintClosure
 INPUT:
     sprint_id: str
     prompt: str
-    skip_gitnexus: bool = False
-    skip_deploy: bool = False
-    no_push: bool = False
 OUTPUT:
-    closure_status: str ("SEALED" | "FAILED")
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
 
 BEGIN
     TRY
-        // STAGE 1: Cleaner
-        EXECUTE CleanGitNexusLocks()
+        ASSERT sprint_id != ""
 
-        // STAGE 2: GitNexus Re-indexing
-        IF NOT skip_gitnexus THEN
-            EXECUTE ReindexGitNexusGraph(host="192.168.3.184")
+        // STEP 1: Main vertical spine - GitNexus Shadow Cleaner (X=0.0, Y=2.0)
+        EXECUTE CleanGitNexusShadows()
+
+        // STEP 2: Main vertical spine - Re-index AST in GitNexus (X=0.0, Y=4.0)
+        EXECUTE ReindexGitNexusAst()
+
+        // STEP 3: Sub-skill composition - Export UI Codebase Dump (X=0.0, Y=6.0)
+        CALL_SKILL(b-sdd-ui-export, {sprint_id: sprint_id})
+
+        // STEP 4: Sub-skill composition - Deploy Astryx UI to Cloudflare Pages (X=0.0, Y=8.0)
+        CALL_SKILL(cloudflare-pages-expert, {project_name: "astryx-cockpit"})
+
+        // STEP 5: Main vertical spine - Skills Catalog Audit & Immutability (X=0.0, Y=10.0)
+        EXECUTE DumpSkillsAndVerifyCatalog()
+
+        // STEP 6: Sub-skill composition - Synchronize to NotebookLM SSoT (X=0.0, Y=12.0)
+        CALL_SKILL(b-sdd-notebooklm-sync, {notebook_id: "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2"})
+
+        // STEP 7: Main vertical spine - Compile Active Rules (<500 words) (X=0.0, Y=14.0)
+        EXECUTE CompileActiveRulesCompact()
+
+        // STEP 8: Question Node - Active Rules Word Count Check (X=0.0, Y=16.0)
+        IF VerifyRulesWordCountLeq500() THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=16.0): Failure/Degradation
+            LOG_ERROR("Active rules exceeded 500 words limit")
+            HALT_AND_DEGRADE("RULES_EXCEEDED_BUDGET")
         FI
 
-        // STAGE 3: Dual Code Dumps
-        EXECUTE SynthesizeBackendDump(output="b-sdd_code_dump.txt")
-        CALL_SKILL(b-sdd-ui-export, {
-            source: "b-sdd-ui",
-            output: "b-sdd-ui_code_dump.txt",
-            sync_remote: True
-        })
+        // STEP 9: Main vertical spine - Utopia DB Tripartite Sync & WORM Commit (X=0.0, Y=18.0)
+        EXECUTE CommitUtopiaDbWormSnapshot(sprint_id)
 
-        // STAGE 3.5: Cloudflare Pages Deployment
-        IF NOT skip_deploy THEN
-            CALL_SKILL(cloudflare-pages-expert, {action: "deploy", project: "b-sdd-ui"})
-        FI
+        // STEP 10: Main vertical spine - Git Release Tag & Push (X=0.0, Y=20.0)
+        EXECUTE TagAndPushGitRelease(sprint_id)
 
-        // STAGE 4: Skills Inventory & Immutability Barrier
-        ASSERT VerifySystemSkillsImmutability() == TRUE
-        EXECUTE RefreshSkillsCatalog()
+        // STEP 11: Verification & Callback Webhook (X=0.0, Y=22.0)
+        EXECUTE NotifySupervisorWebhook(sprint_id)
+        EMIT_TELEMETRY(status="SUCCESS", sprint_id=sprint_id)
+        RETURN Status="SUCCESS"
 
-        // STAGE 5: NotebookLM SSoT Sync
-        CALL_SKILL(b-sdd-notebooklm-sync, {
-            notebook_id: "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2",
-            sources: ["b-sdd_code_dump.txt", "b-sdd-ui_code_dump.txt"]
-        })
-
-        // STAGE 6: Rules Compilation
-        wc = EXECUTE CompileActiveRules()
-        ASSERT wc < 500
-
-        // STAGE 7: Utopia DB Tripartite Sync & WORM Ledger
-        EXECUTE SyncUtopiaDBAndRecordWORM(sprint_id, wc)
-
-        // STAGE 8: Handoff Synthesis
-        EXECUTE SynthesizeHandoff(prompt)
-
-        // STAGE 9: Git Sealing
-        EXECUTE GitTagAndSeal(tag=sprint_id + "_done", push=NOT no_push)
-
-        // STAGE 10: Supervisor Callback
-        EXECUTE EmitSupervisorCallback(sprint_id, status="SEALED")
-
-        RETURN "SEALED"
     CATCH Error AS e
         LOG_CRITICAL("Sprint closure failed: " + e.Message)
         HALT_AND_DEGRADE(e.Message)
     END
 END
-```
+
+text
+
+--------------------------------------------------------------------------------
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ b-sdd-sprint-closure.drakon.json
+Total Algorithmic Nodes:
+ 13
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)
+[ACTION] Крок 1: Зачистка тіньових файлів GitNexus (.184)
+[ACTION] Крок 2: Оновлення графа знань AST у GitNexus
+[INSERTION] CALL_SKILL(b-sdd-ui-export): Крок 3: Синтез дампа коду b-sdd-ui
+[INSERTION] CALL_SKILL(cloudflare-pages-expert): Крок 4: Деплой фронтенду в Cloudflare Pages
+[ACTION] Крок 5: Аудит каталогу скілів та перевірка бар'єру незмінності ADR-015
+[INSERTION] CALL_SKILL(b-sdd-notebooklm-sync): Крок 6: Синхронізація з NotebookLM
+[ACTION] Крок 7: Компіляція активних правил у .context/active_rules.md
+[QUESTION] Крок 8: Обсяг правил менше 500 слів (ADR-005)?
+[ACTION] Крок 9: Синхронізація Tripartite з Utopia DB (.251) та фіксація WORM-знімку
+[ACTION] Крок 10: Фіксація тегу sprint_done у git та пуш
+[END] Успішне завершення: Спринт успішно закрито та запечатано
+[END] Аварійне завершення: Порушення ліміту слів або цілісності (X=4.0)
+<!-- DRAKON_VISUAL_FLOW_END -->
 
 ---
 
-<!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `b-sdd-sprint-closure.drakon.json`
-- **Total Algorithmic Nodes:** 13
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: Повний життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)
-  2. `[ACTION]` Етап 1: Очищення блокувань GitNexus (gitnexus_cleaner.py)
-  3. `[ACTION]` Етап 2: Переіндексація AST-графа коду в GitNexus на хості 192.168.3.184
-  4. `[INSERTION]` CALL_SKILL(b-sdd-ui-export): Етап 3: Синтез подвійного текстового дампу (b-sdd_code_dump.txt та b-sdd-ui_code_dump.txt)
-  5. `[INSERTION]` CALL_SKILL(cloudflare-pages-expert): Етап 3.5: Публікація Astryx Cockpit у Cloudflare Pages (b-sdd-ui.pages.dev)
-  6. `[ACTION]` Етап 4: Інвентаризація активних скілів та верифікація незмінності ядра (ADR-015)
-  7. `[INSERTION]` CALL_SKILL(b-sdd-notebooklm-sync): Етап 5: Оновлення джерел та дампу UI у записнику NotebookLM (ID: 205ee2ec...)
-  8. `[ACTION]` Етап 6: Компіляція active_rules.md та бюджет <500 слів (ADR-005)
-  9. `[ACTION]` Етап 7: Синхронізація трипартитної онтології та WORM-запис в Utopia DB (.251)
-  10. `[ACTION]` Етап 8: Генерація дискретного Handoff артефакту (ADR-007)
-  11. `[ACTION]` Етап 9: Фіксація Git Release Tag (sprint_XXX_done) та git push
-  12. `[ACTION]` Етап 10: Телеметричний callback на супервайзер (n8n webhook)
-  13. `[END]` Завершення: Спринт успішно закрито та запечатано (Phi_7 Distilled)
-<!-- DRAKON_VISUAL_FLOW_END -->
+4. Operational Guide & CLI Execution
+Повний автономний запуск закриття спринту:
+./run_b_sdd.sh --sprint-closure --sprint-id sprint_022 --prompt "Завершено стабілізацію ядра"
+
+bash
+Ручний виклик аудиту скілів перед коммітом:
+python3 scripts/dump_skills.py
+
+bash
+
 
 ````
 
-#### Файл: `b-sdd-sprint-closure/b-sdd-sprint-closure.drakon.json` (6,142 байт)
+#### Файл: `b-sdd-sprint-closure/b-sdd-sprint-closure.drakon.json` (5,573 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "b-sdd-sprint-closure",
   "category": "bssd_system_skill",
-  "description": "Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.",
-  "params": "sprint_id: str, prompt: str, skip_gitnexus: bool = False, skip_deploy: bool = False, no_push: bool = False",
+  "description": "Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та синхронізація з Utopia DB і NotebookLM.",
+  "params": "sprint_id: str, prompt: str",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Повний життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)",
+      "label": "Початок: Життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)",
       "edges": {
         "down": "step_cleaner",
         "right": null
@@ -6674,7 +6130,7 @@ END
     {
       "node_id": "step_cleaner",
       "node_type": "action",
-      "label": "Етап 1: Очищення блокувань GitNexus (gitnexus_cleaner.py)",
+      "label": "Крок 1: Зачистка тіньових файлів GitNexus (.184)",
       "edges": {
         "down": "step_gitnexus",
         "right": null
@@ -6688,9 +6144,9 @@ END
     {
       "node_id": "step_gitnexus",
       "node_type": "action",
-      "label": "Етап 2: Переіндексація AST-графа коду в GitNexus на хості 192.168.3.184",
+      "label": "Крок 2: Оновлення графа знань AST у GitNexus",
       "edges": {
-        "down": "step_dumps",
+        "down": "step_ui_export",
         "right": null
       },
       "semantic_binding": {
@@ -6700,11 +6156,11 @@ END
       "y": 4.0
     },
     {
-      "node_id": "step_dumps",
+      "node_id": "step_ui_export",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd-ui-export): Етап 3: Синтез подвійного текстового дампу (b-sdd_code_dump.txt та b-sdd-ui_code_dump.txt)",
+      "label": "CALL_SKILL(b-sdd-ui-export): Крок 3: Синтез дампа коду b-sdd-ui",
       "edges": {
-        "down": "step_deploy_pages",
+        "down": "step_deploy_cf",
         "right": null
       },
       "semantic_binding": {
@@ -6715,11 +6171,11 @@ END
       "y": 6.0
     },
     {
-      "node_id": "step_deploy_pages",
+      "node_id": "step_deploy_cf",
       "node_type": "insertion",
-      "label": "CALL_SKILL(cloudflare-pages-expert): Етап 3.5: Публікація Astryx Cockpit у Cloudflare Pages (b-sdd-ui.pages.dev)",
+      "label": "CALL_SKILL(cloudflare-pages-expert): Крок 4: Деплой фронтенду в Cloudflare Pages",
       "edges": {
-        "down": "step_skills_dump",
+        "down": "step_dump_skills",
         "right": null
       },
       "semantic_binding": {
@@ -6730,26 +6186,25 @@ END
       "y": 8.0
     },
     {
-      "node_id": "step_skills_dump",
+      "node_id": "step_dump_skills",
       "node_type": "action",
-      "label": "Етап 4: Інвентаризація активних скілів та верифікація незмінності ядра (ADR-015)",
+      "label": "Крок 5: Аудит каталогу скілів та перевірка бар'єру незмінності ADR-015",
       "edges": {
-        "down": "step_notebooklm",
+        "down": "step_nb_sync",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-02",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 10.0
     },
     {
-      "node_id": "step_notebooklm",
+      "node_id": "step_nb_sync",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd-notebooklm-sync): Етап 5: Оновлення джерел та дампу UI у записнику NotebookLM (ID: 205ee2ec...)",
+      "label": "CALL_SKILL(b-sdd-notebooklm-sync): Крок 6: Синхронізація з NotebookLM",
       "edges": {
-        "down": "step_rules_compile",
+        "down": "step_compile_rules",
         "right": null
       },
       "semantic_binding": {
@@ -6760,27 +6215,26 @@ END
       "y": 12.0
     },
     {
-      "node_id": "step_rules_compile",
+      "node_id": "step_compile_rules",
       "node_type": "action",
-      "label": "Етап 6: Компіляція active_rules.md та бюджет <500 слів (ADR-005)",
+      "label": "Крок 7: Компіляція активних правил у .context/active_rules.md",
       "edges": {
-        "down": "step_utopia",
+        "down": "check_word_count",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-005-INV-01",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 14.0
     },
     {
-      "node_id": "step_utopia",
-      "node_type": "action",
-      "label": "Етап 7: Синхронізація трипартитної онтології та WORM-запис в Utopia DB (.251)",
+      "node_id": "check_word_count",
+      "node_type": "question",
+      "label": "Крок 8: Обсяг правил менше 500 слів (ADR-005)?",
       "edges": {
-        "down": "step_handoff",
-        "right": null
+        "down": "step_utopia_sync",
+        "right": "err_rules"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -6789,11 +6243,25 @@ END
       "y": 16.0
     },
     {
-      "node_id": "step_handoff",
-      "node_type": "action",
-      "label": "Етап 8: Генерація дискретного Handoff артефакту (ADR-007)",
+      "node_id": "err_rules",
+      "node_type": "end",
+      "label": "Аварійне завершення: Порушення ліміту слів або цілісності",
       "edges": {
-        "down": "step_git_sealing",
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 16.0
+    },
+    {
+      "node_id": "step_utopia_sync",
+      "node_type": "action",
+      "label": "Крок 9: Синхронізація Tripartite з Utopia DB (.251) та фіксація WORM-знімку",
+      "edges": {
+        "down": "step_git_tag",
         "right": null
       },
       "semantic_binding": {
@@ -6803,11 +6271,11 @@ END
       "y": 18.0
     },
     {
-      "node_id": "step_git_sealing",
+      "node_id": "step_git_tag",
       "node_type": "action",
-      "label": "Етап 9: Фіксація Git Release Tag (sprint_XXX_done) та git push",
+      "label": "Крок 10: Фіксація тегу sprint_done у git та пуш",
       "edges": {
-        "down": "step_callback",
+        "down": "end_success",
         "right": null
       },
       "semantic_binding": {
@@ -6817,23 +6285,9 @@ END
       "y": 20.0
     },
     {
-      "node_id": "step_callback",
-      "node_type": "action",
-      "label": "Етап 10: Телеметричний callback на супервайзер (n8n webhook)",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 22.0
-    },
-    {
-      "node_id": "end",
+      "node_id": "end_success",
       "node_type": "end",
-      "label": "Завершення: Спринт успішно закрито та запечатано (Phi_7 Distilled)",
+      "label": "Успішне завершення: Спринт успішно закрито та запечатано",
       "edges": {
         "down": null,
         "right": null
@@ -6842,7 +6296,7 @@ END
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 24.0
+      "y": 22.0
     }
   ],
   "meta": {
@@ -6854,6 +6308,7 @@ END
     "crossings_count": 0
   }
 }
+
 ````
 
 #### Файл: `b-sdd-sprint-closure/scripts/sprint_closure.py` (376 байт)
@@ -6883,224 +6338,157 @@ if __name__ == "__main__":
 ### [9/59] Скіл: `b-sdd-ui-export`
 
 **Каталог:** `~/.agents/skills/b-sdd-ui-export`  
-**Опис:** Autonomous pipeline for synthesizing Gemini Spark-optimized structured plain-text dumps of Astryx Cockpit UI (b-sdd-ui), staging into working NotebookLM MCP directories on host .184, and synchronizing into the B-SDD Architecture SSoT notebook.  
+**Опис:** Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM.  
 **Файлів у складі:** 2  
 
-#### Файл: `b-sdd-ui-export/SKILL.md` (8,649 байт)
+#### Файл: `b-sdd-ui-export/SKILL.md` (4,883 байт)
 ````markdown
 ---
 name: b-sdd-ui-export
-description: Autonomous pipeline for synthesizing Gemini Spark-optimized structured plain-text dumps of Astryx Cockpit UI (b-sdd-ui), staging into working NotebookLM MCP directories on host .184, and synchronizing into the B-SDD Architecture SSoT notebook.
+description: Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
 invoked_skills: [b-sdd, notebooklm]
 ---
 
-# B-SDD UI Export & NotebookLM Sync Skill
+# B-SDD UI Export
+Системний скіл проєкту B-SDD для експорту кодової бази фронтенду Astryx Cockpit (
+b-sdd-ui
+) у єдиний структурований текстовий дамп (
+b-sdd-ui_code_dump.txt
+). Забезпечує фільтрацію службових файлів, стейджинг артефакту на вузол агрегації 
+.184
+ та оновлення джерела знань у Google NotebookLM.
 
-Autonomous system skill for synthesizing structured plain-text source code dumps of the **Astryx Cockpit** (`b-sdd-ui`), staging them into working NotebookLM MCP directories on host `192.168.3.184`, and synchronizing them directly into the Single Source of Truth (SSoT) Google NotebookLM project notebook: *"B-SDD Methodology, Multi-Session Handoff & Architecture"*.
+--------------------------------------------------------------------------------
 
----
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: ADR-015 (системний скіл), ADR-016 (стандарт псевдокоду), ADR-009 (Astryx UI).
+Negative Invariants
+:
+NEVER
+ включати у дамп папки 
+node_modules
+, 
+.git
+, 
+dist
+, 
+.vite
+, 
+coverage
+.
+NEVER
+ експортувати незбірочний або зламаний стан UI (обов'язкова перевірка 
+npm run build
+ або lint).
+NEVER
+ порушувати формат делімітерів файлів всередині згенерованого 
+.txt
+ дампа.
 
-## 1. Architectural Context & Negative Invariants
+--------------------------------------------------------------------------------
 
-- **ADR-015 Compliance (Skill Taxonomy & Immutability)**:
-  - This skill is a declared `SYSTEM_SKILL` with `immutable: true`.
-  - It is protected against accidental deletion or mutation by the Astryx Cockpit UI and automated sprint scripts.
-- **ADR-016 Compliance (Tripartite Standard)**:
-  - Strict isomorphism between textual algorithmic pseudocode and `<skill_name>.drakon.json`.
-  - Primary vertical skewer ($X=0, C=0$) represents the clean synthesis, staging, and MCP registration path.
-  - Error and offline degradation paths branch strictly to the right ($X=4.0$).
-- **ADR-002 Compliance (Pure Python Standard Library)**:
-  - Synthesis scripts (`scripts/dump_ui_codebase.py`) rely exclusively on Python standard library modules (`pathlib`, `os`, `re`, `datetime`, `subprocess`, `argparse`).
-- **Negative Invariants**:
-  - **NEVER** include raw third-party vendor minified libraries (such as `drakonwidget.js`, `drakongen.js`) or binary images in the plain-text dump.
-  - **NEVER** overwrite the SSoT backend dump (`b-sdd_code_dump.txt`) with the frontend dump; use distinct canonical naming: `b-sdd-ui_code_dump.txt`.
-  - **NEVER** allow failure of external NotebookLM network synchronization to crash or roll back local code synthesis (graceful offline degradation to $X=4.0$).
-
----
-
-## 2. Algorithmic Workflow (ADR-016 Standard)
-
-```text
-ALGORITHM ExportAndSyncAstryxUI
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteBSddUiExport
 INPUT:
-    ui_source_dir: Path = "b-sdd-ui"
-    output_dump_file: Path = "b-sdd-ui_code_dump.txt"
-    remote_host: str = "192.168.3.184"
-    notebook_id: str = "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2"
+    ui_source_dir: str ("/home/vokov/projects/b-sdd/b-sdd-ui")
+    target_host: str ("192.168.3.184")
 OUTPUT:
-    sync_status: str ("SUCCESS" | "DEGRADED" | "FAILED")
-    source_id: Optional[str]
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+    dump_path: str
 
 BEGIN
     TRY
-        ASSERT DirectoryExists(ui_source_dir)
-        ASSERT FileExists(ui_source_dir / "src/lib/backend-types.ts")
+        ASSERT ui_source_dir != ""
 
-        // STEP 1: Primary Vertical Skewer (X=0.0, Y=2.0)
-        EXECUTE ValidateUIWorkspace(ui_source_dir)
+        // STEP 1: Sub-skill composition - Check B-SDD Environment (X=0.0, Y=2.0)
+        CALL_SKILL(b-sdd, {action: "verify_ui_workspace"})
 
-        // STEP 2: Plain-Text Dump Synthesis for Gemini Spark (X=0.0, Y=4.0)
-        dump_result = EXECUTE SynthesizeGeminiSparkDump(
-            source=ui_source_dir,
-            output=output_dump_file,
-            layers=[
-                "Contracts & Backend Types",
-                "Realtime SSE & API Client",
-                "DRAKON Engine & IR Bridge",
-                "Application Shell & TopBar",
-                "Cockpit Panels & Drawers",
-                "Styling & Cloudflare Config"
-            ]
-        )
+        // STEP 2: Main vertical spine - Aggregate Frontend Code (X=0.0, Y=4.0)
+        EXECUTE RunUiCodeAggregation(ui_source_dir, output="/home/vokov/b-sdd-ui_code_dump.txt")
 
-        // STEP 3: Verification Question (X=0.0, Y=6.0)
-        IF dump_result.file_size > 0 AND dump_result.file_count > 0 THEN
+        // STEP 3: Question Node - Dump Integrity Check (X=0.0, Y=6.0)
+        IF VerifyDumpIntegrity("/home/vokov/b-sdd-ui_code_dump.txt") THEN
             CONTINUE along Vertical Skewer (X=0.0)
         ELSE
-            BRANCH_RIGHT(X=4.0, Y=6.0): Dump Synthesis Failure
-            LOG_CRITICAL("Failed to synthesize UI code dump")
-            HALT_AND_DEGRADE("DUMP_SYNTHESIS_FAILED")
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+            LOG_ERROR("b-sdd-ui code dump generation failed or resulted in empty file")
+            HALT_AND_DEGRADE("EMPTY_UI_DUMP")
         FI
 
-        // STEP 4: Stage to Remote Host Working Directories (X=0.0, Y=8.0)
-        EXECUTE StageToMCPDirectories(
-            local_file=output_dump_file,
-            remote_host=remote_host,
-            destinations=[
-                "/home/vokov/b-sdd-ui_code_dump.txt",
-                "/home/vokov/notebooklm-agent-copilot/b-sdd-ui_code_dump.txt"
-            ]
-        )
+        // STEP 4: Main vertical spine - Stage Dump to Aggregator Host (X=0.0, Y=8.0)
+        EXECUTE StageDumpToRemoteHost(target_host, "/home/vokov/b-sdd-ui_code_dump.txt")
 
-        // STEP 5: Check MCP Server Availability (X=0.0, Y=10.0)
-        mcp_online = EXECUTE ProbeMCPServer(host=remote_host, port=8002)
+        // STEP 5: Sub-skill composition - Ingest into NotebookLM (X=0.0, Y=10.0)
+        CALL_SKILL(notebooklm, {action: "update_source", source_name: "b-sdd-ui_code_dump.txt"})
 
-        // STEP 6: MCP Online Evaluation (X=0.0, Y=12.0)
-        IF mcp_online == TRUE THEN
-            CONTINUE along Vertical Skewer (X=0.0)
-        ELSE
-            BRANCH_RIGHT(X=4.0, Y=12.0): Offline MCP Degradation
-            LOG_WARNING("NotebookLM MCP server unreachable; preserving staged files")
-            RETURN Status="DEGRADED", SourceID=NULL
-        FI
-
-        // STEP 7: Call NotebookLM Skill to Ingest Source (X=0.0, Y=14.0)
-        CALL_SKILL(notebooklm, {
-            action: "sources_add_file",
-            notebook_id: notebook_id,
-            file_path: "/home/vokov/b-sdd-ui_code_dump.txt",
-            mime_type: "text/plain"
-        })
-
-        // STEP 8: Verify Source Registration (X=0.0, Y=16.0)
-        sources = EXECUTE ListSources(notebook_id=notebook_id)
-        registered_source = FindSourceByTitle(sources, "b-sdd-ui_code_dump.txt")
-
-        // STEP 9: Final Success Invariant (X=0.0, Y=18.0)
-        IF registered_source != NULL THEN
-            EMIT_TELEMETRY(status="SUCCESS", source_id=registered_source.id)
-            RETURN Status="SUCCESS", SourceID=registered_source.id
-        ELSE
-            BRANCH_RIGHT(X=4.0, Y=18.0): Ingestion Verification Failed
-            LOG_CRITICAL("Source not found in NotebookLM registry after upload")
-            HALT_AND_DEGRADE("NOTEBOOKLM_REGISTRATION_FAILED")
-        FI
+        // STEP 6: Verification & Telemetry (X=0.0, Y=12.0)
+        EMIT_TELEMETRY(status="SUCCESS")
+        RETURN Status="SUCCESS"
 
     CATCH Error AS e
-        LOG_CRITICAL("Unhandled error during UI export: " + e.Message)
+        LOG_CRITICAL("b-sdd-ui export failed: " + e.Message)
         HALT_AND_DEGRADE(e.Message)
     END
 END
-```
 
----
+text
 
-## 3. Operational Guide & CLI Execution
-
-### Command 1: Local Synthesis with Automatic Remote Staging
-```bash
-python3 /home/vokov/projects/b-sdd/scripts/dump_ui_codebase.py \
-  --source /home/vokov/projects/b-sdd/b-sdd-ui \
-  --output /home/vokov/projects/b-sdd/b-sdd-ui_code_dump.txt \
-  --sync-remote
-```
-
-### Command 2: Fallback via Remote Aggregator (`run_md_service.sh` on .184)
-```bash
-ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 \
-  "/home/vokov/projects/resume/run_md_service.sh \
-   --batch \
-   --source /home/vokov/projects/b-sdd/b-sdd-ui \
-   --output /home/vokov/b-sdd-ui_code_dump.txt"
-```
-
-### Command 3: Synchronize to Google NotebookLM
-Using MCP or `notebooklm_mcp.py`:
-```bash
-python3 -c '
-from src.core.drakon.skill_visual_bridge import *
-# Ingestion via NotebookLM MCP tool
-'
-```
-
----
+--------------------------------------------------------------------------------
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `b-sdd-ui-export.drakon.json`
-- **Total Algorithmic Nodes:** 14
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified with degradation paths ($X=4.0$).
-  1. `[HEADLINE]` Початок: Експорт коду Astryx UI в робочу директорію NotebookLM-MCP та синхронізація SSoT
-  2. `[ACTION]` Крок 1: Валідація робочого простору b-sdd-ui та контракту бекенду (backend-types.ts)
-  3. `[ACTION]` Крок 2: Синтез структурованого текстового дампу для Gemini Spark (scripts/dump_ui_codebase.py)
-  4. `[QUESTION]` Крок 3: Дамп успішно згенеровано (розмір > 0)?
-  5. `[ACTION]` Крок 4: Стейджинг дампу в робочу директорію NotebookLM-MCP на хості 192.168.3.184
-  6. `[ACTION]` Крок 5: Перевірка доступності NotebookLM MCP сервера (порт 8002)
-  7. `[QUESTION]` Крок 6: MCP сервер доступний?
-  8. `[INSERTION]` CALL_SKILL(notebooklm): Крок 7: Синхронізація дампу в записник 'B-SDD Methodology, Multi-Session Handoff & Architecture'
-  9. `[ACTION]` Крок 8: Верифікація джерела b-sdd-ui_code_dump.txt через sources_list
-  10. `[QUESTION]` Крок 9: Джерело успішно додано/оновлено в NotebookLM?
-  11. `[END]` Успішне завершення: Код інтерфейсу експортовано та зафіксовано в SSoT записнику
-  12. `[ACTION]` Помилка синтезу дампу b-sdd-ui: логування та зупинка (X=4.0)
-  13. `[ACTION]` Помилка зв'язку з MCP: збереження локального та віддаленого дампу без онлайн реєстрації (X=4.0)
-  14. `[ACTION]` Помилка додавання джерела в NotebookLM: діагностика сесії (X=4.0)
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ b-sdd-ui-export.drakon.json
+Total Algorithmic Nodes:
+ 8
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Експорт кодової бази Astryx UI (b-sdd-ui)
+[INSERTION] CALL_SKILL(b-sdd): Крок 1: Перевірка стану робочого простору
+[ACTION] Крок 2: Синтез текстового дампа кодової бази b-sdd-ui
+[QUESTION] Крок 3: Сформований текстовий дамп валідний та не порожній?
+[ACTION] Крок 4: Стейджинг дампа на вузол-агрегатор 192.168.3.184
+[INSERTION] CALL_SKILL(notebooklm): Крок 5: Завантаження дампа в SSoT блокнот
+[END] Успішне завершення: Дамп Astryx UI успішно синхронізовано
+[END] Аварійне завершення: Помилка генерації дампа UI (X=4.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+4. Operational Guide & CLI Execution
+Генерація дампа UI локально:
+python3 scripts/dump_ui_codebase.py \
+  --source /home/vokov/projects/b-sdd/b-sdd-ui \
+  --output /home/vokov/b-sdd-ui_code_dump.txt
+
+bash
+Копіювання на хост агрегації .184:
+scp /home/vokov/b-sdd-ui_code_dump.txt vokov@192.168.3.184:/home/vokov/b-sdd-ui_code_dump.txt
+
+bash
+
 
 ````
 
-#### Файл: `b-sdd-ui-export/b-sdd-ui-export.drakon.json` (7,289 байт)
+#### Файл: `b-sdd-ui-export/b-sdd-ui-export.drakon.json` (3,584 байт)
 ````json
 {
   "schema_version": "1.0",
-  "name": "B-SDD Astryx UI Codebase Export & NotebookLM Sync Pipeline",
+  "name": "b-sdd-ui-export",
   "category": "bssd_system_skill",
-  "description": "Автономний контур експорту коду фронтенду Astryx Cockpit (b-sdd-ui) у структурований текстовий дамп для Gemini Spark, стейджингу в робочу директорію NotebookLM-MCP на хості .184 та збереження в SSoT записнику NotebookLM.",
-  "params": "source_dir: str = 'b-sdd-ui', output_dump: str = 'b-sdd-ui_code_dump.txt', notebook_id: str = '205ee2ec-e0d2-4ba6-badf-44f2de02c7e2'",
+  "description": "Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM.",
+  "params": "ui_source_dir: str, target_host: str",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Експорт коду Astryx UI в робочу директорію NotebookLM-MCP та синхронізація SSoT",
+      "label": "Початок: Експорт кодової бази Astryx UI (b-sdd-ui)",
       "edges": {
-        "down": "step_verify",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-01",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 0.0
-    },
-    {
-      "node_id": "step_verify",
-      "node_type": "action",
-      "label": "Крок 1: Валідація робочого простору b-sdd-ui та контракту бекенду (backend-types.ts)",
-      "edges": {
-        "down": "step_synth_dump",
+        "down": "step_call_bsdd",
         "right": null
       },
       "semantic_binding": {
@@ -7108,44 +6496,57 @@ from src.core.drakon.skill_visual_bridge import *
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 2.0
+      "y": 0.0
     },
     {
-      "node_id": "step_synth_dump",
-      "node_type": "action",
-      "label": "Крок 2: Синтез структурованого текстового дампу для Gemini Spark (scripts/dump_ui_codebase.py)",
+      "node_id": "step_call_bsdd",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Крок 1: Перевірка стану робочого простору",
       "edges": {
-        "down": "cond_dump_ok",
+        "down": "step_aggregate",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-016-INV-02",
+        "call_skill": "b-sdd",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_aggregate",
+      "node_type": "action",
+      "label": "Крок 2: Синтез текстового дампа кодової бази b-sdd-ui",
+      "edges": {
+        "down": "check_dump",
+        "right": null
+      },
+      "semantic_binding": {
         "severity": "normal"
       },
       "x": 0.0,
       "y": 4.0
     },
     {
-      "node_id": "cond_dump_ok",
+      "node_id": "check_dump",
       "node_type": "question",
-      "label": "Крок 3: Дамп успішно згенеровано (розмір > 0)?",
+      "label": "Крок 3: Сформований текстовий дамп валідний та не порожній?",
       "edges": {
-        "down": "step_stage_mcp",
-        "right": "step_err_dump"
+        "down": "step_stage",
+        "right": "err_dump"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-008-INV-02",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 6.0
     },
     {
-      "node_id": "step_err_dump",
-      "node_type": "action",
-      "label": "Помилка синтезу дампу b-sdd-ui: логування та зупинка",
+      "node_id": "err_dump",
+      "node_type": "end",
+      "label": "Аварійне завершення: Помилка генерації дампа UI",
       "edges": {
-        "down": "end_failed",
+        "down": null,
         "right": null
       },
       "semantic_binding": {
@@ -7155,166 +6556,57 @@ from src.core.drakon.skill_visual_bridge import *
       "y": 6.0
     },
     {
-      "node_id": "step_stage_mcp",
+      "node_id": "step_stage",
       "node_type": "action",
-      "label": "Крок 4: Стейджинг дампу в робочу директорію NotebookLM-MCP на хості 192.168.3.184",
+      "label": "Крок 4: Стейджинг дампа на вузол-агрегатор 192.168.3.184",
       "edges": {
-        "down": "step_check_mcp",
+        "down": "step_call_nb",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-002-INV-01",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 8.0
     },
     {
-      "node_id": "step_check_mcp",
-      "node_type": "action",
-      "label": "Крок 5: Перевірка доступності NotebookLM MCP сервера (порт 8002)",
+      "node_id": "step_call_nb",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(notebooklm): Крок 5: Завантаження дампа в SSoT блокнот",
       "edges": {
-        "down": "cond_mcp_ok",
+        "down": "end_success",
         "right": null
       },
       "semantic_binding": {
+        "call_skill": "notebooklm",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 10.0
     },
     {
-      "node_id": "cond_mcp_ok",
-      "node_type": "question",
-      "label": "Крок 6: MCP сервер доступний?",
-      "edges": {
-        "down": "step_sync_notebook",
-        "right": "step_err_mcp"
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-008-INV-02",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 12.0
-    },
-    {
-      "node_id": "step_err_mcp",
-      "node_type": "action",
-      "label": "Помилка зв'язку з MCP: збереження локального та віддаленого дампу без онлайн реєстрації",
-      "edges": {
-        "down": "end_degraded",
-        "right": null
-      },
-      "semantic_binding": {
-        "severity": "warning"
-      },
-      "x": 4.0,
-      "y": 12.0
-    },
-    {
-      "node_id": "step_sync_notebook",
-      "node_type": "insertion",
-      "label": "Крок 7: Синхронізація дампу в записник 'B-SDD Methodology, Multi-Session Handoff & Architecture'",
-      "edges": {
-        "down": "step_verify_source",
-        "right": null
-      },
-      "semantic_binding": {
-        "call_skill": "notebooklm",
-        "adr_invariant_id": "ADR-016-INV-03",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 14.0
-    },
-    {
-      "node_id": "step_verify_source",
-      "node_type": "action",
-      "label": "Крок 8: Верифікація джерела b-sdd-ui_code_dump.txt через sources_list",
-      "edges": {
-        "down": "cond_source_ok",
-        "right": null
-      },
-      "semantic_binding": {
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 16.0
-    },
-    {
-      "node_id": "cond_source_ok",
-      "node_type": "question",
-      "label": "Крок 9: Джерело успішно додано/оновлено в NotebookLM?",
-      "edges": {
-        "down": "end_success",
-        "right": "step_err_sync"
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-008-INV-02",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 18.0
-    },
-    {
-      "node_id": "step_err_sync",
-      "node_type": "action",
-      "label": "Помилка додавання джерела в NotebookLM: діагностика сесії",
-      "edges": {
-        "down": "end_failed",
-        "right": null
-      },
-      "semantic_binding": {
-        "severity": "critical"
-      },
-      "x": 4.0,
-      "y": 18.0
-    },
-    {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Код інтерфейсу експортовано та зафіксовано в SSoT записнику",
+      "label": "Успішне завершення: Дамп Astryx UI успішно синхронізовано",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-016-INV-01",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 20.0
-    },
-    {
-      "node_id": "end_degraded",
-      "node_type": "end",
-      "label": "Деградоване завершення: Дамп створено та стейджено, але онлайн реєстрація відкладена",
-      "edges": {
-        "down": null,
-        "right": null
-      },
-      "semantic_binding": {
-        "severity": "warning"
-      },
-      "x": 4.0,
-      "y": 14.0
-    },
-    {
-      "node_id": "end_failed",
-      "node_type": "end",
-      "label": "Аварійне завершення: Експорт коду перервано",
-      "edges": {
-        "down": null,
-        "right": null
-      },
-      "semantic_binding": {
-        "severity": "critical"
-      },
-      "x": 4.0,
-      "y": 20.0
+      "y": 12.0
     }
-  ]
+  ],
+  "meta": {
+    "skill_name": "b-sdd-ui-export",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
 }
 
 ````
@@ -7325,99 +6617,136 @@ from src.core.drakon.skill_visual_bridge import *
 ### [10/59] Скіл: `brainstorming`
 
 **Каталог:** `~/.agents/skills/brainstorming`  
-**Опис:** Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes  
+**Опис:** Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду.  
 **Файлів у складі:** 2  
 
-#### Файл: `brainstorming/SKILL.md` (3,159 байт)
+#### Файл: `brainstorming/SKILL.md` (4,842 байт)
 ````markdown
 ---
 name: brainstorming
-description: Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes
+description: Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду.
 type: PROJECT_SKILL
-category: general
+category: ideation
 immutable: false
 invoked_skills: [using-git-worktrees]
 ---
-# Brainstorming Ideas Into Designs
 
-## Overview
+# Brainstorming
+Скіл для творчого та аналітичного дослідження концепцій перед початком написання коду або формування плану реалізації. Допомагає структурувати розмиті ідеї через діалог, аналіз альтернативних підходів, оцінку компромісів та інкрементну валідацію.
 
-Help turn ideas into fully formed designs and specs through natural collaborative dialogue.
+--------------------------------------------------------------------------------
 
-Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design in small sections (200-300 words), checking after each section whether it looks right so far.
+1. Architectural Context & Negative Invariants
+ADR Compliance
+: Відповідає ADR-015 та ADR-016.
+Negative Invariants
+:
+NEVER
+ поспішати переходити до написання коду, доки цілі та альтернативи не зафіксовані.
+NEVER
+ ігнорувати слабкі сторони або ризики запропонованих підходів.
+NEVER
+ використовувати цей скіл для чітко детермінованих механічних задач, що мають готову інструкцію.
 
-## The Process
+--------------------------------------------------------------------------------
 
-**Understanding the idea:**
-- Check out the current project state first (files, docs, recent commits)
-- Ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
+2. Algorithmic Workflow (ADR-016 Standard)
+ALGORITHM ExecuteBrainstorming
+INPUT:
+    initial_idea: str
+    problem_context: dict
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+    design_doc: str
 
-**Exploring approaches:**
-- Propose 2-3 different approaches with trade-offs
-- Present options conversationally with your recommendation and reasoning
-- Lead with your recommended option and explain why
+BEGIN
+    TRY
+        ASSERT initial_idea != ""
 
-**Presenting the design:**
-- Once you believe you understand what you're building, present the design
-- Break it into sections of 200-300 words
-- Ask after each section whether it looks right so far
-- Cover: architecture, components, data flow, error handling, testing
-- Be ready to go back and clarify if something doesn't make sense
+        // STEP 1: Main vertical spine - Explore Intent & Problem Space (X=0.0, Y=2.0)
+        EXECUTE ExploreProblemSpaceAndRequirements(initial_idea)
 
-## After the Design
+        // STEP 2: Main vertical spine - Formulate Alternative Approaches (X=0.0, Y=4.0)
+        EXECUTE GenerateDivergentAlternatives(count=3)
 
-**Documentation:**
-- Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- Use elements-of-style:writing-clearly-and-concisely skill if available
-- Commit the design document to git
+        // STEP 3: Question Node - Evaluation & Feasibility Check (X=0.0, Y=6.0)
+        IF EvaluateAlternativesFeasibility() THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+            LOG_ERROR("All proposed alternatives fail feasibility constraints")
+            HALT_AND_DEGRADE("NO_VIABLE_ALTERNATIVES")
+        FI
 
-**Implementation (if continuing):**
-- Ask: "Ready to set up for implementation?"
-- Use superpowers:using-git-worktrees to create isolated workspace
-- Use superpowers:writing-plans to create detailed implementation plan
+        // STEP 4: Sub-skill composition - Prepare Isolated Exploration Workspace (X=0.0, Y=8.0)
+        CALL_SKILL(using-git-worktrees, {branch_name: "explore/idea-prototype"})
 
-## Key Principles
+        // STEP 5: Main vertical spine - Synthesize Design Document (X=0.0, Y=10.0)
+        EXECUTE SynthesizeConsolidatedConceptDoc()
 
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all designs
-- **Explore alternatives** - Always propose 2-3 approaches before settling
-- **Incremental validation** - Present design in sections, validate each
-- **Be flexible** - Go back and clarify when something doesn't make sense
+        // STEP 6: Verification & Completion (X=0.0, Y=12.0)
+        ASSERT VerifyConceptClarityAndNextSteps()
+        EMIT_TELEMETRY(status="SUCCESS")
+        RETURN Status="SUCCESS"
+
+    CATCH Error AS e
+        LOG_CRITICAL("Brainstorming session failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
+
+text
+
+--------------------------------------------------------------------------------
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `brainstorming.drakon.json`
-- **Total Algorithmic Nodes:** 6
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: brainstorming
-  2. `[ACTION]` Overview
-  3. `[ACTION]` The Process
-  4. `[INSERTION]` CALL_SKILL(using-git-worktrees): After the Design
-  5. `[ACTION]` Key Principles
-  6. `[END]` Завершення: brainstorming
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+Schema File:
+ brainstorming.drakon.json
+Total Algorithmic Nodes:
+ 8
+Spine Topology:
+ Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+[HEADLINE] Початок: Концептуальне брейнштормінг-дослідження
+[ACTION] Крок 1: Дослідження простору проблеми та цілей
+[ACTION] Крок 2: Формування дивергентних альтернативних рішень
+[QUESTION] Крок 3: Знайдено хоча б одну життєздатну альтернативу?
+[INSERTION] CALL_SKILL(using-git-worktrees): Крок 4: Створення ізольованого робочого дерева для прототипу
+[ACTION] Крок 5: Синтез концептуального документа дизайну
+[END] Успішне завершення: Концепцію сформовано та узгоджено
+[END] Аварійне завершення: Відсутність життєздатних альтернатив (X=4.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+4. Operational Guide & CLI Execution
+Створення ізольованого воркспейсу для дослідження:
+git worktree add -b explore/new-concept ../new-concept-tree main
+
+bash
+Фіксація концептуального документу в базі знань:
+echo "# Concept Exploration: $TITLE" > docs/explorations/concept_draft.md
+
+bash
+
 
 ````
 
-#### Файл: `brainstorming/brainstorming.drakon.json` (3,434 байт)
+#### Файл: `brainstorming/brainstorming.drakon.json` (3,687 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "brainstorming",
   "category": "bssd_project_skill",
-  "description": "Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes",
-  "params": "context: dict",
+  "description": "Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду.",
+  "params": "initial_idea: str, problem_context: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: brainstorming",
+      "label": "Початок: Концептуальне брейнштормінг-дослідження",
       "edges": {
-        "down": "step_1",
+        "down": "step_explore",
         "right": null
       },
       "semantic_binding": {
@@ -7428,84 +6757,103 @@ Start by understanding the current project context, then ask questions one at a 
       "y": 0.0
     },
     {
-      "node_id": "step_1",
+      "node_id": "step_explore",
       "node_type": "action",
-      "label": "Overview",
+      "label": "Крок 1: Дослідження простору проблеми та цілей",
       "edges": {
-        "down": "step_2",
+        "down": "step_alternatives",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 2.0,
-      "instructions": "Help turn ideas into fully formed designs and specs through natural collaborative dialogue. Start by understanding the current project context, then ask questions one at a time to "
+      "y": 2.0
     },
     {
-      "node_id": "step_2",
+      "node_id": "step_alternatives",
       "node_type": "action",
-      "label": "The Process",
+      "label": "Крок 2: Формування дивергентних альтернативних рішень",
       "edges": {
-        "down": "step_3",
+        "down": "check_feasibility",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 4.0,
-      "instructions": "**Understanding the idea:** - Check out the current project state first (files, docs, recent commits) - Ask questions one at a time to refine the idea - Prefer multiple choice ques"
+      "y": 4.0
     },
     {
-      "node_id": "step_3",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(using-git-worktrees): After the Design",
+      "node_id": "check_feasibility",
+      "node_type": "question",
+      "label": "Крок 3: Знайдено хоча б одну життєздатну альтернативу?",
       "edges": {
-        "down": "step_4",
-        "right": null
+        "down": "step_call_worktree",
+        "right": "err_alternatives"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "using-git-worktrees"
-      },
-      "x": 0.0,
-      "y": 6.0,
-      "instructions": "**Documentation:** - Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md` - Use elements-of-style:writing-clearly-and-concisely skill if available - Commit the d"
-    },
-    {
-      "node_id": "step_4",
-      "node_type": "action",
-      "label": "Key Principles",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0,
-      "instructions": "- **One question at a time** - Don't overwhelm with multiple questions - **Multiple choice preferred** - Easier to answer than open-ended when possible - **YAGNI ruthlessly** - Rem"
+      "y": 6.0
     },
     {
-      "node_id": "end",
+      "node_id": "err_alternatives",
       "node_type": "end",
-      "label": "Завершення: brainstorming",
+      "label": "Аварійне завершення: Відсутність життєздатних альтернатив",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_call_worktree",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(using-git-worktrees): Крок 4: Створення ізольованого робочого дерева для прототипу",
+      "edges": {
+        "down": "step_doc_synth",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "using-git-worktrees",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_doc_synth",
+      "node_type": "action",
+      "label": "Крок 5: Синтез концептуального документа дизайну",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
         "severity": "normal"
       },
       "x": 0.0,
       "y": 10.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Концепцію сформовано та узгоджено",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
     }
   ],
   "meta": {
@@ -7517,6 +6865,7 @@ Start by understanding the current project context, then ask questions one at a 
     "crossings_count": 0
   }
 }
+
 ````
 
 ---

@@ -120,6 +120,71 @@ def validate_drakon_schema(skill_name: str, drakon_data: Dict[str, Any]) -> Tupl
     return len(errors) == 0, errors
 
 
+def normalize_skill_md(skill_name: str, text: str) -> str:
+    """Normalizes SKILL.md into canonical ADR-015/016 markdown format."""
+    text = text.strip()
+
+    # 1. Ensure YAML frontmatter is delimited by '---'
+    if not text.startswith("---"):
+        lines = text.splitlines()
+        fm_lines = ["---"]
+        in_fm = True
+        body_lines = []
+        for line in lines:
+            s = line.strip()
+            if in_fm:
+                if any(s.startswith(k) for k in ("name:", "description:", "type:", "category:", "immutable:", "invoked_skills:")) or (s.startswith("- ") and fm_lines[-1].startswith("invoked_skills:")) or s == "":
+                    if s:
+                        fm_lines.append(s)
+                else:
+                    in_fm = False
+                    fm_lines.append("---")
+                    body_lines.append(line)
+            else:
+                body_lines.append(line)
+        if in_fm:
+            fm_lines.append("---")
+        text = "\n".join(fm_lines) + "\n\n" + "\n".join(body_lines)
+
+    # 2. Ensure title is properly formatted with '#'
+    lines = text.splitlines()
+    new_lines = []
+    fm_count = 0
+    after_fm = False
+    title_added = False
+    for line in lines:
+        if line.strip() == "---":
+            fm_count += 1
+            new_lines.append(line)
+            if fm_count == 2:
+                after_fm = True
+            continue
+        if after_fm and not title_added:
+            s = line.strip()
+            if s and not s.startswith("#") and not s.startswith("-"):
+                new_lines.append(f"# {s}")
+                title_added = True
+                continue
+            elif s.startswith("#"):
+                title_added = True
+        new_lines.append(line)
+    text = "\n".join(new_lines)
+
+    # 3. Ensure DRAKON visual anchor tags are present
+    if "<!-- DRAKON_VISUAL_FLOW_START -->" not in text:
+        m = re.search(r'((?:##\s*|\d+\.\s*)DRAKON Visual Workflow[^\n]*\n)(.*?)(\n-+\s*\n\s*(?:##\s*|\d+\.\s*)Operational Guide|\n(?:##\s*|\d+\.\s*)Operational Guide|$)', text, re.DOTALL | re.IGNORECASE)
+        if m:
+            heading = m.group(1).strip()
+            if not heading.startswith("##"):
+                heading = f"## {heading}"
+            content = m.group(2).strip()
+            rest = m.group(3) if m.group(3) else ""
+            anchor_block = f"<!-- DRAKON_VISUAL_FLOW_START -->\n{heading}\n{content}\n<!-- DRAKON_VISUAL_FLOW_END -->"
+            text = text[:m.start()] + anchor_block + "\n\n---\n\n" + rest.lstrip("-\n ") + text[m.end():]
+
+    return text.strip() + "\n"
+
+
 def validate_skill_md(skill_name: str, skill_md: str) -> Tuple[bool, List[str]]:
     """Validates that SKILL.md contains frontmatter and ALGORITHM pseudocode."""
     errors: List[str] = []
@@ -148,7 +213,7 @@ def unpack_skills(corpus_file: Path, dry_run: bool = False) -> Dict[str, Any]:
 
     for skill in skills:
         name = skill["name"]
-        skill_md = skill["skill_md"]
+        skill_md = normalize_skill_md(name, skill["skill_md"])
         drakon_raw = skill["drakon_raw"]
 
         skill_errors: List[str] = []

@@ -1,0 +1,145 @@
+{
+  "schema_version": "1.0",
+  "name": "b-sdd-kindle-docs",
+  "category": "bssd_system_skill",
+  "description": "Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.",
+  "params": "recipient_email: str, dry_run: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Компіляція та доставка документації на Kindle",
+      "edges": {
+        "down": "step_call_bsdd",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_call_bsdd",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Крок 1: Верифікація стану кластера та синхронізації",
+      "edges": {
+        "down": "step_sync_git",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_sync_git",
+      "node_type": "action",
+      "label": "Крок 2: Синхронізація git-репозиторію на вузол 192.168.3.184",
+      "edges": {
+        "down": "check_sync",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "check_sync",
+      "node_type": "question",
+      "label": "Крок 3: Синхронізація з віддаленим вузлом успішна?",
+      "edges": {
+        "down": "step_compile_epub",
+        "right": "err_kindle"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "err_kindle",
+      "node_type": "end",
+      "label": "Аварійне завершення: Помилка компіляції або доставки",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_compile_epub",
+      "node_type": "action",
+      "label": "Крок 4: Збирання 10 розділів посібника у формат EPUB 3.0",
+      "edges": {
+        "down": "check_epub",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "check_epub",
+      "node_type": "question",
+      "label": "Крок 5: EPUB-файл валідний та містить 10 розділів?",
+      "edges": {
+        "down": "step_dispatch",
+        "right": "err_kindle"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "step_dispatch",
+      "node_type": "action",
+      "label": "Крок 6: Відправка на Kindle через send_digest.py",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Документацію доставлено на Kindle",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "b-sdd-kindle-docs",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

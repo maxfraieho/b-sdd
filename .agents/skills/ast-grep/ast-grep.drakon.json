@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "name": "ast-grep",
+  "category": "bssd_project_skill",
+  "description": "Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST).",
+  "params": "pattern: str, target_path: str, language: str",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Структурний аналіз коду через ast-grep",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Крок 1: Верифікація патерну через CST/AST парсинг",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Крок 2: Виконання сканування цільової директорії",
+      "edges": {
+        "down": "check_matches",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "check_matches",
+      "node_type": "question",
+      "label": "Крок 3: Синтаксичні збіги валідні та знайдені?",
+      "edges": {
+        "down": "step_format",
+        "right": "err_matches"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "err_matches",
+      "node_type": "end",
+      "label": "Аварійне завершення: Помилка синтаксичного патерну",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_format",
+      "node_type": "action",
+      "label": "Крок 4: Форматування результатів у структурований JSON",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Структурний аналіз завершено",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "ast-grep",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

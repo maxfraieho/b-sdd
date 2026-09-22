@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0",
+  "name": "brainstorming",
+  "category": "bssd_project_skill",
+  "description": "Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду.",
+  "params": "initial_idea: str, problem_context: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Концептуальне брейнштормінг-дослідження",
+      "edges": {
+        "down": "step_explore",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_explore",
+      "node_type": "action",
+      "label": "Крок 1: Дослідження простору проблеми та цілей",
+      "edges": {
+        "down": "step_alternatives",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_alternatives",
+      "node_type": "action",
+      "label": "Крок 2: Формування дивергентних альтернативних рішень",
+      "edges": {
+        "down": "check_feasibility",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "check_feasibility",
+      "node_type": "question",
+      "label": "Крок 3: Знайдено хоча б одну життєздатну альтернативу?",
+      "edges": {
+        "down": "step_call_worktree",
+        "right": "err_alternatives"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "err_alternatives",
+      "node_type": "end",
+      "label": "Аварійне завершення: Відсутність життєздатних альтернатив",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_call_worktree",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(using-git-worktrees): Крок 4: Створення ізольованого робочого дерева для прототипу",
+      "edges": {
+        "down": "step_doc_synth",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "using-git-worktrees",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_doc_synth",
+      "node_type": "action",
+      "label": "Крок 5: Синтез концептуального документа дизайну",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Концепцію сформовано та узгоджено",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    }
+  ],
+  "meta": {
+    "skill_name": "brainstorming",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

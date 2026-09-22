@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "name": "api-designer",
+  "category": "bssd_project_skill",
+  "description": "Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів.",
+  "params": "domain_requirements: dict, api_style: str",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Проектування API та OpenAPI специфікації",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Крок 1: Аналіз домену та моделювання сутностей",
+      "edges": {
+        "down": "step_2",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_2",
+      "node_type": "action",
+      "label": "Крок 2: Опис ендпоінтів та схем запитів/відповідей",
+      "edges": {
+        "down": "check_lint",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "check_lint",
+      "node_type": "question",
+      "label": "Крок 3: Специфікація OpenAPI валідна (linting pass)?",
+      "edges": {
+        "down": "step_mock",
+        "right": "err_lint"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "err_lint",
+      "node_type": "end",
+      "label": "Аварійне завершення: Помилка валідації схеми API",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_mock",
+      "node_type": "action",
+      "label": "Крок 4: Запуск мок-сервера та валідація контрактів",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Специфікацію API узгоджено та верифіковано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "api-designer",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

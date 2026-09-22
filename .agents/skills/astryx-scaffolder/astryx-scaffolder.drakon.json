@@ -1,0 +1,117 @@
+{
+  "schema_version": "1.0",
+  "name": "astryx-scaffolder",
+  "category": "bssd_system_skill",
+  "description": "Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища оператора.",
+  "params": "component_name: str, component_zone: str, category: str",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Генерація компонента Astryx Cockpit",
+      "edges": {
+        "down": "step_1",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_1",
+      "node_type": "action",
+      "label": "Крок 1: Перевірка зональних обмежень (Zone A/B/C)",
+      "edges": {
+        "down": "step_call_bsdd",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_call_bsdd",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Крок 2: Перевірка токенів дизайн-системи ADR-009",
+      "edges": {
+        "down": "check_tokens",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "check_tokens",
+      "node_type": "question",
+      "label": "Крок 3: Токени та темна тема відповідають стандарту?",
+      "edges": {
+        "down": "step_scaffold",
+        "right": "err_tokens"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "err_tokens",
+      "node_type": "end",
+      "label": "Аварійне завершення: Порушення токенів Astryx",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_scaffold",
+      "node_type": "action",
+      "label": "Крок 4: Створення вихідного коду компонента та тестів",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Компонент успішно згенеровано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "astryx-scaffolder",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

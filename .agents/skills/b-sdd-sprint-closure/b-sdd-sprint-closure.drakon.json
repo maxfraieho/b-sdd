@@ -2,13 +2,13 @@
   "schema_version": "1.0",
   "name": "b-sdd-sprint-closure",
   "category": "bssd_system_skill",
-  "description": "Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.",
-  "params": "sprint_id: str, prompt: str, skip_gitnexus: bool = False, skip_deploy: bool = False, no_push: bool = False",
+  "description": "Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та синхронізація з Utopia DB і NotebookLM.",
+  "params": "sprint_id: str, prompt: str",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Повний життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)",
+      "label": "Початок: Життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)",
       "edges": {
         "down": "step_cleaner",
         "right": null
@@ -23,7 +23,7 @@
     {
       "node_id": "step_cleaner",
       "node_type": "action",
-      "label": "Етап 1: Очищення блокувань GitNexus (gitnexus_cleaner.py)",
+      "label": "Крок 1: Зачистка тіньових файлів GitNexus (.184)",
       "edges": {
         "down": "step_gitnexus",
         "right": null
@@ -37,9 +37,9 @@
     {
       "node_id": "step_gitnexus",
       "node_type": "action",
-      "label": "Етап 2: Переіндексація AST-графа коду в GitNexus на хості 192.168.3.184",
+      "label": "Крок 2: Оновлення графа знань AST у GitNexus",
       "edges": {
-        "down": "step_dumps",
+        "down": "step_ui_export",
         "right": null
       },
       "semantic_binding": {
@@ -49,11 +49,11 @@
       "y": 4.0
     },
     {
-      "node_id": "step_dumps",
+      "node_id": "step_ui_export",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd-ui-export): Етап 3: Синтез подвійного текстового дампу (b-sdd_code_dump.txt та b-sdd-ui_code_dump.txt)",
+      "label": "CALL_SKILL(b-sdd-ui-export): Крок 3: Синтез дампа коду b-sdd-ui",
       "edges": {
-        "down": "step_deploy_pages",
+        "down": "step_deploy_cf",
         "right": null
       },
       "semantic_binding": {
@@ -64,11 +64,11 @@
       "y": 6.0
     },
     {
-      "node_id": "step_deploy_pages",
+      "node_id": "step_deploy_cf",
       "node_type": "insertion",
-      "label": "CALL_SKILL(cloudflare-pages-expert): Етап 3.5: Публікація Astryx Cockpit у Cloudflare Pages (b-sdd-ui.pages.dev)",
+      "label": "CALL_SKILL(cloudflare-pages-expert): Крок 4: Деплой фронтенду в Cloudflare Pages",
       "edges": {
-        "down": "step_skills_dump",
+        "down": "step_dump_skills",
         "right": null
       },
       "semantic_binding": {
@@ -79,26 +79,25 @@
       "y": 8.0
     },
     {
-      "node_id": "step_skills_dump",
+      "node_id": "step_dump_skills",
       "node_type": "action",
-      "label": "Етап 4: Інвентаризація активних скілів та верифікація незмінності ядра (ADR-015)",
+      "label": "Крок 5: Аудит каталогу скілів та перевірка бар'єру незмінності ADR-015",
       "edges": {
-        "down": "step_notebooklm",
+        "down": "step_nb_sync",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-02",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 10.0
     },
     {
-      "node_id": "step_notebooklm",
+      "node_id": "step_nb_sync",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd-notebooklm-sync): Етап 5: Оновлення джерел та дампу UI у записнику NotebookLM (ID: 205ee2ec...)",
+      "label": "CALL_SKILL(b-sdd-notebooklm-sync): Крок 6: Синхронізація з NotebookLM",
       "edges": {
-        "down": "step_rules_compile",
+        "down": "step_compile_rules",
         "right": null
       },
       "semantic_binding": {
@@ -109,27 +108,26 @@
       "y": 12.0
     },
     {
-      "node_id": "step_rules_compile",
+      "node_id": "step_compile_rules",
       "node_type": "action",
-      "label": "Етап 6: Компіляція active_rules.md та бюджет <500 слів (ADR-005)",
+      "label": "Крок 7: Компіляція активних правил у .context/active_rules.md",
       "edges": {
-        "down": "step_utopia",
+        "down": "check_word_count",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-005-INV-01",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 14.0
     },
     {
-      "node_id": "step_utopia",
-      "node_type": "action",
-      "label": "Етап 7: Синхронізація трипартитної онтології та WORM-запис в Utopia DB (.251)",
+      "node_id": "check_word_count",
+      "node_type": "question",
+      "label": "Крок 8: Обсяг правил менше 500 слів (ADR-005)?",
       "edges": {
-        "down": "step_handoff",
-        "right": null
+        "down": "step_utopia_sync",
+        "right": "err_rules"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -138,11 +136,25 @@
       "y": 16.0
     },
     {
-      "node_id": "step_handoff",
-      "node_type": "action",
-      "label": "Етап 8: Генерація дискретного Handoff артефакту (ADR-007)",
+      "node_id": "err_rules",
+      "node_type": "end",
+      "label": "Аварійне завершення: Порушення ліміту слів або цілісності",
       "edges": {
-        "down": "step_git_sealing",
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 16.0
+    },
+    {
+      "node_id": "step_utopia_sync",
+      "node_type": "action",
+      "label": "Крок 9: Синхронізація Tripartite з Utopia DB (.251) та фіксація WORM-знімку",
+      "edges": {
+        "down": "step_git_tag",
         "right": null
       },
       "semantic_binding": {
@@ -152,11 +164,11 @@
       "y": 18.0
     },
     {
-      "node_id": "step_git_sealing",
+      "node_id": "step_git_tag",
       "node_type": "action",
-      "label": "Етап 9: Фіксація Git Release Tag (sprint_XXX_done) та git push",
+      "label": "Крок 10: Фіксація тегу sprint_done у git та пуш",
       "edges": {
-        "down": "step_callback",
+        "down": "end_success",
         "right": null
       },
       "semantic_binding": {
@@ -166,23 +178,9 @@
       "y": 20.0
     },
     {
-      "node_id": "step_callback",
-      "node_type": "action",
-      "label": "Етап 10: Телеметричний callback на супервайзер (n8n webhook)",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 22.0
-    },
-    {
-      "node_id": "end",
+      "node_id": "end_success",
       "node_type": "end",
-      "label": "Завершення: Спринт успішно закрито та запечатано (Phi_7 Distilled)",
+      "label": "Успішне завершення: Спринт успішно закрито та запечатано",
       "edges": {
         "down": null,
         "right": null
@@ -191,7 +189,7 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 24.0
+      "y": 22.0
     }
   ],
   "meta": {

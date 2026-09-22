@@ -1,6 +1,6 @@
 # B-SDD ACTIVE CORE SKILLS CATALOG (59 ACTIVE SKILLS)
 
-**Дата генерації:** 2026-09-22 10:19:38Z  
+**Дата генерації:** 2026-09-22 11:07:42Z  
 **Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  
 **Каталог активних скілів:** `/home/vokov/.agents/skills`  
 **Каталог розширених скілів:** `/home/vokov/.agents/skills/_extended`  
@@ -35,7 +35,7 @@
 - **Назва:** b-sdd
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.
+- **Опис:** Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.
 - **Шлях:** `~/.agents/skills/b-sdd`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, b-sdd.drakon.json`
@@ -44,7 +44,7 @@
 - **Назва:** b-sdd-sprint-closure
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
+- **Опис:** Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та синхронізація з Utopia DB і NotebookLM.
 - **Шлях:** `~/.agents/skills/b-sdd-sprint-closure`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, b-sdd-sprint-closure.drakon.json, scripts/sprint_closure.py`
@@ -98,7 +98,7 @@
 - **Назва:** architecture-designer
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.
+- **Опис:** Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабованості.
 - **Шлях:** `~/.agents/skills/architecture-designer`
 - **Кількість файлів коду/конфігів:** 7
 - **Ключові файли:** `SKILL.md, architecture-designer.drakon.json, references/adr-template.md, references/architecture-patterns.md, references/database-selection.md, references/nfr-checklist.md, references/system-design.md`
@@ -219,7 +219,7 @@
 - **Назва:** brainstorming
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes
+- **Опис:** Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду.
 - **Шлях:** `~/.agents/skills/brainstorming`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, brainstorming.drakon.json`
@@ -295,7 +295,7 @@
 - **Назва:** ast-grep
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.
+- **Опис:** Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST).
 - **Шлях:** `~/.agents/skills/ast-grep`
 - **Кількість файлів коду/конфігів:** 4
 - **Ключові файли:** `README.md, SKILL.md, ast-grep.drakon.json, references/rule_reference.md`
@@ -424,7 +424,7 @@
 - **Назва:** astryx-scaffolder
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.
+- **Опис:** Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища оператора.
 - **Шлях:** `~/.agents/skills/astryx-scaffolder`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, astryx-scaffolder.drakon.json, scripts/scaffold_component.py`
@@ -509,7 +509,7 @@
 - **Назва:** b-sdd-kindle-docs
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation and operator handbook into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via the send-to-kindle repository on host 192.168.3.184.
+- **Опис:** Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.
 - **Шлях:** `~/.agents/skills/b-sdd-kindle-docs`
 - **Кількість файлів коду/конфігів:** 4
 - **Ключові файли:** `SKILL.md, b-sdd-kindle-docs.drakon.json, scripts/bsdd_to_kindle.py, scripts/dispatch_on_184.sh`
@@ -536,7 +536,7 @@
 - **Назва:** b-sdd-notebooklm-sync
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Autonomous pipeline for synchronizing B-SDD codebase dumps, active bitemporal ADRs from Utopia DB (.251), comprehensive 10-chapter documentation (.txt), and strategic dossiers into Google NotebookLM project notebooks, pruning obsolete sources, and generating Deep Dive audio overviews.
+- **Опис:** Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google NotebookLM.
 - **Шлях:** `~/.agents/skills/b-sdd-notebooklm-sync`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, b-sdd-notebooklm-sync.drakon.json, scripts/sync_notebooklm.sh`
@@ -545,7 +545,7 @@
 - **Назва:** b-sdd-ui-export
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Autonomous pipeline for synthesizing Gemini Spark-optimized structured plain-text dumps of Astryx Cockpit UI (b-sdd-ui), staging into working NotebookLM MCP directories on host .184, and synchronizing into the B-SDD Architecture SSoT notebook.
+- **Опис:** Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM.
 - **Шлях:** `~/.agents/skills/b-sdd-ui-export`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, b-sdd-ui-export.drakon.json`
@@ -563,7 +563,7 @@
 - **Назва:** api-designer
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.
+- **Опис:** Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів.
 - **Шлях:** `~/.agents/skills/api-designer`
 - **Кількість файлів коду/конфігів:** 7
 - **Ключові файли:** `SKILL.md, api-designer.drakon.json, references/error-handling.md, references/openapi.md, references/pagination.md, references/rest-patterns.md, references/versioning.md`

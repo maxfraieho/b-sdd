@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0",
+  "name": "b-sdd-notebooklm-sync",
+  "category": "bssd_system_skill",
+  "description": "Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google NotebookLM.",
+  "params": "notebook_id: str, force_audio: bool",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Синхронізація артефактів B-SDD у NotebookLM",
+      "edges": {
+        "down": "step_call_bsdd",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_call_bsdd",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Крок 1: Верифікація стану кластера",
+      "edges": {
+        "down": "step_code_dump",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_code_dump",
+      "node_type": "action",
+      "label": "Крок 2: Генерація чистого текстового дампа кодової бази (--code-only)",
+      "edges": {
+        "down": "step_utopia_adrs",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "step_utopia_adrs",
+      "node_type": "action",
+      "label": "Крок 3: Вивантаження активних бітемпоральних ADR з Utopia DB (.251)",
+      "edges": {
+        "down": "check_staged",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "check_staged",
+      "node_type": "question",
+      "label": "Крок 4: Сформовані файли-джерела валідні?",
+      "edges": {
+        "down": "step_mcp_ingest",
+        "right": "err_staged"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "err_staged",
+      "node_type": "end",
+      "label": "Аварійне завершення: Помилка формування джерел",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_mcp_ingest",
+      "node_type": "action",
+      "label": "Крок 5: Очищення застарілих та завантаження нових джерел через MCP",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Синхронізацію знань у NotebookLM виконано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    }
+  ],
+  "meta": {
+    "skill_name": "b-sdd-notebooklm-sync",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
