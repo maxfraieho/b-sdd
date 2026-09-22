@@ -1,0 +1,82 @@
+{
+  "name": "b-sdd-sprint-distiller",
+  "nodes": [
+    {
+      "id": "node_1",
+      "type": "headline",
+      "title": "Початок: Виконання b-sdd-sprint-distiller",
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "id": "node_2",
+      "type": "action",
+      "title": "Крок 1: Семантична екстракція метрик та рішень",
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "id": "node_3",
+      "type": "action",
+      "title": "Крок 2: Класифікація за тріадою ADR-010",
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "id": "node_4",
+      "type": "question",
+      "title": "Крок 3: Виявлено заміщені інваріанти?",
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "id": "node_5",
+      "type": "action",
+      "title": "Крок 4: Дописування кванту знань у Mega-ADR",
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "id": "node_6",
+      "type": "action",
+      "title": "Крок 5: Реєстрація бітемпорального WORM-запису",
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "id": "node_7",
+      "type": "question",
+      "title": "Крок 6: Бюджет active_rules < 500 слів?",
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "id": "node_8",
+      "type": "insertion",
+      "title": "CALL_SKILL(b-sdd-notebooklm-sync): Оновлення SSoT",
+      "x": 0.0,
+      "y": 14.0
+    },
+    {
+      "id": "node_9",
+      "type": "end",
+      "title": "Успішне завершення: Дистиляцію спринту завершено",
+      "x": 0.0,
+      "y": 16.0
+    },
+    {
+      "id": "node_10",
+      "type": "action",
+      "title": "Обробка переповнення правил (safe-refactor)",
+      "x": 4.0,
+      "y": 12.0
+    },
+    {
+      "id": "node_11",
+      "type": "end",
+      "title": "Аварійне завершення: Деградація виконання",
+      "x": 4.0,
+      "y": 16.0
+    }
+  ]
+}

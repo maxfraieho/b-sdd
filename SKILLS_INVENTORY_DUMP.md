@@ -1,11 +1,11 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP (ADR-015 TAXONOMY)
 
-**Згенеровано:** 2026-09-22 11:21:02Z  
+**Згенеровано:** 2026-09-22 12:08:55Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
-**Загальна кількість скілів:** **59** (🌟 **34** System Skills, 🛠️ **25** Project Skills)  
-**Покриття ДРАКОН-схемами (Rule of 2):** **59/59** (100.0%)  
-**Загальна кількість файлів коду/конфігів:** **303**  
+**Загальна кількість скілів:** **60** (🌟 **35** System Skills, 🛠️ **25** Project Skills)  
+**Покриття ДРАКОН-схемами (Rule of 2):** **60/60** (100.0%)  
+**Загальна кількість файлів коду/конфігів:** **305**  
 **Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR, ADR-015)  
 
 > [!NOTE]
@@ -15,7 +15,7 @@
 
 ---
 
-## 🌟 B-SDD System Skills (Core Infrastructure & Meta-Engine) — 34 скілів
+## 🌟 B-SDD System Skills (Core Infrastructure & Meta-Engine) — 35 скілів
 
 | # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |
 |---|---|---|:---:|---|
@@ -25,34 +25,35 @@
 | 4 | [**b-sdd-kindle-docs**](#skill-b-sdd-kindle-docs) | Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184. | ✅ | `SKILL.md`, `b-sdd-kindle-docs.drakon.json` +2 |
 | 5 | [**b-sdd-notebooklm-sync**](#skill-b-sdd-notebooklm-sync) | Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google Noteboo... | ✅ | `SKILL.md`, `b-sdd-notebooklm-sync.drakon.json` +1 |
 | 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та... | ✅ | `SKILL.md`, `b-sdd-sprint-closure.drakon.json` +1 |
-| 7 | [**b-sdd-ui-export**](#skill-b-sdd-ui-export) | Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM. | ✅ | `SKILL.md`, `b-sdd-ui-export.drakon.json` |
-| 8 | [**cloudflare-pages-expert**](#skill-cloudflare-pages-expert) | Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler... | ✅ | `SKILL.md`, `cloudflare-pages-expert.drakon.json` |
-| 9 | [**code-reviewer**](#skill-code-reviewer) | Аналіз код-дифів (PR/MR), виявлення архітектурних запахів, вразливостей безпеки, дефектів продуктивності та надання конструктивного рев'ю. | ✅ | `SKILL.md`, `code-reviewer.drakon.json` +6 |
-| 10 | [**codebase-design**](#skill-codebase-design) | Формування архітектурної чистоти та структури кодової бази, розділення модулів, дотримання слабкої зв'язності (loose coupling). | ✅ | `SKILL.md`, `DEEPENING.md` +2 |
-| 11 | [**condition-based-waiting**](#skill-condition-based-waiting) | Ліквідація ненадійних тестів (flaky tests) через заміну фіксованих таймаутів на детерміноване очікування настання умов. | ✅ | `SKILL.md`, `condition-based-waiting.drakon.json` +1 |
-| 12 | [**defense-in-depth**](#skill-defense-in-depth) | Ешелонована багаторівнева валідація даних на межах API, бізнес-логіки та системних викликів для запобігання дефектам. | ✅ | `SKILL.md`, `defense-in-depth.drakon.json` |
-| 13 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Систематична петля діагностики критичних багів, регресій продуктивності та побудова відтворюваного детермінованого тест-кейсу. | ✅ | `SKILL.md`, `diagnosing-bugs.drakon.json` +1 |
-| 14 | [**drakon-compiler**](#skill-drakon-compiler) | Компіляція планарних ДРАКОН-схем (.drakon.json) у виконуваний код (Python/TypeScript), зворотна трансляція та валідація інваріантів C=0. | ✅ | `SKILL.md`, `drakon-compiler.drakon.json` +1 |
-| 15 | [**find-skills**](#skill-find-skills) | Пошук та виявлення релевантних спеціалізованих скілів у локальному та розширеному каталозі агентів. | ✅ | `SKILL.md`, `find-skills.drakon.json` |
-| 16 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Поглиблення неглибоких модулів, реструктуризація коду за принципами Джона Оустерхаута та оптимізація інтерфейсів. | ✅ | `SKILL.md`, `HTML-REPORT.md` +1 |
-| 17 | [**intent-continuity**](#skill-intent-continuity) | Забезпечення безперервності намірів та рішень крізь розподілені агентські сесії через бітемпоральний леджер. | ✅ | `SKILL.md`, `intent-continuity.drakon.json` |
-| 18 | [**investigate-first**](#skill-investigate-first) | Обов'язкове попереднє дослідження фактичного стану системи та коду перед будь-якими змінами чи гіпотезами. | ✅ | `SKILL.md`, `investigate-first.drakon.json` +1 |
-| 19 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Повний релізний конвеєр компіляції дайджестів, оновлень архітектури та книг для мобільних рідерів Kindle. | ✅ | `SKILL.md`, `kindle-release-pipeline.drakon.json` +7 |
-| 20 | [**laya-decision-router**](#skill-laya-decision-router) | Суб-40мс не-авторегресивна System 1 класифікація задач, оцінка ризиків порушення ADR та маршрутизація скілів на Pixel 7. | ✅ | `SKILL.md`, `laya-decision-router.drakon.json` |
-| 21 | [**root-cause-tracing**](#skill-root-cause-tracing) | Глибинне трасування першопричин збоїв через граф залежностей та стек викликів до вихідного джерела помилки. | ✅ | `SKILL.md`, `find-polluter.sh` +1 |
-| 22 | [**safe-refactor**](#skill-safe-refactor) | Безпечний рефакторинг коду під захистом автоматизованих тестів зі збереженням поведінкових інваріантів. | ✅ | `SKILL.md`, `safe-refactor.drakon.json` +1 |
-| 23 | [**session-distiller**](#skill-session-distiller) | Аналітична дистиляція логів довгих сесій у компактні підсумки, архітектурні висновки та списки задач. | ✅ | `SKILL.md`, `session-distiller.drakon.json` |
-| 24 | [**skill-audit**](#skill-skill-audit) | Ревізія та верифікація скілів на відповідність стандартам таксономії ADR-015, планарності ДРАКОН та актуальності. | ✅ | `SKILL.md`, `skill-audit.drakon.json` |
-| 25 | [**skill-creator**](#skill-skill-creator) | Створення та кристалізація нових агентських скілів за правилом 2-х повторень з повною генерацією маніфесту та схеми. | ✅ | `SKILL.md`, `LICENSE.txt` +6 |
-| 26 | [**surgical-patch**](#skill-surgical-patch) | Точкове, мінімально інвазивне внесення виправлень без супутнього руйнування сусіднього коду та структури. | ✅ | `SKILL.md`, `surgical-patch.drakon.json` +1 |
-| 27 | [**systematic-debugging**](#skill-systematic-debugging) | Методичне усунення дефектів: формулювання гіпотез, ізоляція причин, перевірка експериментами та закріплення тестами. | ✅ | `SKILL.md`, `CREATION-LOG.md` +5 |
-| 28 | [**test-driven-development**](#skill-test-driven-development) | Розробка через тестування (TDD): цикл Red-Green-Refactor, де жоден рядок коду не пишеться без попередньо падаючого тесту. | ✅ | `SKILL.md`, `test-driven-development.drakon.json` |
-| 29 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Виявлення та виправлення антипатернів тестування (надлишковий мокінг, тестування реалізації замість поведінки, tautological tests). | ✅ | `SKILL.md`, `testing-anti-patterns.drakon.json` |
-| 30 | [**using-git-worktrees**](#skill-using-git-worktrees) | Ізоляція робочих контекстів та паралельних завдань за допомогою механізму git worktree без перемикання поточної гілки. | ✅ | `SKILL.md`, `using-git-worktrees.drakon.json` |
-| 31 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Синхронізація архітектурних рішень та графів намірів у незмінний WORM-леджер Utopia DB на вузлі 192.168.3.251. | ✅ | `SKILL.md`, `utopia-intent-ledger.drakon.json` +2 |
-| 32 | [**verification-before-completion**](#skill-verification-before-completion) | Обов'язковий попередній аудит та запуск перевірочних скриптів перед декларуванням успішного завершення задачі. | ✅ | `SKILL.md`, `verification-before-completion.drakon.json` |
-| 33 | [**writing-great-skills**](#skill-writing-great-skills) | Керівництво зі створення високоефективних, лаконічних та однозначних інструкцій для агентів. | ✅ | `SKILL.md`, `GLOSSARY.md` +1 |
-| 34 | [**writing-skills**](#skill-writing-skills) | Базові стандарти синтаксису, метаданих та формулювання процедурних правил для каталогу скілів. | ✅ | `SKILL.md`, `anthropic-best-practices.md` +2 |
+| 7 | [**b-sdd-sprint-distiller**](#skill-b-sdd-sprint-distiller) | Автономна дистиляція звітів закриття спринту, оновлення кумулятивного Mega-ADR, реєстрація WORM-запису в Utopia DB та збереження в нестир... | ✅ | `SKILL.md`, `b-sdd-sprint-distiller.drakon.json` |
+| 8 | [**b-sdd-ui-export**](#skill-b-sdd-ui-export) | Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM. | ✅ | `SKILL.md`, `b-sdd-ui-export.drakon.json` |
+| 9 | [**cloudflare-pages-expert**](#skill-cloudflare-pages-expert) | Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler... | ✅ | `SKILL.md`, `cloudflare-pages-expert.drakon.json` |
+| 10 | [**code-reviewer**](#skill-code-reviewer) | Аналіз код-дифів (PR/MR), виявлення архітектурних запахів, вразливостей безпеки, дефектів продуктивності та надання конструктивного рев'ю. | ✅ | `SKILL.md`, `code-reviewer.drakon.json` +6 |
+| 11 | [**codebase-design**](#skill-codebase-design) | Формування архітектурної чистоти та структури кодової бази, розділення модулів, дотримання слабкої зв'язності (loose coupling). | ✅ | `SKILL.md`, `DEEPENING.md` +2 |
+| 12 | [**condition-based-waiting**](#skill-condition-based-waiting) | Ліквідація ненадійних тестів (flaky tests) через заміну фіксованих таймаутів на детерміноване очікування настання умов. | ✅ | `SKILL.md`, `condition-based-waiting.drakon.json` +1 |
+| 13 | [**defense-in-depth**](#skill-defense-in-depth) | Ешелонована багаторівнева валідація даних на межах API, бізнес-логіки та системних викликів для запобігання дефектам. | ✅ | `SKILL.md`, `defense-in-depth.drakon.json` |
+| 14 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Систематична петля діагностики критичних багів, регресій продуктивності та побудова відтворюваного детермінованого тест-кейсу. | ✅ | `SKILL.md`, `diagnosing-bugs.drakon.json` +1 |
+| 15 | [**drakon-compiler**](#skill-drakon-compiler) | Компіляція планарних ДРАКОН-схем (.drakon.json) у виконуваний код (Python/TypeScript), зворотна трансляція та валідація інваріантів C=0. | ✅ | `SKILL.md`, `drakon-compiler.drakon.json` +1 |
+| 16 | [**find-skills**](#skill-find-skills) | Пошук та виявлення релевантних спеціалізованих скілів у локальному та розширеному каталозі агентів. | ✅ | `SKILL.md`, `find-skills.drakon.json` |
+| 17 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Поглиблення неглибоких модулів, реструктуризація коду за принципами Джона Оустерхаута та оптимізація інтерфейсів. | ✅ | `SKILL.md`, `HTML-REPORT.md` +1 |
+| 18 | [**intent-continuity**](#skill-intent-continuity) | Забезпечення безперервності намірів та рішень крізь розподілені агентські сесії через бітемпоральний леджер. | ✅ | `SKILL.md`, `intent-continuity.drakon.json` |
+| 19 | [**investigate-first**](#skill-investigate-first) | Обов'язкове попереднє дослідження фактичного стану системи та коду перед будь-якими змінами чи гіпотезами. | ✅ | `SKILL.md`, `investigate-first.drakon.json` +1 |
+| 20 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Повний релізний конвеєр компіляції дайджестів, оновлень архітектури та книг для мобільних рідерів Kindle. | ✅ | `SKILL.md`, `kindle-release-pipeline.drakon.json` +7 |
+| 21 | [**laya-decision-router**](#skill-laya-decision-router) | Суб-40мс не-авторегресивна System 1 класифікація задач, оцінка ризиків порушення ADR та маршрутизація скілів на Pixel 7. | ✅ | `SKILL.md`, `laya-decision-router.drakon.json` |
+| 22 | [**root-cause-tracing**](#skill-root-cause-tracing) | Глибинне трасування першопричин збоїв через граф залежностей та стек викликів до вихідного джерела помилки. | ✅ | `SKILL.md`, `find-polluter.sh` +1 |
+| 23 | [**safe-refactor**](#skill-safe-refactor) | Безпечний рефакторинг коду під захистом автоматизованих тестів зі збереженням поведінкових інваріантів. | ✅ | `SKILL.md`, `safe-refactor.drakon.json` +1 |
+| 24 | [**session-distiller**](#skill-session-distiller) | Аналітична дистиляція логів довгих сесій у компактні підсумки, архітектурні висновки та списки задач. | ✅ | `SKILL.md`, `session-distiller.drakon.json` |
+| 25 | [**skill-audit**](#skill-skill-audit) | Ревізія та верифікація скілів на відповідність стандартам таксономії ADR-015, планарності ДРАКОН та актуальності. | ✅ | `SKILL.md`, `skill-audit.drakon.json` |
+| 26 | [**skill-creator**](#skill-skill-creator) | Створення та кристалізація нових агентських скілів за правилом 2-х повторень з повною генерацією маніфесту та схеми. | ✅ | `SKILL.md`, `LICENSE.txt` +6 |
+| 27 | [**surgical-patch**](#skill-surgical-patch) | Точкове, мінімально інвазивне внесення виправлень без супутнього руйнування сусіднього коду та структури. | ✅ | `SKILL.md`, `surgical-patch.drakon.json` +1 |
+| 28 | [**systematic-debugging**](#skill-systematic-debugging) | Методичне усунення дефектів: формулювання гіпотез, ізоляція причин, перевірка експериментами та закріплення тестами. | ✅ | `SKILL.md`, `CREATION-LOG.md` +5 |
+| 29 | [**test-driven-development**](#skill-test-driven-development) | Розробка через тестування (TDD): цикл Red-Green-Refactor, де жоден рядок коду не пишеться без попередньо падаючого тесту. | ✅ | `SKILL.md`, `test-driven-development.drakon.json` |
+| 30 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Виявлення та виправлення антипатернів тестування (надлишковий мокінг, тестування реалізації замість поведінки, tautological tests). | ✅ | `SKILL.md`, `testing-anti-patterns.drakon.json` |
+| 31 | [**using-git-worktrees**](#skill-using-git-worktrees) | Ізоляція робочих контекстів та паралельних завдань за допомогою механізму git worktree без перемикання поточної гілки. | ✅ | `SKILL.md`, `using-git-worktrees.drakon.json` |
+| 32 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Синхронізація архітектурних рішень та графів намірів у незмінний WORM-леджер Utopia DB на вузлі 192.168.3.251. | ✅ | `SKILL.md`, `utopia-intent-ledger.drakon.json` +2 |
+| 33 | [**verification-before-completion**](#skill-verification-before-completion) | Обов'язковий попередній аудит та запуск перевірочних скриптів перед декларуванням успішного завершення задачі. | ✅ | `SKILL.md`, `verification-before-completion.drakon.json` |
+| 34 | [**writing-great-skills**](#skill-writing-great-skills) | Керівництво зі створення високоефективних, лаконічних та однозначних інструкцій для агентів. | ✅ | `SKILL.md`, `GLOSSARY.md` +1 |
+| 35 | [**writing-skills**](#skill-writing-skills) | Базові стандарти синтаксису, метаданих та формулювання процедурних правил для каталогу скілів. | ✅ | `SKILL.md`, `anthropic-best-practices.md` +2 |
 
 ---
 
@@ -91,7 +92,7 @@
 ## Повний Вміст Скілів (Full Skills Code & Instructions)
 
 <a id="skill-api-designer"></a>
-### [1/59] Скіл: `api-designer`
+### [1/60] Скіл: `api-designer`
 
 **Каталог:** `~/.agents/skills/api-designer`  
 **Опис:** Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів.  
@@ -3024,7 +3025,7 @@ Avoid these mistakes:
 ---
 
 <a id="skill-architecture-designer"></a>
-### [2/59] Скіл: `architecture-designer`
+### [2/60] Скіл: `architecture-designer`
 
 **Каталог:** `~/.agents/skills/architecture-designer`  
 **Опис:** Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабованості.  
@@ -3932,7 +3933,7 @@ When to Avoid:
 ---
 
 <a id="skill-ast-grep"></a>
-### [3/59] Скіл: `ast-grep`
+### [3/60] Скіл: `ast-grep`
 
 **Каталог:** `~/.agents/skills/ast-grep`  
 **Опис:** Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST).  
@@ -4777,7 +4778,7 @@ rule:
 ---
 
 <a id="skill-astryx-scaffolder"></a>
-### [4/59] Скіл: `astryx-scaffolder`
+### [4/60] Скіл: `astryx-scaffolder`
 
 **Каталог:** `~/.agents/skills/astryx-scaffolder`  
 **Опис:** Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища оператора.  
@@ -5192,32 +5193,22 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-b-sdd"></a>
-### [5/59] Скіл: `b-sdd`
+### [5/60] Скіл: `b-sdd`
 
 **Каталог:** `~/.agents/skills/b-sdd`  
 **Опис:** Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.  
 **Файлів у складі:** 2  
 
-#### Файл: `b-sdd/SKILL.md` (3,975 байт)
+#### Файл: `b-sdd/SKILL.md` (3,960 байт)
 ````markdown
 ---
-
 name: b-sdd
-
 description: Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.
-
 type: SYSTEM_SKILL
-
 category: bssd-system-skill
-
 immutable: true
-
 invoked_skills: [find-skills, skill-creator]
-
 ---
-
-
-
 # BSdd
 
 
@@ -5339,31 +5330,18 @@ END
 ## 3. DRAKON Visual Workflow (Planar Skewer X=0)
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-
 ## DRAKON Visual Workflow (Planar Skewer X=0)
-
-- Schema File: b-sdd.drakon.json
-
-- Total Algorithmic Nodes: 8
-
-- Spine Topology: Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
-
-  1. [HEADLINE] Початок: Виконання b-sdd
-
-  2. [ACTION] Крок 1: Перевірка вхідного контексту та середовища
-
-  3. [QUESTION] Крок 2: Передумови успішно перевірені?
-
-  4. [INSERTION] CALL_SKILL(find-skills): Делегування підзадачі
-
-  5. [ACTION] Крок 4: Фінальна верифікація та телеметрія
-
-  6. [END] Успішне завершення: Процедуру b-sdd виконано
-
-  7. [ACTION] Обробка помилки перевірки (X=4.0)
-
-  8. [END] Аварійне завершення: Зупинка виконання (X=4.0)
-
+- **Schema File:** `b-sdd.drakon.json`
+- **Total Algorithmic Nodes:** 8
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
+  1. `[HEADLINE]` Початок: Виконання b-sdd
+  2. `[ACTION]` Крок 1: Перевірка вхідного контексту та середовища
+  3. `[QUESTION]` Крок 2: Передумови успішно перевірені?
+  4. `[ACTION]` Обробка помилки перевірки: фіксація в журналі
+  5. `[END]` Аварійне завершення: Зупинка виконання
+  6. `[INSERTION]` CALL_SKILL(find-skills): Делегування підзадачі
+  7. `[ACTION]` Крок 4: Фінальна верифікація та телеметрія
+  8. `[END]` Успішне завершення: Процедуру b-sdd виконано
 <!-- DRAKON_VISUAL_FLOW_END -->
 
 
@@ -5395,7 +5373,7 @@ pytest tests/test_b_sdd.py -v || true
 
 ````
 
-#### Файл: `b-sdd/b-sdd.drakon.json` (3,394 байт)
+#### Файл: `b-sdd/b-sdd.drakon.json` (3,393 байт)
 ````json
 {
   "schema_version": "1.0",
@@ -5528,13 +5506,12 @@ pytest tests/test_b_sdd.py -v || true
     "crossings_count": 0
   }
 }
-
 ````
 
 ---
 
 <a id="skill-b-sdd-kindle-docs"></a>
-### [6/59] Скіл: `b-sdd-kindle-docs`
+### [6/60] Скіл: `b-sdd-kindle-docs`
 
 **Каталог:** `~/.agents/skills/b-sdd-kindle-docs`  
 **Опис:** Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.  
@@ -6000,7 +5977,7 @@ echo "=== [3/3] Execution complete ==="
 ---
 
 <a id="skill-b-sdd-notebooklm-sync"></a>
-### [7/59] Скіл: `b-sdd-notebooklm-sync`
+### [7/60] Скіл: `b-sdd-notebooklm-sync`
 
 **Каталог:** `~/.agents/skills/b-sdd-notebooklm-sync`  
 **Опис:** Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google NotebookLM.  
@@ -6418,7 +6395,7 @@ echo "==========================================================================
 ---
 
 <a id="skill-b-sdd-sprint-closure"></a>
-### [8/59] Скіл: `b-sdd-sprint-closure`
+### [8/60] Скіл: `b-sdd-sprint-closure`
 
 **Каталог:** `~/.agents/skills/b-sdd-sprint-closure`  
 **Опис:** Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та синхронізація з Utopia DB і NotebookLM.  
@@ -6780,8 +6757,226 @@ if __name__ == "__main__":
 
 ---
 
+<a id="skill-b-sdd-sprint-distiller"></a>
+### [9/60] Скіл: `b-sdd-sprint-distiller`
+
+**Каталог:** `~/.agents/skills/b-sdd-sprint-distiller`  
+**Опис:** Автономна дистиляція звітів закриття спринту, оновлення кумулятивного Mega-ADR, реєстрація WORM-запису в Utopia DB та збереження в нестираємий архів Google Drive.  
+**Файлів у складі:** 2  
+
+#### Файл: `b-sdd-sprint-distiller/SKILL.md` (5,582 байт)
+````markdown
+---
+name: b-sdd-sprint-distiller
+description: Автономна дистиляція звітів закриття спринту, оновлення кумулятивного Mega-ADR, реєстрація WORM-запису в Utopia DB та збереження в нестираємий архів Google Drive.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [test-driven-development, b-sdd-notebooklm-sync, safe-refactor]
+---
+
+# b-sdd-sprint-distiller
+
+Автономна дистиляція звітів закриття спринту, оновлення кумулятивного Mega-ADR, реєстрація WORM-запису в Utopia DB та збереження в нестираємий архів Google Drive.
+
+---
+
+## 1. Architectural Context & Negative Invariants
+- **ADR Compliance**: Відповідає ADR-001 (Bitemporal WORM Ledger), ADR-005 (Active Rules Budget < 500 words), ADR-010 (Tripartite ADR Ontology), ADR-015 (System Skill Taxonomy) та ADR-016 (Tripartite Skill Architecture & Pseudocode Standard).
+- **Negative Invariants**:
+  - **NEVER** видаляти або перезаписувати історичні бітемпоральні WORM-записи.
+  - **NEVER** перевищувати ліміт активних правил у 500 слів у `.context/active_rules.md`.
+  - **NEVER** додавати поодинокі сирі звіти як постійні джерела в NotebookLM (уникати ліміту 50 джерел).
+  - **NEVER** спрямовувати обробники деградації або помилок ліворуч від шампура (дозволено строго X = 4.0).
+
+---
+
+## 2. Algorithmic Workflow (ADR-016 Standard)
+
+<!-- ALGORITHMIC_PSEUDOCODE_START -->
+ALGORITHM DistillSprintKnowledge
+INPUT:
+    sprint_id: str
+    raw_report_path: str
+OUTPUT:
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+BEGIN
+    TRY
+        ASSERT FileExists(raw_report_path)
+        
+        // STEP 1: Semantic extraction from raw report (X=0.0, Y=2.0)
+        EXECUTE raw_data := ExtractMetricsAndDecisions(raw_report_path)
+        
+        // STEP 2: Tripartite classification according to ADR-010 (X=0.0, Y=4.0)
+        EXECUTE data_adr := ClusterDecisions(raw_data, "DataADR")
+        EXECUTE skill_adr := ClusterDecisions(raw_data, "SkillADR")
+        EXECUTE spec_adr := ClusterDecisions(raw_data, "SpecADR")
+        
+        // STEP 3: Question Node - Invariant superseding verification (X=0.0, Y=6.0)
+        IF DetectSupersededInvariants(raw_data) THEN
+            EXECUTE ApplyBitemporalSuperseding("docs/ADR/B_SDD_MEGA_ADR_MASTER.md")
+        ELSE
+            CONTINUE along Vertical Skewer (X=0.0)
+        FI
+        
+        // STEP 4: Append distilled quantum to Mega-ADR (X=0.0, Y=8.0)
+        EXECUTE AppendDistilledSprintNode("docs/ADR/B_SDD_MEGA_ADR_MASTER.md", sprint_id, raw_data)
+        
+        // STEP 5: Commit immutable WORM record (X=0.0, Y=10.0)
+        EXECUTE worm_id := CommitToUtopiaWORM(sprint_id, raw_data)
+        ASSERT worm_id != null
+        
+        // STEP 6: Replicate to permanent archive (X=0.0, Y=12.0)
+        EXECUTE ReplicateArchive(raw_report_path, sprint_id)
+        
+        // STEP 7: Question Node - Rule budget verification (X=0.0, Y=14.0)
+        IF WordCount(".context/active_rules.md") >= 500 THEN
+            BRANCH_RIGHT(X=4.0, Y=14.0): Budget Overflow
+            CALL_SKILL(safe-refactor, {target: ".context/active_rules.md", max_words: 490})
+        ELSE
+            CONTINUE along Vertical Skewer (X=0.0)
+        FI
+        
+        // STEP 8: Synchronize SSoT in NotebookLM (X=0.0, Y=16.0)
+        CALL_SKILL(b-sdd-notebooklm-sync, {source: "docs/ADR/B_SDD_MEGA_ADR_MASTER.md"})
+        
+        EMIT_TELEMETRY(status="SUCCESS", skill="b-sdd-sprint-distiller")
+        RETURN "SUCCESS"
+        
+    CATCH Error AS e
+        BRANCH_RIGHT(X=4.0): Failure Handling
+        LOG_CRITICAL("Sprint distillation failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
+<!-- ALGORITHMIC_PSEUDOCODE_END -->
+
+---
+
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+- Schema File: b-sdd-sprint-distiller.drakon.json
+- Total Algorithmic Nodes: 9
+- Spine Topology: Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+  1. [HEADLINE] Початок: Виконання b-sdd-sprint-distiller (X=0, Y=0)
+  2. [ACTION] Крок 1: Семантична екстракція метрик та рішень (X=0, Y=2)
+  3. [ACTION] Крок 2: Класифікація за тріадою ADR-010 (X=0, Y=4)
+  4. [QUESTION] Крок 3: Виявлено заміщені інваріанти? (X=0, Y=6)
+  5. [ACTION] Крок 4: Дописування кванту знань у Mega-ADR (X=0, Y=8)
+  6. [ACTION] Крок 5: Реєстрація бітемпорального WORM-запису (X=0, Y=10)
+  7. [QUESTION] Крок 6: Бюджет active_rules < 500 слів? (X=0, Y=12)
+  8. [INSERTION] CALL_SKILL(b-sdd-notebooklm-sync): Оновлення SSoT (X=0, Y=14)
+  9. [END] Успішне завершення: Дистиляцію спринту завершено (X=0, Y=16)
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+## 4. Operational Guide & CLI Execution
+
+### Типовий запуск процедури:
+```bash
+python3 scripts/distill_sprint.py --sprint-id sprint_031 --raw reports/sprint_031_closure_raw.md
+```
+
+### Верифікація результатів:
+```bash
+pytest tests/test_sprint_distiller.py -v
+```
+
+````
+
+#### Файл: `b-sdd-sprint-distiller/b-sdd-sprint-distiller.drakon.json` (2,037 байт)
+````json
+{
+  "name": "b-sdd-sprint-distiller",
+  "nodes": [
+    {
+      "id": "node_1",
+      "type": "headline",
+      "title": "Початок: Виконання b-sdd-sprint-distiller",
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "id": "node_2",
+      "type": "action",
+      "title": "Крок 1: Семантична екстракція метрик та рішень",
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "id": "node_3",
+      "type": "action",
+      "title": "Крок 2: Класифікація за тріадою ADR-010",
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "id": "node_4",
+      "type": "question",
+      "title": "Крок 3: Виявлено заміщені інваріанти?",
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "id": "node_5",
+      "type": "action",
+      "title": "Крок 4: Дописування кванту знань у Mega-ADR",
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "id": "node_6",
+      "type": "action",
+      "title": "Крок 5: Реєстрація бітемпорального WORM-запису",
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "id": "node_7",
+      "type": "question",
+      "title": "Крок 6: Бюджет active_rules < 500 слів?",
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "id": "node_8",
+      "type": "insertion",
+      "title": "CALL_SKILL(b-sdd-notebooklm-sync): Оновлення SSoT",
+      "x": 0.0,
+      "y": 14.0
+    },
+    {
+      "id": "node_9",
+      "type": "end",
+      "title": "Успішне завершення: Дистиляцію спринту завершено",
+      "x": 0.0,
+      "y": 16.0
+    },
+    {
+      "id": "node_10",
+      "type": "action",
+      "title": "Обробка переповнення правил (safe-refactor)",
+      "x": 4.0,
+      "y": 12.0
+    },
+    {
+      "id": "node_11",
+      "type": "end",
+      "title": "Аварійне завершення: Деградація виконання",
+      "x": 4.0,
+      "y": 16.0
+    }
+  ]
+}
+
+````
+
+---
+
 <a id="skill-b-sdd-ui-export"></a>
-### [9/59] Скіл: `b-sdd-ui-export`
+### [10/60] Скіл: `b-sdd-ui-export`
 
 **Каталог:** `~/.agents/skills/b-sdd-ui-export`  
 **Опис:** Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM.  
@@ -7123,7 +7318,7 @@ pytest tests/test_b_sdd_ui_export.py -v || true
 ---
 
 <a id="skill-brainstorming"></a>
-### [10/59] Скіл: `brainstorming`
+### [11/60] Скіл: `brainstorming`
 
 **Каталог:** `~/.agents/skills/brainstorming`  
 **Опис:** Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду.  
@@ -7465,7 +7660,7 @@ pytest tests/test_brainstorming.py -v || true
 ---
 
 <a id="skill-caveman"></a>
-### [11/59] Скіл: `caveman`
+### [12/60] Скіл: `caveman`
 
 **Каталог:** `~/.agents/skills/caveman`  
 **Опис:** Ультрастислий режим комунікації для економії токенів без втрати технічного змісту та строгості.  
@@ -7841,7 +8036,7 @@ pytest tests/test_caveman.py -v || true
 ---
 
 <a id="skill-cli-developer"></a>
-### [12/59] Скіл: `cli-developer`
+### [13/60] Скіл: `cli-developer`
 
 **Каталог:** `~/.agents/skills/cli-developer`  
 **Опис:** Проектування та розробка високопродуктивних консольних утиліт (CLI), парсинг прапорців, інтерактивні підказки та автодоповнення.  
@@ -10203,7 +10398,7 @@ SEE ALSO
 ---
 
 <a id="skill-cloudflare-pages-expert"></a>
-### [13/59] Скіл: `cloudflare-pages-expert`
+### [14/60] Скіл: `cloudflare-pages-expert`
 
 **Каталог:** `~/.agents/skills/cloudflare-pages-expert`  
 **Опис:** Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler CLI.  
@@ -10545,7 +10740,7 @@ pytest tests/test_cloudflare_pages_expert.py -v || true
 ---
 
 <a id="skill-code-documenter"></a>
-### [14/59] Скіл: `code-documenter`
+### [15/60] Скіл: `code-documenter`
 
 **Каталог:** `~/.agents/skills/code-documenter`  
 **Опис:** Генерація, структурування та валідація технічної документації, коментарів JSDoc/docstrings та OpenAPI специфікацій.  
@@ -13079,7 +13274,7 @@ Credit card, PayPal, wire transfer (annual plans only).
 ---
 
 <a id="skill-code-reviewer"></a>
-### [15/59] Скіл: `code-reviewer`
+### [16/60] Скіл: `code-reviewer`
 
 **Каталог:** `~/.agents/skills/code-reviewer`  
 **Опис:** Аналіз код-дифів (PR/MR), виявлення архітектурних запахів, вразливостей безпеки, дефектів продуктивності та надання конструктивного рев'ю.  
@@ -14430,7 +14625,7 @@ All requirements verified:
 ---
 
 <a id="skill-codebase-design"></a>
-### [16/59] Скіл: `codebase-design`
+### [17/60] Скіл: `codebase-design`
 
 **Каталог:** `~/.agents/skills/codebase-design`  
 **Опис:** Формування архітектурної чистоти та структури кодової бази, розділення модулів, дотримання слабкої зв'язності (loose coupling).  
@@ -14863,7 +15058,7 @@ pytest tests/test_codebase_design.py -v || true
 ---
 
 <a id="skill-condition-based-waiting"></a>
-### [17/59] Скіл: `condition-based-waiting`
+### [18/60] Скіл: `condition-based-waiting`
 
 **Каталог:** `~/.agents/skills/condition-based-waiting`  
 **Опис:** Ліквідація ненадійних тестів (flaky tests) через заміну фіксованих таймаутів на детерміноване очікування настання умов.  
@@ -15368,7 +15563,7 @@ export function waitForEventMatch(
 ---
 
 <a id="skill-defense-in-depth"></a>
-### [18/59] Скіл: `defense-in-depth`
+### [19/60] Скіл: `defense-in-depth`
 
 **Каталог:** `~/.agents/skills/defense-in-depth`  
 **Опис:** Ешелонована багаторівнева валідація даних на межах API, бізнес-логіки та системних викликів для запобігання дефектам.  
@@ -15710,7 +15905,7 @@ pytest tests/test_defense_in_depth.py -v || true
 ---
 
 <a id="skill-diagnosing-bugs"></a>
-### [19/59] Скіл: `diagnosing-bugs`
+### [20/60] Скіл: `diagnosing-bugs`
 
 **Каталог:** `~/.agents/skills/diagnosing-bugs`  
 **Опис:** Систематична петля діагностики критичних багів, регресій продуктивності та побудова відтворюваного детермінованого тест-кейсу.  
@@ -16098,7 +16293,7 @@ printf 'ERROR_MSG=%s\n' "$ERROR_MSG"
 ---
 
 <a id="skill-drakon-compiler"></a>
-### [20/59] Скіл: `drakon-compiler`
+### [21/60] Скіл: `drakon-compiler`
 
 **Каталог:** `~/.agents/skills/drakon-compiler`  
 **Опис:** Компіляція планарних ДРАКОН-схем (.drakon.json) у виконуваний код (Python/TypeScript), зворотна трансляція та валідація інваріантів C=0.  
@@ -16512,7 +16707,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-executing-plans"></a>
-### [21/59] Скіл: `executing-plans`
+### [22/60] Скіл: `executing-plans`
 
 **Каталог:** `~/.agents/skills/executing-plans`  
 **Опис:** Дисципліноване пакетне виконання затверджених планів реалізації з контрольними точками верифікації.  
@@ -16835,7 +17030,7 @@ pytest tests/test_executing_plans.py -v || true
 ---
 
 <a id="skill-find-skills"></a>
-### [22/59] Скіл: `find-skills`
+### [23/60] Скіл: `find-skills`
 
 **Каталог:** `~/.agents/skills/find-skills`  
 **Опис:** Пошук та виявлення релевантних спеціалізованих скілів у локальному та розширеному каталозі агентів.  
@@ -17158,7 +17353,7 @@ pytest tests/test_find_skills.py -v || true
 ---
 
 <a id="skill-frontend-design"></a>
-### [23/59] Скіл: `frontend-design`
+### [24/60] Скіл: `frontend-design`
 
 **Каталог:** `~/.agents/skills/frontend-design`  
 **Опис:** Створення виразних, ергономічних та високоякісних користувацьких вебінтерфейсів з униканням шаблонного дизайну.  
@@ -17663,7 +17858,7 @@ pytest tests/test_frontend_design.py -v || true
 ---
 
 <a id="skill-grill-with-docs"></a>
-### [24/59] Скіл: `grill-with-docs`
+### [25/60] Скіл: `grill-with-docs`
 
 **Каталог:** `~/.agents/skills/grill-with-docs`  
 **Опис:** Інтенсивне структуроване інтерв'ю для виявлення прихованих припущень та паралельного формування ADR і глосарію домену.  
@@ -18005,7 +18200,7 @@ pytest tests/test_grill_with_docs.py -v || true
 ---
 
 <a id="skill-handoff"></a>
-### [25/59] Скіл: `handoff`
+### [26/60] Скіл: `handoff`
 
 **Каталог:** `~/.agents/skills/handoff`  
 **Опис:** Формування дискретного, машинозчитуваного артефакту передачі контексту між сесіями та спринтами (ADR-007).  
@@ -18328,7 +18523,7 @@ pytest tests/test_handoff.py -v || true
 ---
 
 <a id="skill-improve-codebase-architecture"></a>
-### [26/59] Скіл: `improve-codebase-architecture`
+### [27/60] Скіл: `improve-codebase-architecture`
 
 **Каталог:** `~/.agents/skills/improve-codebase-architecture`  
 **Опис:** Поглиблення неглибоких модулів, реструктуризація коду за принципами Джона Оустерхаута та оптимізація інтерфейсів.  
@@ -18798,7 +18993,7 @@ pytest tests/test_improve_codebase_architecture.py -v || true
 ---
 
 <a id="skill-intent-continuity"></a>
-### [27/59] Скіл: `intent-continuity`
+### [28/60] Скіл: `intent-continuity`
 
 **Каталог:** `~/.agents/skills/intent-continuity`  
 **Опис:** Забезпечення безперервності намірів та рішень крізь розподілені агентські сесії через бітемпоральний леджер.  
@@ -19140,7 +19335,7 @@ pytest tests/test_intent_continuity.py -v || true
 ---
 
 <a id="skill-investigate-first"></a>
-### [28/59] Скіл: `investigate-first`
+### [29/60] Скіл: `investigate-first`
 
 **Каталог:** `~/.agents/skills/investigate-first`  
 **Опис:** Обов'язкове попереднє дослідження фактичного стану системи та коду перед будь-якими змінами чи гіпотезами.  
@@ -19491,7 +19686,7 @@ interface:
 ---
 
 <a id="skill-kindle-release-pipeline"></a>
-### [29/59] Скіл: `kindle-release-pipeline`
+### [30/60] Скіл: `kindle-release-pipeline`
 
 **Каталог:** `~/.agents/skills/kindle-release-pipeline`  
 **Опис:** Повний релізний конвеєр компіляції дайджестів, оновлень архітектури та книг для мобільних рідерів Kindle.  
@@ -20896,7 +21091,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-laya-decision-router"></a>
-### [30/59] Скіл: `laya-decision-router`
+### [31/60] Скіл: `laya-decision-router`
 
 **Каталог:** `~/.agents/skills/laya-decision-router`  
 **Опис:** Суб-40мс не-авторегресивна System 1 класифікація задач, оцінка ризиків порушення ADR та маршрутизація скілів на Pixel 7.  
@@ -21238,7 +21433,7 @@ pytest tests/test_laya_decision_router.py -v || true
 ---
 
 <a id="skill-make-interfaces-feel-better"></a>
-### [31/59] Скіл: `make-interfaces-feel-better`
+### [32/60] Скіл: `make-interfaces-feel-better`
 
 **Каталог:** `~/.agents/skills/make-interfaces-feel-better`  
 **Опис:** Полірування мікроінтеракцій, реактивності інтерфейсу, оптимістичних оновлень та сприйняття швидкодії UI.  
@@ -22439,7 +22634,7 @@ Some fonts (like Inter) change the visual appearance of numerals with this prope
 ---
 
 <a id="skill-mcp-builder"></a>
-### [32/59] Скіл: `mcp-builder`
+### [33/60] Скіл: `mcp-builder`
 
 **Каталог:** `~/.agents/skills/mcp-builder`  
 **Опис:** Проектування, реалізація та тестування серверів Model Context Protocol (MCP) для підключення зовнішніх інструментів.  
@@ -26093,7 +26288,7 @@ mcp>=1.1.0
 ---
 
 <a id="skill-notebooklm"></a>
-### [33/59] Скіл: `notebooklm`
+### [34/60] Скіл: `notebooklm`
 
 **Каталог:** `~/.agents/skills/notebooklm`  
 **Опис:** Взаємодія з Google NotebookLM API та MCP для організації досліджень, синтезу знань та аудіо-оглядів.  
@@ -26416,7 +26611,7 @@ pytest tests/test_notebooklm.py -v || true
 ---
 
 <a id="skill-notebooklm-gitnexus-copilot"></a>
-### [34/59] Скіл: `notebooklm-gitnexus-copilot`
+### [35/60] Скіл: `notebooklm-gitnexus-copilot`
 
 **Каталог:** `~/.agents/skills/notebooklm-gitnexus-copilot`  
 **Опис:** Спільний аналітичний міст між графом знань GitNexus AST на хості .184 та блокнотом NotebookLM SSoT.  
@@ -26758,7 +26953,7 @@ pytest tests/test_notebooklm_gitnexus_copilot.py -v || true
 ---
 
 <a id="skill-root-cause-tracing"></a>
-### [35/59] Скіл: `root-cause-tracing`
+### [36/60] Скіл: `root-cause-tracing`
 
 **Каталог:** `~/.agents/skills/root-cause-tracing`  
 **Опис:** Глибинне трасування першопричин збоїв через граф залежностей та стек викликів до вихідного джерела помилки.  
@@ -27168,7 +27363,7 @@ exit 0
 ---
 
 <a id="skill-safe-refactor"></a>
-### [36/59] Скіл: `safe-refactor`
+### [37/60] Скіл: `safe-refactor`
 
 **Каталог:** `~/.agents/skills/safe-refactor`  
 **Опис:** Безпечний рефакторинг коду під захистом автоматизованих тестів зі збереженням поведінкових інваріантів.  
@@ -27519,7 +27714,7 @@ interface:
 ---
 
 <a id="skill-session-distiller"></a>
-### [37/59] Скіл: `session-distiller`
+### [38/60] Скіл: `session-distiller`
 
 **Каталог:** `~/.agents/skills/session-distiller`  
 **Опис:** Аналітична дистиляція логів довгих сесій у компактні підсумки, архітектурні висновки та списки задач.  
@@ -27861,7 +28056,7 @@ pytest tests/test_session_distiller.py -v || true
 ---
 
 <a id="skill-skill-audit"></a>
-### [38/59] Скіл: `skill-audit`
+### [39/60] Скіл: `skill-audit`
 
 **Каталог:** `~/.agents/skills/skill-audit`  
 **Опис:** Ревізія та верифікація скілів на відповідність стандартам таксономії ADR-015, планарності ДРАКОН та актуальності.  
@@ -28203,7 +28398,7 @@ pytest tests/test_skill_audit.py -v || true
 ---
 
 <a id="skill-skill-creator"></a>
-### [39/59] Скіл: `skill-creator`
+### [40/60] Скіл: `skill-creator`
 
 **Каталог:** `~/.agents/skills/skill-creator`  
 **Опис:** Створення та кристалізація нових агентських скілів за правилом 2-х повторень з повною генерацією маніфесту та схеми.  
@@ -29392,7 +29587,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-subagent-driven-development"></a>
-### [40/59] Скіл: `subagent-driven-development`
+### [41/60] Скіл: `subagent-driven-development`
 
 **Каталог:** `~/.agents/skills/subagent-driven-development`  
 **Опис:** Делегування ізольованих підзадач незалежним субагентам для збереження контекстного бюджету головного агента.  
@@ -29715,7 +29910,7 @@ pytest tests/test_subagent_driven_development.py -v || true
 ---
 
 <a id="skill-surgical-patch"></a>
-### [41/59] Скіл: `surgical-patch`
+### [42/60] Скіл: `surgical-patch`
 
 **Каталог:** `~/.agents/skills/surgical-patch`  
 **Опис:** Точкове, мінімально інвазивне внесення виправлень без супутнього руйнування сусіднього коду та структури.  
@@ -30066,7 +30261,7 @@ interface:
 ---
 
 <a id="skill-systematic-debugging"></a>
-### [42/59] Скіл: `systematic-debugging`
+### [43/60] Скіл: `systematic-debugging`
 
 **Каталог:** `~/.agents/skills/systematic-debugging`  
 **Опис:** Методичне усунення дефектів: формулювання гіпотез, ізоляція причин, перевірка експериментами та закріплення тестами.  
@@ -30761,7 +30956,7 @@ Which do you choose? Be honest about what you would actually do with senior engi
 ---
 
 <a id="skill-test-driven-development"></a>
-### [43/59] Скіл: `test-driven-development`
+### [44/60] Скіл: `test-driven-development`
 
 **Каталог:** `~/.agents/skills/test-driven-development`  
 **Опис:** Розробка через тестування (TDD): цикл Red-Green-Refactor, де жоден рядок коду не пишеться без попередньо падаючого тесту.  
@@ -31084,7 +31279,7 @@ pytest tests/test_test_driven_development.py -v || true
 ---
 
 <a id="skill-testing-anti-patterns"></a>
-### [44/59] Скіл: `testing-anti-patterns`
+### [45/60] Скіл: `testing-anti-patterns`
 
 **Каталог:** `~/.agents/skills/testing-anti-patterns`  
 **Опис:** Виявлення та виправлення антипатернів тестування (надлишковий мокінг, тестування реалізації замість поведінки, tautological tests).  
@@ -31426,7 +31621,7 @@ pytest tests/test_testing_anti_patterns.py -v || true
 ---
 
 <a id="skill-theme-factory"></a>
-### [45/59] Скіл: `theme-factory`
+### [46/60] Скіл: `theme-factory`
 
 **Каталог:** `~/.agents/skills/theme-factory`  
 **Опис:** Проектування та гармонізація палітр кольорів, темної та світлої теми, токенів дизайну та типографіки.  
@@ -32195,7 +32390,7 @@ Tech startups, software launches, innovation showcases, AI/ML presentations, dig
 ---
 
 <a id="skill-to-spec"></a>
-### [46/59] Скіл: `to-spec`
+### [47/60] Скіл: `to-spec`
 
 **Каталог:** `~/.agents/skills/to-spec`  
 **Опис:** Трансформація неструктурованих вимог та ідей у суворі, формальні інженерні специфікації поведінки.  
@@ -32518,7 +32713,7 @@ pytest tests/test_to_spec.py -v || true
 ---
 
 <a id="skill-to-tickets"></a>
-### [47/59] Скіл: `to-tickets`
+### [48/60] Скіл: `to-tickets`
 
 **Каталог:** `~/.agents/skills/to-tickets`  
 **Опис:** Декомпозиція високорівневих специфікацій на атомарні, машинозчитувані тікети для автономних виконавців.  
@@ -32841,7 +33036,7 @@ pytest tests/test_to_tickets.py -v || true
 ---
 
 <a id="skill-using-git-worktrees"></a>
-### [48/59] Скіл: `using-git-worktrees`
+### [49/60] Скіл: `using-git-worktrees`
 
 **Каталог:** `~/.agents/skills/using-git-worktrees`  
 **Опис:** Ізоляція робочих контекстів та паралельних завдань за допомогою механізму git worktree без перемикання поточної гілки.  
@@ -33164,7 +33359,7 @@ pytest tests/test_using_git_worktrees.py -v || true
 ---
 
 <a id="skill-utopia-intent-ledger"></a>
-### [49/59] Скіл: `utopia-intent-ledger`
+### [50/60] Скіл: `utopia-intent-ledger`
 
 **Каталог:** `~/.agents/skills/utopia-intent-ledger`  
 **Опис:** Синхронізація архітектурних рішень та графів намірів у незмінний WORM-леджер Utopia DB на вузлі 192.168.3.251.  
@@ -33601,7 +33796,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-vercel-composition-patterns"></a>
-### [50/59] Скіл: `vercel-composition-patterns`
+### [51/60] Скіл: `vercel-composition-patterns`
 
 **Каталог:** `~/.agents/skills/vercel-composition-patterns`  
 **Опис:** Архітектурні патерни компонування сучасних React-додатків, серверні компоненти (RSC) та оптимізація рендерингу.  
@@ -35850,7 +36045,7 @@ nested inside each other—they just need to be within the same provider.
 ---
 
 <a id="skill-vercel-react-best-practices"></a>
-### [51/59] Скіл: `vercel-react-best-practices`
+### [52/60] Скіл: `vercel-react-best-practices`
 
 **Каталог:** `~/.agents/skills/vercel-react-best-practices`  
 **Опис:** Інженерні стандарти продуктивності React та Next.js від Vercel: мінімізація ререндерів, бандлу та затримок.  
@@ -44391,7 +44586,7 @@ function Profile({ name }: { name: string }) {
 ---
 
 <a id="skill-verification-before-completion"></a>
-### [52/59] Скіл: `verification-before-completion`
+### [53/60] Скіл: `verification-before-completion`
 
 **Каталог:** `~/.agents/skills/verification-before-completion`  
 **Опис:** Обов'язковий попередній аудит та запуск перевірочних скриптів перед декларуванням успішного завершення задачі.  
@@ -44714,7 +44909,7 @@ pytest tests/test_verification_before_completion.py -v || true
 ---
 
 <a id="skill-wayfinder"></a>
-### [53/59] Скіл: `wayfinder`
+### [54/60] Скіл: `wayfinder`
 
 **Каталог:** `~/.agents/skills/wayfinder`  
 **Опис:** Навігація по великих кодових базах, пошук точок входу, картування залежностей та побудова маршруту дослідження.  
@@ -45037,7 +45232,7 @@ pytest tests/test_wayfinder.py -v || true
 ---
 
 <a id="skill-web-artifacts-builder"></a>
-### [54/59] Скіл: `web-artifacts-builder`
+### [55/60] Скіл: `web-artifacts-builder`
 
 **Каталог:** `~/.agents/skills/web-artifacts-builder`  
 **Опис:** Автономна генерація односторінкових HTML/JS/CSS веб-артефактів, інтерактивних демонстрацій та візуалізаторів.  
@@ -45951,7 +46146,7 @@ echo "  import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/di
 ---
 
 <a id="skill-web-design-guidelines"></a>
-### [55/59] Скіл: `web-design-guidelines`
+### [56/60] Скіл: `web-design-guidelines`
 
 **Каталог:** `~/.agents/skills/web-design-guidelines`  
 **Опис:** Дотримання стандартів доступності (a11y), семантичної верстки, контрастності та адаптивності веб-інтерфейсів.  
@@ -46274,7 +46469,7 @@ pytest tests/test_web_design_guidelines.py -v || true
 ---
 
 <a id="skill-webapp-testing"></a>
-### [56/59] Скіл: `webapp-testing`
+### [57/60] Скіл: `webapp-testing`
 
 **Каталог:** `~/.agents/skills/webapp-testing`  
 **Опис:** Комплексне тестування веб-додатків через Playwright/Vitest, перевірка користувацьких сценаріїв та API-інтеграцій.  
@@ -47033,7 +47228,7 @@ if __name__ == '__main__':
 ---
 
 <a id="skill-writing-great-skills"></a>
-### [57/59] Скіл: `writing-great-skills`
+### [58/60] Скіл: `writing-great-skills`
 
 **Каталог:** `~/.agents/skills/writing-great-skills`  
 **Опис:** Керівництво зі створення високоефективних, лаконічних та однозначних інструкцій для агентів.  
@@ -47562,7 +47757,7 @@ pytest tests/test_writing_great_skills.py -v || true
 ---
 
 <a id="skill-writing-plans"></a>
-### [58/59] Скіл: `writing-plans`
+### [59/60] Скіл: `writing-plans`
 
 **Каталог:** `~/.agents/skills/writing-plans`  
 **Опис:** Складання структурованих, інкрементних планів реалізації з чіткими критеріями перевірки кожного кроку.  
@@ -47885,7 +48080,7 @@ pytest tests/test_writing_plans.py -v || true
 ---
 
 <a id="skill-writing-skills"></a>
-### [59/59] Скіл: `writing-skills`
+### [60/60] Скіл: `writing-skills`
 
 **Каталог:** `~/.agents/skills/writing-skills`  
 **Опис:** Базові стандарти синтаксису, метаданих та формулювання процедурних правил для каталогу скілів.  

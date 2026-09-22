@@ -103,14 +103,14 @@ install_hook() {
     cat << 'EOF' > "$HOOK_TARGET"
 #!/usr/bin/env bash
 # ==============================================================================
-# B-SDD Laya Fast-Path Pre-Commit Hook (Sprint 030 - Vector 2)
-# Evaluates staged diff risk using Laya System 1 (Pixel 7 :9623).
+# B-SDD Laya Fast-Path Pre-Commit Hook (Sprint 031 - Dual Gate: Risk & Intent)
+# Evaluates staged diff risk (P < 0.15) and spec intent alignment (S_intent >= 0.82)
 # Bypass with: git commit --no-verify  OR  LAYA_SKIP_PRECOMMIT=1 git commit
 # ==============================================================================
 set -euo pipefail
 
 if [[ "${LAYA_SKIP_PRECOMMIT:-0}" == "1" ]]; then
-    echo "ℹ LAYA_SKIP_PRECOMMIT=1 set. Skipping Laya pre-commit risk gate."
+    echo "ℹ LAYA_SKIP_PRECOMMIT=1 set. Skipping Laya pre-commit risk and intent gates."
     exit 0
 fi
 
@@ -122,7 +122,7 @@ fi
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-# Run Fast-Path Diff Risk Gatekeeper
+# Run Fast-Path Dual-Gate Risk & Intent Gatekeeper
 set +e
 python3 -m src.core.diff_risk_gatekeeper --cached
 GATE_EXIT=$?
@@ -131,12 +131,14 @@ set -e
 if [[ $GATE_EXIT -ne 0 ]]; then
     echo ""
     echo "================================================================================"
-    echo "❌ [LAYA FAST-PATH PRE-COMMIT GATE]: Commit rejected due to risk assessment."
-    echo "   To remediate: add test coverage or refactor mutations in staging."
+    echo "❌ [LAYA DUAL-GATE PRE-COMMIT REJECTION]: Commit rejected by architectural gate."
+    echo "   Criteria: Diff Risk P < 0.15 AND Spec Intent Alignment S_intent >= 0.82."
+    echo "   To remediate: align staged code with SKILL.md assertions or add unit tests."
     echo "   To force (Operator Override): git commit --no-verify"
     echo "================================================================================"
     exit $GATE_EXIT
 fi
+
 
 exit 0
 EOF

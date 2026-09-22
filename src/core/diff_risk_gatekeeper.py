@@ -313,6 +313,8 @@ def main():
     parser.add_argument("--json", action="store_true", help="Print structured JSON output")
     parser.add_argument("--force", action="store_true", help="Bypass block and exit with code 0")
     parser.add_argument("--timeout", type=float, default=3.0, help="Laya query timeout")
+    parser.add_argument("--verify-intent", action="store_true", default=True, help="Enforce Vector 3 spec intent verification (default: True)")
+    parser.add_argument("--skip-intent", action="store_true", help="Skip Vector 3 intent verification")
     args = parser.parse_args()
 
     diff_text = ""
@@ -331,6 +333,28 @@ def main():
     gatekeeper = DiffRiskGatekeeper(timeout=args.timeout)
     result = gatekeeper.evaluate_diff_risk(diff_text)
 
+    # Vector 3: Semantic Spec-to-Code Intent Verification (Dual Gate)
+    intent_enabled = not args.skip_intent and os.getenv("LAYA_SKIP_INTENT", "0") != "1"
+    if intent_enabled and result["allow_commit"] and not args.diff_text and not args.diff_file:
+        from src.core.intent_verification.intent_gatekeeper import IntentGatekeeper
+        intent_gk = IntentGatekeeper()
+        intent_res = intent_gk.evaluate_staged_changes()
+        result["intent_verification"] = intent_res.to_dict()
+        result["s_intent"] = intent_res.cosine_alignment
+        result["missing_invariants"] = intent_res.missing_invariants
+
+        if not intent_res.allow_commit:
+            result["allow_commit"] = False
+            result["reason"] = f"Intent violation: {intent_res.verdict} (S_intent={intent_res.cosine_alignment:.2f}, missing={intent_res.missing_invariants})"
+            result["action"] = "ALIGN_CODE_TO_SPEC"
+
+        capsule_dual = (
+            f"[DUAL_GATE: Risk={result['choice']} (P={result['p_violation']:.2f}), "
+            f"Intent={intent_res.verdict} (S={intent_res.cosine_alignment:.2f}), "
+            f"AllowCommit={result['allow_commit']}]"
+        )
+        result["capsule"] = capsule_dual
+
     if args.json:
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
@@ -338,10 +362,12 @@ def main():
         if not result["allow_commit"]:
             print(f"❌ Commit BLOCKED: {result['reason']}")
             print(f"▶ Recommended Action: {result['action']}")
-            if result['choice'] == "REMEDIATE_INVARIANTS":
+            if result.get('choice') == "REMEDIATE_INVARIANTS":
                 print("💡 Suggestion: Run safe-refactor or add unit tests for modified core modules.")
-            elif result['choice'] == "HALT_FOR_INSPECTION":
+            elif result.get('choice') == "HALT_FOR_INSPECTION":
                 print("⚠️ Critical security or invariant risk. Escalating to Operator Review (Φ6).")
+            elif "Intent violation" in result['reason']:
+                print("💡 Suggestion: Ensure code implements all ASSERT and CALL_SKILL statements from SKILL.md pseudocode.")
 
     if args.force:
         print("⚠️ Bypass requested via --force. Exiting 0.")
@@ -352,3 +378,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
