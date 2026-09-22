@@ -51,7 +51,11 @@ KNOWN_SYSTEM_SKILLS: Set[str] = {
     "defense-in-depth",
     "verification-before-completion",
     "using-git-worktrees",
+    "cloudflare-pages-expert",
+    "b-sdd-notebooklm-sync",
+    "b-sdd-kindle-docs",
 }
+
 
 
 def parse_skill_frontmatter(content: str) -> Tuple[Dict[str, Any], str]:
@@ -358,6 +362,80 @@ def load_skill_drakon(skill_name: str, skills_dir: Optional[Path] = None) -> Dic
     return schema
 
 
+def generate_pseudocode_from_drakon(skill_name: str, schema_json: Dict[str, Any]) -> str:
+    """
+    Generates deterministic, structured Algorithmic Pseudocode from a DRAKON schema.
+    Compliant with ADR-016 (Standardized Tripartite Skill Specification).
+    """
+    title = schema_json.get("name") or skill_name
+    clean_name = re.sub(r"[^a-zA-Z0-9_\-\s]", "", title)
+    parts = [p for p in re.split(r"[\s\-_]+", clean_name.strip()) if p]
+    safe_title = "".join(p[0].upper() + p[1:] for p in parts) or "ExecuteSkill"
+    raw_nodes = schema_json.get("nodes", [])
+
+    nodes_list = raw_nodes if isinstance(raw_nodes, list) else list(raw_nodes.values())
+
+    lines = [
+        f"ALGORITHM {safe_title}(context: dict)",
+        "BEGIN",
+        "    TRY",
+        "        // Preconditions verification",
+        f"        ASSERT ValidatePreconditions('{skill_name}')",
+        "",
+    ]
+
+    skewer_nodes = [n for n in nodes_list if float(n.get("x", 0.0)) == 0.0]
+    step_num = 1
+
+    for node in skewer_nodes:
+        ntype = node.get("node_type", "action").lower()
+        lbl = node.get("label", "")
+        edges = node.get("edges", {})
+        sb = node.get("semantic_binding", {}) or {}
+        call_skill = sb.get("call_skill")
+
+        if ntype in ("headline", "header"):
+            lines.append(f"        // Main Flow Spine: {lbl}")
+        elif ntype == "question":
+            lines.append(f"        // Step {step_num} Decision: {lbl}")
+            lines.append(f"        IF EvaluateCondition('{lbl}') THEN")
+            lines.append("            // Primary branch along vertical skewer (X=0)")
+            right_target = edges.get("right")
+            if right_target:
+                alt_node = next((n for n in nodes_list if n.get("node_id") == right_target), None)
+                alt_lbl = alt_node.get("label", right_target) if alt_node else right_target
+                lines.append("        ELSE")
+                lines.append(f"            BRANCH_RIGHT(X=4.0): {alt_lbl}")
+                if alt_node and alt_node.get("semantic_binding", {}).get("call_skill"):
+                    alt_cs = alt_node["semantic_binding"]["call_skill"]
+                    lines.append(f"            CALL_SKILL({alt_cs}, context)")
+                lines.append(f"            LOG_WARN('Degradation branch taken for: {lbl}')")
+            lines.append("        FI")
+            step_num += 1
+        elif ntype in ("insertion", "action") and call_skill:
+            lines.append(f"        STEP {step_num}: CALL_SKILL({call_skill}, context)")
+            lines.append(f"        // {lbl}")
+            step_num += 1
+        elif ntype == "action":
+            lines.append(f"        STEP {step_num}: {lbl}")
+            inst = node.get("instructions")
+            if inst:
+                lines.append(f"        // Detail: {inst[:120]}")
+            step_num += 1
+        elif ntype == "end":
+            lines.append(f"        RETURN Success('{lbl}')")
+
+    lines.extend([
+        "    CATCH Exception AS e",
+        "        LOG_CRITICAL('❌ Execution failed: ' + e.Message)",
+        f"        HALT_AND_DEGRADE('Fallback for {skill_name}')",
+        "    END",
+        "END",
+    ])
+
+    return "\n".join(lines)
+
+
 def save_skill_drakon(skill_name: str, schema_json: Dict[str, Any], skills_dir: Optional[Path] = None) -> Dict[str, Any]:
     """
     Saves visual DRAKON schema for a skill and synchronizes changes to SKILL.md.
@@ -443,6 +521,8 @@ def save_skill_drakon(skill_name: str, schema_json: Dict[str, Any], skills_dir: 
     fm_lines.append("---")
     new_fm = "\n".join(fm_lines) + "\n"
 
+
+
     # Synchronize visual workflow section in body
     flow_marker_start = "<!-- DRAKON_VISUAL_FLOW_START -->"
     flow_marker_end = "<!-- DRAKON_VISUAL_FLOW_END -->"
@@ -461,6 +541,33 @@ def save_skill_drakon(skill_name: str, schema_json: Dict[str, Any], skills_dir: 
     flow_lines.append(flow_marker_end)
     flow_block = "\n".join(flow_lines)
 
+    # Synchronize Algorithmic Pseudocode section per ADR-016
+    pseudo_marker_start = "<!-- ALGORITHMIC_PSEUDOCODE_START -->"
+    pseudo_marker_end = "<!-- ALGORITHMIC_PSEUDOCODE_END -->"
+    pseudocode = generate_pseudocode_from_drakon(skill_name, schema_json)
+
+    pseudo_block = (
+        f"{pseudo_marker_start}\n"
+        f"## 📐 Канонічний алгоритмічний псевдокод (B-SDD ADR-016 Standard)\n\n"
+        f"> [!IMPORTANT]\n"
+        f"> Цей псевдокод є 1:1 текстовим ізоморфізмом планарної ДРАКОН-схеми `{skill_name}.drakon.json`.\n\n"
+        f"```text\n{pseudocode}\n```\n"
+        f"{pseudo_marker_end}"
+    )
+
+    if pseudo_marker_start in body and pseudo_marker_end in body:
+        body = re.sub(
+            rf"{re.escape(pseudo_marker_start)}.*?{re.escape(pseudo_marker_end)}",
+            pseudo_block,
+            body,
+            flags=re.DOTALL
+        )
+    elif "ALGORITHM " not in body:
+        if flow_marker_start in body:
+            body = body.replace(flow_marker_start, pseudo_block + "\n\n" + flow_marker_start)
+        else:
+            body = "\n\n" + pseudo_block + "\n" + body
+
     if flow_marker_start in body and flow_marker_end in body:
         body = re.sub(
             rf"{re.escape(flow_marker_start)}.*?{re.escape(flow_marker_end)}",
@@ -472,6 +579,7 @@ def save_skill_drakon(skill_name: str, schema_json: Dict[str, Any], skills_dir: 
         body = body.rstrip() + "\n\n" + flow_block + "\n"
 
     skill_md_file.write_text(new_fm + body, encoding="utf-8")
+
 
     return {
         "status": "ok",

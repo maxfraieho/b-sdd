@@ -1,0 +1,184 @@
+{
+  "schema_version": "1.0",
+  "name": "Cloudflare Pages Expert Pipeline",
+  "category": "bssd_system_skill",
+  "description": "Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages через Wrangler CLI.",
+  "params": "project_name: str = 'astryx-cockpit', dry_run: bool = False",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Публікація Astryx Cockpit у Cloudflare Pages",
+      "edges": {
+        "down": "step_verify",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 1: Перевірка передумов робочого простору b-sdd-ui",
+      "edges": {
+        "down": "cond_build",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "cond_build",
+      "node_type": "question",
+      "label": "Крок 2: Збірка npm run build успішна?",
+      "edges": {
+        "down": "step_gen_configs",
+        "right": "step_err_build"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "step_err_build",
+      "node_type": "action",
+      "label": "Помилка збірки TypeScript/Vite: логування та зупинка",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "severe",
+        "call_skill": "diagnosing-bugs"
+      },
+      "x": 4.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "step_gen_configs",
+      "node_type": "action",
+      "label": "Крок 3: Генерація dist/_headers (CORS, CSP) та dist/_redirects",
+      "edges": {
+        "down": "cond_wrangler",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "cond_wrangler",
+      "node_type": "question",
+      "label": "Крок 4: Деплой через локальний Wrangler CLI успішний?",
+      "edges": {
+        "down": "step_validate_url",
+        "right": "step_fallback_184"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_fallback_184",
+      "node_type": "action",
+      "label": "Деградація: Запуск віддаленого деплоєра через вузол .184",
+      "edges": {
+        "down": "step_validate_url",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "mild"
+      },
+      "x": 4.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_validate_url",
+      "node_type": "action",
+      "label": "Крок 5: HTTP GET верифікація доступності https://astryx-cockpit.pages.dev == 200",
+      "edges": {
+        "down": "step_telemetry",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "step_telemetry",
+      "node_type": "action",
+      "label": "Крок 6: Реєстрація релізу в Utopia DB WORM леджер",
+      "edges": {
+        "down": "end",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "normal",
+        "call_skill": "utopia-intent-ledger"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "end",
+      "node_type": "end",
+      "label": "Завершення: Публікація Astryx Cockpit успішна",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    },
+    {
+      "node_id": "end_failed",
+      "node_type": "end",
+      "label": "Завершення з помилкою: Перехід на локальний сервер",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "severe"
+      },
+      "x": 4.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "cloudflare-pages-expert",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

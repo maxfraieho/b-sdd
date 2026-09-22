@@ -77,3 +77,5 @@ The workbench gateway (`src/server/workbench_server.py`) provides REST endpoints
 - **ADR-015-INV-03 (Bi-directional Visual DRAKON / Rule of 2):** Every skill directory must contain `<skill_name>.drakon.json` alongside `SKILL.md`.
 - **ADR-015-INV-04 (Planar Skewer & Skill Composition):** Visual skill schemas must satisfy 100% mathematical planarity ($C=0$) with the main spine on the vertical skewer ($X=0$). Cross-skill links must use `CALL_SKILL` semantics.
 - **ADR-015-INV-05 (Copilot Segregation):** Project-level copilot activities cannot mutate system skills without an explicit architectural meta-sprint.
+- **ADR-015-INV-06 (Tripartite Skill Specification):** Cross-Reference (ADR-016): The internal structure of skills must adhere to the Tripartite Standard, embedding canonical Algorithmic Pseudocode in `SKILL.md` as the primary logic structure isomorphic to the DRAKON schema.
+

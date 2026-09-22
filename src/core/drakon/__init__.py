@@ -26,6 +26,7 @@ from src.core.drakon.skill_visual_bridge import (
     verify_system_skills_immutability,
     parse_skill_frontmatter,
     synthesize_drakon_schema,
+    generate_pseudocode_from_drakon,
     KNOWN_SYSTEM_SKILLS,
 )
 
@@ -47,6 +48,8 @@ __all__ = [
     "verify_system_skills_immutability",
     "parse_skill_frontmatter",
     "synthesize_drakon_schema",
+    "generate_pseudocode_from_drakon",
     "KNOWN_SYSTEM_SKILLS",
 ]
+
 

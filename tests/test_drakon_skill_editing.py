@@ -157,3 +157,55 @@ type: PROJECT_SKILL
         assert "skill-b" in names
         for d in dtos:
             assert d.has_drakon_schema is True
+
+
+def test_generate_pseudocode_from_drakon_adr016():
+    from src.core.drakon.skill_visual_bridge import generate_pseudocode_from_drakon
+    schema = {
+        "name": "DeploySample",
+        "nodes": [
+            {"node_id": "start", "node_type": "headline", "label": "Start Deployment", "x": 0.0, "y": 0.0},
+            {"node_id": "step_1", "node_type": "action", "label": "Run build", "instructions": "Execute build script", "x": 0.0, "y": 2.0},
+            {
+                "node_id": "cond_ok", "node_type": "question", "label": "Build succeeded?",
+                "edges": {"down": "step_2", "right": "err_step"},
+                "x": 0.0, "y": 4.0
+            },
+            {
+                "node_id": "err_step", "node_type": "action", "label": "Handle build failure",
+                "semantic_binding": {"call_skill": "diagnosing-bugs"},
+                "x": 4.0, "y": 4.0
+            },
+            {
+                "node_id": "step_2", "node_type": "insertion", "label": "Call ledger",
+                "semantic_binding": {"call_skill": "utopia-intent-ledger"},
+                "x": 0.0, "y": 6.0
+            },
+            {"node_id": "end", "node_type": "end", "label": "Completed", "x": 0.0, "y": 8.0}
+        ]
+    }
+    pseudocode = generate_pseudocode_from_drakon("deploy-sample", schema)
+    assert "ALGORITHM DeploySample" in pseudocode
+    assert "BEGIN" in pseudocode
+    assert "IF EvaluateCondition('Build succeeded?')" in pseudocode
+    assert "BRANCH_RIGHT(X=4.0): Handle build failure" in pseudocode
+    assert "CALL_SKILL(diagnosing-bugs, context)" in pseudocode
+    assert "CALL_SKILL(utopia-intent-ledger, context)" in pseudocode
+    assert "RETURN Success('Completed')" in pseudocode
+
+
+def test_cloudflare_pages_expert_live_skill():
+    from src.core.drakon.skill_visual_bridge import load_skill_drakon, USER_SKILLS_DIR
+    schema = load_skill_drakon("cloudflare-pages-expert")
+    assert schema["name"] in ("Cloudflare Pages Expert Pipeline", "cloudflare-pages-expert")
+    assert len(schema["nodes"]) >= 6
+
+    # Verify SKILL.md has ALGORITHM pseudocode and YAML frontmatter
+    md_file = USER_SKILLS_DIR / "cloudflare-pages-expert" / "SKILL.md"
+    assert md_file.exists()
+    content = md_file.read_text(encoding="utf-8")
+    assert "type: SYSTEM_SKILL" in content
+    assert "category: bssd-system-skill" in content
+    assert "immutable: true" in content
+    assert "ALGORITHM DeployAstryxToCloudflarePages" in content
+

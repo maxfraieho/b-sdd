@@ -30,4 +30,6 @@ Chosen option: **Dynamic Skill Routing & The Rule of 2 Self-Authoring** (Option 
 - Operational workflows repeated >= 2 times must be proposed for crystallization into an agent skill.
 - Skills must follow standard agent skill format (`SKILL.md` with YAML metadata).
 - Cross-Reference (ADR-015): Every crystallized skill must maintain a paired `<skill_name>.drakon.json` visual schema alongside `SKILL.md` (Bi-directional Visual DRAKON Invariant) and specify its taxonomy (`SYSTEM_SKILL` or `PROJECT_SKILL`).
+- Cross-Reference (ADR-016): Every crystallized skill must adhere to the Tripartite Skill Standard, embedding formal Algorithmic Pseudocode in `SKILL.md` isomorphic to its DRAKON schema.
+
 

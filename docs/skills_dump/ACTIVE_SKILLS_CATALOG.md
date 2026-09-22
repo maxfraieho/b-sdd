@@ -1,6 +1,6 @@
-# B-SDD ACTIVE CORE SKILLS CATALOG (53 ACTIVE SKILLS)
+# B-SDD ACTIVE CORE SKILLS CATALOG (58 ACTIVE SKILLS)
 
-**Дата генерації:** 2026-09-22 07:59:55Z  
+**Дата генерації:** 2026-09-22 08:25:27Z  
 **Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  
 **Каталог активних скілів:** `/home/vokov/.agents/skills`  
 **Каталог розширених скілів:** `/home/vokov/.agents/skills/_extended`  
@@ -8,7 +8,7 @@
 **Статус:** Затверджено як активний стандарт для Astryx Copilot та ДРАКОН-нод.  
 
 > [!IMPORTANT]
-> Даний каталог містить **53 активних скілів ядра**, включаючи відновлені скіли спринту 027 (kindle-release-pipeline, drakon-compiler, utopia-intent-ledger, astryx-scaffolder).
+> Даний каталог містить **58 активних скілів ядра**, включаючи відновлені скіли спринту 027 (kindle-release-pipeline, drakon-compiler, utopia-intent-ledger, astryx-scaffolder).
 > Допоміжні та доменні скіли (29 найменувань) надійно ізольовано в `~/.agents/skills/_extended/`
 > і не перевантажують контекстне вікно планувальника.
 
@@ -25,11 +25,11 @@
 | 5 | Diagnostics & Debugging | 4 | Системне налагодження, пошук кореневих причин, трейсинг дефектів |
 | 6 | Frontend & Astryx Ergonomics | 8 | Інтерфейси Astryx Cockpit, скафолдинг компонентів, React/Vercel патерни |
 | 7 | Protocols & System Tools | 7 | Kindle пайплайн релізів, MCP-сервери, NotebookLM, GitNexus, API та CLI |
-| **Σ** | **Всього активних скілів** | **53** | **Повний замкнений контур AGI** |
+| **Σ** | **Всього активних скілів** | **58** | **Повний замкнений контур AGI** |
 
 ---
 
-## 1. Core B-SDD & Architecture (11)
+## 1. Core B-SDD & Architecture (13)
 
 ### `b-sdd`
 - **Назва:** b-sdd
@@ -39,6 +39,24 @@
 - **Шлях:** `~/.agents/skills/b-sdd`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, b-sdd.drakon.json`
+
+### `b-sdd-sprint-closure`
+- **Назва:** b-sdd-sprint-closure
+- **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
+- **ДРАКОН-схема (Rule of 2):** ✅ Присутня
+- **Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
+- **Шлях:** `~/.agents/skills/b-sdd-sprint-closure`
+- **Кількість файлів коду/конфігів:** 3
+- **Ключові файли:** `SKILL.md, b-sdd-sprint-closure.drakon.json, scripts/sprint_closure.py`
+
+### `session-distiller`
+- **Назва:** session-distiller
+- **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
+- **ДРАКОН-схема (Rule of 2):** ✅ Присутня
+- **Опис:** Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007).
+- **Шлях:** `~/.agents/skills/session-distiller`
+- **Кількість файлів коду/конфігів:** 2
+- **Ключові файли:** `SKILL.md, session-distiller.drakon.json`
 
 ### `intent-continuity`
 - **Назва:** intent-continuity
@@ -391,7 +409,7 @@
 
 ---
 
-## 6. Frontend & Astryx Ergonomics (8)
+## 6. Frontend & Astryx Ergonomics (9)
 
 ### `frontend-design`
 - **Назва:** frontend-design
@@ -410,6 +428,15 @@
 - **Шлях:** `~/.agents/skills/astryx-scaffolder`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, astryx-scaffolder.drakon.json, scripts/scaffold_component.py`
+
+### `cloudflare-pages-expert`
+- **Назва:** cloudflare-pages-expert
+- **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
+- **ДРАКОН-схема (Rule of 2):** ✅ Присутня
+- **Опис:** Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages через Wrangler CLI.
+- **Шлях:** `~/.agents/skills/cloudflare-pages-expert`
+- **Кількість файлів коду/конфігів:** 2
+- **Ключові файли:** `SKILL.md, cloudflare-pages-expert.drakon.json`
 
 ### `make-interfaces-feel-better`
 - **Назва:** make-interfaces-feel-better
@@ -467,7 +494,7 @@
 
 ---
 
-## 7. Protocols & System Tools (7)
+## 7. Protocols & System Tools (9)
 
 ### `kindle-release-pipeline`
 - **Назва:** kindle-release-pipeline
@@ -478,14 +505,14 @@
 - **Кількість файлів коду/конфігів:** 9
 - **Ключові файли:** `SKILL.md, kindle-release-pipeline.drakon.json, scripts/bsdd_to_kindle.py, scripts/dispatch_kindle_book.sh, scripts/dispatch_on_184.sh, scripts/dossier_to_kindle.py, scripts/kindle_digest.py, scripts/md_to_epub.py` (+ 1 more...)
 
-### `mcp-builder`
-- **Назва:** mcp-builder
-- **Таксономія (ADR-015):** `PROJECT_SKILL`
+### `b-sdd-kindle-docs`
+- **Назва:** b-sdd-kindle-docs
+- **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).
-- **Шлях:** `~/.agents/skills/mcp-builder`
-- **Кількість файлів коду/конфігів:** 11
-- **Ключові файли:** `LICENSE.txt, SKILL.md, mcp-builder.drakon.json, reference/evaluation.md, reference/mcp_best_practices.md, reference/node_mcp_server.md, reference/python_mcp_server.md, scripts/connections.py` (+ 3 more...)
+- **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation and operator handbook into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via the send-to-kindle repository on host 192.168.3.184.
+- **Шлях:** `~/.agents/skills/b-sdd-kindle-docs`
+- **Кількість файлів коду/конфігів:** 4
+- **Ключові файли:** `SKILL.md, b-sdd-kindle-docs.drakon.json, scripts/bsdd_to_kindle.py, scripts/dispatch_on_184.sh`
 
 ### `notebooklm`
 - **Назва:** notebooklm
@@ -504,6 +531,24 @@
 - **Шлях:** `~/.agents/skills/notebooklm-gitnexus-copilot`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, notebooklm-gitnexus-copilot.drakon.json`
+
+### `b-sdd-notebooklm-sync`
+- **Назва:** b-sdd-notebooklm-sync
+- **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
+- **ДРАКОН-схема (Rule of 2):** ✅ Присутня
+- **Опис:** Autonomous pipeline for synchronizing B-SDD codebase dumps, active bitemporal ADRs from Utopia DB (.251), comprehensive 10-chapter documentation (.txt), and strategic dossiers into Google NotebookLM project notebooks, pruning obsolete sources, and generating Deep Dive audio overviews.
+- **Шлях:** `~/.agents/skills/b-sdd-notebooklm-sync`
+- **Кількість файлів коду/конфігів:** 3
+- **Ключові файли:** `SKILL.md, b-sdd-notebooklm-sync.drakon.json, scripts/sync_notebooklm.sh`
+
+### `mcp-builder`
+- **Назва:** mcp-builder
+- **Таксономія (ADR-015):** `PROJECT_SKILL`
+- **ДРАКОН-схема (Rule of 2):** ✅ Присутня
+- **Опис:** Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).
+- **Шлях:** `~/.agents/skills/mcp-builder`
+- **Кількість файлів коду/конфігів:** 11
+- **Ключові файли:** `LICENSE.txt, SKILL.md, mcp-builder.drakon.json, reference/evaluation.md, reference/mcp_best_practices.md, reference/node_mcp_server.md, reference/python_mcp_server.md, scripts/connections.py` (+ 3 more...)
 
 ### `api-designer`
 - **Назва:** api-designer
@@ -572,4 +617,4 @@
 | `verify-and-stop` | Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion ch... |
 
 ---
-**Всього активних файлів коду у 48 скілах ядра:** 287
+**Всього активних файлів коду у 48 скілах ядра:** 301

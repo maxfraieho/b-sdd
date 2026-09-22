@@ -16,8 +16,8 @@ skills_dir = Path(os.path.expanduser("~/.agents/skills")).resolve()
 ext_dir = skills_dir / "_extended"
 
 categories = {
-    "1. Core B-SDD & Architecture (11)": [
-        "b-sdd", "intent-continuity", "laya-decision-router", "drakon-compiler", "utopia-intent-ledger",
+    "1. Core B-SDD & Architecture (13)": [
+        "b-sdd", "b-sdd-sprint-closure", "session-distiller", "intent-continuity", "laya-decision-router", "drakon-compiler", "utopia-intent-ledger",
         "architecture-designer", "skill-creator", "writing-great-skills", "writing-skills", "skill-audit", "find-skills"
     ],
     "2. Planning & SSD Specs (9)": [
@@ -34,15 +34,16 @@ categories = {
     "5. Diagnostics & Debugging (4)": [
         "investigate-first", "systematic-debugging", "root-cause-tracing", "diagnosing-bugs"
     ],
-    "6. Frontend & Astryx Ergonomics (8)": [
-        "frontend-design", "astryx-scaffolder", "make-interfaces-feel-better", "web-design-guidelines",
+    "6. Frontend & Astryx Ergonomics (9)": [
+        "frontend-design", "astryx-scaffolder", "cloudflare-pages-expert", "make-interfaces-feel-better", "web-design-guidelines",
         "vercel-react-best-practices", "vercel-composition-patterns", "web-artifacts-builder", "theme-factory"
     ],
-    "7. Protocols & System Tools (7)": [
-        "kindle-release-pipeline", "mcp-builder", "notebooklm", "notebooklm-gitnexus-copilot",
-        "api-designer", "cli-developer", "caveman"
+    "7. Protocols & System Tools (9)": [
+        "kindle-release-pipeline", "b-sdd-kindle-docs", "notebooklm", "notebooklm-gitnexus-copilot", "b-sdd-notebooklm-sync",
+        "mcp-builder", "api-designer", "cli-developer", "caveman"
     ]
 }
+
 
 
 def main():
