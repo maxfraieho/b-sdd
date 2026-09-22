@@ -20,6 +20,7 @@ AUTO_CHAIN=false
 MAX_CHAIN_SPRINTS=3
 RUN_FITNESS=true
 RUN_COMPILE=true
+RUN_LAYA=true
 PRINT_MODE=false
 USER_PROMPT=""
 
@@ -39,6 +40,7 @@ Options:
   --auto-chain [N]     Automatically chain up to N sprints using dynamic handoffs (default: 3)
   --skip-fitness       Skip pre-flight architecture fitness tests
   --skip-compile       Skip pre-flight active rule compilation
+  --skip-laya          Skip Laya System 1 pre-flight routing and classification
   --prompt <text>      Prompt to supply to the agent harness
   -h, --help           Show this help message
 
@@ -107,6 +109,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --skip-compile)
             RUN_COMPILE=false
+            shift
+            ;;
+        --skip-laya|--no-laya)
+            RUN_LAYA=false
             shift
             ;;
         --prompt)
@@ -184,6 +190,48 @@ while [[ $CURRENT_SPRINT -le $MAX_CHAIN_SPRINTS ]]; do
         python3 -m src.cli.main fitness
     fi
 
+    # 4. Laya System 1 Decision & Skill Routing (Pixel 7 Podroid: 192.168.3.251:9623)
+    LAYA_CAPSULE=""
+    if [[ "$RUN_LAYA" = true && -n "$USER_PROMPT" ]]; then
+        if [[ "$USER_PROMPT" == *"[LAYA DECISION:"* || "$USER_PROMPT" == *"[LAYA CONTEXT:"* ]]; then
+            echo "⚡ Laya Decision capsule already present in prompt."
+        else
+            echo "⚡ Querying Laya Decision Engine (Pixel 7: 192.168.3.251:9623)..."
+            LAYA_OUT=$(printf '%s' "$USER_PROMPT" | python3 -m src.core.laya_client --stdin 2>/dev/null || true)
+            if [[ -n "$LAYA_OUT" ]]; then
+                eval "$(printf '%s' "$LAYA_OUT" | python3 -c '
+import json, sys
+try:
+    d = json.loads(sys.stdin.read())
+    choice = d.get("choice", "PROCEED")
+    domain = d.get("domain", "core")
+    score = d.get("score", 0.98)
+    skills = d.get("skills_formatted", "@b-sdd, @intent-continuity, @safe-refactor")
+    fb = d.get("fallback", False)
+    mode = "LocalHeuristicFallback" if fb else "NeuralInference"
+    lat = d.get("latency_ms", 0.0)
+    print(f"LAYA_CHOICE=\"{choice}\"")
+    print(f"LAYA_DOMAIN=\"{domain}\"")
+    print(f"LAYA_SCORE=\"{score}\"")
+    print(f"LAYA_SKILLS=\"{skills}\"")
+    print(f"LAYA_MODE=\"{mode}\"")
+    print(f"LAYA_LATENCY=\"{lat}\"")
+except Exception:
+    pass
+' 2>/dev/null || true)"
+                if [[ -n "${LAYA_CHOICE:-}" ]]; then
+                    echo "   ▶ Decision: $LAYA_CHOICE | Domain: $LAYA_DOMAIN | Score: $LAYA_SCORE | Latency: ${LAYA_LATENCY}ms (Mode: $LAYA_MODE)"
+                    echo "   ▶ Recommended Skills: $LAYA_SKILLS"
+                    if [[ "$LAYA_MODE" == "NeuralInference" ]]; then
+                        LAYA_CAPSULE="[LAYA DECISION: Mode=NeuralInference, Domain=$LAYA_DOMAIN, Choice=$LAYA_CHOICE, Score=$LAYA_SCORE, Recommended Skills=$LAYA_SKILLS]"
+                    else
+                        LAYA_CAPSULE="[LAYA CONTEXT: Mode=LocalHeuristicFallback, Domain=$LAYA_DOMAIN, Choice=$LAYA_CHOICE, Score=$LAYA_SCORE, Recommended Skills=$LAYA_SKILLS]"
+                    fi
+                fi
+            fi
+        fi
+    fi
+
     # Auto-detect harness
     ACTIVE_HARNESS="$AGENT_HARNESS"
     if [[ "$ACTIVE_HARNESS" == "auto" ]]; then
@@ -209,12 +257,21 @@ while [[ $CURRENT_SPRINT -le $MAX_CHAIN_SPRINTS ]]; do
 
     FINAL_PROMPT=""
     if [[ -n "$USER_PROMPT" ]]; then
+        BASE_PROMPT=""
         if [[ "$USER_PROMPT" == *"[B-SDD Invariants:"* ]]; then
-            FINAL_PROMPT="$USER_PROMPT"
+            BASE_PROMPT="$USER_PROMPT"
         elif [[ -n "$CONTEXT_PREFIX" ]]; then
-            FINAL_PROMPT="$CONTEXT_PREFIX $USER_PROMPT"
+            BASE_PROMPT="$CONTEXT_PREFIX $USER_PROMPT"
         else
-            FINAL_PROMPT="$USER_PROMPT"
+            BASE_PROMPT="$USER_PROMPT"
+        fi
+
+        if [[ -n "$LAYA_CAPSULE" && "$BASE_PROMPT" != *"$LAYA_CAPSULE"* ]]; then
+            FINAL_PROMPT="$BASE_PROMPT
+
+$LAYA_CAPSULE"
+        else
+            FINAL_PROMPT="$BASE_PROMPT"
         fi
     fi
 
@@ -265,6 +322,13 @@ while [[ $CURRENT_SPRINT -le $MAX_CHAIN_SPRINTS ]]; do
                 else
                     exec codex
                 fi
+                ;;
+            echo|dry-run)
+                echo "🧪 DRY RUN [Harness: $ACTIVE_HARNESS]:"
+                echo "--------------------------------------------------------------------------------"
+                echo "$FINAL_PROMPT"
+                echo "--------------------------------------------------------------------------------"
+                exit 0
                 ;;
             *)
                 echo "❌ Unsupported harness: $ACTIVE_HARNESS."

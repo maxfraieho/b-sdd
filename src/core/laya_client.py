@@ -299,12 +299,23 @@ def main():
     parser.add_argument("--port", type=int, default=None, help="Port override")
     parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT, help="Timeout in seconds")
     parser.add_argument("--check-health", action="store_true", help="Check daemon health")
+    parser.add_argument("--stdin", action="store_true", help="Read directive from standard input")
     args = parser.parse_args()
 
     client = get_laya_client(host=args.host, port=args.port, timeout=args.timeout)
     if args.check_health:
         result = client.check_health()
     else:
+        import sys
+        directive_text = args.directive
+        if args.stdin and not sys.stdin.isatty():
+            try:
+                stdin_input = sys.stdin.read().strip()
+                if stdin_input:
+                    directive_text = stdin_input
+            except Exception:
+                pass
+
         try:
             state_dict = json.loads(args.state)
         except Exception:
@@ -315,7 +326,7 @@ def main():
             questions_dict = {}
 
         result = client.predict(
-            directive=args.directive,
+            directive=directive_text,
             state=state_dict,
             questions=questions_dict,
             instruction_name=args.instruction_name,

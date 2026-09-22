@@ -108,3 +108,17 @@ class TestLayaClient:
         c1 = get_laya_client()
         c2 = get_laya_client()
         assert c1 is c2
+
+    def test_cli_stdin_invocation(self):
+        import subprocess, sys
+        cmd = [sys.executable, "-m", "src.core.laya_client", "--stdin"]
+        p = subprocess.run(
+            cmd,
+            input="Deploy react interface and css styles",
+            text=True,
+            capture_output=True
+        )
+        assert p.returncode == 0
+        data = json.loads(p.stdout)
+        assert data.get("domain") == "ui"
+        assert "@frontend-design" in data.get("skills_formatted", "")
