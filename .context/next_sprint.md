@@ -1,16 +1,23 @@
 # Next Sprint Handoff Briefing (ADR-007)
 <!-- Generated automatically by B-SDD Dynamic Handoff Protocol -->
-- **Handoff ID:** `handoff-session-1790085646`
+- **Handoff ID:** `handoff-session-1790095927`
 - **Source Session:** `unspecified`
-- **Timestamp:** `2026-09-22T14:00:46.349861+00:00`
+- **Timestamp:** `2026-09-22T16:52:07.083905+00:00`
 - **Fitness Status:** PASSED (100% compliant)
-- **Git Status:** branch `main`, commit `09634da`
+- **Git Status:** branch `main`, commit `30eb074`
 
 ## 1. Upstream Work Summary
 ### Modified Artifacts
 ```
-deploy/podroid/podroid_utopia_worm.initd
-deploy/podroid/utopia_worm_daemon.py
+.context/next_sprint.md
+SKILLS_INVENTORY_DUMP.md
+b_sdd_user_guide_sprint032.epub
+docs/skills_dump/ACTIVE_SKILLS_CATALOG.md
+docs/skills_dump/SKILLS_INVENTORY_DUMP.md
+docs/utopia_local_worm.jsonl
+scripts/bsdd_supervisor.py
+scripts/send_to_kindle.py
+tests/test_supervisor_negative_guard.py
 ```
 
 ### Completed Tasks

@@ -1,11 +1,11 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP (ADR-015 TAXONOMY)
 
-**Згенеровано:** 2026-09-22 12:08:55Z  
+**Згенеровано:** 2026-09-22 16:48:57Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
 **Загальна кількість скілів:** **60** (🌟 **35** System Skills, 🛠️ **25** Project Skills)  
 **Покриття ДРАКОН-схемами (Rule of 2):** **60/60** (100.0%)  
-**Загальна кількість файлів коду/конфігів:** **305**  
+**Загальна кількість файлів коду/конфігів:** **306**  
 **Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR, ADR-015)  
 
 > [!NOTE]
@@ -22,7 +22,7 @@
 | 1 | [**architecture-designer**](#skill-architecture-designer) | Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабо... | ✅ | `SKILL.md`, `architecture-designer.drakon.json` +5 |
 | 2 | [**astryx-scaffolder**](#skill-astryx-scaffolder) | Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища опер... | ✅ | `SKILL.md`, `astryx-scaffolder.drakon.json` +1 |
 | 3 | [**b-sdd**](#skill-b-sdd) | Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правило... | ✅ | `SKILL.md`, `b-sdd.drakon.json` |
-| 4 | [**b-sdd-kindle-docs**](#skill-b-sdd-kindle-docs) | Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184. | ✅ | `SKILL.md`, `b-sdd-kindle-docs.drakon.json` +2 |
+| 4 | [**b-sdd-kindle-docs**](#skill-b-sdd-kindle-docs) | Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle через шлюз n8n та резервний контур на хості .184. | ✅ | `SKILL.md`, `b-sdd-kindle-docs.drakon.json` +3 |
 | 5 | [**b-sdd-notebooklm-sync**](#skill-b-sdd-notebooklm-sync) | Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google Noteboo... | ✅ | `SKILL.md`, `b-sdd-notebooklm-sync.drakon.json` +1 |
 | 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та... | ✅ | `SKILL.md`, `b-sdd-sprint-closure.drakon.json` +1 |
 | 7 | [**b-sdd-sprint-distiller**](#skill-b-sdd-sprint-distiller) | Автономна дистиляція звітів закриття спринту, оновлення кумулятивного Mega-ADR, реєстрація WORM-запису в Utopia DB та збереження в нестир... | ✅ | `SKILL.md`, `b-sdd-sprint-distiller.drakon.json` |
@@ -5514,207 +5514,122 @@ pytest tests/test_b_sdd.py -v || true
 ### [6/60] Скіл: `b-sdd-kindle-docs`
 
 **Каталог:** `~/.agents/skills/b-sdd-kindle-docs`  
-**Опис:** Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.  
-**Файлів у складі:** 4  
+**Опис:** Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle через шлюз n8n та резервний контур на хості .184.  
+**Файлів у складі:** 5  
 
-#### Файл: `b-sdd-kindle-docs/SKILL.md` (3,960 байт)
+#### Файл: `b-sdd-kindle-docs/SKILL.md` (4,846 байт)
 ````markdown
 ---
-
 name: b-sdd-kindle-docs
-
-description: Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.
-
+description: Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle через шлюз n8n та резервний контур на хості .184.
 type: SYSTEM_SKILL
-
 category: bssd-system-skill
-
 immutable: true
-
 invoked_skills: [b-sdd]
-
 ---
-
-
 
 # BSddKindleDocs
 
-
-
-Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.
-
-
+Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та гарантована доставка на Amazon Kindle (`tukroschu@kindle.com`).
 
 ---
-
-
 
 ## 1. Architectural Context & Negative Invariants
 
-- **ADR Compliance**: Відповідає ADR-015 (Taxonomy & Immutability) та ADR-016 (Algorithmic Pseudocode & Visual DRAKON Round-Trip).
-
+- **ADR Compliance**: Відповідає ADR-002 (Pure Stdlib), ADR-015 (Taxonomy & Immutability) та ADR-016 (Algorithmic Pseudocode & Visual DRAKON Round-Trip).
 - **Negative Invariants**:
-
   - **NEVER** порушувати топологічні обмеження головного шампура (X = 0.0, C = 0).
-
   - **NEVER** спрямовувати обробники деградації або помилок ліворуч від шампура (дозволено строго X = 4.0).
-
-  - **NEVER** завершувати виконання без емісії телеметрії та реєстрації статусу.
-
-
+  - **NEVER** надсилати лист на Kindle із заповненим полем CC (сувора вимога Amazon, помилка E009).
+  - **NEVER** маркувати доставку як SUCCESS без перевірки наявності EPUB (>50 КБ) та успішного статусу в журналі `logs/kindle_delivery.log`.
 
 ---
-
-
 
 ## 2. Algorithmic Workflow (ADR-016 Standard)
 
-
-
 ```text
-
 ALGORITHM ExecuteBSddKindleDocs
-
 INPUT:
-
     context: dict
-
     options: dict
-
 OUTPUT:
-
     status: str ("SUCCESS" | "FAILED" | "DEGRADED")
 
-
-
 BEGIN
-
     TRY
-
         ASSERT context != null
 
-
-
         // STEP 1: Pre-execution validation along Vertical Skewer (X=0.0, Y=2.0)
-
         EXECUTE ValidateEnvironmentPreconditions(context)
 
+        // STEP 2: Main vertical spine execution - pandoc EPUB build (X=0.0, Y=4.0)
+        EXECUTE CompileUserGuideEpub(source="docs/user_guide", toc=True, min_size=50000)
 
-
-        // STEP 2: Main vertical spine execution (X=0.0, Y=4.0)
-
-        EXECUTE PerformCoreOperation(options)
-
-
-
-        // STEP 3: Question Node - Invariant verification (X=0.0, Y=6.0)
-
-        IF VerifyOperationIntegrity() THEN
-
-            CONTINUE along Vertical Skewer (X=0.0)
-
+        // STEP 3: Dispatch Gateway Decision Node (X=0.0, Y=6.0)
+        IF CheckPrimaryGatewayAvailability("https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book") THEN
+            EXECUTE DispatchViaN8nGateway(target="tukroschu@kindle.com", mime="application/epub+zip")
         ELSE
-
-            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
-
-            LOG_ERROR("Operation verification failed in b-sdd-kindle-docs")
-
-            HALT_AND_DEGRADE("INTEGRITY_CHECK_FAILED")
-
+            BRANCH_RIGHT(X=4.0, Y=6.0): Remote Node .184 Fallback
+            LOG_WARNING("Primary n8n gateway unavailable, invoking fallback on host 184")
+            EXECUTE DispatchViaRemote184SendDigest(target="tukroschu@kindle.com")
         FI
 
-        CALL_SKILL(b-sdd, {context: context})
-
-
-
-        // STEP 4: Verification Gate & Telemetry emission (X=0.0, Y=8.0)
-
-        ASSERT VerifyFinalArtifacts()
-
+        // STEP 4: Verification Gate & Telemetry emission (X=0.0, Y=10.0)
+        ASSERT VerifyKindleDeliveryLog(status="SUCCESS")
         EMIT_TELEMETRY(status="SUCCESS", skill="b-sdd-kindle-docs")
-
         RETURN Status="SUCCESS"
 
-
-
     CATCH Error AS e
-
         LOG_CRITICAL("Execution failed in b-sdd-kindle-docs: " + e.Message)
-
         HALT_AND_DEGRADE(e.Message)
-
     END
-
 END
-
 ```
 
-
-
 ---
-
-
 
 ## 3. DRAKON Visual Workflow (Planar Skewer X=0)
 
 <!-- DRAKON_VISUAL_FLOW_START -->
-
 ## DRAKON Visual Workflow (Planar Skewer X=0)
-
 - Schema File: b-sdd-kindle-docs.drakon.json
-
-- Total Algorithmic Nodes: 8
-
+- Total Algorithmic Nodes: 9
 - Spine Topology: Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
-
   1. [HEADLINE] Початок: Виконання b-sdd-kindle-docs
-
-  2. [ACTION] Крок 1: Перевірка вхідного контексту та середовища
-
-  3. [QUESTION] Крок 2: Передумови успішно перевірені?
-
-  4. [INSERTION] CALL_SKILL(b-sdd): Делегування підзадачі
-
-  5. [ACTION] Крок 4: Фінальна верифікація та телеметрія
-
-  6. [END] Успішне завершення: Процедуру b-sdd-kindle-docs виконано
-
-  7. [ACTION] Обробка помилки перевірки (X=4.0)
-
-  8. [END] Аварійне завершення: Зупинка виконання (X=4.0)
-
+  2. [ACTION] Крок 1: Перевірка середовища та розділів посібника
+  3. [ACTION] Крок 2: Компіляція EPUB 3.0 через pandoc (10 розділів, --toc, >50КБ)
+  4. [QUESTION] Крок 3: Первинний шлюз n8n доступний?
+  5. [ACTION] Аварійний контур: Відправка через send_digest.py на .184 (X=4.0)
+  6. [END] Завершення в аварійному режимі (X=4.0)
+  7. [ACTION] Крок 4: Відправка на Kindle через шлюз n8n
+  8. [ACTION] Крок 5: Верифікація доставки та журналу logs/kindle_delivery.log
+  9. [END] Успішне завершення: Доставку на Kindle підтверджено
 <!-- DRAKON_VISUAL_FLOW_END -->
-
-
 
 ---
 
-
-
 ## 4. Operational Guide & CLI Execution
 
-### Типовий запуск процедури:
-
+### Компіляція та доставка посібника на Kindle:
 ```bash
+# 1. Локальна компіляція посібника (10 розділів)
+pandoc docs/user_guide/*.md -o b_sdd_user_guide_sprint032.epub \
+  --metadata title="B-SDD Practical User Guide (Sprint 032)" \
+  --metadata author="B-SDD Autonomous Core" \
+  --toc --toc-depth=2
 
-python3 -m src.cli.main run-skill --name b-sdd-kindle-docs --context default
-
+# 2. Первинна доставка через гарантований шлюз
+python3 scripts/send_to_kindle.py --file b_sdd_user_guide_sprint032.epub --to tukroschu@kindle.com
 ```
 
-
-
-### Верифікація результатів:
-
+### Верифікація доставки:
 ```bash
-
-pytest tests/test_b_sdd_kindle_docs.py -v || true
-
+tail -n 10 logs/kindle_delivery.log
 ```
-
 
 ````
 
-#### Файл: `b-sdd-kindle-docs/b-sdd-kindle-docs.drakon.json` (3,375 байт)
+#### Файл: `b-sdd-kindle-docs/b-sdd-kindle-docs.drakon.json` (3,753 байт)
 ````json
 {
   "schema_version": "1.0",
@@ -5741,9 +5656,9 @@ pytest tests/test_b_sdd_kindle_docs.py -v || true
     {
       "node_id": "step_init",
       "node_type": "action",
-      "label": "Крок 1: Перевірка вхідного контексту та середовища",
+      "label": "Крок 1: Перевірка середовища та розділів посібника",
       "edges": {
-        "down": "check_precond",
+        "down": "step_build",
         "right": null
       },
       "semantic_binding": {
@@ -5753,12 +5668,12 @@ pytest tests/test_b_sdd_kindle_docs.py -v || true
       "y": 2.0
     },
     {
-      "node_id": "check_precond",
-      "node_type": "question",
-      "label": "Крок 2: Передумови успішно перевірені?",
+      "node_id": "step_build",
+      "node_type": "action",
+      "label": "Крок 2: Компіляція EPUB 3.0 через pandoc (10 розділів, --toc, >50КБ)",
       "edges": {
-        "down": "step_sub",
-        "right": "err_precond"
+        "down": "check_gateway",
+        "right": null
       },
       "semantic_binding": {
         "severity": "normal"
@@ -5767,54 +5682,53 @@ pytest tests/test_b_sdd_kindle_docs.py -v || true
       "y": 4.0
     },
     {
-      "node_id": "err_precond",
-      "node_type": "action",
-      "label": "Обробка помилки перевірки: фіксація в журналі",
+      "node_id": "check_gateway",
+      "node_type": "question",
+      "label": "Крок 3: Первинний шлюз n8n доступний?",
       "edges": {
-        "down": "end_failed",
+        "down": "step_send_n8n",
+        "right": "err_fallback_184"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "err_fallback_184",
+      "node_type": "action",
+      "label": "Аварійний контур: Відправка через send_digest.py на .184 (X=4.0)",
+      "edges": {
+        "down": "end_degraded",
         "right": null
       },
       "semantic_binding": {
-        "severity": "critical"
+        "severity": "degraded"
       },
       "x": 4.0,
-      "y": 4.0
+      "y": 6.0
     },
     {
-      "node_id": "end_failed",
+      "node_id": "end_degraded",
       "node_type": "end",
-      "label": "Аварійне завершення: Зупинка виконання",
+      "label": "Завершення в аварійному режимі (X=4.0)",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "severity": "critical"
+        "severity": "degraded"
       },
       "x": 4.0,
-      "y": 6.0
+      "y": 8.0
     },
     {
-      "node_id": "step_sub",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Делегування підзадачі",
+      "node_id": "step_send_n8n",
+      "node_type": "action",
+      "label": "Крок 4: Відправка на Kindle через шлюз n8n",
       "edges": {
         "down": "step_verify",
-        "right": null
-      },
-      "semantic_binding": {
-        "call_skill": "b-sdd",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 6.0
-    },
-    {
-      "node_id": "step_verify",
-      "node_type": "action",
-      "label": "Крок 4: Фінальна верифікація та телеметрія",
-      "edges": {
-        "down": "end_success",
         "right": null
       },
       "semantic_binding": {
@@ -5824,9 +5738,23 @@ pytest tests/test_b_sdd_kindle_docs.py -v || true
       "y": 8.0
     },
     {
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 5: Верифікація доставки та журналу logs/kindle_delivery.log",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Процедуру b-sdd-kindle-docs виконано",
+      "label": "Успішне завершення: Доставку на Kindle підтверджено",
       "edges": {
         "down": null,
         "right": null
@@ -5835,7 +5763,7 @@ pytest tests/test_b_sdd_kindle_docs.py -v || true
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0
+      "y": 12.0
     }
   ],
   "meta": {
@@ -5971,6 +5899,137 @@ ssh -o ConnectTimeout=10 "${REMOTE_HOST}" "
 "
 
 echo "=== [3/3] Execution complete ==="
+
+````
+
+#### Файл: `b-sdd-kindle-docs/scripts/send_mail.py` (5,137 байт)
+````python
+#!/usr/bin/env python3
+"""B-SDD Send to Kindle script (Pure stdlib & n8n gateway fallback).
+
+Complies with ADR-002 (pure stdlib).
+Dispatches EPUB to Amazon Send-to-Kindle (tukroschu@kindle.com)
+with zero CC and proper MIME application/epub+zip.
+Primary Channel: https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book
+Fallback Channel: Remote Node 192.168.3.184 (send_digest.py)
+"""
+import argparse
+import os
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+DEFAULT_ENDPOINT = "https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book"
+DEFAULT_TO = "tukroschu@kindle.com"
+DEFAULT_SUBJECT = "B-SDD Practical User Guide Sprint 032"
+
+
+def log_delivery(epub_path: Path, to_addr: str, status: str, details: str = "") -> None:
+    """Logs delivery attempt to logs/kindle_delivery.log."""
+    try:
+        # Resolve repo root
+        root_dir = Path(__file__).resolve().parent.parent
+        logs_dir = root_dir / "logs"
+        logs_dir.mkdir(parents=True, exist_ok=True)
+        log_file = logs_dir / "kindle_delivery.log"
+        ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
+        size = epub_path.stat().st_size if epub_path.exists() else 0
+        entry = (
+            f"[{ts}] === B-SDD Kindle Delivery Dispatch ===\n"
+            f"[{ts}] EPUB Artifact: {epub_path} ({size} bytes, {size/1024:.1f} KB)\n"
+            f"[{ts}] Kindle Target: {to_addr}\n"
+            f"[{ts}] Sender Address: tukroschu@gmail.com\n"
+            f"[{ts}] Execution Status: {status}\n"
+            f"[{ts}] Details: {details}\n\n"
+        )
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(entry)
+    except Exception as e:
+        print(f"[-] Warning: Failed to write kindle_delivery.log: {e}", file=sys.stderr)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Send EPUB to Kindle")
+    parser.add_argument("--file", type=Path, required=True, help="Path to .epub file")
+    parser.add_argument("--to", default=DEFAULT_TO, help="Target kindle address")
+    parser.add_argument("--subject", default=DEFAULT_SUBJECT, help="Email subject")
+    parser.add_argument("--dry-run", action="store_true", help="Perform dry run")
+    args = parser.parse_args()
+
+    epub_file = args.file
+    if not epub_file.exists():
+        print(f"[-] Error: File not found: {epub_file}", file=sys.stderr)
+        log_delivery(epub_file, args.to, "FAILED", f"File not found: {epub_file}")
+        sys.exit(1)
+
+    if args.dry_run:
+        print(f"[dry-run] Would dispatch {epub_file} ({epub_file.stat().st_size} bytes) -> {args.to}")
+        sys.exit(0)
+
+    print(f"[*] Dispatching {epub_file} to {args.to} via Kindle gateway...")
+
+    # Call dispatch_kindle_book.sh if available
+    script_sh = Path(__file__).resolve().parent / "dispatch_kindle_book.sh"
+    if script_sh.exists():
+        res = subprocess.run(
+            ["bash", str(script_sh), str(epub_file), args.subject],
+            capture_output=True,
+            text=True,
+        )
+        print(res.stdout)
+        if res.returncode == 0:
+            log_delivery(epub_file, args.to, "SUCCESS", f"Delivered via dispatch_kindle_book.sh: {res.stdout.strip()}")
+            return
+        else:
+            print(f"[-] Primary gateway failed: {res.stderr}", file=sys.stderr)
+            # Fall through to fallback
+
+    # Direct curl to n8n webhook
+    res = subprocess.run(
+        [
+            "curl", "-s", "-w", "\n%{http_code}", "-X", "POST", DEFAULT_ENDPOINT,
+            "-F", f"subject={args.subject}",
+            "-F", f"data=@{epub_file};type=application/epub+zip",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    lines = res.stdout.strip().split("\n")
+    http_code = lines[-1] if lines else "0"
+    body = "\n".join(lines[:-1]) if len(lines) > 1 else ""
+
+    if http_code == "200":
+        print(f"[+] SUCCESS: Book delivered to Kindle! Response: {body}")
+        log_delivery(epub_file, args.to, "SUCCESS", f"HTTP 200 via n8n: {body}")
+        return
+
+    # Fallback: remote node .184
+    print(f"[-] n8n Gateway returned HTTP {http_code}. Attempting fallback to node 192.168.3.184...", file=sys.stderr)
+    try:
+        fb_res = subprocess.run(
+            [
+                "ssh", "-o", "ConnectTimeout=5", "vokov@192.168.3.184",
+                f"cd /home/vokov/projects/send-to-kindle && python3 send_digest.py {epub_file} --to {args.to} --subject '{args.subject}'"
+            ],
+            capture_output=True,
+            text=True,
+        )
+        if fb_res.returncode == 0:
+            print(f"[+] SUCCESS: Delivered via node .184 fallback! Response: {fb_res.stdout.strip()}")
+            log_delivery(epub_file, args.to, "SUCCESS", f"Delivered via .184 fallback: {fb_res.stdout.strip()}")
+            return
+        else:
+            print(f"[-] Fallback to .184 also failed: {fb_res.stderr.strip()}", file=sys.stderr)
+    except Exception as fb_err:
+        print(f"[-] Fallback execution error: {fb_err}", file=sys.stderr)
+
+    log_delivery(epub_file, args.to, "FAILED", f"Gateway HTTP {http_code}: {body}")
+    sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
 
 ````
 
