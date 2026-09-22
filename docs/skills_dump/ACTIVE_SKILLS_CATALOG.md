@@ -1,6 +1,6 @@
-# B-SDD ACTIVE CORE SKILLS CATALOG (58 ACTIVE SKILLS)
+# B-SDD ACTIVE CORE SKILLS CATALOG (59 ACTIVE SKILLS)
 
-**Дата генерації:** 2026-09-22 08:25:27Z  
+**Дата генерації:** 2026-09-22 10:19:38Z  
 **Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  
 **Каталог активних скілів:** `/home/vokov/.agents/skills`  
 **Каталог розширених скілів:** `/home/vokov/.agents/skills/_extended`  
@@ -8,7 +8,7 @@
 **Статус:** Затверджено як активний стандарт для Astryx Copilot та ДРАКОН-нод.  
 
 > [!IMPORTANT]
-> Даний каталог містить **58 активних скілів ядра**, включаючи відновлені скіли спринту 027 (kindle-release-pipeline, drakon-compiler, utopia-intent-ledger, astryx-scaffolder).
+> Даний каталог містить **59 активних скілів ядра**, включаючи відновлені скіли спринту 027 (kindle-release-pipeline, drakon-compiler, utopia-intent-ledger, astryx-scaffolder).
 > Допоміжні та доменні скіли (29 найменувань) надійно ізольовано в `~/.agents/skills/_extended/`
 > і не перевантажують контекстне вікно планувальника.
 
@@ -25,7 +25,7 @@
 | 5 | Diagnostics & Debugging | 4 | Системне налагодження, пошук кореневих причин, трейсинг дефектів |
 | 6 | Frontend & Astryx Ergonomics | 8 | Інтерфейси Astryx Cockpit, скафолдинг компонентів, React/Vercel патерни |
 | 7 | Protocols & System Tools | 7 | Kindle пайплайн релізів, MCP-сервери, NotebookLM, GitNexus, API та CLI |
-| **Σ** | **Всього активних скілів** | **58** | **Повний замкнений контур AGI** |
+| **Σ** | **Всього активних скілів** | **59** | **Повний замкнений контур AGI** |
 
 ---
 
@@ -44,7 +44,7 @@
 - **Назва:** b-sdd-sprint-closure
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
+- **Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
 - **Шлях:** `~/.agents/skills/b-sdd-sprint-closure`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, b-sdd-sprint-closure.drakon.json, scripts/sprint_closure.py`
@@ -494,7 +494,7 @@
 
 ---
 
-## 7. Protocols & System Tools (9)
+## 7. Protocols & System Tools (10)
 
 ### `kindle-release-pipeline`
 - **Назва:** kindle-release-pipeline
@@ -540,6 +540,15 @@
 - **Шлях:** `~/.agents/skills/b-sdd-notebooklm-sync`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, b-sdd-notebooklm-sync.drakon.json, scripts/sync_notebooklm.sh`
+
+### `b-sdd-ui-export`
+- **Назва:** b-sdd-ui-export
+- **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
+- **ДРАКОН-схема (Rule of 2):** ✅ Присутня
+- **Опис:** Autonomous pipeline for synthesizing Gemini Spark-optimized structured plain-text dumps of Astryx Cockpit UI (b-sdd-ui), staging into working NotebookLM MCP directories on host .184, and synchronizing into the B-SDD Architecture SSoT notebook.
+- **Шлях:** `~/.agents/skills/b-sdd-ui-export`
+- **Кількість файлів коду/конфігів:** 2
+- **Ключові файли:** `SKILL.md, b-sdd-ui-export.drakon.json`
 
 ### `mcp-builder`
 - **Назва:** mcp-builder
@@ -617,4 +626,4 @@
 | `verify-and-stop` | Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion ch... |
 
 ---
-**Всього активних файлів коду у 48 скілах ядра:** 301
+**Всього активних файлів коду у 48 скілах ядра:** 303

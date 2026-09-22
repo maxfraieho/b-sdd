@@ -38,8 +38,8 @@ categories = {
         "frontend-design", "astryx-scaffolder", "cloudflare-pages-expert", "make-interfaces-feel-better", "web-design-guidelines",
         "vercel-react-best-practices", "vercel-composition-patterns", "web-artifacts-builder", "theme-factory"
     ],
-    "7. Protocols & System Tools (9)": [
-        "kindle-release-pipeline", "b-sdd-kindle-docs", "notebooklm", "notebooklm-gitnexus-copilot", "b-sdd-notebooklm-sync",
+    "7. Protocols & System Tools (10)": [
+        "kindle-release-pipeline", "b-sdd-kindle-docs", "notebooklm", "notebooklm-gitnexus-copilot", "b-sdd-notebooklm-sync", "b-sdd-ui-export",
         "mcp-builder", "api-designer", "cli-developer", "caveman"
     ]
 }

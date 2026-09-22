@@ -2,15 +2,15 @@
   "schema_version": "1.0",
   "name": "b-sdd-sprint-closure",
   "category": "bssd_system_skill",
-  "description": "Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.",
-  "params": "context: dict",
+  "description": "Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.",
+  "params": "sprint_id: str, prompt: str, skip_gitnexus: bool = False, skip_deploy: bool = False, no_push: bool = False",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: b-sdd-sprint-closure",
+      "label": "Початок: Повний життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)",
       "edges": {
-        "down": "step_1",
+        "down": "step_cleaner",
         "right": null
       },
       "semantic_binding": {
@@ -21,151 +21,177 @@
       "y": 0.0
     },
     {
-      "node_id": "step_1",
+      "node_id": "step_cleaner",
       "node_type": "action",
-      "label": "When to Use",
+      "label": "Етап 1: Очищення блокувань GitNexus (gitnexus_cleaner.py)",
       "edges": {
-        "down": "step_2",
+        "down": "step_gitnexus",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 2.0,
-      "instructions": "- When all sprint implementation tasks, specifications, and test suites are 100% completed. - At the formal sprint closure phase ($\\Phi_6 \\to \\Phi_7$). - When sealing release tags,"
+      "y": 2.0
     },
     {
-      "node_id": "step_2",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): The 10-Stage Discrete Sprint Closure Protocol",
-      "edges": {
-        "down": "step_3",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 4.0,
-      "instructions": "┌────────────────────────────────────────────────────────────────────────────────────────┐ │                        B-SDD SPRINT CLOSURE LIFECYCLE (Φ6 ──► Φ7)                      "
-    },
-    {
-      "node_id": "step_3",
+      "node_id": "step_gitnexus",
       "node_type": "action",
-      "label": "Stage 1: GitNexus Lock & Shadow Cleaner",
+      "label": "Етап 2: Переіндексація AST-графа коду в GitNexus на хості 192.168.3.184",
       "edges": {
-        "down": "step_4",
+        "down": "step_dumps",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 6.0,
-      "instructions": "Removes orphaned locks and shadow files (`lbug.shadow`, `lbug.wal.checkpoint`, `*.lock`) locally and on remote AST host `192.168.3.184`: python3 scripts/gitnexus_cleaner.py"
+      "y": 4.0
     },
     {
-      "node_id": "step_4",
+      "node_id": "step_dumps",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (H",
+      "label": "CALL_SKILL(b-sdd-ui-export): Етап 3: Синтез подвійного текстового дампу (b-sdd_code_dump.txt та b-sdd-ui_code_dump.txt)",
       "edges": {
-        "down": "step_5",
+        "down": "step_deploy_pages",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 8.0,
-      "instructions": "Triggers full AST re-indexing inside the `gitnexus-server` container on host `192.168.3.184`: ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 \"docker exec -t gitnexus-server gi"
-    },
-    {
-      "node_id": "step_5",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt",
-      "edges": {
-        "down": "step_6",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 10.0,
-      "instructions": "Synthesizes a unified Plain Text dump of the repository (code only, no binaries/caches/markdown): python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt"
-    },
-    {
-      "node_id": "step_6",
-      "node_type": "action",
-      "label": "Stage 4: Active Skills Inventory Dump",
-      "edges": {
-        "down": "step_7",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
+        "call_skill": "b-sdd-ui-export",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0,
-      "instructions": "Refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md` and root `SKILLS_INVENTORY_DUMP.md`: python3 scripts/dump_skills.py"
+      "y": 6.0
     },
     {
-      "node_id": "step_7",
+      "node_id": "step_deploy_pages",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Stage 5: NotebookLM SSoT Pruning & Synchronization",
+      "label": "CALL_SKILL(cloudflare-pages-expert): Етап 3.5: Публікація Astryx Cockpit у Cloudflare Pages (b-sdd-ui.pages.dev)",
       "edges": {
-        "down": "step_8",
+        "down": "step_skills_dump",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
+        "call_skill": "cloudflare-pages-expert",
+        "severity": "normal"
       },
       "x": 0.0,
-      "y": 14.0,
-      "instructions": "Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`. 1. Prune stale code dump (`sources_delete`). 2. Prune transient test step reports and duplicate documents. 3. Uploa"
+      "y": 8.0
     },
     {
-      "node_id": "step_8",
+      "node_id": "step_skills_dump",
       "node_type": "action",
-      "label": "Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Co",
+      "label": "Етап 4: Інвентаризація активних скілів та верифікація незмінності ядра (ADR-015)",
+      "edges": {
+        "down": "step_notebooklm",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "step_notebooklm",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd-notebooklm-sync): Етап 5: Оновлення джерел та дампу UI у записнику NotebookLM (ID: 205ee2ec...)",
+      "edges": {
+        "down": "step_rules_compile",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd-notebooklm-sync",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "step_rules_compile",
+      "node_type": "action",
+      "label": "Етап 6: Компіляція active_rules.md та бюджет <500 слів (ADR-005)",
+      "edges": {
+        "down": "step_utopia",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-005-INV-01",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    },
+    {
+      "node_id": "step_utopia",
+      "node_type": "action",
+      "label": "Етап 7: Синхронізація трипартитної онтології та WORM-запис в Utopia DB (.251)",
+      "edges": {
+        "down": "step_handoff",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0
+    },
+    {
+      "node_id": "step_handoff",
+      "node_type": "action",
+      "label": "Етап 8: Генерація дискретного Handoff артефакту (ADR-007)",
+      "edges": {
+        "down": "step_git_sealing",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    },
+    {
+      "node_id": "step_git_sealing",
+      "node_type": "action",
+      "label": "Етап 9: Фіксація Git Release Tag (sprint_XXX_done) та git push",
+      "edges": {
+        "down": "step_callback",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 20.0
+    },
+    {
+      "node_id": "step_callback",
+      "node_type": "action",
+      "label": "Етап 10: Телеметричний callback на супервайзер (n8n webhook)",
       "edges": {
         "down": "end",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 16.0,
-      "instructions": "Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`):"
+      "y": 22.0
     },
     {
       "node_id": "end",
       "node_type": "end",
-      "label": "Завершення: b-sdd-sprint-closure",
+      "label": "Завершення: Спринт успішно закрито та запечатано (Phi_7 Distilled)",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 18.0
+      "y": 24.0
     }
   ],
   "meta": {

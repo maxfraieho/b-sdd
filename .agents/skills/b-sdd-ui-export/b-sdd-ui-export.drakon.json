@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.0",
+  "name": "B-SDD Astryx UI Codebase Export & NotebookLM Sync Pipeline",
+  "category": "bssd_system_skill",
+  "description": "Автономний контур експорту коду фронтенду Astryx Cockpit (b-sdd-ui) у структурований текстовий дамп для Gemini Spark, стейджингу в робочу директорію NotebookLM-MCP на хості .184 та збереження в SSoT записнику NotebookLM.",
+  "params": "source_dir: str = 'b-sdd-ui', output_dump: str = 'b-sdd-ui_code_dump.txt', notebook_id: str = '205ee2ec-e0d2-4ba6-badf-44f2de02c7e2'",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Експорт коду Astryx UI в робочу директорію NotebookLM-MCP та синхронізація SSoT",
+      "edges": {
+        "down": "step_verify",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-01",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 1: Валідація робочого простору b-sdd-ui та контракту бекенду (backend-types.ts)",
+      "edges": {
+        "down": "step_synth_dump",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_synth_dump",
+      "node_type": "action",
+      "label": "Крок 2: Синтез структурованого текстового дампу для Gemini Spark (scripts/dump_ui_codebase.py)",
+      "edges": {
+        "down": "cond_dump_ok",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-016-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "cond_dump_ok",
+      "node_type": "question",
+      "label": "Крок 3: Дамп успішно згенеровано (розмір > 0)?",
+      "edges": {
+        "down": "step_stage_mcp",
+        "right": "step_err_dump"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_err_dump",
+      "node_type": "action",
+      "label": "Помилка синтезу дампу b-sdd-ui: логування та зупинка",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_stage_mcp",
+      "node_type": "action",
+      "label": "Крок 4: Стейджинг дампу в робочу директорію NotebookLM-MCP на хості 192.168.3.184",
+      "edges": {
+        "down": "step_check_mcp",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-002-INV-01",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_check_mcp",
+      "node_type": "action",
+      "label": "Крок 5: Перевірка доступності NotebookLM MCP сервера (порт 8002)",
+      "edges": {
+        "down": "cond_mcp_ok",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "cond_mcp_ok",
+      "node_type": "question",
+      "label": "Крок 6: MCP сервер доступний?",
+      "edges": {
+        "down": "step_sync_notebook",
+        "right": "step_err_mcp"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "step_err_mcp",
+      "node_type": "action",
+      "label": "Помилка зв'язку з MCP: збереження локального та віддаленого дампу без онлайн реєстрації",
+      "edges": {
+        "down": "end_degraded",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "warning"
+      },
+      "x": 4.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "step_sync_notebook",
+      "node_type": "insertion",
+      "label": "Крок 7: Синхронізація дампу в записник 'B-SDD Methodology, Multi-Session Handoff & Architecture'",
+      "edges": {
+        "down": "step_verify_source",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "notebooklm",
+        "adr_invariant_id": "ADR-016-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    },
+    {
+      "node_id": "step_verify_source",
+      "node_type": "action",
+      "label": "Крок 8: Верифікація джерела b-sdd-ui_code_dump.txt через sources_list",
+      "edges": {
+        "down": "cond_source_ok",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0
+    },
+    {
+      "node_id": "cond_source_ok",
+      "node_type": "question",
+      "label": "Крок 9: Джерело успішно додано/оновлено в NotebookLM?",
+      "edges": {
+        "down": "end_success",
+        "right": "step_err_sync"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    },
+    {
+      "node_id": "step_err_sync",
+      "node_type": "action",
+      "label": "Помилка додавання джерела в NotebookLM: діагностика сесії",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 18.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Код інтерфейсу експортовано та зафіксовано в SSoT записнику",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-016-INV-01",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 20.0
+    },
+    {
+      "node_id": "end_degraded",
+      "node_type": "end",
+      "label": "Деградоване завершення: Дамп створено та стейджено, але онлайн реєстрація відкладена",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "warning"
+      },
+      "x": 4.0,
+      "y": 14.0
+    },
+    {
+      "node_id": "end_failed",
+      "node_type": "end",
+      "label": "Аварійне завершення: Експорт коду перервано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 20.0
+    }
+  ]
+}

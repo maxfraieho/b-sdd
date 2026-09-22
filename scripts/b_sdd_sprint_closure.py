@@ -69,13 +69,39 @@ def stage_2_gitnexus_sync(skip: bool = False) -> bool:
 
 
 def stage_3_code_dump() -> bool:
-    log_stage(3, "Codebase Plain Text Dump Synthesis (b-sdd_code_dump.txt)")
+    log_stage(3, "Codebase Plain Text Dump Synthesis (Backend & Astryx UI)")
     dumper = ROOT / "scripts" / "dump_codebase.py"
     out_file = ROOT / "b-sdd_code_dump.txt"
+    backend_ok = True
     if dumper.exists():
         res = subprocess.run([sys.executable, str(dumper), "--source", str(ROOT), "--output", str(out_file)], cwd=str(ROOT))
-        return res.returncode == 0
-    return False
+        backend_ok = (res.returncode == 0)
+
+    ui_dumper = ROOT / "scripts" / "dump_ui_codebase.py"
+    ui_out_file = ROOT / "b-sdd-ui_code_dump.txt"
+    ui_ok = True
+    if ui_dumper.exists():
+        res_ui = subprocess.run([sys.executable, str(ui_dumper), "--source", str(ROOT / "b-sdd-ui"), "--output", str(ui_out_file), "--sync-remote"], cwd=str(ROOT))
+        ui_ok = (res_ui.returncode == 0)
+
+    return backend_ok and ui_ok
+
+
+def stage_cloudflare_pages_deploy(skip: bool = False) -> bool:
+    log_stage("3.5", "Astryx Cockpit Cloudflare Pages Production Deployment")
+    if skip:
+        print("[SKIP] Cloudflare Pages deployment skipped by operator request.")
+        return True
+
+    deploy_script = ROOT / "scripts" / "deploy_cloudflare_pages.sh"
+    if deploy_script.exists():
+        res = subprocess.run(["bash", str(deploy_script)], cwd=str(ROOT))
+        if res.returncode != 0:
+            print("[WARN] Cloudflare Pages deployment returned non-zero code.", file=sys.stderr)
+            return False
+        print("✓ Astryx Cockpit deployed live to https://b-sdd-ui.pages.dev")
+        return True
+    return True
 
 
 def stage_immutability_barrier() -> bool:
@@ -109,13 +135,28 @@ def stage_4_skills_dump() -> bool:
 
 
 def stage_5_notebooklm_sync() -> bool:
-    log_stage(5, "NotebookLM SSoT Verification & Update")
+    log_stage(5, "NotebookLM SSoT Verification & Update (Dual Dumps)")
     print(f"[INFO] Target Notebook: {NOTEBOOK_ID}")
     code_dump_file = ROOT / "b-sdd_code_dump.txt"
+    ui_dump_file = ROOT / "b-sdd-ui_code_dump.txt"
+
     if code_dump_file.exists():
-        print(f"[INFO] Fresh code dump ready for NotebookLM ({code_dump_file.stat().st_size:,} bytes).")
-        return True
-    return False
+        print(f"[INFO] Fresh backend code dump ready ({code_dump_file.stat().st_size:,} bytes).")
+    if ui_dump_file.exists():
+        print(f"[INFO] Fresh UI code dump ready ({ui_dump_file.stat().st_size:,} bytes).")
+
+    # Stage and update in NotebookLM via host .184 MCP CLI if reachable
+    try:
+        remote_cmd = f"python3 /home/vokov/notebooklm_mcp.py add-text {NOTEBOOK_ID} b-sdd-ui_code_dump.txt /home/vokov/b-sdd-ui_code_dump.txt"
+        res = subprocess.run(["ssh", "-o", "StrictHostKeyChecking=no", f"vokov@{GITNEXUS_HOST}", remote_cmd], capture_output=True, text=True, timeout=60)
+        if res.returncode == 0:
+            print("✓ Updated b-sdd-ui_code_dump.txt in NotebookLM SSoT notebook.")
+        else:
+            print(f"[INFO] NotebookLM update notification: {res.stdout.strip() or res.stderr.strip()}")
+    except Exception as e:
+        print(f"[WARN] Remote NotebookLM sync attempt: {e}")
+
+    return code_dump_file.exists() and ui_dump_file.exists()
 
 
 def stage_6_utopia_sync(sprint_id: str, commit_hash: str, release_tag: str, rules_wc: int) -> bool:
@@ -217,6 +258,7 @@ def main():
     parser.add_argument("--sprint", required=True, help="Sprint ID (e.g. sprint_030)")
     parser.add_argument("--prompt", required=True, help="Next sprint dispatch prompt")
     parser.add_argument("--skip-gitnexus", action="store_true", help="Skip remote GitNexus re-indexing")
+    parser.add_argument("--skip-deploy", action="store_true", help="Skip Cloudflare Pages production deployment")
     parser.add_argument("--no-push", action="store_true", help="Do not push git tags/commits to remote")
 
     args = parser.parse_args()
@@ -232,8 +274,11 @@ def main():
     # 2. GitNexus Sync
     stage_2_gitnexus_sync(skip=args.skip_gitnexus)
 
-    # 3. Code Dump
+    # 3. Code Dump (Backend & Astryx UI)
     stage_3_code_dump()
+
+    # 3.5. Cloudflare Pages Production Deployment
+    stage_cloudflare_pages_deploy(skip=args.skip_deploy)
 
     # 4. Skills Dump
     stage_4_skills_dump()

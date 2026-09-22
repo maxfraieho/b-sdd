@@ -1,11 +1,11 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP (ADR-015 TAXONOMY)
 
-**Згенеровано:** 2026-09-22 08:25:25Z  
+**Згенеровано:** 2026-09-22 10:19:37Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
-**Загальна кількість скілів:** **58** (🌟 **33** System Skills, 🛠️ **25** Project Skills)  
-**Покриття ДРАКОН-схемами (Rule of 2):** **58/58** (100.0%)  
-**Загальна кількість файлів коду/конфігів:** **301**  
+**Загальна кількість скілів:** **59** (🌟 **34** System Skills, 🛠️ **25** Project Skills)  
+**Покриття ДРАКОН-схемами (Rule of 2):** **59/59** (100.0%)  
+**Загальна кількість файлів коду/конфігів:** **303**  
 **Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR, ADR-015)  
 
 > [!NOTE]
@@ -15,7 +15,7 @@
 
 ---
 
-## 🌟 B-SDD System Skills (Core Infrastructure & Meta-Engine) — 33 скілів
+## 🌟 B-SDD System Skills (Core Infrastructure & Meta-Engine) — 34 скілів
 
 | # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |
 |---|---|---|:---:|---|
@@ -25,33 +25,34 @@
 | 4 | [**b-sdd-kindle-docs**](#skill-b-sdd-kindle-docs) | Autonomous pipeline for compiling B-SDD architecture documentation and operator handbook into standard EPUB 3.0 ebooks and dispatching th... | ✅ | `SKILL.md`, `b-sdd-kindle-docs.drakon.json` +2 |
 | 5 | [**b-sdd-notebooklm-sync**](#skill-b-sdd-notebooklm-sync) | Autonomous pipeline for synchronizing B-SDD codebase dumps, active bitemporal ADRs from Utopia DB (.251), comprehensive 10-chapter docume... | ✅ | `SKILL.md`, `b-sdd-notebooklm-sync.drakon.json` +1 |
 | 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words)... | ✅ | `SKILL.md`, `b-sdd-sprint-closure.drakon.json` +1 |
-| 7 | [**cloudflare-pages-expert**](#skill-cloudflare-pages-expert) | Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages чер... | ✅ | `SKILL.md`, `cloudflare-pages-expert.drakon.json` |
-| 8 | [**code-reviewer**](#skill-code-reviewer) | Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1... | ✅ | `SKILL.md`, `code-reviewer.drakon.json` +6 |
-| 9 | [**codebase-design**](#skill-codebase-design) | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportuni... | ✅ | `SKILL.md`, `DEEPENING.md` +2 |
-| 10 | [**condition-based-waiting**](#skill-condition-based-waiting) | Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition... | ✅ | `SKILL.md`, `condition-based-waiting.drakon.json` +1 |
-| 11 | [**defense-in-depth**](#skill-defense-in-depth) | Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data p... | ✅ | `SKILL.md`, `defense-in-depth.drakon.json` |
-| 12 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/thr... | ✅ | `SKILL.md`, `diagnosing-bugs.drakon.json` +1 |
-| 13 | [**drakon-compiler**](#skill-drakon-compiler) | Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C... | ✅ | `SKILL.md`, `drakon-compiler.drakon.json` +1 |
-| 14 | [**find-skills**](#skill-find-skills) | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that ... | ✅ | `SKILL.md`, `find-skills.drakon.json` |
-| 15 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | ✅ | `SKILL.md`, `HTML-REPORT.md` +1 |
-| 16 | [**intent-continuity**](#skill-intent-continuity) | Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synch... | ✅ | `SKILL.md`, `intent-continuity.drakon.json` |
-| 17 | [**investigate-first**](#skill-investigate-first) | Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations nee... | ✅ | `SKILL.md`, `investigate-first.drakon.json` +1 |
-| 18 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatch... | ✅ | `SKILL.md`, `kindle-release-pipeline.drakon.json` +7 |
-| 19 | [**laya-decision-router**](#skill-laya-decision-router) | Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing. | ✅ | `SKILL.md`, `laya-decision-router.drakon.json` |
-| 20 | [**root-cause-tracing**](#skill-root-cause-tracing) | Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward thr... | ✅ | `SKILL.md`, `find-polluter.sh` +1 |
-| 21 | [**safe-refactor**](#skill-safe-refactor) | Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracke... | ✅ | `SKILL.md`, `safe-refactor.drakon.json` +1 |
-| 22 | [**session-distiller**](#skill-session-distiller) | Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006... | ✅ | `SKILL.md`, `session-distiller.drakon.json` |
-| 23 | [**skill-audit**](#skill-skill-audit) | Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run... | ✅ | `SKILL.md`, `skill-audit.drakon.json` |
-| 24 | [**skill-creator**](#skill-skill-creator) | Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that e... | ✅ | `SKILL.md`, `LICENSE.txt` +6 |
-| 25 | [**surgical-patch**](#skill-surgical-patch) | Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and ta... | ✅ | `SKILL.md`, `surgical-patch.drakon.json` +1 |
-| 26 | [**systematic-debugging**](#skill-systematic-debugging) | Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigat... | ✅ | `SKILL.md`, `CREATION-LOG.md` +5 |
-| 27 | [**test-driven-development**](#skill-test-driven-development) | Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code... | ✅ | `SKILL.md`, `test-driven-development.drakon.json` |
-| 28 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior... | ✅ | `SKILL.md`, `testing-anti-patterns.drakon.json` |
-| 29 | [**using-git-worktrees**](#skill-using-git-worktrees) | Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated gi... | ✅ | `SKILL.md`, `using-git-worktrees.drakon.json` |
-| 30 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent... | ✅ | `SKILL.md`, `utopia-intent-ledger.drakon.json` +2 |
-| 31 | [**verification-before-completion**](#skill-verification-before-completion) | Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands a... | ✅ | `SKILL.md`, `verification-before-completion.drakon.json` |
-| 32 | [**writing-great-skills**](#skill-writing-great-skills) | Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable. | ✅ | `SKILL.md`, `GLOSSARY.md` +1 |
-| 33 | [**writing-skills**](#skill-writing-skills) | Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation ... | ✅ | `SKILL.md`, `anthropic-best-practices.md` +2 |
+| 7 | [**b-sdd-ui-export**](#skill-b-sdd-ui-export) | Autonomous pipeline for synthesizing Gemini Spark-optimized structured plain-text dumps of Astryx Cockpit UI (b-sdd-ui), staging into wor... | ✅ | `SKILL.md`, `b-sdd-ui-export.drakon.json` |
+| 8 | [**cloudflare-pages-expert**](#skill-cloudflare-pages-expert) | Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages чер... | ✅ | `SKILL.md`, `cloudflare-pages-expert.drakon.json` |
+| 9 | [**code-reviewer**](#skill-code-reviewer) | Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1... | ✅ | `SKILL.md`, `code-reviewer.drakon.json` +6 |
+| 10 | [**codebase-design**](#skill-codebase-design) | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportuni... | ✅ | `SKILL.md`, `DEEPENING.md` +2 |
+| 11 | [**condition-based-waiting**](#skill-condition-based-waiting) | Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition... | ✅ | `SKILL.md`, `condition-based-waiting.drakon.json` +1 |
+| 12 | [**defense-in-depth**](#skill-defense-in-depth) | Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data p... | ✅ | `SKILL.md`, `defense-in-depth.drakon.json` |
+| 13 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/thr... | ✅ | `SKILL.md`, `diagnosing-bugs.drakon.json` +1 |
+| 14 | [**drakon-compiler**](#skill-drakon-compiler) | Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C... | ✅ | `SKILL.md`, `drakon-compiler.drakon.json` +1 |
+| 15 | [**find-skills**](#skill-find-skills) | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that ... | ✅ | `SKILL.md`, `find-skills.drakon.json` |
+| 16 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | ✅ | `SKILL.md`, `HTML-REPORT.md` +1 |
+| 17 | [**intent-continuity**](#skill-intent-continuity) | Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synch... | ✅ | `SKILL.md`, `intent-continuity.drakon.json` |
+| 18 | [**investigate-first**](#skill-investigate-first) | Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations nee... | ✅ | `SKILL.md`, `investigate-first.drakon.json` +1 |
+| 19 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatch... | ✅ | `SKILL.md`, `kindle-release-pipeline.drakon.json` +7 |
+| 20 | [**laya-decision-router**](#skill-laya-decision-router) | Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing. | ✅ | `SKILL.md`, `laya-decision-router.drakon.json` |
+| 21 | [**root-cause-tracing**](#skill-root-cause-tracing) | Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward thr... | ✅ | `SKILL.md`, `find-polluter.sh` +1 |
+| 22 | [**safe-refactor**](#skill-safe-refactor) | Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracke... | ✅ | `SKILL.md`, `safe-refactor.drakon.json` +1 |
+| 23 | [**session-distiller**](#skill-session-distiller) | Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006... | ✅ | `SKILL.md`, `session-distiller.drakon.json` |
+| 24 | [**skill-audit**](#skill-skill-audit) | Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run... | ✅ | `SKILL.md`, `skill-audit.drakon.json` |
+| 25 | [**skill-creator**](#skill-skill-creator) | Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that e... | ✅ | `SKILL.md`, `LICENSE.txt` +6 |
+| 26 | [**surgical-patch**](#skill-surgical-patch) | Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and ta... | ✅ | `SKILL.md`, `surgical-patch.drakon.json` +1 |
+| 27 | [**systematic-debugging**](#skill-systematic-debugging) | Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigat... | ✅ | `SKILL.md`, `CREATION-LOG.md` +5 |
+| 28 | [**test-driven-development**](#skill-test-driven-development) | Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code... | ✅ | `SKILL.md`, `test-driven-development.drakon.json` |
+| 29 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior... | ✅ | `SKILL.md`, `testing-anti-patterns.drakon.json` |
+| 30 | [**using-git-worktrees**](#skill-using-git-worktrees) | Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated gi... | ✅ | `SKILL.md`, `using-git-worktrees.drakon.json` |
+| 31 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent... | ✅ | `SKILL.md`, `utopia-intent-ledger.drakon.json` +2 |
+| 32 | [**verification-before-completion**](#skill-verification-before-completion) | Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands a... | ✅ | `SKILL.md`, `verification-before-completion.drakon.json` |
+| 33 | [**writing-great-skills**](#skill-writing-great-skills) | Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable. | ✅ | `SKILL.md`, `GLOSSARY.md` +1 |
+| 34 | [**writing-skills**](#skill-writing-skills) | Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation ... | ✅ | `SKILL.md`, `anthropic-best-practices.md` +2 |
 
 ---
 
@@ -90,7 +91,7 @@
 ## Повний Вміст Скілів (Full Skills Code & Instructions)
 
 <a id="skill-api-designer"></a>
-### [1/58] Скіл: `api-designer`
+### [1/59] Скіл: `api-designer`
 
 **Каталог:** `~/.agents/skills/api-designer`  
 **Опис:** Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.  
@@ -3102,7 +3103,7 @@ Avoid these mistakes:
 ---
 
 <a id="skill-architecture-designer"></a>
-### [2/58] Скіл: `architecture-designer`
+### [2/59] Скіл: `architecture-designer`
 
 **Каталог:** `~/.agents/skills/architecture-designer`  
 **Опис:** Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.  
@@ -3986,7 +3987,7 @@ When to Avoid:
 ---
 
 <a id="skill-ast-grep"></a>
-### [3/58] Скіл: `ast-grep`
+### [3/59] Скіл: `ast-grep`
 
 **Каталог:** `~/.agents/skills/ast-grep`  
 **Опис:** Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.  
@@ -5043,7 +5044,7 @@ rule:
 ---
 
 <a id="skill-astryx-scaffolder"></a>
-### [4/58] Скіл: `astryx-scaffolder`
+### [4/59] Скіл: `astryx-scaffolder`
 
 **Каталог:** `~/.agents/skills/astryx-scaffolder`  
 **Опис:** Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.  
@@ -5298,13 +5299,13 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-b-sdd"></a>
-### [5/58] Скіл: `b-sdd`
+### [5/59] Скіл: `b-sdd`
 
 **Каталог:** `~/.agents/skills/b-sdd`  
 **Опис:** Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.  
 **Файлів у складі:** 2  
 
-#### Файл: `b-sdd/SKILL.md` (4,251 байт)
+#### Файл: `b-sdd/SKILL.md` (6,056 байт)
 ````markdown
 ---
 name: b-sdd
@@ -5371,6 +5372,41 @@ Before committing or completing a task:
    - Назва джерела в NotebookLM повинна строго відповідати конвенції:
      `INBOX_GEMINI_<SPRINT_ID>_<STEP>_REPORT`
    - Локального збереження у `logs/*.json` НЕДОСТАТНЬО. Агент зобов'язаний виконати виклик `notebooklm/sources_add_text` перед відправкою події успіху.
+
+<!-- ALGORITHMIC_PSEUDOCODE_START -->
+## 📐 Канонічний алгоритмічний псевдокод (B-SDD ADR-016 Standard)
+
+> [!IMPORTANT]
+> Цей псевдокод є 1:1 текстовим ізоморфізмом планарної ДРАКОН-схеми `b-sdd.drakon.json`.
+
+```text
+ALGORITHM BSdd(context: dict)
+BEGIN
+    TRY
+        // Preconditions verification
+        ASSERT ValidatePreconditions('b-sdd')
+
+        // Main Flow Spine: Початок: b-sdd
+        STEP 1: CALL_SKILL(find-skills, context)
+        // CALL_SKILL(find-skills): Pre-Flight Phase (Always First)
+        STEP 2: Decision & Supersession Protocol (Changing Architecture)
+        // Detail: When introducing a new architecture pattern or retiring an old one: 1. Do NOT delete old ADRs or leave conflicting rules
+        STEP 3: CALL_SKILL(skill-creator, context)
+        // CALL_SKILL(skill-creator): The Rule of 2 (Autonomous Skill Crystallization)
+        STEP 4: Verification Gate (Before Any Commit)
+        // Detail: Before committing or completing a task: 1. Run the automated architecture fitness suite: pytest -v tests/test_architectu
+        STEP 5: Roles Separation:
+        // Detail: - **Telegram:** Passive HITL window for the Human Operator only. - **Gemini Spark:** Autonomous Chief Architect & Sprint
+        STEP 6: Mandatory Step Exit Gate:
+        // Detail: - Жоден крок спринту (Scout / Contract / Impl / Fitness) НЕ вважається завершеним, доки звітний JSON та лог тестів не оп
+        RETURN Success('Завершення: b-sdd')
+    CATCH Exception AS e
+        LOG_CRITICAL('❌ Execution failed: ' + e.Message)
+        HALT_AND_DEGRADE('Fallback for b-sdd')
+    END
+END
+```
+<!-- ALGORITHMIC_PSEUDOCODE_END -->
 
 <!-- DRAKON_VISUAL_FLOW_START -->
 ## DRAKON Visual Workflow (Planar Skewer X=0)
@@ -5541,7 +5577,7 @@ Before committing or completing a task:
 ---
 
 <a id="skill-b-sdd-kindle-docs"></a>
-### [6/58] Скіл: `b-sdd-kindle-docs`
+### [6/59] Скіл: `b-sdd-kindle-docs`
 
 **Каталог:** `~/.agents/skills/b-sdd-kindle-docs`  
 **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation and operator handbook into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) and Gmail backup via the send-to-kindle repository on host 192.168.3.184.  
@@ -5972,7 +6008,7 @@ echo "=== [3/3] Execution complete ==="
 ---
 
 <a id="skill-b-sdd-notebooklm-sync"></a>
-### [7/58] Скіл: `b-sdd-notebooklm-sync`
+### [7/59] Скіл: `b-sdd-notebooklm-sync`
 
 **Каталог:** `~/.agents/skills/b-sdd-notebooklm-sync`  
 **Опис:** Autonomous pipeline for synchronizing B-SDD codebase dumps, active bitemporal ADRs from Utopia DB (.251), comprehensive 10-chapter documentation (.txt), and strategic dossiers into Google NotebookLM project notebooks, pruning obsolete sources, and generating Deep Dive audio overviews.  
@@ -6395,36 +6431,36 @@ echo "==========================================================================
 ---
 
 <a id="skill-b-sdd-sprint-closure"></a>
-### [8/58] Скіл: `b-sdd-sprint-closure`
+### [8/59] Скіл: `b-sdd-sprint-closure`
 
 **Каталог:** `~/.agents/skills/b-sdd-sprint-closure`  
-**Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.  
+**Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.  
 **Файлів у складі:** 3  
 
-#### Файл: `b-sdd-sprint-closure/SKILL.md` (8,146 байт)
+#### Файл: `b-sdd-sprint-closure/SKILL.md` (10,053 байт)
 ````markdown
 ---
 name: b-sdd-sprint-closure
-description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
+description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
-invoked_skills: [b-sdd]
+invoked_skills: [b-sdd, cloudflare-pages-expert, b-sdd-ui-export, b-sdd-notebooklm-sync]
 ---
 # B-SDD Sprint Closure & Distillation Skill
 
-The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated 10-stage protocol for finalizing discrete sprints under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, AST knowledge graph currency in GitNexus, bitemporal Tripartite ontology and WORM ledger synchronization in Utopia DB, and telemetric callback to the orchestrating supervisor.
+The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated discrete sprint closure and distillation protocol under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, AST knowledge graph currency in GitNexus, frontend deployment to Cloudflare Pages, bitemporal Tripartite ontology and WORM ledger synchronization in Utopia DB, dual code dumps in Google NotebookLM, and telemetric callback to the orchestrating supervisor.
 
 ---
 
 ## 1. When to Use
 - When all sprint implementation tasks, specifications, and test suites are 100% completed.
 - At the formal sprint closure phase ($\Phi_6 \to \Phi_7$).
-- When sealing release tags, compiling active rules into `.context/active_rules.md`, updating GitNexus AST graph, and committing WORM audit snapshots into Utopia DB.
+- When sealing release tags, compiling active rules into `.context/active_rules.md`, updating GitNexus AST graph, publishing the Astryx UI to Cloudflare Pages, and committing WORM audit snapshots into Utopia DB.
 
 ---
 
-## 2. The 10-Stage Discrete Sprint Closure Protocol
+## 2. The Sprint Closure & Distillation Lifecycle
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -6434,15 +6470,18 @@ The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated 10-stage pr
        │
   [2. GitNexus Sync]     docker exec gitnexus-server gitnexus analyze /projects/b-sdd (.184)
        │
-  [3. Code Dump]         python3 scripts/dump_codebase.py (b-sdd_code_dump.txt)
+  [3. Code Dumps]        dump_codebase.py (b-sdd_code_dump.txt) &
+                         CALL_SKILL(b-sdd-ui-export): dump_ui_codebase.py (b-sdd-ui_code_dump.txt)
        │
-  [4. Skills Dump]       python3 scripts/dump_skills.py (ACTIVE_SKILLS_CATALOG.md)
+  [3.5. Deploy UI]       CALL_SKILL(cloudflare-pages-expert): deploy_cloudflare_pages.sh
        │
-  [5. NotebookLM Sync]   Rotates codebase dump in Notebook 205ee2ec-e0d2-4ba6-badf-44f2de02c7e2
+  [4. Skills Dump]       python3 scripts/dump_skills.py & Immutability Barrier (ADR-015)
        │
-  [6. Utopia DB Sync]    Tripartite (ADR + Spec + Skill) sync & WORM ledger commit on .251
+  [5. NotebookLM Sync]   CALL_SKILL(b-sdd-notebooklm-sync): Updates dual code dumps in SSoT Notebook
        │
-  [7. Rules Compile]     python3 -m src.cli.main compile (<500 words, ADR-005)
+  [6. Rules Compile]     python3 -m src.cli.main compile (<500 words, ADR-005)
+       │
+  [7. Utopia DB Sync]    Tripartite (ADR + Spec + Skill) sync & WORM ledger commit on .251
        │
   [8. Handoff]           ./run_b_sdd.sh --handoff --prompt "<Next Sprint Directive>" (ADR-007)
        │
@@ -6461,131 +6500,168 @@ python3 scripts/gitnexus_cleaner.py
 Triggers full AST re-indexing inside the `gitnexus-server` container on host `192.168.3.184`:
 ```bash
 ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 "docker exec -t gitnexus-server gitnexus analyze /projects/b-sdd"
-# Verify health
-curl -s http://192.168.3.184:4747/api/health
 ```
 
-### Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt`)
-Synthesizes a unified Plain Text dump of the repository (code only, no binaries/caches/markdown):
+### Stage 3: Dual Codebase Text Dumps Generation
+1. **Backend Code Dump**:
+   ```bash
+   python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt
+   ```
+2. **Astryx Cockpit UI Code Dump (via `b-sdd-ui-export`)**:
+   ```bash
+   python3 scripts/dump_ui_codebase.py --source b-sdd-ui --output b-sdd-ui_code_dump.txt --sync-remote
+   ```
+
+### Stage 3.5: Astryx Cockpit Cloudflare Pages Production Deployment (via `cloudflare-pages-expert`)
+Builds production bundle and publishes live to Cloudflare Pages:
 ```bash
-python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt
+bash scripts/deploy_cloudflare_pages.sh
+# Verifies HTTP 200 at https://b-sdd-ui.pages.dev
 ```
 
-### Stage 4: Active Skills Inventory Dump
-Refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md` and root `SKILLS_INVENTORY_DUMP.md`:
+### Stage 4: Active Skills Inventory & Immutability Barrier
+Verifies that all core system skills remain intact and immutable per ADR-015, then refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md`:
 ```bash
 python3 scripts/dump_skills.py
 ```
 
-### Stage 5: NotebookLM SSoT Pruning & Synchronization
+### Stage 5: NotebookLM SSoT Dual Dumps Update (via `b-sdd-notebooklm-sync`)
 Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`.
-1. Prune stale code dump (`sources_delete`).
-2. Prune transient test step reports and duplicate documents.
-3. Upload new `b-sdd_code_dump.txt` (`sources_add_file` with `mime_type="text/plain"`).
+Synchronizes both `b-sdd_code_dump.txt` and `b-sdd-ui_code_dump.txt` into Google NotebookLM via the MCP server on host `.184`.
 
-### Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Commit (Host .251)
-Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`):
-1. **SPEC/ADR Layer:** All active ADRs (`ADR-001`..`ADR-014`, `ADR-FE-001`) with bitemporal coordinates $(T_v, T_t)$.
-2. **DATA Layer:** Functional specifications (`SPEC-001`..`SPEC-020`) and system constitution (`CONST-001`).
-3. **SKILL Layer:** All 55 active skills in `~/.agents/skills/`.
-4. **WORM Ledger Record:** Writes immutable record into `intent_store.worm_ledger` with commit hash, release tag, phase, word count, and GitNexus metadata.
-```bash
-python3 scripts/sync_utopia.py
-```
-
-### Stage 7: Rules Compilation & Budget Enforcement (ADR-005)
+### Stage 6: Rules Compilation & Budget Enforcement (ADR-005)
 Recompiles active rules snapshot and verifies word budget:
 ```bash
 python3 -m src.cli.main compile
-# Strictly < 500 words
 test $(wc -w < .context/active_rules.md) -lt 500
 ```
 
+### Stage 7: Utopia DB Tripartite Ontology Sync & WORM Ledger Commit (Host .251)
+Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`) and records immutable commit in `intent_store.worm_ledger`.
+
 ### Stage 8: Discrete Sprint Handoff Synthesis (ADR-007)
-Generates the atomic handoff artifact, updating `.context/sprint_handoff.json` and `.context/next_sprint.md`:
-```bash
-./run_b_sdd.sh --handoff --prompt "Prepare Sprint <XXX+1>: <Next Sprint Title>"
-```
+Generates atomic handoff artifacts (`.context/sprint_handoff.json` and `.context/next_sprint.md`).
 
 ### Stage 9: Git Sealing & Release Tagging
-Tags the exact commit and pushes to origin:
 ```bash
-git tag -f -a sprint_<XXX>_done -m "sprint_<XXX>: sealed and distilled"
-git push origin main -f sprint_<XXX>_done
+git tag -a sprint_XXX_done -m "sprint_XXX: sealed and distilled"
+git push origin main sprint_XXX_done
 ```
 
-### Stage 10: Telemetric Callback Dispatch
-Emits completion signal to n8n supervisor webhook:
-```bash
-curl -s -X POST http://100.66.97.93:5678/webhook/bsdd-supervisor-result \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sprint_id": "sprint_<XXX>",
-    "status": "SEALED",
-    "phase": "PHI_7_DISTILLED",
-    "commit": "'$(git rev-parse HEAD)'",
-    "tag": "sprint_<XXX>_done",
-    "rules_word_count": '$(wc -w < .context/active_rules.md)',
-    "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
-  }'
-```
+### Stage 10: Telemetric Callback to Supervisor Webhook
+Dispatches POST payload to n8n supervisor webhook (`http://100.66.97.93:5678/webhook/bsdd-supervisor-result`).
 
 ---
 
-## 3. Automated Execution
+## 3. Algorithmic Workflow (ADR-016 Standard)
 
-To execute the entire 10-stage lifecycle autonomously:
-```bash
-python3 scripts/b_sdd_sprint_closure.py --sprint sprint_<XXX> --prompt "<Next Sprint Directive>"
-```
-Or via the skill runner:
-```bash
-~/.agents/skills/b-sdd-sprint-closure/scripts/sprint_closure.py --sprint sprint_<XXX> --prompt "<Next Sprint Directive>"
+```text
+ALGORITHM ExecuteSprintClosure
+INPUT:
+    sprint_id: str
+    prompt: str
+    skip_gitnexus: bool = False
+    skip_deploy: bool = False
+    no_push: bool = False
+OUTPUT:
+    closure_status: str ("SEALED" | "FAILED")
+
+BEGIN
+    TRY
+        // STAGE 1: Cleaner
+        EXECUTE CleanGitNexusLocks()
+
+        // STAGE 2: GitNexus Re-indexing
+        IF NOT skip_gitnexus THEN
+            EXECUTE ReindexGitNexusGraph(host="192.168.3.184")
+        FI
+
+        // STAGE 3: Dual Code Dumps
+        EXECUTE SynthesizeBackendDump(output="b-sdd_code_dump.txt")
+        CALL_SKILL(b-sdd-ui-export, {
+            source: "b-sdd-ui",
+            output: "b-sdd-ui_code_dump.txt",
+            sync_remote: True
+        })
+
+        // STAGE 3.5: Cloudflare Pages Deployment
+        IF NOT skip_deploy THEN
+            CALL_SKILL(cloudflare-pages-expert, {action: "deploy", project: "b-sdd-ui"})
+        FI
+
+        // STAGE 4: Skills Inventory & Immutability Barrier
+        ASSERT VerifySystemSkillsImmutability() == TRUE
+        EXECUTE RefreshSkillsCatalog()
+
+        // STAGE 5: NotebookLM SSoT Sync
+        CALL_SKILL(b-sdd-notebooklm-sync, {
+            notebook_id: "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2",
+            sources: ["b-sdd_code_dump.txt", "b-sdd-ui_code_dump.txt"]
+        })
+
+        // STAGE 6: Rules Compilation
+        wc = EXECUTE CompileActiveRules()
+        ASSERT wc < 500
+
+        // STAGE 7: Utopia DB Tripartite Sync & WORM Ledger
+        EXECUTE SyncUtopiaDBAndRecordWORM(sprint_id, wc)
+
+        // STAGE 8: Handoff Synthesis
+        EXECUTE SynthesizeHandoff(prompt)
+
+        // STAGE 9: Git Sealing
+        EXECUTE GitTagAndSeal(tag=sprint_id + "_done", push=NOT no_push)
+
+        // STAGE 10: Supervisor Callback
+        EXECUTE EmitSupervisorCallback(sprint_id, status="SEALED")
+
+        RETURN "SEALED"
+    CATCH Error AS e
+        LOG_CRITICAL("Sprint closure failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
 ```
 
 ---
-
-## 4. Architectural Invariants
-- **INV-CLOSURE-01:** Never close a sprint without a 100% passing test suite (`pytest tests/`).
-- **INV-CLOSURE-02:** Active rules snapshot in `.context/active_rules.md` must never exceed 500 words (ADR-005).
-- **INV-CLOSURE-03:** AST graph on host 184 must be re-indexed to match the exact sealed commit hash.
-- **INV-CLOSURE-04:** Utopia DB on host 251 must record an immutable WORM ledger snapshot for the sprint.
-- **INV-CLOSURE-05:** Zero external pip dependencies in core runtime or closure scripts (ADR-002 Pure Stdlib).
 
 <!-- DRAKON_VISUAL_FLOW_START -->
 ## DRAKON Visual Workflow (Planar Skewer X=0)
 - **Schema File:** `b-sdd-sprint-closure.drakon.json`
-- **Total Algorithmic Nodes:** 10
+- **Total Algorithmic Nodes:** 13
 - **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: b-sdd-sprint-closure
-  2. `[ACTION]` When to Use
-  3. `[INSERTION]` CALL_SKILL(b-sdd): The 10-Stage Discrete Sprint Closure Protocol
-  4. `[ACTION]` Stage 1: GitNexus Lock & Shadow Cleaner
-  5. `[INSERTION]` CALL_SKILL(b-sdd): Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (H
-  6. `[INSERTION]` CALL_SKILL(b-sdd): Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt
-  7. `[ACTION]` Stage 4: Active Skills Inventory Dump
-  8. `[INSERTION]` CALL_SKILL(b-sdd): Stage 5: NotebookLM SSoT Pruning & Synchronization
-  9. `[ACTION]` Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Co
-  10. `[END]` Завершення: b-sdd-sprint-closure
+  1. `[HEADLINE]` Початок: Повний життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)
+  2. `[ACTION]` Етап 1: Очищення блокувань GitNexus (gitnexus_cleaner.py)
+  3. `[ACTION]` Етап 2: Переіндексація AST-графа коду в GitNexus на хості 192.168.3.184
+  4. `[INSERTION]` CALL_SKILL(b-sdd-ui-export): Етап 3: Синтез подвійного текстового дампу (b-sdd_code_dump.txt та b-sdd-ui_code_dump.txt)
+  5. `[INSERTION]` CALL_SKILL(cloudflare-pages-expert): Етап 3.5: Публікація Astryx Cockpit у Cloudflare Pages (b-sdd-ui.pages.dev)
+  6. `[ACTION]` Етап 4: Інвентаризація активних скілів та верифікація незмінності ядра (ADR-015)
+  7. `[INSERTION]` CALL_SKILL(b-sdd-notebooklm-sync): Етап 5: Оновлення джерел та дампу UI у записнику NotebookLM (ID: 205ee2ec...)
+  8. `[ACTION]` Етап 6: Компіляція active_rules.md та бюджет <500 слів (ADR-005)
+  9. `[ACTION]` Етап 7: Синхронізація трипартитної онтології та WORM-запис в Utopia DB (.251)
+  10. `[ACTION]` Етап 8: Генерація дискретного Handoff артефакту (ADR-007)
+  11. `[ACTION]` Етап 9: Фіксація Git Release Tag (sprint_XXX_done) та git push
+  12. `[ACTION]` Етап 10: Телеметричний callback на супервайзер (n8n webhook)
+  13. `[END]` Завершення: Спринт успішно закрито та запечатано (Phi_7 Distilled)
 <!-- DRAKON_VISUAL_FLOW_END -->
 
 ````
 
-#### Файл: `b-sdd-sprint-closure/b-sdd-sprint-closure.drakon.json` (6,065 байт)
+#### Файл: `b-sdd-sprint-closure/b-sdd-sprint-closure.drakon.json` (6,142 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "b-sdd-sprint-closure",
   "category": "bssd_system_skill",
-  "description": "Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.",
-  "params": "context: dict",
+  "description": "Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.",
+  "params": "sprint_id: str, prompt: str, skip_gitnexus: bool = False, skip_deploy: bool = False, no_push: bool = False",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: b-sdd-sprint-closure",
+      "label": "Початок: Повний життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)",
       "edges": {
-        "down": "step_1",
+        "down": "step_cleaner",
         "right": null
       },
       "semantic_binding": {
@@ -6596,151 +6672,177 @@ Or via the skill runner:
       "y": 0.0
     },
     {
-      "node_id": "step_1",
+      "node_id": "step_cleaner",
       "node_type": "action",
-      "label": "When to Use",
+      "label": "Етап 1: Очищення блокувань GitNexus (gitnexus_cleaner.py)",
       "edges": {
-        "down": "step_2",
+        "down": "step_gitnexus",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 2.0,
-      "instructions": "- When all sprint implementation tasks, specifications, and test suites are 100% completed. - At the formal sprint closure phase ($\\Phi_6 \\to \\Phi_7$). - When sealing release tags,"
+      "y": 2.0
     },
     {
-      "node_id": "step_2",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): The 10-Stage Discrete Sprint Closure Protocol",
-      "edges": {
-        "down": "step_3",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 4.0,
-      "instructions": "┌────────────────────────────────────────────────────────────────────────────────────────┐ │                        B-SDD SPRINT CLOSURE LIFECYCLE (Φ6 ──► Φ7)                      "
-    },
-    {
-      "node_id": "step_3",
+      "node_id": "step_gitnexus",
       "node_type": "action",
-      "label": "Stage 1: GitNexus Lock & Shadow Cleaner",
+      "label": "Етап 2: Переіндексація AST-графа коду в GitNexus на хості 192.168.3.184",
       "edges": {
-        "down": "step_4",
+        "down": "step_dumps",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 6.0,
-      "instructions": "Removes orphaned locks and shadow files (`lbug.shadow`, `lbug.wal.checkpoint`, `*.lock`) locally and on remote AST host `192.168.3.184`: python3 scripts/gitnexus_cleaner.py"
+      "y": 4.0
     },
     {
-      "node_id": "step_4",
+      "node_id": "step_dumps",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (H",
+      "label": "CALL_SKILL(b-sdd-ui-export): Етап 3: Синтез подвійного текстового дампу (b-sdd_code_dump.txt та b-sdd-ui_code_dump.txt)",
       "edges": {
-        "down": "step_5",
+        "down": "step_deploy_pages",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 8.0,
-      "instructions": "Triggers full AST re-indexing inside the `gitnexus-server` container on host `192.168.3.184`: ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 \"docker exec -t gitnexus-server gi"
-    },
-    {
-      "node_id": "step_5",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt",
-      "edges": {
-        "down": "step_6",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
-      },
-      "x": 0.0,
-      "y": 10.0,
-      "instructions": "Synthesizes a unified Plain Text dump of the repository (code only, no binaries/caches/markdown): python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt"
-    },
-    {
-      "node_id": "step_6",
-      "node_type": "action",
-      "label": "Stage 4: Active Skills Inventory Dump",
-      "edges": {
-        "down": "step_7",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
+        "call_skill": "b-sdd-ui-export",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0,
-      "instructions": "Refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md` and root `SKILLS_INVENTORY_DUMP.md`: python3 scripts/dump_skills.py"
+      "y": 6.0
     },
     {
-      "node_id": "step_7",
+      "node_id": "step_deploy_pages",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Stage 5: NotebookLM SSoT Pruning & Synchronization",
+      "label": "CALL_SKILL(cloudflare-pages-expert): Етап 3.5: Публікація Astryx Cockpit у Cloudflare Pages (b-sdd-ui.pages.dev)",
       "edges": {
-        "down": "step_8",
+        "down": "step_skills_dump",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "b-sdd"
+        "call_skill": "cloudflare-pages-expert",
+        "severity": "normal"
       },
       "x": 0.0,
-      "y": 14.0,
-      "instructions": "Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`. 1. Prune stale code dump (`sources_delete`). 2. Prune transient test step reports and duplicate documents. 3. Uploa"
+      "y": 8.0
     },
     {
-      "node_id": "step_8",
+      "node_id": "step_skills_dump",
       "node_type": "action",
-      "label": "Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Co",
+      "label": "Етап 4: Інвентаризація активних скілів та верифікація незмінності ядра (ADR-015)",
+      "edges": {
+        "down": "step_notebooklm",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "step_notebooklm",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd-notebooklm-sync): Етап 5: Оновлення джерел та дампу UI у записнику NotebookLM (ID: 205ee2ec...)",
+      "edges": {
+        "down": "step_rules_compile",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd-notebooklm-sync",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "step_rules_compile",
+      "node_type": "action",
+      "label": "Етап 6: Компіляція active_rules.md та бюджет <500 слів (ADR-005)",
+      "edges": {
+        "down": "step_utopia",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-005-INV-01",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    },
+    {
+      "node_id": "step_utopia",
+      "node_type": "action",
+      "label": "Етап 7: Синхронізація трипартитної онтології та WORM-запис в Utopia DB (.251)",
+      "edges": {
+        "down": "step_handoff",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0
+    },
+    {
+      "node_id": "step_handoff",
+      "node_type": "action",
+      "label": "Етап 8: Генерація дискретного Handoff артефакту (ADR-007)",
+      "edges": {
+        "down": "step_git_sealing",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    },
+    {
+      "node_id": "step_git_sealing",
+      "node_type": "action",
+      "label": "Етап 9: Фіксація Git Release Tag (sprint_XXX_done) та git push",
+      "edges": {
+        "down": "step_callback",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 20.0
+    },
+    {
+      "node_id": "step_callback",
+      "node_type": "action",
+      "label": "Етап 10: Телеметричний callback на супервайзер (n8n webhook)",
       "edges": {
         "down": "end",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 16.0,
-      "instructions": "Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`):"
+      "y": 22.0
     },
     {
       "node_id": "end",
       "node_type": "end",
-      "label": "Завершення: b-sdd-sprint-closure",
+      "label": "Завершення: Спринт успішно закрито та запечатано (Phi_7 Distilled)",
       "edges": {
         "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 18.0
+      "y": 24.0
     }
   ],
   "meta": {
@@ -6777,8 +6879,450 @@ if __name__ == "__main__":
 
 ---
 
+<a id="skill-b-sdd-ui-export"></a>
+### [9/59] Скіл: `b-sdd-ui-export`
+
+**Каталог:** `~/.agents/skills/b-sdd-ui-export`  
+**Опис:** Autonomous pipeline for synthesizing Gemini Spark-optimized structured plain-text dumps of Astryx Cockpit UI (b-sdd-ui), staging into working NotebookLM MCP directories on host .184, and synchronizing into the B-SDD Architecture SSoT notebook.  
+**Файлів у складі:** 2  
+
+#### Файл: `b-sdd-ui-export/SKILL.md` (8,649 байт)
+````markdown
+---
+name: b-sdd-ui-export
+description: Autonomous pipeline for synthesizing Gemini Spark-optimized structured plain-text dumps of Astryx Cockpit UI (b-sdd-ui), staging into working NotebookLM MCP directories on host .184, and synchronizing into the B-SDD Architecture SSoT notebook.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [b-sdd, notebooklm]
+---
+
+# B-SDD UI Export & NotebookLM Sync Skill
+
+Autonomous system skill for synthesizing structured plain-text source code dumps of the **Astryx Cockpit** (`b-sdd-ui`), staging them into working NotebookLM MCP directories on host `192.168.3.184`, and synchronizing them directly into the Single Source of Truth (SSoT) Google NotebookLM project notebook: *"B-SDD Methodology, Multi-Session Handoff & Architecture"*.
+
+---
+
+## 1. Architectural Context & Negative Invariants
+
+- **ADR-015 Compliance (Skill Taxonomy & Immutability)**:
+  - This skill is a declared `SYSTEM_SKILL` with `immutable: true`.
+  - It is protected against accidental deletion or mutation by the Astryx Cockpit UI and automated sprint scripts.
+- **ADR-016 Compliance (Tripartite Standard)**:
+  - Strict isomorphism between textual algorithmic pseudocode and `<skill_name>.drakon.json`.
+  - Primary vertical skewer ($X=0, C=0$) represents the clean synthesis, staging, and MCP registration path.
+  - Error and offline degradation paths branch strictly to the right ($X=4.0$).
+- **ADR-002 Compliance (Pure Python Standard Library)**:
+  - Synthesis scripts (`scripts/dump_ui_codebase.py`) rely exclusively on Python standard library modules (`pathlib`, `os`, `re`, `datetime`, `subprocess`, `argparse`).
+- **Negative Invariants**:
+  - **NEVER** include raw third-party vendor minified libraries (such as `drakonwidget.js`, `drakongen.js`) or binary images in the plain-text dump.
+  - **NEVER** overwrite the SSoT backend dump (`b-sdd_code_dump.txt`) with the frontend dump; use distinct canonical naming: `b-sdd-ui_code_dump.txt`.
+  - **NEVER** allow failure of external NotebookLM network synchronization to crash or roll back local code synthesis (graceful offline degradation to $X=4.0$).
+
+---
+
+## 2. Algorithmic Workflow (ADR-016 Standard)
+
+```text
+ALGORITHM ExportAndSyncAstryxUI
+INPUT:
+    ui_source_dir: Path = "b-sdd-ui"
+    output_dump_file: Path = "b-sdd-ui_code_dump.txt"
+    remote_host: str = "192.168.3.184"
+    notebook_id: str = "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2"
+OUTPUT:
+    sync_status: str ("SUCCESS" | "DEGRADED" | "FAILED")
+    source_id: Optional[str]
+
+BEGIN
+    TRY
+        ASSERT DirectoryExists(ui_source_dir)
+        ASSERT FileExists(ui_source_dir / "src/lib/backend-types.ts")
+
+        // STEP 1: Primary Vertical Skewer (X=0.0, Y=2.0)
+        EXECUTE ValidateUIWorkspace(ui_source_dir)
+
+        // STEP 2: Plain-Text Dump Synthesis for Gemini Spark (X=0.0, Y=4.0)
+        dump_result = EXECUTE SynthesizeGeminiSparkDump(
+            source=ui_source_dir,
+            output=output_dump_file,
+            layers=[
+                "Contracts & Backend Types",
+                "Realtime SSE & API Client",
+                "DRAKON Engine & IR Bridge",
+                "Application Shell & TopBar",
+                "Cockpit Panels & Drawers",
+                "Styling & Cloudflare Config"
+            ]
+        )
+
+        // STEP 3: Verification Question (X=0.0, Y=6.0)
+        IF dump_result.file_size > 0 AND dump_result.file_count > 0 THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=6.0): Dump Synthesis Failure
+            LOG_CRITICAL("Failed to synthesize UI code dump")
+            HALT_AND_DEGRADE("DUMP_SYNTHESIS_FAILED")
+        FI
+
+        // STEP 4: Stage to Remote Host Working Directories (X=0.0, Y=8.0)
+        EXECUTE StageToMCPDirectories(
+            local_file=output_dump_file,
+            remote_host=remote_host,
+            destinations=[
+                "/home/vokov/b-sdd-ui_code_dump.txt",
+                "/home/vokov/notebooklm-agent-copilot/b-sdd-ui_code_dump.txt"
+            ]
+        )
+
+        // STEP 5: Check MCP Server Availability (X=0.0, Y=10.0)
+        mcp_online = EXECUTE ProbeMCPServer(host=remote_host, port=8002)
+
+        // STEP 6: MCP Online Evaluation (X=0.0, Y=12.0)
+        IF mcp_online == TRUE THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=12.0): Offline MCP Degradation
+            LOG_WARNING("NotebookLM MCP server unreachable; preserving staged files")
+            RETURN Status="DEGRADED", SourceID=NULL
+        FI
+
+        // STEP 7: Call NotebookLM Skill to Ingest Source (X=0.0, Y=14.0)
+        CALL_SKILL(notebooklm, {
+            action: "sources_add_file",
+            notebook_id: notebook_id,
+            file_path: "/home/vokov/b-sdd-ui_code_dump.txt",
+            mime_type: "text/plain"
+        })
+
+        // STEP 8: Verify Source Registration (X=0.0, Y=16.0)
+        sources = EXECUTE ListSources(notebook_id=notebook_id)
+        registered_source = FindSourceByTitle(sources, "b-sdd-ui_code_dump.txt")
+
+        // STEP 9: Final Success Invariant (X=0.0, Y=18.0)
+        IF registered_source != NULL THEN
+            EMIT_TELEMETRY(status="SUCCESS", source_id=registered_source.id)
+            RETURN Status="SUCCESS", SourceID=registered_source.id
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=18.0): Ingestion Verification Failed
+            LOG_CRITICAL("Source not found in NotebookLM registry after upload")
+            HALT_AND_DEGRADE("NOTEBOOKLM_REGISTRATION_FAILED")
+        FI
+
+    CATCH Error AS e
+        LOG_CRITICAL("Unhandled error during UI export: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
+```
+
+---
+
+## 3. Operational Guide & CLI Execution
+
+### Command 1: Local Synthesis with Automatic Remote Staging
+```bash
+python3 /home/vokov/projects/b-sdd/scripts/dump_ui_codebase.py \
+  --source /home/vokov/projects/b-sdd/b-sdd-ui \
+  --output /home/vokov/projects/b-sdd/b-sdd-ui_code_dump.txt \
+  --sync-remote
+```
+
+### Command 2: Fallback via Remote Aggregator (`run_md_service.sh` on .184)
+```bash
+ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 \
+  "/home/vokov/projects/resume/run_md_service.sh \
+   --batch \
+   --source /home/vokov/projects/b-sdd/b-sdd-ui \
+   --output /home/vokov/b-sdd-ui_code_dump.txt"
+```
+
+### Command 3: Synchronize to Google NotebookLM
+Using MCP or `notebooklm_mcp.py`:
+```bash
+python3 -c '
+from src.core.drakon.skill_visual_bridge import *
+# Ingestion via NotebookLM MCP tool
+'
+```
+
+---
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- **Schema File:** `b-sdd-ui-export.drakon.json`
+- **Total Algorithmic Nodes:** 14
+- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified with degradation paths ($X=4.0$).
+  1. `[HEADLINE]` Початок: Експорт коду Astryx UI в робочу директорію NotebookLM-MCP та синхронізація SSoT
+  2. `[ACTION]` Крок 1: Валідація робочого простору b-sdd-ui та контракту бекенду (backend-types.ts)
+  3. `[ACTION]` Крок 2: Синтез структурованого текстового дампу для Gemini Spark (scripts/dump_ui_codebase.py)
+  4. `[QUESTION]` Крок 3: Дамп успішно згенеровано (розмір > 0)?
+  5. `[ACTION]` Крок 4: Стейджинг дампу в робочу директорію NotebookLM-MCP на хості 192.168.3.184
+  6. `[ACTION]` Крок 5: Перевірка доступності NotebookLM MCP сервера (порт 8002)
+  7. `[QUESTION]` Крок 6: MCP сервер доступний?
+  8. `[INSERTION]` CALL_SKILL(notebooklm): Крок 7: Синхронізація дампу в записник 'B-SDD Methodology, Multi-Session Handoff & Architecture'
+  9. `[ACTION]` Крок 8: Верифікація джерела b-sdd-ui_code_dump.txt через sources_list
+  10. `[QUESTION]` Крок 9: Джерело успішно додано/оновлено в NotebookLM?
+  11. `[END]` Успішне завершення: Код інтерфейсу експортовано та зафіксовано в SSoT записнику
+  12. `[ACTION]` Помилка синтезу дампу b-sdd-ui: логування та зупинка (X=4.0)
+  13. `[ACTION]` Помилка зв'язку з MCP: збереження локального та віддаленого дампу без онлайн реєстрації (X=4.0)
+  14. `[ACTION]` Помилка додавання джерела в NotebookLM: діагностика сесії (X=4.0)
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+````
+
+#### Файл: `b-sdd-ui-export/b-sdd-ui-export.drakon.json` (7,289 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "B-SDD Astryx UI Codebase Export & NotebookLM Sync Pipeline",
+  "category": "bssd_system_skill",
+  "description": "Автономний контур експорту коду фронтенду Astryx Cockpit (b-sdd-ui) у структурований текстовий дамп для Gemini Spark, стейджингу в робочу директорію NotebookLM-MCP на хості .184 та збереження в SSoT записнику NotebookLM.",
+  "params": "source_dir: str = 'b-sdd-ui', output_dump: str = 'b-sdd-ui_code_dump.txt', notebook_id: str = '205ee2ec-e0d2-4ba6-badf-44f2de02c7e2'",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Експорт коду Astryx UI в робочу директорію NotebookLM-MCP та синхронізація SSoT",
+      "edges": {
+        "down": "step_verify",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-01",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 1: Валідація робочого простору b-sdd-ui та контракту бекенду (backend-types.ts)",
+      "edges": {
+        "down": "step_synth_dump",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_synth_dump",
+      "node_type": "action",
+      "label": "Крок 2: Синтез структурованого текстового дампу для Gemini Spark (scripts/dump_ui_codebase.py)",
+      "edges": {
+        "down": "cond_dump_ok",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-016-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "cond_dump_ok",
+      "node_type": "question",
+      "label": "Крок 3: Дамп успішно згенеровано (розмір > 0)?",
+      "edges": {
+        "down": "step_stage_mcp",
+        "right": "step_err_dump"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_err_dump",
+      "node_type": "action",
+      "label": "Помилка синтезу дампу b-sdd-ui: логування та зупинка",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_stage_mcp",
+      "node_type": "action",
+      "label": "Крок 4: Стейджинг дампу в робочу директорію NotebookLM-MCP на хості 192.168.3.184",
+      "edges": {
+        "down": "step_check_mcp",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-002-INV-01",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_check_mcp",
+      "node_type": "action",
+      "label": "Крок 5: Перевірка доступності NotebookLM MCP сервера (порт 8002)",
+      "edges": {
+        "down": "cond_mcp_ok",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "cond_mcp_ok",
+      "node_type": "question",
+      "label": "Крок 6: MCP сервер доступний?",
+      "edges": {
+        "down": "step_sync_notebook",
+        "right": "step_err_mcp"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "step_err_mcp",
+      "node_type": "action",
+      "label": "Помилка зв'язку з MCP: збереження локального та віддаленого дампу без онлайн реєстрації",
+      "edges": {
+        "down": "end_degraded",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "warning"
+      },
+      "x": 4.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "step_sync_notebook",
+      "node_type": "insertion",
+      "label": "Крок 7: Синхронізація дампу в записник 'B-SDD Methodology, Multi-Session Handoff & Architecture'",
+      "edges": {
+        "down": "step_verify_source",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "notebooklm",
+        "adr_invariant_id": "ADR-016-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    },
+    {
+      "node_id": "step_verify_source",
+      "node_type": "action",
+      "label": "Крок 8: Верифікація джерела b-sdd-ui_code_dump.txt через sources_list",
+      "edges": {
+        "down": "cond_source_ok",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 16.0
+    },
+    {
+      "node_id": "cond_source_ok",
+      "node_type": "question",
+      "label": "Крок 9: Джерело успішно додано/оновлено в NotebookLM?",
+      "edges": {
+        "down": "end_success",
+        "right": "step_err_sync"
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-008-INV-02",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 18.0
+    },
+    {
+      "node_id": "step_err_sync",
+      "node_type": "action",
+      "label": "Помилка додавання джерела в NotebookLM: діагностика сесії",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 18.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Код інтерфейсу експортовано та зафіксовано в SSoT записнику",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-016-INV-01",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 20.0
+    },
+    {
+      "node_id": "end_degraded",
+      "node_type": "end",
+      "label": "Деградоване завершення: Дамп створено та стейджено, але онлайн реєстрація відкладена",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "warning"
+      },
+      "x": 4.0,
+      "y": 14.0
+    },
+    {
+      "node_id": "end_failed",
+      "node_type": "end",
+      "label": "Аварійне завершення: Експорт коду перервано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 20.0
+    }
+  ]
+}
+
+````
+
+---
+
 <a id="skill-brainstorming"></a>
-### [9/58] Скіл: `brainstorming`
+### [10/59] Скіл: `brainstorming`
 
 **Каталог:** `~/.agents/skills/brainstorming`  
 **Опис:** Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes  
@@ -6978,7 +7522,7 @@ Start by understanding the current project context, then ask questions one at a 
 ---
 
 <a id="skill-caveman"></a>
-### [10/58] Скіл: `caveman`
+### [11/59] Скіл: `caveman`
 
 **Каталог:** `~/.agents/skills/caveman`  
 **Опис:** Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity levels: lite, full (default), ultra, wenyan-lite, wenyan-full, wenyan-ultra. Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens", "be brief", or invokes /caveman. Also auto-triggers when token efficiency is requested.  
@@ -7275,7 +7819,7 @@ Persisted outside chat: write normal prose — code, comments, commits, docs, is
 ---
 
 <a id="skill-cli-developer"></a>
-### [11/58] Скіл: `cli-developer`
+### [12/59] Скіл: `cli-developer`
 
 **Каталог:** `~/.agents/skills/cli-developer`  
 **Опис:** Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars and spinners, generating bash/zsh/fish completion scripts, CLI design, shell completions, and cross-platform terminal applications using commander, click, typer, or cobra.  
@@ -9595,7 +10139,7 @@ SEE ALSO
 ---
 
 <a id="skill-cloudflare-pages-expert"></a>
-### [12/58] Скіл: `cloudflare-pages-expert`
+### [13/59] Скіл: `cloudflare-pages-expert`
 
 **Каталог:** `~/.agents/skills/cloudflare-pages-expert`  
 **Опис:** Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages через Wrangler CLI.  
@@ -9940,7 +10484,7 @@ curl -s -o /dev/null -w "%{http_code}\n" https://astryx-cockpit.pages.dev
 ---
 
 <a id="skill-code-documenter"></a>
-### [13/58] Скіл: `code-documenter`
+### [14/59] Скіл: `code-documenter`
 
 **Каталог:** `~/.agents/skills/code-documenter`  
 **Опис:** Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use when adding docstrings to functions or classes, creating API documentation, building documentation sites, or writing tutorials and user guides. Invoke for OpenAPI/Swagger specs, JSDoc, doc portals, getting started guides.  
@@ -12500,7 +13044,7 @@ Credit card, PayPal, wire transfer (annual plans only).
 ---
 
 <a id="skill-code-reviewer"></a>
-### [14/58] Скіл: `code-reviewer`
+### [15/59] Скіл: `code-reviewer`
 
 **Каталог:** `~/.agents/skills/code-reviewer`  
 **Опис:** Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming issues, and architectural concerns, then produces a structured review report with prioritized, actionable feedback. Use when reviewing pull requests, conducting code quality audits, identifying refactoring opportunities, or checking for security issues. Invoke for PR reviews, code quality checks, refactoring suggestions, review code, code quality. Complements specialized skills (security-reviewer, test-master) by providing broad-scope review across correctness, performance, maintainability, and test coverage in a single pass.  
@@ -13829,7 +14373,7 @@ All requirements verified:
 ---
 
 <a id="skill-codebase-design"></a>
-### [15/58] Скіл: `codebase-design`
+### [16/59] Скіл: `codebase-design`
 
 **Каталог:** `~/.agents/skills/codebase-design`  
 **Опис:** Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.  
@@ -14246,7 +14790,7 @@ Good interfaces make testing natural:
 ---
 
 <a id="skill-condition-based-waiting"></a>
-### [16/58] Скіл: `condition-based-waiting`
+### [17/59] Скіл: `condition-based-waiting`
 
 **Каталог:** `~/.agents/skills/condition-based-waiting`  
 **Опис:** Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for actual state changes, eliminating flaky tests from timing guesses  
@@ -14741,7 +15285,7 @@ export function waitForEventMatch(
 ---
 
 <a id="skill-defense-in-depth"></a>
-### [17/58] Скіл: `defense-in-depth`
+### [18/59] Скіл: `defense-in-depth`
 
 **Каталог:** `~/.agents/skills/defense-in-depth`  
 **Опис:** Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to make bugs structurally impossible  
@@ -15080,7 +15624,7 @@ All four layers were necessary. During testing, each layer caught bugs the other
 ---
 
 <a id="skill-diagnosing-bugs"></a>
-### [18/58] Скіл: `diagnosing-bugs`
+### [19/59] Скіл: `diagnosing-bugs`
 
 **Каталог:** `~/.agents/skills/diagnosing-bugs`  
 **Опис:** Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.  
@@ -15472,7 +16016,7 @@ printf 'ERROR_MSG=%s\n' "$ERROR_MSG"
 ---
 
 <a id="skill-drakon-compiler"></a>
-### [19/58] Скіл: `drakon-compiler`
+### [20/59] Скіл: `drakon-compiler`
 
 **Каталог:** `~/.agents/skills/drakon-compiler`  
 **Опис:** Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict skewer alignment.  
@@ -15726,7 +16270,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-executing-plans"></a>
-### [20/58] Скіл: `executing-plans`
+### [21/59] Скіл: `executing-plans`
 
 **Каталог:** `~/.agents/skills/executing-plans`  
 **Опис:** Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes tasks in batches, reports for review between batches  
@@ -16014,7 +16558,7 @@ After all tasks complete and verified:
 ---
 
 <a id="skill-find-skills"></a>
-### [21/58] Скіл: `find-skills`
+### [22/59] Скіл: `find-skills`
 
 **Каталог:** `~/.agents/skills/find-skills`  
 **Опис:** Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.  
@@ -16368,7 +16912,7 @@ npx skills init my-xyz-skill
 ---
 
 <a id="skill-frontend-design"></a>
-### [22/58] Скіл: `frontend-design`
+### [23/59] Скіл: `frontend-design`
 
 **Каталог:** `~/.agents/skills/frontend-design`  
 **Опис:** Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.  
@@ -16701,7 +17245,7 @@ Remember: Claude is capable of extraordinary creative work. Don't hold back, sho
 ---
 
 <a id="skill-grill-with-docs"></a>
-### [23/58] Скіл: `grill-with-docs`
+### [24/59] Скіл: `grill-with-docs`
 
 **Каталог:** `~/.agents/skills/grill-with-docs`  
 **Опис:** A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.  
@@ -16853,7 +17397,7 @@ Run a `/grilling` session, using the `/domain-modeling` skill.
 ---
 
 <a id="skill-handoff"></a>
-### [24/58] Скіл: `handoff`
+### [25/59] Скіл: `handoff`
 
 **Каталог:** `~/.agents/skills/handoff`  
 **Опис:** Compact the current conversation into a handoff document for another agent to pick up.  
@@ -17013,7 +17557,7 @@ If the user passed arguments, treat them as a description of what the next sessi
 ---
 
 <a id="skill-improve-codebase-architecture"></a>
-### [25/58] Скіл: `improve-codebase-architecture`
+### [26/59] Скіл: `improve-codebase-architecture`
 
 **Каталог:** `~/.agents/skills/improve-codebase-architecture`  
 **Опис:** Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.  
@@ -17336,7 +17880,7 @@ Side effects happen inline as decisions crystallize — run the `/domain-modelin
 ---
 
 <a id="skill-intent-continuity"></a>
-### [26/58] Скіл: `intent-continuity`
+### [27/59] Скіл: `intent-continuity`
 
 **Каталог:** `~/.agents/skills/intent-continuity`  
 **Опис:** Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization.  
@@ -17450,7 +17994,7 @@ Guarantee that all generated, modified, or refactored code strictly complies wit
 ---
 
 <a id="skill-investigate-first"></a>
-### [27/58] Скіл: `investigate-first`
+### [28/59] Скіл: `investigate-first`
 
 **Каталог:** `~/.agents/skills/investigate-first`  
 **Опис:** Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked hypotheses.  
@@ -17622,7 +18166,7 @@ interface:
 ---
 
 <a id="skill-kindle-release-pipeline"></a>
-### [28/58] Скіл: `kindle-release-pipeline`
+### [29/59] Скіл: `kindle-release-pipeline`
 
 **Каталог:** `~/.agents/skills/kindle-release-pipeline`  
 **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.  
@@ -18994,7 +19538,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-laya-decision-router"></a>
-### [29/58] Скіл: `laya-decision-router`
+### [30/59] Скіл: `laya-decision-router`
 
 **Каталог:** `~/.agents/skills/laya-decision-router`  
 **Опис:** Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing.  
@@ -19331,7 +19875,7 @@ Before completing any task utilizing Laya Decision Router:
 ---
 
 <a id="skill-make-interfaces-feel-better"></a>
-### [30/58] Скіл: `make-interfaces-feel-better`
+### [31/59] Скіл: `make-interfaces-feel-better`
 
 **Каталог:** `~/.agents/skills/make-interfaces-feel-better`  
 **Опис:** Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover states, shadows, borders, typography, micro-interactions, enter/exit animations, or any visual detail work. Triggers on UI polish, design details, "make it feel better", "feels off", stagger animations, border radius, optical alignment, font smoothing, tabular numbers, image outlines, box shadows.  
@@ -20569,7 +21113,7 @@ Some fonts (like Inter) change the visual appearance of numerals with this prope
 ---
 
 <a id="skill-mcp-builder"></a>
-### [31/58] Скіл: `mcp-builder`
+### [32/59] Скіл: `mcp-builder`
 
 **Каталог:** `~/.agents/skills/mcp-builder`  
 **Опис:** Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).  
@@ -24347,7 +24891,7 @@ mcp>=1.1.0
 ---
 
 <a id="skill-notebooklm"></a>
-### [32/58] Скіл: `notebooklm`
+### [33/59] Скіл: `notebooklm`
 
 **Каталог:** `~/.agents/skills/notebooklm`  
 **Опис:** Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact types, download in multiple formats. Activates on explicit /notebooklm or intent like "create a podcast about X  
@@ -25123,7 +25667,7 @@ notebooklm language --help     # Language settings
 ---
 
 <a id="skill-notebooklm-gitnexus-copilot"></a>
-### [33/58] Скіл: `notebooklm-gitnexus-copilot`
+### [34/59] Скіл: `notebooklm-gitnexus-copilot`
 
 **Каталог:** `~/.agents/skills/notebooklm-gitnexus-copilot`  
 **Опис:** Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic work packet execution where NotebookLM drafts exact code snippets from 100% full-code context. Use for refactoring, feature implementation, and architectural reviews.  
@@ -25492,7 +26036,7 @@ call_mcp_tool("notebooklm", "chat_ask", {
 ---
 
 <a id="skill-root-cause-tracing"></a>
-### [34/58] Скіл: `root-cause-tracing`
+### [35/59] Скіл: `root-cause-tracing`
 
 **Каталог:** `~/.agents/skills/root-cause-tracing`  
 **Опис:** Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, adding instrumentation when needed, to identify source of invalid data or incorrect behavior  
@@ -25948,7 +26492,7 @@ exit 0
 ---
 
 <a id="skill-safe-refactor"></a>
-### [35/58] Скіл: `safe-refactor`
+### [36/59] Скіл: `safe-refactor`
 
 **Каталог:** `~/.agents/skills/safe-refactor`  
 **Опис:** Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits.  
@@ -26120,7 +26664,7 @@ interface:
 ---
 
 <a id="skill-session-distiller"></a>
-### [36/58] Скіл: `session-distiller`
+### [37/59] Скіл: `session-distiller`
 
 **Каталог:** `~/.agents/skills/session-distiller`  
 **Опис:** Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007).  
@@ -26280,7 +26824,7 @@ python3 -m src.cli.main handoff --prompt "Next sprint directive"
 ---
 
 <a id="skill-skill-audit"></a>
-### [37/58] Скіл: `skill-audit`
+### [38/59] Скіл: `skill-audit`
 
 **Каталог:** `~/.agents/skills/skill-audit`  
 **Опис:** Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing new skills, before sharing skills upstream, or during periodic skill maintenance.  
@@ -26560,7 +27104,7 @@ Action: fill with concrete guidance or remove.
 ---
 
 <a id="skill-skill-creator"></a>
-### [38/58] Скіл: `skill-creator`
+### [39/59] Скіл: `skill-creator`
 
 **Каталог:** `~/.agents/skills/skill-creator`  
 **Опис:** Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.  
@@ -27974,7 +28518,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-subagent-driven-development"></a>
-### [39/58] Скіл: `subagent-driven-development`
+### [40/59] Скіл: `subagent-driven-development`
 
 **Каталог:** `~/.agents/skills/subagent-driven-development`  
 **Опис:** Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between tasks, enabling fast iteration with quality gates  
@@ -28378,7 +28922,7 @@ See code-reviewer template: requesting-code-review/code-reviewer.md
 ---
 
 <a id="skill-surgical-patch"></a>
-### [40/58] Скіл: `surgical-patch`
+### [41/59] Скіл: `surgical-patch`
 
 **Каталог:** `~/.agents/skills/surgical-patch`  
 **Опис:** Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests matter.  
@@ -28550,7 +29094,7 @@ interface:
 ---
 
 <a id="skill-systematic-debugging"></a>
-### [41/58] Скіл: `systematic-debugging`
+### [42/59] Скіл: `systematic-debugging`
 
 **Каталог:** `~/.agents/skills/systematic-debugging`  
 **Опис:** Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysis, hypothesis testing, implementation) that ensures understanding before attempting solutions  
@@ -29410,7 +29954,7 @@ Which do you choose? Be honest about what you would actually do with senior engi
 ---
 
 <a id="skill-test-driven-development"></a>
-### [42/58] Скіл: `test-driven-development`
+### [43/59] Скіл: `test-driven-development`
 
 **Каталог:** `~/.agents/skills/test-driven-development`  
 **Опис:** Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures tests actually verify behavior by requiring failure first  
@@ -29986,7 +30530,7 @@ No exceptions without your human partner's permission.
 ---
 
 <a id="skill-testing-anti-patterns"></a>
-### [43/58] Скіл: `testing-anti-patterns`
+### [44/59] Скіл: `testing-anti-patterns`
 
 **Каталог:** `~/.agents/skills/testing-anti-patterns`  
 **Опис:** Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production pollution with test-only methods, and mocking without understanding dependencies  
@@ -30500,7 +31044,7 @@ Fix: Test real behavior or question why you're mocking at all.
 ---
 
 <a id="skill-theme-factory"></a>
-### [44/58] Скіл: `theme-factory`
+### [45/59] Скіл: `theme-factory`
 
 **Каталог:** `~/.agents/skills/theme-factory`  
 **Опис:** Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.  
@@ -31181,7 +31725,7 @@ Tech startups, software launches, innovation showcases, AI/ML presentations, dig
 ---
 
 <a id="skill-to-spec"></a>
-### [45/58] Скіл: `to-spec`
+### [46/59] Скіл: `to-spec`
 
 **Каталог:** `~/.agents/skills/to-spec`  
 **Опис:** Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.  
@@ -31467,7 +32011,7 @@ Any further notes about the feature.
 ---
 
 <a id="skill-to-tickets"></a>
-### [46/58] Скіл: `to-tickets`
+### [47/59] Скіл: `to-tickets`
 
 **Каталог:** `~/.agents/skills/to-tickets`  
 **Опис:** Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker — edges as text in a local file, or native blocking links on a real tracker.  
@@ -31792,7 +32336,7 @@ Work the frontier one ticket at a time with `/implement`, clearing context betwe
 ---
 
 <a id="skill-using-git-worktrees"></a>
-### [47/58] Скіл: `using-git-worktrees`
+### [48/59] Скіл: `using-git-worktrees`
 
 **Каталог:** `~/.agents/skills/using-git-worktrees`  
 **Опис:** Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification  
@@ -32217,7 +32761,7 @@ Ready to implement auth feature
 ---
 
 <a id="skill-utopia-intent-ledger"></a>
-### [48/58] Скіл: `utopia-intent-ledger`
+### [49/59] Скіл: `utopia-intent-ledger`
 
 **Каталог:** `~/.agents/skills/utopia-intent-ledger`  
 **Опис:** Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge graph.  
@@ -32532,7 +33076,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-vercel-composition-patterns"></a>
-### [49/58] Скіл: `vercel-composition-patterns`
+### [50/59] Скіл: `vercel-composition-patterns`
 
 **Каталог:** `~/.agents/skills/vercel-composition-patterns`  
 **Опис:** React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.  
@@ -34750,7 +35294,7 @@ nested inside each other—they just need to be within the same provider.
 ---
 
 <a id="skill-vercel-react-best-practices"></a>
-### [50/58] Скіл: `vercel-react-best-practices`
+### [51/59] Скіл: `vercel-react-best-practices`
 
 **Каталог:** `~/.agents/skills/vercel-react-best-practices`  
 **Опис:** React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.  
@@ -43325,7 +43869,7 @@ function Profile({ name }: { name: string }) {
 ---
 
 <a id="skill-verification-before-completion"></a>
-### [51/58] Скіл: `verification-before-completion`
+### [52/59] Скіл: `verification-before-completion`
 
 **Каталог:** `~/.agents/skills/verification-before-completion`  
 **Опис:** Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always  
@@ -43676,7 +44220,7 @@ This is non-negotiable.
 ---
 
 <a id="skill-wayfinder"></a>
-### [52/58] Скіл: `wayfinder`
+### [53/59] Скіл: `wayfinder`
 
 **Каталог:** `~/.agents/skills/wayfinder`  
 **Опис:** Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.  
@@ -44014,7 +44558,7 @@ The user may run unblocked tickets in parallel, so expect other sessions to be e
 ---
 
 <a id="skill-web-artifacts-builder"></a>
-### [53/58] Скіл: `web-artifacts-builder`
+### [54/59] Скіл: `web-artifacts-builder`
 
 **Каталог:** `~/.agents/skills/web-artifacts-builder`  
 **Опис:** Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.  
@@ -44873,7 +45417,7 @@ echo "  import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/di
 ---
 
 <a id="skill-web-design-guidelines"></a>
-### [54/58] Скіл: `web-design-guidelines`
+### [55/59] Скіл: `web-design-guidelines`
 
 **Каталог:** `~/.agents/skills/web-design-guidelines`  
 **Опис:** Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".  
@@ -45035,7 +45579,7 @@ If no files specified, ask the user which files to review.
 ---
 
 <a id="skill-webapp-testing"></a>
-### [55/58] Скіл: `webapp-testing`
+### [56/59] Скіл: `webapp-testing`
 
 **Каталог:** `~/.agents/skills/webapp-testing`  
 **Опис:** Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.  
@@ -45744,7 +46288,7 @@ if __name__ == '__main__':
 ---
 
 <a id="skill-writing-great-skills"></a>
-### [56/58] Скіл: `writing-great-skills`
+### [57/59] Скіл: `writing-great-skills`
 
 **Каталог:** `~/.agents/skills/writing-great-skills`  
 **Опис:** Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.  
@@ -46244,7 +46788,7 @@ Use these to diagnose issues the user may be having with the skill.
 ---
 
 <a id="skill-writing-plans"></a>
-### [57/58] Скіл: `writing-plans`
+### [58/59] Скіл: `writing-plans`
 
 **Каталог:** `~/.agents/skills/writing-plans`  
 **Опис:** Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans with exact file paths, complete code examples, and verification steps assuming engineer has minimal domain knowledge  
@@ -46538,7 +47082,7 @@ After saving the plan, offer execution choice:
 ---
 
 <a id="skill-writing-skills"></a>
-### [58/58] Скіл: `writing-skills`
+### [59/59] Скіл: `writing-skills`
 
 **Каталог:** `~/.agents/skills/writing-skills`  
 **Опис:** Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with subagents before writing, iterating until bulletproof against rationalization  

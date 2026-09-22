@@ -1,25 +1,25 @@
 ---
 name: b-sdd-sprint-closure
-description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
+description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), dual codebase text dump synthesis (b-sdd_code_dump.txt and b-sdd-ui_code_dump.txt), Astryx Cockpit Cloudflare Pages publication, GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
 type: SYSTEM_SKILL
 category: bssd-system-skill
 immutable: true
-invoked_skills: [b-sdd]
+invoked_skills: [b-sdd, cloudflare-pages-expert, b-sdd-ui-export, b-sdd-notebooklm-sync]
 ---
 # B-SDD Sprint Closure & Distillation Skill
 
-The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated 10-stage protocol for finalizing discrete sprints under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, AST knowledge graph currency in GitNexus, bitemporal Tripartite ontology and WORM ledger synchronization in Utopia DB, and telemetric callback to the orchestrating supervisor.
+The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated discrete sprint closure and distillation protocol under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, AST knowledge graph currency in GitNexus, frontend deployment to Cloudflare Pages, bitemporal Tripartite ontology and WORM ledger synchronization in Utopia DB, dual code dumps in Google NotebookLM, and telemetric callback to the orchestrating supervisor.
 
 ---
 
 ## 1. When to Use
 - When all sprint implementation tasks, specifications, and test suites are 100% completed.
 - At the formal sprint closure phase ($\Phi_6 \to \Phi_7$).
-- When sealing release tags, compiling active rules into `.context/active_rules.md`, updating GitNexus AST graph, and committing WORM audit snapshots into Utopia DB.
+- When sealing release tags, compiling active rules into `.context/active_rules.md`, updating GitNexus AST graph, publishing the Astryx UI to Cloudflare Pages, and committing WORM audit snapshots into Utopia DB.
 
 ---
 
-## 2. The 10-Stage Discrete Sprint Closure Protocol
+## 2. The Sprint Closure & Distillation Lifecycle
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
@@ -29,15 +29,18 @@ The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated 10-stage pr
        │
   [2. GitNexus Sync]     docker exec gitnexus-server gitnexus analyze /projects/b-sdd (.184)
        │
-  [3. Code Dump]         python3 scripts/dump_codebase.py (b-sdd_code_dump.txt)
+  [3. Code Dumps]        dump_codebase.py (b-sdd_code_dump.txt) &
+                         CALL_SKILL(b-sdd-ui-export): dump_ui_codebase.py (b-sdd-ui_code_dump.txt)
        │
-  [4. Skills Dump]       python3 scripts/dump_skills.py (ACTIVE_SKILLS_CATALOG.md)
+  [3.5. Deploy UI]       CALL_SKILL(cloudflare-pages-expert): deploy_cloudflare_pages.sh
        │
-  [5. NotebookLM Sync]   Rotates codebase dump in Notebook 205ee2ec-e0d2-4ba6-badf-44f2de02c7e2
+  [4. Skills Dump]       python3 scripts/dump_skills.py & Immutability Barrier (ADR-015)
        │
-  [6. Utopia DB Sync]    Tripartite (ADR + Spec + Skill) sync & WORM ledger commit on .251
+  [5. NotebookLM Sync]   CALL_SKILL(b-sdd-notebooklm-sync): Updates dual code dumps in SSoT Notebook
        │
-  [7. Rules Compile]     python3 -m src.cli.main compile (<500 words, ADR-005)
+  [6. Rules Compile]     python3 -m src.cli.main compile (<500 words, ADR-005)
+       │
+  [7. Utopia DB Sync]    Tripartite (ADR + Spec + Skill) sync & WORM ledger commit on .251
        │
   [8. Handoff]           ./run_b_sdd.sh --handoff --prompt "<Next Sprint Directive>" (ADR-007)
        │
@@ -56,110 +59,147 @@ python3 scripts/gitnexus_cleaner.py
 Triggers full AST re-indexing inside the `gitnexus-server` container on host `192.168.3.184`:
 ```bash
 ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 "docker exec -t gitnexus-server gitnexus analyze /projects/b-sdd"
-# Verify health
-curl -s http://192.168.3.184:4747/api/health
 ```
 
-### Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt`)
-Synthesizes a unified Plain Text dump of the repository (code only, no binaries/caches/markdown):
+### Stage 3: Dual Codebase Text Dumps Generation
+1. **Backend Code Dump**:
+   ```bash
+   python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt
+   ```
+2. **Astryx Cockpit UI Code Dump (via `b-sdd-ui-export`)**:
+   ```bash
+   python3 scripts/dump_ui_codebase.py --source b-sdd-ui --output b-sdd-ui_code_dump.txt --sync-remote
+   ```
+
+### Stage 3.5: Astryx Cockpit Cloudflare Pages Production Deployment (via `cloudflare-pages-expert`)
+Builds production bundle and publishes live to Cloudflare Pages:
 ```bash
-python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt
+bash scripts/deploy_cloudflare_pages.sh
+# Verifies HTTP 200 at https://b-sdd-ui.pages.dev
 ```
 
-### Stage 4: Active Skills Inventory Dump
-Refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md` and root `SKILLS_INVENTORY_DUMP.md`:
+### Stage 4: Active Skills Inventory & Immutability Barrier
+Verifies that all core system skills remain intact and immutable per ADR-015, then refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md`:
 ```bash
 python3 scripts/dump_skills.py
 ```
 
-### Stage 5: NotebookLM SSoT Pruning & Synchronization
+### Stage 5: NotebookLM SSoT Dual Dumps Update (via `b-sdd-notebooklm-sync`)
 Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`.
-1. Prune stale code dump (`sources_delete`).
-2. Prune transient test step reports and duplicate documents.
-3. Upload new `b-sdd_code_dump.txt` (`sources_add_file` with `mime_type="text/plain"`).
+Synchronizes both `b-sdd_code_dump.txt` and `b-sdd-ui_code_dump.txt` into Google NotebookLM via the MCP server on host `.184`.
 
-### Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Commit (Host .251)
-Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`):
-1. **SPEC/ADR Layer:** All active ADRs (`ADR-001`..`ADR-014`, `ADR-FE-001`) with bitemporal coordinates $(T_v, T_t)$.
-2. **DATA Layer:** Functional specifications (`SPEC-001`..`SPEC-020`) and system constitution (`CONST-001`).
-3. **SKILL Layer:** All 55 active skills in `~/.agents/skills/`.
-4. **WORM Ledger Record:** Writes immutable record into `intent_store.worm_ledger` with commit hash, release tag, phase, word count, and GitNexus metadata.
-```bash
-python3 scripts/sync_utopia.py
-```
-
-### Stage 7: Rules Compilation & Budget Enforcement (ADR-005)
+### Stage 6: Rules Compilation & Budget Enforcement (ADR-005)
 Recompiles active rules snapshot and verifies word budget:
 ```bash
 python3 -m src.cli.main compile
-# Strictly < 500 words
 test $(wc -w < .context/active_rules.md) -lt 500
 ```
 
+### Stage 7: Utopia DB Tripartite Ontology Sync & WORM Ledger Commit (Host .251)
+Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`) and records immutable commit in `intent_store.worm_ledger`.
+
 ### Stage 8: Discrete Sprint Handoff Synthesis (ADR-007)
-Generates the atomic handoff artifact, updating `.context/sprint_handoff.json` and `.context/next_sprint.md`:
-```bash
-./run_b_sdd.sh --handoff --prompt "Prepare Sprint <XXX+1>: <Next Sprint Title>"
-```
+Generates atomic handoff artifacts (`.context/sprint_handoff.json` and `.context/next_sprint.md`).
 
 ### Stage 9: Git Sealing & Release Tagging
-Tags the exact commit and pushes to origin:
 ```bash
-git tag -f -a sprint_<XXX>_done -m "sprint_<XXX>: sealed and distilled"
-git push origin main -f sprint_<XXX>_done
+git tag -a sprint_XXX_done -m "sprint_XXX: sealed and distilled"
+git push origin main sprint_XXX_done
 ```
 
-### Stage 10: Telemetric Callback Dispatch
-Emits completion signal to n8n supervisor webhook:
-```bash
-curl -s -X POST http://100.66.97.93:5678/webhook/bsdd-supervisor-result \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sprint_id": "sprint_<XXX>",
-    "status": "SEALED",
-    "phase": "PHI_7_DISTILLED",
-    "commit": "'$(git rev-parse HEAD)'",
-    "tag": "sprint_<XXX>_done",
-    "rules_word_count": '$(wc -w < .context/active_rules.md)',
-    "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
-  }'
-```
+### Stage 10: Telemetric Callback to Supervisor Webhook
+Dispatches POST payload to n8n supervisor webhook (`http://100.66.97.93:5678/webhook/bsdd-supervisor-result`).
 
 ---
 
-## 3. Automated Execution
+## 3. Algorithmic Workflow (ADR-016 Standard)
 
-To execute the entire 10-stage lifecycle autonomously:
-```bash
-python3 scripts/b_sdd_sprint_closure.py --sprint sprint_<XXX> --prompt "<Next Sprint Directive>"
-```
-Or via the skill runner:
-```bash
-~/.agents/skills/b-sdd-sprint-closure/scripts/sprint_closure.py --sprint sprint_<XXX> --prompt "<Next Sprint Directive>"
+```text
+ALGORITHM ExecuteSprintClosure
+INPUT:
+    sprint_id: str
+    prompt: str
+    skip_gitnexus: bool = False
+    skip_deploy: bool = False
+    no_push: bool = False
+OUTPUT:
+    closure_status: str ("SEALED" | "FAILED")
+
+BEGIN
+    TRY
+        // STAGE 1: Cleaner
+        EXECUTE CleanGitNexusLocks()
+
+        // STAGE 2: GitNexus Re-indexing
+        IF NOT skip_gitnexus THEN
+            EXECUTE ReindexGitNexusGraph(host="192.168.3.184")
+        FI
+
+        // STAGE 3: Dual Code Dumps
+        EXECUTE SynthesizeBackendDump(output="b-sdd_code_dump.txt")
+        CALL_SKILL(b-sdd-ui-export, {
+            source: "b-sdd-ui",
+            output: "b-sdd-ui_code_dump.txt",
+            sync_remote: True
+        })
+
+        // STAGE 3.5: Cloudflare Pages Deployment
+        IF NOT skip_deploy THEN
+            CALL_SKILL(cloudflare-pages-expert, {action: "deploy", project: "b-sdd-ui"})
+        FI
+
+        // STAGE 4: Skills Inventory & Immutability Barrier
+        ASSERT VerifySystemSkillsImmutability() == TRUE
+        EXECUTE RefreshSkillsCatalog()
+
+        // STAGE 5: NotebookLM SSoT Sync
+        CALL_SKILL(b-sdd-notebooklm-sync, {
+            notebook_id: "205ee2ec-e0d2-4ba6-badf-44f2de02c7e2",
+            sources: ["b-sdd_code_dump.txt", "b-sdd-ui_code_dump.txt"]
+        })
+
+        // STAGE 6: Rules Compilation
+        wc = EXECUTE CompileActiveRules()
+        ASSERT wc < 500
+
+        // STAGE 7: Utopia DB Tripartite Sync & WORM Ledger
+        EXECUTE SyncUtopiaDBAndRecordWORM(sprint_id, wc)
+
+        // STAGE 8: Handoff Synthesis
+        EXECUTE SynthesizeHandoff(prompt)
+
+        // STAGE 9: Git Sealing
+        EXECUTE GitTagAndSeal(tag=sprint_id + "_done", push=NOT no_push)
+
+        // STAGE 10: Supervisor Callback
+        EXECUTE EmitSupervisorCallback(sprint_id, status="SEALED")
+
+        RETURN "SEALED"
+    CATCH Error AS e
+        LOG_CRITICAL("Sprint closure failed: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
 ```
 
 ---
-
-## 4. Architectural Invariants
-- **INV-CLOSURE-01:** Never close a sprint without a 100% passing test suite (`pytest tests/`).
-- **INV-CLOSURE-02:** Active rules snapshot in `.context/active_rules.md` must never exceed 500 words (ADR-005).
-- **INV-CLOSURE-03:** AST graph on host 184 must be re-indexed to match the exact sealed commit hash.
-- **INV-CLOSURE-04:** Utopia DB on host 251 must record an immutable WORM ledger snapshot for the sprint.
-- **INV-CLOSURE-05:** Zero external pip dependencies in core runtime or closure scripts (ADR-002 Pure Stdlib).
 
 <!-- DRAKON_VISUAL_FLOW_START -->
 ## DRAKON Visual Workflow (Planar Skewer X=0)
 - **Schema File:** `b-sdd-sprint-closure.drakon.json`
-- **Total Algorithmic Nodes:** 10
+- **Total Algorithmic Nodes:** 13
 - **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: b-sdd-sprint-closure
-  2. `[ACTION]` When to Use
-  3. `[INSERTION]` CALL_SKILL(b-sdd): The 10-Stage Discrete Sprint Closure Protocol
-  4. `[ACTION]` Stage 1: GitNexus Lock & Shadow Cleaner
-  5. `[INSERTION]` CALL_SKILL(b-sdd): Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (H
-  6. `[INSERTION]` CALL_SKILL(b-sdd): Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt
-  7. `[ACTION]` Stage 4: Active Skills Inventory Dump
-  8. `[INSERTION]` CALL_SKILL(b-sdd): Stage 5: NotebookLM SSoT Pruning & Synchronization
-  9. `[ACTION]` Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Co
-  10. `[END]` Завершення: b-sdd-sprint-closure
+  1. `[HEADLINE]` Початок: Повний життєвий цикл закриття спринту B-SDD (Phi_6 -> Phi_7)
+  2. `[ACTION]` Етап 1: Очищення блокувань GitNexus (gitnexus_cleaner.py)
+  3. `[ACTION]` Етап 2: Переіндексація AST-графа коду в GitNexus на хості 192.168.3.184
+  4. `[INSERTION]` CALL_SKILL(b-sdd-ui-export): Етап 3: Синтез подвійного текстового дампу (b-sdd_code_dump.txt та b-sdd-ui_code_dump.txt)
+  5. `[INSERTION]` CALL_SKILL(cloudflare-pages-expert): Етап 3.5: Публікація Astryx Cockpit у Cloudflare Pages (b-sdd-ui.pages.dev)
+  6. `[ACTION]` Етап 4: Інвентаризація активних скілів та верифікація незмінності ядра (ADR-015)
+  7. `[INSERTION]` CALL_SKILL(b-sdd-notebooklm-sync): Етап 5: Оновлення джерел та дампу UI у записнику NotebookLM (ID: 205ee2ec...)
+  8. `[ACTION]` Етап 6: Компіляція active_rules.md та бюджет <500 слів (ADR-005)
+  9. `[ACTION]` Етап 7: Синхронізація трипартитної онтології та WORM-запис в Utopia DB (.251)
+  10. `[ACTION]` Етап 8: Генерація дискретного Handoff артефакту (ADR-007)
+  11. `[ACTION]` Етап 9: Фіксація Git Release Tag (sprint_XXX_done) та git push
+  12. `[ACTION]` Етап 10: Телеметричний callback на супервайзер (n8n webhook)
+  13. `[END]` Завершення: Спринт успішно закрито та запечатано (Phi_7 Distilled)
 <!-- DRAKON_VISUAL_FLOW_END -->

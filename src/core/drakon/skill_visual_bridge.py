@@ -54,6 +54,7 @@ KNOWN_SYSTEM_SKILLS: Set[str] = {
     "cloudflare-pages-expert",
     "b-sdd-notebooklm-sync",
     "b-sdd-kindle-docs",
+    "b-sdd-ui-export",
 }
 
 

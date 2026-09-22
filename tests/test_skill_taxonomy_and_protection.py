@@ -153,3 +153,18 @@ body
         )
         assert valid is True
         assert len(violations) == 0
+
+
+def test_b_sdd_ui_export_system_skill_registration():
+    """Verify b-sdd-ui-export is recognized as a protected system skill."""
+    assert "b-sdd-ui-export" in KNOWN_SYSTEM_SKILLS
+    user_skill_dir = Path.home() / ".agents" / "skills" / "b-sdd-ui-export"
+    if user_skill_dir.exists():
+        skill_md = user_skill_dir / "SKILL.md"
+        assert skill_md.exists()
+        meta, _ = parse_skill_frontmatter(skill_md.read_text(encoding="utf-8"))
+        assert meta.get("type") == "SYSTEM_SKILL"
+        assert meta.get("immutable") is True
+        drakon_file = user_skill_dir / "b-sdd-ui-export.drakon.json"
+        assert drakon_file.exists()
+
