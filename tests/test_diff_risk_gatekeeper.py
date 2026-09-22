@@ -168,6 +168,20 @@ diff --git a/tests/test_a.py b/tests/test_a.py
         assert p_blocked.returncode == 1
         assert "Commit BLOCKED" in p_blocked.stdout
 
+    def test_dump_and_doc_files_ignore_eval_patterns(self):
+        gatekeeper = DiffRiskGatekeeper()
+        dump_diff = """diff --git a/b-sdd_code_dump.txt b/b-sdd_code_dump.txt
+--- a/b-sdd_code_dump.txt
++++ b/b-sdd_code_dump.txt
+@@ -10,3 +10,5 @@
++code dump containing eval(foo) and --no-verify notes
++docs line with shell=True discussion
+"""
+        res = gatekeeper.evaluate_diff_risk(dump_diff)
+        assert res["choice"] == "PROCEED"
+        assert res["allow_commit"] is True
+        assert res["features"]["has_suspicious_patterns"] is False
+
     def test_pure_stdlib_compliance_adr002(self):
         import ast
         gatekeeper_path = ROOT / "src" / "core" / "diff_risk_gatekeeper.py"

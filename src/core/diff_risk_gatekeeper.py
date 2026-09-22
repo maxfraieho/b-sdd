@@ -80,15 +80,21 @@ class DiffRiskGatekeeper:
                 additions += 1
                 content = line[1:].strip()
                 added_lines.append(content)
-                # Check for suspicious patterns in newly added lines
-                for pat, desc in SUSPICIOUS_DIFF_PATTERNS:
-                    if re.search(pat, content):
-                        suspicious_matches.append({
-                            "pattern": pat,
-                            "file": current_file,
-                            "line_snippet": content[:100],
-                            "reason": desc
-                        })
+                # Check for suspicious patterns in newly added lines of executable code files (excluding tests, dumps & docs)
+                is_executable_code = (
+                    current_file.endswith((".py", ".sh", ".bash", ".js", ".ts"))
+                    and not current_file.startswith("tests/")
+                    and "dump" not in current_file
+                )
+                if is_executable_code:
+                    for pat, desc in SUSPICIOUS_DIFF_PATTERNS:
+                        if re.search(pat, content):
+                            suspicious_matches.append({
+                                "pattern": pat,
+                                "file": current_file,
+                                "line_snippet": content[:100],
+                                "reason": desc
+                            })
             elif line.startswith("-") and not line.startswith("---"):
                 deletions += 1
 

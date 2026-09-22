@@ -39,3 +39,4 @@ Chosen option: **Option 3: Dedicated Edge Inference Node on Pixel 7 (Podroid) wi
 - INV-014-03: Telegram notifications for Circuit Breaker status must be state-debounced (zero spam; triggers only on discrete transitions).
 - INV-014-04: The pre-flight hook in `run_b_sdd.sh` must remain idempotent (never duplicate an existing Laya capsule in prompt).
 - INV-014-05: All ADR updates and structural invariants must synchronize with Utopia DB on Pixel 7 (`192.168.3.251`).
+- INV-014-06: Fast-Path Pre-Commit Gatekeeper: P(violation) < 0.15 grants instant commit; offline degrades to local heuristics.

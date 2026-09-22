@@ -133,8 +133,8 @@ if [[ -z "$USER_PROMPT" && ${#POSITIONAL_ARGS[@]} -gt 0 ]]; then
     USER_PROMPT="${POSITIONAL_ARGS[*]}"
 fi
 
-# Standalone Handoff generation if requested without prompt
-if [[ "$DO_HANDOFF" = true && "$AUTO_CHAIN" = false && -z "$USER_PROMPT" ]]; then
+# Standalone Handoff generation if requested without auto-chaining
+if [[ "$DO_HANDOFF" = true && "$AUTO_CHAIN" = false ]]; then
     echo "================================================================================"
     echo "▶ Standalone Handoff Generation (ADR-007)"
     echo "================================================================================"
@@ -150,7 +150,11 @@ if [[ "$DO_HANDOFF" = true && "$AUTO_CHAIN" = false && -z "$USER_PROMPT" ]]; the
     if [[ "$RUN_FITNESS" = true ]]; then
         python3 -m src.cli.main fitness
     fi
-    python3 -m src.cli.main handoff
+    if [[ -n "$USER_PROMPT" ]]; then
+        python3 -m src.cli.main handoff --prompt "$USER_PROMPT"
+    else
+        python3 -m src.cli.main handoff
+    fi
     exit 0
 fi
 

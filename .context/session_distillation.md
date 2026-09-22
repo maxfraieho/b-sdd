@@ -1,81 +1,81 @@
 # Distilled Session Intelligence (B-SDD)
-- **Conversation ID:** `f8da1c0c-fe2b-48f0-a535-ffccec7bede9`
-- **Steps Analyzed:** 2593 steps across 29 user turns
-- **Time Horizon:** `2026-09-16T14:54:38Z` → `2026-09-17T09:43:17Z`
-- **Files Modified:** 67 unique files
+- **Conversation ID:** `ea0535f4-faf1-4ff4-b154-add60157d0fe`
+- **Steps Analyzed:** 6887 steps across 70 user turns
+- **Time Horizon:** `2026-09-18T08:55:06Z` → `2026-09-22T05:46:54Z`
+- **Files Modified:** 161 unique files
 
 ## 1. Key Milestones & Directives Timeline
 | # | Topic | Directive Summary |
 | :--- | :--- | :--- |
-| 5 | `architecture` | Gensoark запитує: Отримав повний контекст. Дуже важлива інформація: Ключове, що я з’ясував Бекенд-агент прочитав мій PROMPT_BACKEND_AGENT.md! Він з’явився в b-s... |
-| 6 | `b_sdd_methodology` | Дизайн за твоїм попереднім промптом уже створено. Потрібно, щоб ти виконав git pull змін із репозиторію в папку проєкту, узгодив та запушив власні зміни, а поті... |
-| 7 | `b_sdd_methodology` | помилка , готовиц код в /home/vokov/projects/b-sdd/docs/dewsign genspark і hrndof зробив /home/vokov/projects/b-sdd/docs/dewsign/docs/decision/HANDOFF_BACKEND.m... |
-| 8 | `general` | то на .184 |
-| 9 | `general` | статус |
-| 10 | `general` | а що у нас по плану? |
-| 11 | `general` | я думаю краще B , а ти як гадрєш? |
-| 12 | `architecture` | збережи сесію в ai-memory та ADR актуальні збережи в utopia , запкш все |
-| 13 | `architecture` | як на мене, повниц бред, нічого не працює, статичнв бецджу та кнопки. з яким проектом працюємо, де етапи розробки , де артеіакти ADRBщо можна почитати, де редак... |
-| 14 | `general` | запускай сервер внтерфецсу, подивлюсь |
-| 15 | `architecture` | сам текст ADR запису не читається і вілповідно не релагужться, на момент старту не праубвала utopia, може перезапустмти. Мова дракон має значно бвльше ікон ніж ... |
-| 16 | `general` | не бачу змін в можливостях редакиора дракон, може не перезпустив? |
-| 17 | `b_sdd_methodology` | ти красавчик) зберігай сесію в ai-memory оновлюй промт для genspark агента дизацнера у відповідноств до поточного станк системи. Маємо перецти на Astryx https:/... |
-| 18 | `general` | статус |
-| 19 | `general` | де саме знаходиться PROMPT_GENSPARK_ASTRYX_WORKBENCH_REDESIGN.md шлях иа хост. нащо тоц  import_genspark_design.sh мені? коли є    ./run_next_sprint.sh /шлях/до... |
-| 20 | `architecture` | дай відповідь  на питання genspark, мова українська та англійська в інтеріецсі: B-SDD Operator Workbench · Astryx Edition — design decisions What kind of output... |
-| 21 | `b_sdd_methodology` | з яким хостом прауює еоманда  ./run_next_sprint.sh /шлях/до/папки_genspark ? я звантьґтажив до .184 , команда cd /home/vokov/projects/b-sdd ./run_next_sprint.sh... |
-| 22 | `b_sdd_methodology` | перезапускаю сесію тут на .161 командою     cd /home/vokov/projects/b-sdd     ./run_next_sprint.sh /home/vokov/projects/swiss-job-   hunter/docs/RESULTS_RESORCH... |
-| 23 | `b_sdd_methodology` | все виконано сервер запускався . який наступниц крок розробки? за планом. може вже створити новий репозиторіц для іронтенду та використати для cloudflere pages ... |
-| 24 | `general` | якщо можна то краще А |
-| 25 | `general` | що сталось? |
-| 26 | `general` | чому сам не можеш то зробити? токен має бути на .184 /home/vokov/workspace/ai-drakon-scaffolder cloudflare токен |
-| 27 | `b_sdd_methodology` | що далі за планом? готуй стандартну команду нової сесії agy за методикою b-ssd |
-| 28 | `general` | на Astryx ми вде перевели інтерфецс? треба ще задіяти genspark? бпжано зробити мобвльниц перегляд , цого просто нема |
-| 29 | `general` | роби сам, в кінці коменда для нової сесії |
+| 46 | `architecture` | ### ============================================================================== ### B-SDD SPRINT DISPATCH: SPRINT_001_LEGAL · ADVOCATE WORKBENCH INITIALIZATI... |
+| 47 | `architecture` | ### ============================================================================== ### B-SDD SPRINT DISPATCH: HOST_234_PROVISIONING · MCP, SKILLS & N8N DUAL-LOO... |
+| 48 | `architecture` | # TASK: B-SDD SKILLS INVENTORY COMPILATION & NOTEBOOKLM INGESTION  ### 1. МЕТА Зібрати всі доступні системні та користувацькі скіли з папки `~/.agents/skills/` ... |
+| 49 | `architecture` | це вже по іншому проекту, на .234: ### ============================================================================== ### B-SDD SPRINT RESUMPTION: SPRINT_002_LE... |
+| 50 | `b_sdd_methodology` | # MISSION: DEEP DIAGNOSTIC & SELF-HEALING OF N8N DISPATCH PIPELINE & SKILLS REFACTOR EXECUTION  ### 1. КОНТЕКСТ І ПРОБЛЕМА Вже вдруге поштовий диспатч від Gemin... |
+| 51 | `architecture` | # ТЕРМІНОВИЙ АУДИТ ТА ВІДНОВЛЕННЯ ПЕТЛІ ЗВОРОТНОГО ЗВ'ЯЗКУ (FL-01) # Контекст: B-SDD Sprint 021 · Розрив ланцюга Gemini Spark ↔ AGI Orchestrator  ## 1. СИТУАЦІЙ... |
+| 52 | `general` | чому не спрацбвала петля щворотнього звязку та не виконалось завдання від spark ? діагеостуй та виправ |
+| 53 | `architecture` | Ти дієш як DevSecOps / Integration Engineer у проєкті B-SDD.  ### КОНТЕКСТ ТА ПРОБЛЕМА: Воркфлоу n8n (`bsdd-supervisor-result` / URL вебхука: `https://n8n.exodu... |
+| 54 | `architecture` | Ти дієш як Lead AGI Orchestrator проєкту B-SDD на хості 192.168.3.161.  ### КОНТЕКСТ: 1. **Збій прийому диспатчу в n8n:**      Спарк надіслав лист [[B-SDD-DISPA... |
+| 55 | `b_sdd_methodology` | проблема була на хоств oracle де прауює n8n , там cloudflared вилетва, тому не прауювало. перезавантажив. бадано щоб в таких ситуаціях бот сповіщав про недоступ... |
+| 56 | `architecture` | Ти — системний агент Agy на вузлі 192.168.3.161 (~/projects/b-sdd). Завдання: переробити фінал Спринту 028 і реально доставити архітектурну книгу на Kindle. Поп... |
+| 57 | `general` | книжку отримано. ти повинен мати ранвше ствопениц скіл по створенню докумениації та надсиланню в мій kindle. Уец скіл є? онови за потреби як є |
+| 58 | `architecture` | ми випадково видалили 4 важливі скіли включабчи цей, глянь список та перевір чи аже вілновлено, відеови як нвґі: Список 4 нативних скілів B-SDD, що були ізольов... |
+| 59 | `general` | то і запуш тоді |
+| 60 | `general` | в проекті є стандартниц  b-ssd .sh скрипт для запуску спринтів в окремих сесіях , знацди цого. |
+| 61 | `utopia_db` | ми мажмо проект та прауюбчиц код https://github.com/maxfraieho/b-sdd-feedback-loop привптний , через gh з .184 доступниц і повинен матм тут локалтну папку. Серв... |
+| 62 | `architecture` | Ти — системний агент Agy на вузлі 192.168.3.161. Твоє завдання: реалізувати 4 пункти плану виправлення архітектурного дрифту та дублювання диспетчеризації (Reme... |
+| 63 | `b_sdd_methodology` | Ти — системний агент Agy. Перевір стан та пряму відповідь моделі прийняття рішень Laya, розгорнутої на смартфоні Pixel 7 (192.168.3.251:9623) як альтернатива Je... |
+| 64 | `ui_ux` | треьа щоб ти її , ую модель таки використрвував: Ось структурований промпт для Agy на вузлі 192.168.3.161 для реалізації повного скінченного автомата з авто-від... |
+| 65 | `general` | конкретно щараз laya вже використовується? в таоїц роьоті |
+| 66 | `telegram_bot` | треьа щоб ти , agy, використовував ую модель в проуесі прмцняття рвшень, оиже запусти її на podroid .251 і налаштуц себе утзвязці з ботом та системою контролю д... |
+| 67 | `architecture` | статус, чи зараз використовується модель прицняття рішень  в роботі твоїй? і як ? чи використовується в самому проекті b-ssd? і як? чи варто оновити ADR татзбер... |
+| 68 | `architecture` | Ти — системний агент Agy на вузлі 192.168.3.161 (~/projects/b-sdd). Твоє завдання: прийняти до виконання архітектурний план оптимізації витрати токенів через пе... |
+| 69 | `architecture` | Ти — системний агент Agy на вузлі 192.168.3.161 (~/projects/b-sdd). Виконай канонічний диспатч Спринту 030: OUTBOX_AGI_SPRINT_030_FAST_PATH_DIFF_RISK_GATEKEEPER... |
+| 70 | `architecture` | Ти — системний агент Agy на вузлі 192.168.3.161 (~/projects/b-sdd). Виконай фінальне закриття Спринту 030 та генерацію Handoff за фазовим регламентом B-SDD (пер... |
 
 ## 2. Modified Artifacts & Code Seams
 ```
-"/home/vokov/.gemini/antigravity-cli/brain/f8da1c0c-fe2b-48f0-a535-ffccec7bede9/scratch/test_live_endpoints.py"
-"/home/vokov/projects/b-sdd/.context/next_sprint.md"
-"/home/vokov/projects/b-sdd/.gitignore"
-"/home/vokov/projects/b-sdd/b-sdd-ui/.env.production"
-"/home/vokov/projects/b-sdd/b-sdd-ui/index.html"
-"/home/vokov/projects/b-sdd/b-sdd-ui/package.json"
-"/home/vokov/projects/b-sdd/b-sdd-ui/postcss.config.js"
-"/home/vokov/projects/b-sdd/b-sdd-ui/public/_headers"
-"/home/vokov/projects/b-sdd/b-sdd-ui/public/_redirects"
-"/home/vokov/projects/b-sdd/b-sdd-ui/public/favicon.svg"
+"/home/vokov/.agents/skills/b-sdd-kindle-docs/SKILL.md"
+"/home/vokov/.agents/skills/b-sdd-kindle-docs/scripts/dispatch_on_184.sh"
+"/home/vokov/.agents/skills/b-sdd-notebooklm-sync/SKILL.md"
+"/home/vokov/.agents/skills/b-sdd-notebooklm-sync/scripts/sync_notebooklm.sh"
+"/home/vokov/.agents/skills/b-sdd/SKILL.md"
+"/home/vokov/.agents/skills/kindle-release-pipeline/SKILL.md"
+"/home/vokov/.agents/skills/kindle-release-pipeline/scripts/dispatch_on_184.sh"
+"/home/vokov/.agents/skills/session-distiller/SKILL.md"
+"/home/vokov/.config/systemd/user/b-sdd-n8n-watchdog.service"
+"/home/vokov/.config/systemd/user/b-sdd-n8n-watchdog.timer"
+"/home/vokov/.config/systemd/user/b-sdd-supervisor.service"
+"/home/vokov/.gemini/antigravity-cli/mcp_config.json"
+"/home/vokov/projects/b-sdd-feedback-loop/daemon/.env"
+"/home/vokov/projects/b-sdd-feedback-loop/daemon/bsdd_supervisor.py"
+"/home/vokov/projects/b-sdd-feedback-loop/systemd/b-sdd-supervisor.service"
+"/home/vokov/projects/b-sdd-legal/.context/active_rules.md"
+"/home/vokov/projects/b-sdd-legal/.gitignore"
+"/home/vokov/projects/b-sdd-legal/b-sdd-legal-ui/index.html"
+"/home/vokov/projects/b-sdd-legal/b-sdd-legal-ui/package.json"
+"/home/vokov/projects/b-sdd-legal/b-sdd-legal-ui/src/App.tsx"
+"/home/vokov/projects/b-sdd-legal/b-sdd-legal-ui/src/index.css"
+"/home/vokov/projects/b-sdd-legal/b-sdd-legal-ui/src/lib/legal-types.ts"
+"/home/vokov/projects/b-sdd-legal/b-sdd-legal-ui/src/main.tsx"
+"/home/vokov/projects/b-sdd-legal/b-sdd-legal-ui/tsconfig.json"
+"/home/vokov/projects/b-sdd-legal/b-sdd-legal-ui/vite.config.ts"
+"/home/vokov/projects/b-sdd-legal/logs/host_234_provisioning_complete.json"
+"/home/vokov/projects/b-sdd-legal/logs/sprint_001_legal_handoff.json"
+"/home/vokov/projects/b-sdd-legal/logs/sprint_002_legal_handoff.json"
+"/home/vokov/projects/b-sdd-legal/scripts/generate_legal_book.py"
+"/home/vokov/projects/b-sdd-legal/scripts/notebooklm_client.py"
+"/home/vokov/projects/b-sdd-legal/scripts/run_legal_sprint.sh"
+"/home/vokov/projects/b-sdd-legal/scripts/sync_legal_core.sh"
+"/home/vokov/projects/b-sdd-legal/scripts/utopia_mcp_server.py"
+"/home/vokov/projects/b-sdd-legal/src/legal/__init__.py"
+"/home/vokov/projects/b-sdd-legal/src/legal/actors.py"
+"/home/vokov/projects/b-sdd-legal/src/legal/timeline_calibrator.py"
+"/home/vokov/projects/b-sdd-legal/tests/test_legal_core.py"
+"/home/vokov/projects/b-sdd-legal/tests/test_planar.py"
 "/home/vokov/projects/b-sdd/b-sdd-ui/src/App.tsx"
 "/home/vokov/projects/b-sdd/b-sdd-ui/src/components/AdrLibraryModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/AdrReaderModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/BitemporalRadar/AdrListCard.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/BitemporalRadar/TimelineSlider.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/ContextBadges.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/CopilotStream.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/CopilotPanel/TokenGauge.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonCanvas.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonIconPalette.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/DrakonToolbar.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/NodeInspector.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/PseudocodeModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/DrakonStudio/VisualFlowCanvas.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/InvariantDrawer.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/MobileNavigation.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/MobilePhaseView.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/MobileRadarView.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/PhaseStepper.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/ReviewGateModal.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/TasksPanel/TasksDrawer.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/components/Topbar.tsx"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/data/mockAdrs.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/data/mockDrakonSchema.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/data/mockSprints.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/hooks/useIsMobile.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/index.css"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/api.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/backend-types.ts"
-"/home/vokov/projects/b-sdd/b-sdd-ui/src/lib/drakon/adapter.ts"
-... and 27 more files
+... and 121 more files
 ```
 
 ## 3. Actionable Invariants & Pending Work Items

@@ -1,10 +1,10 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP
 
-**Згенеровано:** 2026-09-21 20:01:57Z  
+**Згенеровано:** 2026-09-22 05:52:06Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
-**Загальна кількість скілів:** **53**  
-**Загальна кількість файлів коду/конфігів:** **234**  
+**Загальна кількість скілів:** **55**  
+**Загальна кількість файлів коду/конфігів:** **236**  
 **Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR)  
 
 > [!NOTE]
@@ -23,61 +23,63 @@
 | 3 | [**ast-grep**](#skill-ast-grep) | Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) pat... | `SKILL.md`, `README.md` +1 |
 | 4 | [**astryx-scaffolder**](#skill-astryx-scaffolder) | Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces. | `SKILL.md`, `scripts/scaffold_component.py` |
 | 5 | [**b-sdd**](#skill-b-sdd) | Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework. | `SKILL.md` (1 файл) |
-| 6 | [**brainstorming**](#skill-brainstorming) | Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questionin... | `SKILL.md` (1 файл) |
-| 7 | [**caveman**](#skill-caveman) | Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity lev... | `SKILL.md`, `README.md` |
-| 8 | [**cli-developer**](#skill-cli-developer) | Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars... | `SKILL.md`, `references/design-patterns.md` +4 |
-| 9 | [**code-documenter**](#skill-code-documenter) | Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use... | `SKILL.md`, `references/api-docs-fastapi-django.md` +7 |
-| 10 | [**code-reviewer**](#skill-code-reviewer) | Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming iss... | `SKILL.md`, `references/common-issues.md` +5 |
-| 11 | [**codebase-design**](#skill-codebase-design) | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a... | `SKILL.md`, `DEEPENING.md` +1 |
-| 12 | [**condition-based-waiting**](#skill-condition-based-waiting) | Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for... | `SKILL.md`, `example.ts` |
-| 13 | [**defense-in-depth**](#skill-defense-in-depth) | Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to mak... | `SKILL.md` (1 файл) |
-| 14 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow. | `SKILL.md`, `scripts/hitl-loop.template.sh` |
-| 15 | [**drakon-compiler**](#skill-drakon-compiler) | Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict ... | `SKILL.md`, `scripts/compile_drakon.py` |
-| 16 | [**executing-plans**](#skill-executing-plans) | Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes ... | `SKILL.md` (1 файл) |
-| 17 | [**find-skills**](#skill-find-skills) | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express ... | `SKILL.md` (1 файл) |
-| 18 | [**frontend-design**](#skill-frontend-design) | Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or appli... | `SKILL.md`, `LICENSE.txt` |
-| 19 | [**grill-with-docs**](#skill-grill-with-docs) | A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go. | `SKILL.md` (1 файл) |
-| 20 | [**handoff**](#skill-handoff) | Compact the current conversation into a handoff document for another agent to pick up. | `SKILL.md` (1 файл) |
-| 21 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | `SKILL.md`, `HTML-REPORT.md` |
-| 22 | [**intent-continuity**](#skill-intent-continuity) | Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization. | `SKILL.md` (1 файл) |
-| 23 | [**investigate-first**](#skill-investigate-first) | Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked... | `SKILL.md`, `agents/openai.yaml` |
-| 24 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to... | `SKILL.md`, `scripts/bsdd_to_kindle.py` +6 |
-| 25 | [**laya-decision-router**](#skill-laya-decision-router) | Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing. | `SKILL.md` (1 файл) |
-| 26 | [**make-interfaces-feel-better**](#skill-make-interfaces-feel-better) | Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover s... | `SKILL.md`, `animations.md` +3 |
-| 27 | [**mcp-builder**](#skill-mcp-builder) | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use whe... | `SKILL.md`, `LICENSE.txt` +8 |
-| 28 | [**notebooklm**](#skill-notebooklm) | Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact type... | `SKILL.md` (1 файл) |
-| 29 | [**notebooklm-gitnexus-copilot**](#skill-notebooklm-gitnexus-copilot) | Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic... | `SKILL.md` (1 файл) |
-| 30 | [**root-cause-tracing**](#skill-root-cause-tracing) | Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, add... | `SKILL.md`, `find-polluter.sh` |
-| 31 | [**safe-refactor**](#skill-safe-refactor) | Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits. | `SKILL.md`, `agents/openai.yaml` |
-| 32 | [**skill-audit**](#skill-skill-audit) | Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing ne... | `SKILL.md` (1 файл) |
-| 33 | [**skill-creator**](#skill-skill-creator) | Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capa... | `SKILL.md`, `LICENSE.txt` +5 |
-| 34 | [**subagent-driven-development**](#skill-subagent-driven-development) | Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between task... | `SKILL.md` (1 файл) |
-| 35 | [**surgical-patch**](#skill-surgical-patch) | Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests ma... | `SKILL.md`, `agents/openai.yaml` |
-| 36 | [**systematic-debugging**](#skill-systematic-debugging) | Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysi... | `SKILL.md`, `CREATION-LOG.md` +4 |
-| 37 | [**test-driven-development**](#skill-test-driven-development) | Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures te... | `SKILL.md` (1 файл) |
-| 38 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production polluti... | `SKILL.md` (1 файл) |
-| 39 | [**theme-factory**](#skill-theme-factory) | Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors... | `SKILL.md`, `LICENSE.txt` +10 |
-| 40 | [**to-spec**](#skill-to-spec) | Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed. | `SKILL.md` (1 файл) |
-| 41 | [**to-tickets**](#skill-to-tickets) | Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker —... | `SKILL.md` (1 файл) |
-| 42 | [**using-git-worktrees**](#skill-using-git-worktrees) | Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with sma... | `SKILL.md` (1 файл) |
-| 43 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge... | `SKILL.md`, `scripts/sync_utopia.py` +1 |
-| 44 | [**vercel-composition-patterns**](#skill-vercel-composition-patterns) | React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing r... | `SKILL.md`, `AGENTS.md` +9 |
-| 45 | [**vercel-react-best-practices**](#skill-vercel-react-best-practices) | React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.j... | `SKILL.md`, `AGENTS.md` +71 |
-| 46 | [**verification-before-completion**](#skill-verification-before-completion) | Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output... | `SKILL.md` (1 файл) |
-| 47 | [**wayfinder**](#skill-wayfinder) | Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a ... | `SKILL.md` (1 файл) |
-| 48 | [**web-artifacts-builder**](#skill-web-artifacts-builder) | Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use ... | `SKILL.md`, `LICENSE.txt` +2 |
-| 49 | [**web-design-guidelines**](#skill-web-design-guidelines) | Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my si... | `SKILL.md` (1 файл) |
-| 50 | [**webapp-testing**](#skill-webapp-testing) | Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing... | `SKILL.md`, `LICENSE.txt` +4 |
-| 51 | [**writing-great-skills**](#skill-writing-great-skills) | Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable. | `SKILL.md`, `GLOSSARY.md` |
-| 52 | [**writing-plans**](#skill-writing-plans) | Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans ... | `SKILL.md` (1 файл) |
-| 53 | [**writing-skills**](#skill-writing-skills) | Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with suba... | `SKILL.md`, `anthropic-best-practices.md` +1 |
+| 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump... | `SKILL.md` (1 файл) |
+| 7 | [**brainstorming**](#skill-brainstorming) | Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questionin... | `SKILL.md` (1 файл) |
+| 8 | [**caveman**](#skill-caveman) | Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity lev... | `SKILL.md`, `README.md` |
+| 9 | [**cli-developer**](#skill-cli-developer) | Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars... | `SKILL.md`, `references/design-patterns.md` +4 |
+| 10 | [**code-documenter**](#skill-code-documenter) | Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use... | `SKILL.md`, `references/api-docs-fastapi-django.md` +7 |
+| 11 | [**code-reviewer**](#skill-code-reviewer) | Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming iss... | `SKILL.md`, `references/common-issues.md` +5 |
+| 12 | [**codebase-design**](#skill-codebase-design) | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a... | `SKILL.md`, `DEEPENING.md` +1 |
+| 13 | [**condition-based-waiting**](#skill-condition-based-waiting) | Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for... | `SKILL.md`, `example.ts` |
+| 14 | [**defense-in-depth**](#skill-defense-in-depth) | Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to mak... | `SKILL.md` (1 файл) |
+| 15 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow. | `SKILL.md`, `scripts/hitl-loop.template.sh` |
+| 16 | [**drakon-compiler**](#skill-drakon-compiler) | Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict ... | `SKILL.md`, `scripts/compile_drakon.py` |
+| 17 | [**executing-plans**](#skill-executing-plans) | Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes ... | `SKILL.md` (1 файл) |
+| 18 | [**find-skills**](#skill-find-skills) | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express ... | `SKILL.md` (1 файл) |
+| 19 | [**frontend-design**](#skill-frontend-design) | Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or appli... | `SKILL.md`, `LICENSE.txt` |
+| 20 | [**grill-with-docs**](#skill-grill-with-docs) | A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go. | `SKILL.md` (1 файл) |
+| 21 | [**handoff**](#skill-handoff) | Compact the current conversation into a handoff document for another agent to pick up. | `SKILL.md` (1 файл) |
+| 22 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | `SKILL.md`, `HTML-REPORT.md` |
+| 23 | [**intent-continuity**](#skill-intent-continuity) | Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization. | `SKILL.md` (1 файл) |
+| 24 | [**investigate-first**](#skill-investigate-first) | Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked... | `SKILL.md`, `agents/openai.yaml` |
+| 25 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to... | `SKILL.md`, `scripts/bsdd_to_kindle.py` +6 |
+| 26 | [**laya-decision-router**](#skill-laya-decision-router) | Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing. | `SKILL.md` (1 файл) |
+| 27 | [**make-interfaces-feel-better**](#skill-make-interfaces-feel-better) | Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover s... | `SKILL.md`, `animations.md` +3 |
+| 28 | [**mcp-builder**](#skill-mcp-builder) | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use whe... | `SKILL.md`, `LICENSE.txt` +8 |
+| 29 | [**notebooklm**](#skill-notebooklm) | Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact type... | `SKILL.md` (1 файл) |
+| 30 | [**notebooklm-gitnexus-copilot**](#skill-notebooklm-gitnexus-copilot) | Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic... | `SKILL.md` (1 файл) |
+| 31 | [**root-cause-tracing**](#skill-root-cause-tracing) | Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, add... | `SKILL.md`, `find-polluter.sh` |
+| 32 | [**safe-refactor**](#skill-safe-refactor) | Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits. | `SKILL.md`, `agents/openai.yaml` |
+| 33 | [**session-distiller**](#skill-session-distiller) | Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007). | `SKILL.md` (1 файл) |
+| 34 | [**skill-audit**](#skill-skill-audit) | Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing ne... | `SKILL.md` (1 файл) |
+| 35 | [**skill-creator**](#skill-skill-creator) | Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capa... | `SKILL.md`, `LICENSE.txt` +5 |
+| 36 | [**subagent-driven-development**](#skill-subagent-driven-development) | Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between task... | `SKILL.md` (1 файл) |
+| 37 | [**surgical-patch**](#skill-surgical-patch) | Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests ma... | `SKILL.md`, `agents/openai.yaml` |
+| 38 | [**systematic-debugging**](#skill-systematic-debugging) | Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysi... | `SKILL.md`, `CREATION-LOG.md` +4 |
+| 39 | [**test-driven-development**](#skill-test-driven-development) | Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures te... | `SKILL.md` (1 файл) |
+| 40 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production polluti... | `SKILL.md` (1 файл) |
+| 41 | [**theme-factory**](#skill-theme-factory) | Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors... | `SKILL.md`, `LICENSE.txt` +10 |
+| 42 | [**to-spec**](#skill-to-spec) | Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed. | `SKILL.md` (1 файл) |
+| 43 | [**to-tickets**](#skill-to-tickets) | Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker —... | `SKILL.md` (1 файл) |
+| 44 | [**using-git-worktrees**](#skill-using-git-worktrees) | Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with sma... | `SKILL.md` (1 файл) |
+| 45 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge... | `SKILL.md`, `scripts/sync_utopia.py` +1 |
+| 46 | [**vercel-composition-patterns**](#skill-vercel-composition-patterns) | React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing r... | `SKILL.md`, `AGENTS.md` +9 |
+| 47 | [**vercel-react-best-practices**](#skill-vercel-react-best-practices) | React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.j... | `SKILL.md`, `AGENTS.md` +71 |
+| 48 | [**verification-before-completion**](#skill-verification-before-completion) | Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output... | `SKILL.md` (1 файл) |
+| 49 | [**wayfinder**](#skill-wayfinder) | Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a ... | `SKILL.md` (1 файл) |
+| 50 | [**web-artifacts-builder**](#skill-web-artifacts-builder) | Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use ... | `SKILL.md`, `LICENSE.txt` +2 |
+| 51 | [**web-design-guidelines**](#skill-web-design-guidelines) | Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my si... | `SKILL.md` (1 файл) |
+| 52 | [**webapp-testing**](#skill-webapp-testing) | Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing... | `SKILL.md`, `LICENSE.txt` +4 |
+| 53 | [**writing-great-skills**](#skill-writing-great-skills) | Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable. | `SKILL.md`, `GLOSSARY.md` |
+| 54 | [**writing-plans**](#skill-writing-plans) | Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans ... | `SKILL.md` (1 файл) |
+| 55 | [**writing-skills**](#skill-writing-skills) | Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with suba... | `SKILL.md`, `anthropic-best-practices.md` +1 |
 
 ---
 
 ## Повний Вміст Скілів (Full Skills Code & Instructions)
 
 <a id="skill-api-designer"></a>
-### [1/53] Скіл: `api-designer`
+### [1/55] Скіл: `api-designer`
 
 **Каталог:** `~/.agents/skills/api-designer`  
 **Опис:** Use when designing REST or GraphQL APIs, creating OpenAPI specifications, or planning API architecture. Invoke for resource modeling, versioning strategies, pagination patterns, error handling standards.  
@@ -2918,7 +2920,7 @@ Avoid these mistakes:
 ---
 
 <a id="skill-architecture-designer"></a>
-### [2/53] Скіл: `architecture-designer`
+### [2/55] Скіл: `architecture-designer`
 
 **Каталог:** `~/.agents/skills/architecture-designer`  
 **Опис:** Use when designing new high-level system architecture, reviewing existing designs, or making architectural decisions. Invoke to create architecture diagrams, write Architecture Decision Records (ADRs), evaluate technology trade-offs, design component interactions, and plan for scalability. Use for system design, architecture review, microservices structuring, ADR authoring, scalability planning, and infrastructure pattern selection — distinct from code-level design patterns or database-only design tasks.  
@@ -3615,7 +3617,7 @@ When to Avoid:
 ---
 
 <a id="skill-ast-grep"></a>
-### [3/53] Скіл: `ast-grep`
+### [3/55] Скіл: `ast-grep`
 
 **Каталог:** `~/.agents/skills/ast-grep`  
 **Опис:** Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) patterns, find specific code structures, or perform complex code queries that go beyond simple text search. This skill should be used when users ask to search for code patterns, find specific language constructs, or locate code with particular structural characteristics.  
@@ -4474,7 +4476,7 @@ rule:
 ---
 
 <a id="skill-astryx-scaffolder"></a>
-### [4/53] Скіл: `astryx-scaffolder`
+### [4/55] Скіл: `astryx-scaffolder`
 
 **Каталог:** `~/.agents/skills/astryx-scaffolder`  
 **Опис:** Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces.  
@@ -4597,7 +4599,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-b-sdd"></a>
-### [5/53] Скіл: `b-sdd`
+### [5/55] Скіл: `b-sdd`
 
 **Каталог:** `~/.agents/skills/b-sdd`  
 **Опис:** Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework.  
@@ -4674,8 +4676,127 @@ Before committing or completing a task:
 
 ---
 
+<a id="skill-b-sdd-sprint-closure"></a>
+### [6/55] Скіл: `b-sdd-sprint-closure`
+
+**Каталог:** `~/.agents/skills/b-sdd-sprint-closure`  
+**Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), NotebookLM source cleanup and upload, and supervisor callback notification.  
+**Файлів у складі:** 1  
+
+#### Файл: `b-sdd-sprint-closure/SKILL.md` (4,727 байт)
+````markdown
+---
+name: b-sdd-sprint-closure
+description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), NotebookLM source cleanup and upload, and supervisor callback notification.
+---
+
+# B-SDD Sprint Closure & Distillation Skill
+
+The **B-SDD Sprint Closure Skill** provides an end-to-end, automated protocol for finalizing discrete sprints under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, NotebookLM synchronization as the Single Source of Truth (SSoT), and telemetric callback to the orchestrating supervisor.
+
+---
+
+## 1. When to Use
+- When all sprint tasks, implementation specs, and test suites are 100% completed.
+- At the formal sprint closure phase ($\Phi_6 \to \Phi_7$).
+- When sealing release tags, compiling active rules into `.context/active_rules.md`, and synchronizing the codebase dump into NotebookLM.
+
+---
+
+## 2. Standard Sprint Closure Workflow
+
+### Step 1: Pre-flight Verification & Architecture Fitness
+Ensure all tests and architecture fitness gates pass with zero regressions:
+```bash
+/home/vokov/.local/bin/pytest tests/ -q
+python3 -m src.cli.main fitness
+```
+
+### Step 2: Release Tagging & Code Freeze
+Tag the current verified commit with an annotated release tag and push to remote:
+```bash
+git tag -a sprint_<XXX>_done -m "sprint_<XXX>: <Sprint Title> sealed"
+git push origin sprint_<XXX>_done
+```
+
+### Step 3: Rule Distillation & Context Compaction (ADR-005)
+Update relevant ADRs in `docs/adr/` with any new permanent invariants (e.g., `INV-014-06`).
+Recompile the active rules snapshot:
+```bash
+python3 -m src.cli.main compile
+```
+Verify word count budget:
+```bash
+wc -w .context/active_rules.md
+# Invariant: Must strictly be < 500 words
+```
+
+### Step 4: Core Skills Audit
+Audit `~/.agents/skills/` to ensure presence and validity of required B-SDD skills:
+- `b-sdd`
+- `session-distiller`
+- `kindle-release-pipeline`
+- `laya-decision-router`
+- `safe-refactor`
+- `code-reviewer`
+- `b-sdd-sprint-closure`
+
+### Step 5: Codebase Text Dump Generation (`b-sdd_code_dump.txt`)
+Generate a fresh, unified Plain Text codebase dump containing only code (`.py`, `.sh`, `.json`, `.ts`, `.tsx`, etc.), excluding binaries, virtualenvs, and git caches:
+```bash
+# Option A: Via remote compilation node 184 batch service
+ssh -o BatchMode=yes vokov@192.168.3.184 "cd /home/vokov/projects/resume && ./run_md_service.sh --batch --source /home/vokov/projects/b-sdd --output /home/vokov/projects/b-sdd/b-sdd_code_dump.txt --code-only"
+scp vokov@192.168.3.184:/home/vokov/projects/b-sdd/b-sdd_code_dump.txt /home/vokov/projects/b-sdd/b-sdd_code_dump.txt
+
+# Option B: Via local pure stdlib script
+python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt
+```
+
+### Step 6: NotebookLM SSoT Pruning & Synchronization
+Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`.
+Using the NotebookLM MCP:
+1. List sources: `sources_list(notebook_id="205ee2ec-e0d2-4ba6-badf-44f2de02c7e2")`.
+2. Delete stale code dump (`sources_delete`).
+3. Prune transient test step reports and duplicate sources.
+4. Upload fresh `b-sdd_code_dump.txt` (`sources_add_file` with `mime_type="text/plain"`).
+
+### Step 7: Discrete Sprint Handoff Generation (ADR-007)
+Generate the atomic handoff artifact and update `.context/next_sprint.md` and `.context/sprint_handoff.json`:
+```bash
+./run_b_sdd.sh --handoff --prompt "Prepare Sprint <XXX+1>: <Next Sprint Title>"
+```
+
+### Step 8: Telemetric Callback Dispatch
+Send the sealed completion callback to the n8n supervisor webhook:
+```bash
+curl -s -X POST http://100.66.97.93:5678/webhook/bsdd-supervisor-result \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sprint_id": "sprint_<XXX>",
+    "status": "SEALED",
+    "phase": "PHI_7_DISTILLED",
+    "commit": "'$(git rev-parse HEAD)'",
+    "tag": "sprint_<XXX>_done",
+    "rules_word_count": '$(wc -w < .context/active_rules.md)',
+    "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+  }'
+```
+
+---
+
+## 3. Core Architectural Invariants
+- **INV-CLOSURE-01:** Never close a sprint without a passing test suite (`pytest tests/`).
+- **INV-CLOSURE-02:** Active rules snapshot in `.context/active_rules.md` must never exceed 500 words (ADR-005).
+- **INV-CLOSURE-03:** Codebase text dump in NotebookLM must be updated with the exact release commit state.
+- **INV-CLOSURE-04:** Supervisor callback must be sent synchronously at the completion of Phase $\Phi_7$.
+- **INV-CLOSURE-05:** Zero external pip dependencies in core runtime or closure scripts (ADR-002 Pure Stdlib).
+
+````
+
+---
+
 <a id="skill-brainstorming"></a>
-### [6/53] Скіл: `brainstorming`
+### [7/55] Скіл: `brainstorming`
 
 **Каталог:** `~/.agents/skills/brainstorming`  
 **Опис:** Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questioning, alternative exploration, and incremental validation. Don't use during clear 'mechanical' processes  
@@ -4743,7 +4864,7 @@ Start by understanding the current project context, then ask questions one at a 
 ---
 
 <a id="skill-caveman"></a>
-### [7/53] Скіл: `caveman`
+### [8/55] Скіл: `caveman`
 
 **Каталог:** `~/.agents/skills/caveman`  
 **Опис:** Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity levels: lite, full (default), ultra, wenyan-lite, wenyan-full, wenyan-ultra. Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens", "be brief", or invokes /caveman. Also auto-triggers when token efficiency is requested.  
@@ -4897,7 +5018,7 @@ Persisted outside chat: write normal prose — code, comments, commits, docs, is
 ---
 
 <a id="skill-cli-developer"></a>
-### [8/53] Скіл: `cli-developer`
+### [9/55] Скіл: `cli-developer`
 
 **Каталог:** `~/.agents/skills/cli-developer`  
 **Опис:** Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars and spinners, generating bash/zsh/fish completion scripts, CLI design, shell completions, and cross-platform terminal applications using commander, click, typer, or cobra.  
@@ -7063,7 +7184,7 @@ SEE ALSO
 ---
 
 <a id="skill-code-documenter"></a>
-### [9/53] Скіл: `code-documenter`
+### [10/55] Скіл: `code-documenter`
 
 **Каталог:** `~/.agents/skills/code-documenter`  
 **Опис:** Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use when adding docstrings to functions or classes, creating API documentation, building documentation sites, or writing tutorials and user guides. Invoke for OpenAPI/Swagger specs, JSDoc, doc portals, getting started guides.  
@@ -9435,7 +9556,7 @@ Credit card, PayPal, wire transfer (annual plans only).
 ---
 
 <a id="skill-code-reviewer"></a>
-### [10/53] Скіл: `code-reviewer`
+### [11/55] Скіл: `code-reviewer`
 
 **Каталог:** `~/.agents/skills/code-reviewer`  
 **Опис:** Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming issues, and architectural concerns, then produces a structured review report with prioritized, actionable feedback. Use when reviewing pull requests, conducting code quality audits, identifying refactoring opportunities, or checking for security issues. Invoke for PR reviews, code quality checks, refactoring suggestions, review code, code quality. Complements specialized skills (security-reviewer, test-master) by providing broad-scope review across correctness, performance, maintainability, and test coverage in a single pass.  
@@ -10577,7 +10698,7 @@ All requirements verified:
 ---
 
 <a id="skill-codebase-design"></a>
-### [11/53] Скіл: `codebase-design`
+### [12/55] Скіл: `codebase-design`
 
 **Каталог:** `~/.agents/skills/codebase-design`  
 **Опис:** Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.  
@@ -10796,7 +10917,7 @@ Good interfaces make testing natural:
 ---
 
 <a id="skill-condition-based-waiting"></a>
-### [12/53] Скіл: `condition-based-waiting`
+### [13/55] Скіл: `condition-based-waiting`
 
 **Каталог:** `~/.agents/skills/condition-based-waiting`  
 **Опис:** Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for actual state changes, eliminating flaky tests from timing guesses  
@@ -11093,7 +11214,7 @@ export function waitForEventMatch(
 ---
 
 <a id="skill-defense-in-depth"></a>
-### [13/53] Скіл: `defense-in-depth`
+### [14/55] Скіл: `defense-in-depth`
 
 **Каталог:** `~/.agents/skills/defense-in-depth`  
 **Опис:** Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to make bugs structurally impossible  
@@ -11234,7 +11355,7 @@ All four layers were necessary. During testing, each layer caught bugs the other
 ---
 
 <a id="skill-diagnosing-bugs"></a>
-### [14/53] Скіл: `diagnosing-bugs`
+### [15/55] Скіл: `diagnosing-bugs`
 
 **Каталог:** `~/.agents/skills/diagnosing-bugs`  
 **Опис:** Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.  
@@ -11428,7 +11549,7 @@ printf 'ERROR_MSG=%s\n' "$ERROR_MSG"
 ---
 
 <a id="skill-drakon-compiler"></a>
-### [15/53] Скіл: `drakon-compiler`
+### [16/55] Скіл: `drakon-compiler`
 
 **Каталог:** `~/.agents/skills/drakon-compiler`  
 **Опис:** Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict skewer alignment.  
@@ -11552,7 +11673,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-executing-plans"></a>
-### [16/53] Скіл: `executing-plans`
+### [17/55] Скіл: `executing-plans`
 
 **Каталог:** `~/.agents/skills/executing-plans`  
 **Опис:** Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes tasks in batches, reports for review between batches  
@@ -11642,7 +11763,7 @@ After all tasks complete and verified:
 ---
 
 <a id="skill-find-skills"></a>
-### [17/53] Скіл: `find-skills`
+### [18/55] Скіл: `find-skills`
 
 **Каталог:** `~/.agents/skills/find-skills`  
 **Опис:** Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.  
@@ -11798,7 +11919,7 @@ npx skills init my-xyz-skill
 ---
 
 <a id="skill-frontend-design"></a>
-### [18/53] Скіл: `frontend-design`
+### [19/55] Скіл: `frontend-design`
 
 **Каталог:** `~/.agents/skills/frontend-design`  
 **Опис:** Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.  
@@ -12036,7 +12157,7 @@ Remember: Claude is capable of extraordinary creative work. Don't hold back, sho
 ---
 
 <a id="skill-grill-with-docs"></a>
-### [19/53] Скіл: `grill-with-docs`
+### [20/55] Скіл: `grill-with-docs`
 
 **Каталог:** `~/.agents/skills/grill-with-docs`  
 **Опис:** A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.  
@@ -12057,7 +12178,7 @@ Run a `/grilling` session, using the `/domain-modeling` skill.
 ---
 
 <a id="skill-handoff"></a>
-### [20/53] Скіл: `handoff`
+### [21/55] Скіл: `handoff`
 
 **Каталог:** `~/.agents/skills/handoff`  
 **Опис:** Compact the current conversation into a handoff document for another agent to pick up.  
@@ -12087,7 +12208,7 @@ If the user passed arguments, treat them as a description of what the next sessi
 ---
 
 <a id="skill-improve-codebase-architecture"></a>
-### [21/53] Скіл: `improve-codebase-architecture`
+### [22/55] Скіл: `improve-codebase-architecture`
 
 **Каталог:** `~/.agents/skills/improve-codebase-architecture`  
 **Опис:** Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.  
@@ -12295,7 +12416,7 @@ Side effects happen inline as decisions crystallize — run the `/domain-modelin
 ---
 
 <a id="skill-intent-continuity"></a>
-### [22/53] Скіл: `intent-continuity`
+### [23/55] Скіл: `intent-continuity`
 
 **Каталог:** `~/.agents/skills/intent-continuity`  
 **Опис:** Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization.  
@@ -12330,7 +12451,7 @@ Guarantee that all generated, modified, or refactored code strictly complies wit
 ---
 
 <a id="skill-investigate-first"></a>
-### [23/53] Скіл: `investigate-first`
+### [24/55] Скіл: `investigate-first`
 
 **Каталог:** `~/.agents/skills/investigate-first`  
 **Опис:** Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked hypotheses.  
@@ -12369,7 +12490,7 @@ interface:
 ---
 
 <a id="skill-kindle-release-pipeline"></a>
-### [24/53] Скіл: `kindle-release-pipeline`
+### [25/55] Скіл: `kindle-release-pipeline`
 
 **Каталог:** `~/.agents/skills/kindle-release-pipeline`  
 **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.  
@@ -13539,7 +13660,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-laya-decision-router"></a>
-### [25/53] Скіл: `laya-decision-router`
+### [26/55] Скіл: `laya-decision-router`
 
 **Каталог:** `~/.agents/skills/laya-decision-router`  
 **Опис:** Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing.  
@@ -13674,7 +13795,7 @@ Before completing any task utilizing Laya Decision Router:
 ---
 
 <a id="skill-make-interfaces-feel-better"></a>
-### [26/53] Скіл: `make-interfaces-feel-better`
+### [27/55] Скіл: `make-interfaces-feel-better`
 
 **Каталог:** `~/.agents/skills/make-interfaces-feel-better`  
 **Опис:** Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover states, shadows, borders, typography, micro-interactions, enter/exit animations, or any visual detail work. Triggers on UI polish, design details, "make it feel better", "feels off", stagger animations, border radius, optical alignment, font smoothing, tabular numbers, image outlines, box shadows.  
@@ -14714,7 +14835,7 @@ Some fonts (like Inter) change the visual appearance of numerals with this prope
 ---
 
 <a id="skill-mcp-builder"></a>
-### [27/53] Скіл: `mcp-builder`
+### [28/55] Скіл: `mcp-builder`
 
 **Каталог:** `~/.agents/skills/mcp-builder`  
 **Опис:** Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).  
@@ -18295,7 +18416,7 @@ mcp>=1.1.0
 ---
 
 <a id="skill-notebooklm"></a>
-### [28/53] Скіл: `notebooklm`
+### [29/55] Скіл: `notebooklm`
 
 **Каталог:** `~/.agents/skills/notebooklm`  
 **Опис:** Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact types, download in multiple formats. Activates on explicit /notebooklm or intent like "create a podcast about X  
@@ -18872,7 +18993,7 @@ notebooklm language --help     # Language settings
 ---
 
 <a id="skill-notebooklm-gitnexus-copilot"></a>
-### [29/53] Скіл: `notebooklm-gitnexus-copilot`
+### [30/55] Скіл: `notebooklm-gitnexus-copilot`
 
 **Каталог:** `~/.agents/skills/notebooklm-gitnexus-copilot`  
 **Опис:** Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic work packet execution where NotebookLM drafts exact code snippets from 100% full-code context. Use for refactoring, feature implementation, and architectural reviews.  
@@ -19043,7 +19164,7 @@ call_mcp_tool("notebooklm", "chat_ask", {
 ---
 
 <a id="skill-root-cause-tracing"></a>
-### [30/53] Скіл: `root-cause-tracing`
+### [31/55] Скіл: `root-cause-tracing`
 
 **Каталог:** `~/.agents/skills/root-cause-tracing`  
 **Опис:** Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, adding instrumentation when needed, to identify source of invalid data or incorrect behavior  
@@ -19299,7 +19420,7 @@ exit 0
 ---
 
 <a id="skill-safe-refactor"></a>
-### [31/53] Скіл: `safe-refactor`
+### [32/55] Скіл: `safe-refactor`
 
 **Каталог:** `~/.agents/skills/safe-refactor`  
 **Опис:** Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits.  
@@ -19337,8 +19458,53 @@ interface:
 
 ---
 
+<a id="skill-session-distiller"></a>
+### [33/55] Скіл: `session-distiller`
+
+**Каталог:** `~/.agents/skills/session-distiller`  
+**Опис:** Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007).  
+**Файлів у складі:** 1  
+
+#### Файл: `session-distiller/SKILL.md` (1,506 байт)
+````markdown
+---
+name: session-distiller
+description: Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007).
+---
+
+# Session Distiller (B-SDD Session Compactor & Handoff Protocol)
+
+The **Session Distiller** crystallizes raw multi-turn agent conversations (transcripts) into structured architectural decisions, modified seams, and sprint-to-sprint handoffs conforming to **ADR-006** and **ADR-007**.
+
+## 1. When to Use
+- At the end of a sprint (Phase $\Phi_6 \to \Phi_7$ Sprint Closure).
+- When context budget is nearing exhaustion and requires distillation into `.context/session_distillation.md`.
+- To generate atomic `sprint_handoff.json` and `next_sprint.md` for seamless chaining to subsequent agent sessions.
+
+## 2. Invocation
+From the repository root (`~/projects/b-sdd`):
+```bash
+# Generate session distillation
+python3 -m src.cli.main distill --json
+
+# Generate full sprint handoff
+python3 -m src.cli.main handoff --prompt "Next sprint directive"
+
+# Or via canonical runner
+./run_b_sdd.sh --handoff --prompt "Next sprint directive"
+```
+
+## 3. Core Invariants
+- **ADR-002 Pure Stdlib:** Uses 100% Python Standard Library without external pip dependencies.
+- **Fitness Gate Integration:** Verifies architecture fitness gates before finalizing handoff payloads.
+- **Dual-Output Artifacts:** Produces both machine-readable JSON (`.context/sprint_handoff.json`) and human/LLM-readable markdown (`.context/next_sprint.md`).
+
+````
+
+---
+
 <a id="skill-skill-audit"></a>
-### [32/53] Скіл: `skill-audit`
+### [34/55] Скіл: `skill-audit`
 
 **Каталог:** `~/.agents/skills/skill-audit`  
 **Опис:** Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing new skills, before sharing skills upstream, or during periodic skill maintenance.  
@@ -19420,7 +19586,7 @@ Action: fill with concrete guidance or remove.
 ---
 
 <a id="skill-skill-creator"></a>
-### [33/53] Скіл: `skill-creator`
+### [35/55] Скіл: `skill-creator`
 
 **Каталог:** `~/.agents/skills/skill-creator`  
 **Опис:** Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.  
@@ -20637,7 +20803,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-subagent-driven-development"></a>
-### [34/53] Скіл: `subagent-driven-development`
+### [36/55] Скіл: `subagent-driven-development`
 
 **Каталог:** `~/.agents/skills/subagent-driven-development`  
 **Опис:** Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between tasks, enabling fast iteration with quality gates  
@@ -20840,7 +21006,7 @@ See code-reviewer template: requesting-code-review/code-reviewer.md
 ---
 
 <a id="skill-surgical-patch"></a>
-### [35/53] Скіл: `surgical-patch`
+### [37/55] Скіл: `surgical-patch`
 
 **Каталог:** `~/.agents/skills/surgical-patch`  
 **Опис:** Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests matter.  
@@ -20879,7 +21045,7 @@ interface:
 ---
 
 <a id="skill-systematic-debugging"></a>
-### [36/53] Скіл: `systematic-debugging`
+### [38/55] Скіл: `systematic-debugging`
 
 **Каталог:** `~/.agents/skills/systematic-debugging`  
 **Опис:** Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysis, hypothesis testing, implementation) that ensures understanding before attempting solutions  
@@ -21541,7 +21707,7 @@ Which do you choose? Be honest about what you would actually do with senior engi
 ---
 
 <a id="skill-test-driven-development"></a>
-### [37/53] Скіл: `test-driven-development`
+### [39/55] Скіл: `test-driven-development`
 
 **Каталог:** `~/.agents/skills/test-driven-development`  
 **Опис:** Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures tests actually verify behavior by requiring failure first  
@@ -21919,7 +22085,7 @@ No exceptions without your human partner's permission.
 ---
 
 <a id="skill-testing-anti-patterns"></a>
-### [38/53] Скіл: `testing-anti-patterns`
+### [40/55] Скіл: `testing-anti-patterns`
 
 **Каталог:** `~/.agents/skills/testing-anti-patterns`  
 **Опис:** Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production pollution with test-only methods, and mocking without understanding dependencies  
@@ -22235,7 +22401,7 @@ Fix: Test real behavior or question why you're mocking at all.
 ---
 
 <a id="skill-theme-factory"></a>
-### [39/53] Скіл: `theme-factory`
+### [41/55] Скіл: `theme-factory`
 
 **Каталог:** `~/.agents/skills/theme-factory`  
 **Опис:** Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.  
@@ -22754,7 +22920,7 @@ Tech startups, software launches, innovation showcases, AI/ML presentations, dig
 ---
 
 <a id="skill-to-spec"></a>
-### [40/53] Скіл: `to-spec`
+### [42/55] Скіл: `to-spec`
 
 **Каталог:** `~/.agents/skills/to-spec`  
 **Опис:** Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.  
@@ -22843,7 +23009,7 @@ Any further notes about the feature.
 ---
 
 <a id="skill-to-tickets"></a>
-### [41/53] Скіл: `to-tickets`
+### [43/55] Скіл: `to-tickets`
 
 **Каталог:** `~/.agents/skills/to-tickets`  
 **Опис:** Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker — edges as text in a local file, or native blocking links on a real tracker.  
@@ -22971,7 +23137,7 @@ Work the frontier one ticket at a time with `/implement`, clearing context betwe
 ---
 
 <a id="skill-using-git-worktrees"></a>
-### [42/53] Скіл: `using-git-worktrees`
+### [44/55] Скіл: `using-git-worktrees`
 
 **Каталог:** `~/.agents/skills/using-git-worktrees`  
 **Опис:** Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification  
@@ -23198,7 +23364,7 @@ Ready to implement auth feature
 ---
 
 <a id="skill-utopia-intent-ledger"></a>
-### [43/53] Скіл: `utopia-intent-ledger`
+### [45/55] Скіл: `utopia-intent-ledger`
 
 **Каталог:** `~/.agents/skills/utopia-intent-ledger`  
 **Опис:** Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge graph.  
@@ -23349,7 +23515,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-vercel-composition-patterns"></a>
-### [44/53] Скіл: `vercel-composition-patterns`
+### [46/55] Скіл: `vercel-composition-patterns`
 
 **Каталог:** `~/.agents/skills/vercel-composition-patterns`  
 **Опис:** React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.  
@@ -25378,7 +25544,7 @@ nested inside each other—they just need to be within the same provider.
 ---
 
 <a id="skill-vercel-react-best-practices"></a>
-### [45/53] Скіл: `vercel-react-best-practices`
+### [47/55] Скіл: `vercel-react-best-practices`
 
 **Каталог:** `~/.agents/skills/vercel-react-best-practices`  
 **Опис:** React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.  
@@ -33759,7 +33925,7 @@ function Profile({ name }: { name: string }) {
 ---
 
 <a id="skill-verification-before-completion"></a>
-### [46/53] Скіл: `verification-before-completion`
+### [48/55] Скіл: `verification-before-completion`
 
 **Каталог:** `~/.agents/skills/verification-before-completion`  
 **Опис:** Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always  
@@ -33912,7 +34078,7 @@ This is non-negotiable.
 ---
 
 <a id="skill-wayfinder"></a>
-### [47/53] Скіл: `wayfinder`
+### [49/55] Скіл: `wayfinder`
 
 **Каталог:** `~/.agents/skills/wayfinder`  
 **Опис:** Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.  
@@ -34053,7 +34219,7 @@ The user may run unblocked tickets in parallel, so expect other sessions to be e
 ---
 
 <a id="skill-web-artifacts-builder"></a>
-### [48/53] Скіл: `web-artifacts-builder`
+### [50/55] Скіл: `web-artifacts-builder`
 
 **Каталог:** `~/.agents/skills/web-artifacts-builder`  
 **Опис:** Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.  
@@ -34731,7 +34897,7 @@ echo "  import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/di
 ---
 
 <a id="skill-web-design-guidelines"></a>
-### [49/53] Скіл: `web-design-guidelines`
+### [51/55] Скіл: `web-design-guidelines`
 
 **Каталог:** `~/.agents/skills/web-design-guidelines`  
 **Опис:** Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".  
@@ -34784,7 +34950,7 @@ If no files specified, ask the user which files to review.
 ---
 
 <a id="skill-webapp-testing"></a>
-### [50/53] Скіл: `webapp-testing`
+### [52/55] Скіл: `webapp-testing`
 
 **Каталог:** `~/.agents/skills/webapp-testing`  
 **Опис:** Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.  
@@ -35329,7 +35495,7 @@ if __name__ == '__main__':
 ---
 
 <a id="skill-writing-great-skills"></a>
-### [51/53] Скіл: `writing-great-skills`
+### [53/55] Скіл: `writing-great-skills`
 
 **Каталог:** `~/.agents/skills/writing-great-skills`  
 **Опис:** Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.  
@@ -35632,7 +35798,7 @@ Use these to diagnose issues the user may be having with the skill.
 ---
 
 <a id="skill-writing-plans"></a>
-### [52/53] Скіл: `writing-plans`
+### [54/55] Скіл: `writing-plans`
 
 **Каталог:** `~/.agents/skills/writing-plans`  
 **Опис:** Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans with exact file paths, complete code examples, and verification steps assuming engineer has minimal domain knowledge  
@@ -35762,7 +35928,7 @@ After saving the plan, offer execution choice:
 ---
 
 <a id="skill-writing-skills"></a>
-### [53/53] Скіл: `writing-skills`
+### [55/55] Скіл: `writing-skills`
 
 **Каталог:** `~/.agents/skills/writing-skills`  
 **Опис:** Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with subagents before writing, iterating until bulletproof against rationalization  
