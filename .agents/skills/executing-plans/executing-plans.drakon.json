@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "name": "executing-plans",
+  "category": "bssd_project_skill",
+  "description": "Дисципліноване пакетне виконання затверджених планів реалізації з контрольними точками верифікації.",
+  "params": "context: dict, options: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Виконання executing-plans",
+      "edges": {
+        "down": "step_init",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_init",
+      "node_type": "action",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
+      "edges": {
+        "down": "check_precond",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
+      "edges": {
+        "down": "step_verify",
+        "right": "err_precond"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "err_precond",
+      "node_type": "action",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "end_failed",
+      "node_type": "end",
+      "label": "Аварійне завершення: Зупинка виконання",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 3: Фінальна верифікація та телеметрія",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Процедуру executing-plans виконано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    }
+  ],
+  "meta": {
+    "skill_name": "executing-plans",
+    "skill_type": "PROJECT_SKILL",
+    "immutable": false,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

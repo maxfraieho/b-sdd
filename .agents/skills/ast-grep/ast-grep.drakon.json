@@ -3,14 +3,14 @@
   "name": "ast-grep",
   "category": "bssd_project_skill",
   "description": "Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST).",
-  "params": "pattern: str, target_path: str, language: str",
+  "params": "context: dict, options: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Структурний аналіз коду через ast-grep",
+      "label": "Початок: Виконання ast-grep",
       "edges": {
-        "down": "step_1",
+        "down": "step_init",
         "right": null
       },
       "semantic_binding": {
@@ -21,11 +21,11 @@
       "y": 0.0
     },
     {
-      "node_id": "step_1",
+      "node_id": "step_init",
       "node_type": "action",
-      "label": "Крок 1: Верифікація патерну через CST/AST парсинг",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
       "edges": {
-        "down": "step_2",
+        "down": "check_precond",
         "right": null
       },
       "semantic_binding": {
@@ -35,12 +35,12 @@
       "y": 2.0
     },
     {
-      "node_id": "step_2",
-      "node_type": "action",
-      "label": "Крок 2: Виконання сканування цільової директорії",
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
       "edges": {
-        "down": "check_matches",
-        "right": null
+        "down": "step_verify",
+        "right": "err_precond"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -49,23 +49,23 @@
       "y": 4.0
     },
     {
-      "node_id": "check_matches",
-      "node_type": "question",
-      "label": "Крок 3: Синтаксичні збіги валідні та знайдені?",
+      "node_id": "err_precond",
+      "node_type": "action",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
       "edges": {
-        "down": "step_format",
-        "right": "err_matches"
+        "down": "end_failed",
+        "right": null
       },
       "semantic_binding": {
-        "severity": "normal"
+        "severity": "critical"
       },
-      "x": 0.0,
-      "y": 6.0
+      "x": 4.0,
+      "y": 4.0
     },
     {
-      "node_id": "err_matches",
+      "node_id": "end_failed",
       "node_type": "end",
-      "label": "Аварійне завершення: Помилка синтаксичного патерну",
+      "label": "Аварійне завершення: Зупинка виконання",
       "edges": {
         "down": null,
         "right": null
@@ -77,9 +77,9 @@
       "y": 6.0
     },
     {
-      "node_id": "step_format",
+      "node_id": "step_verify",
       "node_type": "action",
-      "label": "Крок 4: Форматування результатів у структурований JSON",
+      "label": "Крок 3: Фінальна верифікація та телеметрія",
       "edges": {
         "down": "end_success",
         "right": null
@@ -88,12 +88,12 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0
+      "y": 6.0
     },
     {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Структурний аналіз завершено",
+      "label": "Успішне завершення: Процедуру ast-grep виконано",
       "edges": {
         "down": null,
         "right": null
@@ -102,7 +102,7 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0
+      "y": 8.0
     }
   ],
   "meta": {

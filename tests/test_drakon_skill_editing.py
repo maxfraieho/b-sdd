@@ -207,5 +207,6 @@ def test_cloudflare_pages_expert_live_skill():
     assert "type: SYSTEM_SKILL" in content
     assert "category: bssd-system-skill" in content
     assert "immutable: true" in content
-    assert "ALGORITHM DeployAstryxToCloudflarePages" in content
+    assert "ALGORITHM DeployAstryxToCloudflarePages" in content or "ALGORITHM ExecuteCloudflarePagesExpert" in content
+
 

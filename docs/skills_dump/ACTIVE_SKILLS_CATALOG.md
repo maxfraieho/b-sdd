@@ -1,6 +1,6 @@
 # B-SDD ACTIVE CORE SKILLS CATALOG (59 ACTIVE SKILLS)
 
-**Дата генерації:** 2026-09-22 11:07:42Z  
+**Дата генерації:** 2026-09-22 11:21:04Z  
 **Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  
 **Каталог активних скілів:** `/home/vokov/.agents/skills`  
 **Каталог розширених скілів:** `/home/vokov/.agents/skills/_extended`  
@@ -53,7 +53,7 @@
 - **Назва:** session-distiller
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Distills, compacts, and extracts architectural decisions, invariants, and handoffs from agent transcripts using SessionDistiller (ADR-006, ADR-007).
+- **Опис:** Аналітична дистиляція логів довгих сесій у компактні підсумки, архітектурні висновки та списки задач.
 - **Шлях:** `~/.agents/skills/session-distiller`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, session-distiller.drakon.json`
@@ -62,7 +62,7 @@
 - **Назва:** intent-continuity
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Enforces non-drifting code implementation backed by active bitemporal architectural rules, ADR compliance, and Utopia DB bitemporal synchronization.
+- **Опис:** Забезпечення безперервності намірів та рішень крізь розподілені агентські сесії через бітемпоральний леджер.
 - **Шлях:** `~/.agents/skills/intent-continuity`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, intent-continuity.drakon.json`
@@ -71,7 +71,7 @@
 - **Назва:** laya-decision-router
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Sub-40ms System 1 non-autoregressive decision engine for task classification, prompt guardrails, and typed skill routing.
+- **Опис:** Суб-40мс не-авторегресивна System 1 класифікація задач, оцінка ризиків порушення ADR та маршрутизація скілів на Pixel 7.
 - **Шлях:** `~/.agents/skills/laya-decision-router`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, laya-decision-router.drakon.json`
@@ -80,7 +80,7 @@
 - **Назва:** drakon-compiler
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Compiles DRAKON visual algorithm diagrams into Intermediate Representation (IR) and executable macro-prompts using planar graph solver (C=0, X=0) and strict skewer alignment.
+- **Опис:** Компіляція планарних ДРАКОН-схем (.drakon.json) у виконуваний код (Python/TypeScript), зворотна трансляція та валідація інваріантів C=0.
 - **Шлях:** `~/.agents/skills/drakon-compiler`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, drakon-compiler.drakon.json, scripts/compile_drakon.py`
@@ -89,7 +89,7 @@
 - **Назва:** utopia-intent-ledger
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Manages bitemporal WORM ledger transactions, validates tripartite ADR ontology, and executes atomic synchronization with Utopia DB intent store and knowledge graph.
+- **Опис:** Синхронізація архітектурних рішень та графів намірів у незмінний WORM-леджер Utopia DB на вузлі 192.168.3.251.
 - **Шлях:** `~/.agents/skills/utopia-intent-ledger`
 - **Кількість файлів коду/конфігів:** 4
 - **Ключові файли:** `SKILL.md, utopia-intent-ledger.drakon.json, scripts/sync_utopia.py, scripts/validate_ontology.py`
@@ -107,7 +107,7 @@
 - **Назва:** skill-creator
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+- **Опис:** Створення та кристалізація нових агентських скілів за правилом 2-х повторень з повною генерацією маніфесту та схеми.
 - **Шлях:** `~/.agents/skills/skill-creator`
 - **Кількість файлів коду/конфігів:** 8
 - **Ключові файли:** `LICENSE.txt, SKILL.md, skill-creator.drakon.json, references/output-patterns.md, references/workflows.md, scripts/init_skill.py, scripts/package_skill.py, scripts/quick_validate.py`
@@ -116,7 +116,7 @@
 - **Назва:** writing-great-skills
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Reference for writing and editing skills well — the vocabulary and principles that make a skill predictable.
+- **Опис:** Керівництво зі створення високоефективних, лаконічних та однозначних інструкцій для агентів.
 - **Шлях:** `~/.agents/skills/writing-great-skills`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `GLOSSARY.md, SKILL.md, writing-great-skills.drakon.json`
@@ -125,7 +125,7 @@
 - **Назва:** writing-skills
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when creating new skills, editing existing skills, or verifying skills work before deployment - applies TDD to process documentation by testing with subagents before writing, iterating until bulletproof against rationalization
+- **Опис:** Базові стандарти синтаксису, метаданих та формулювання процедурних правил для каталогу скілів.
 - **Шлях:** `~/.agents/skills/writing-skills`
 - **Кількість файлів коду/конфігів:** 4
 - **Ключові файли:** `SKILL.md, anthropic-best-practices.md, persuasion-principles.md, writing-skills.drakon.json`
@@ -134,7 +134,7 @@
 - **Назва:** skill-audit
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when auditing the skills installed in ~/.claude/skills/ for structure quality, metadata completeness, and instruction usefulness. Run after installing new skills, before sharing skills upstream, or during periodic skill maintenance.
+- **Опис:** Ревізія та верифікація скілів на відповідність стандартам таксономії ADR-015, планарності ДРАКОН та актуальності.
 - **Шлях:** `~/.agents/skills/skill-audit`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, skill-audit.drakon.json`
@@ -143,7 +143,7 @@
 - **Назва:** find-skills
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.
+- **Опис:** Пошук та виявлення релевантних спеціалізованих скілів у локальному та розширеному каталозі агентів.
 - **Шлях:** `~/.agents/skills/find-skills`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, find-skills.drakon.json`
@@ -156,7 +156,7 @@
 - **Назва:** writing-plans
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when design is complete and you need detailed implementation tasks for engineers with zero codebase context - creates comprehensive implementation plans with exact file paths, complete code examples, and verification steps assuming engineer has minimal domain knowledge
+- **Опис:** Складання структурованих, інкрементних планів реалізації з чіткими критеріями перевірки кожного кроку.
 - **Шлях:** `~/.agents/skills/writing-plans`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, writing-plans.drakon.json`
@@ -165,7 +165,7 @@
 - **Назва:** executing-plans
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when partner provides a complete implementation plan to execute in controlled batches with review checkpoints - loads plan, reviews critically, executes tasks in batches, reports for review between batches
+- **Опис:** Дисципліноване пакетне виконання затверджених планів реалізації з контрольними точками верифікації.
 - **Шлях:** `~/.agents/skills/executing-plans`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, executing-plans.drakon.json`
@@ -174,7 +174,7 @@
 - **Назва:** to-spec
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you've already discussed.
+- **Опис:** Трансформація неструктурованих вимог та ідей у суворі, формальні інженерні специфікації поведінки.
 - **Шлях:** `~/.agents/skills/to-spec`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, to-spec.drakon.json`
@@ -183,7 +183,7 @@
 - **Назва:** to-tickets
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published to the configured tracker — edges as text in a local file, or native blocking links on a real tracker.
+- **Опис:** Декомпозиція високорівневих специфікацій на атомарні, машинозчитувані тікети для автономних виконавців.
 - **Шлях:** `~/.agents/skills/to-tickets`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, to-tickets.drakon.json`
@@ -192,7 +192,7 @@
 - **Назва:** wayfinder
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Plan a huge chunk of work — more than one agent session can hold — as a shared map of investigation tickets on your issue tracker, and resolve them one at a time until the way to the destination is clear.
+- **Опис:** Навігація по великих кодових базах, пошук точок входу, картування залежностей та побудова маршруту дослідження.
 - **Шлях:** `~/.agents/skills/wayfinder`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, wayfinder.drakon.json`
@@ -201,7 +201,7 @@
 - **Назва:** subagent-driven-development
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when executing implementation plans with independent tasks in the current session - dispatches fresh subagent for each task with code review between tasks, enabling fast iteration with quality gates
+- **Опис:** Делегування ізольованих підзадач незалежним субагентам для збереження контекстного бюджету головного агента.
 - **Шлях:** `~/.agents/skills/subagent-driven-development`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, subagent-driven-development.drakon.json`
@@ -210,7 +210,7 @@
 - **Назва:** handoff
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Compact the current conversation into a handoff document for another agent to pick up.
+- **Опис:** Формування дискретного, машинозчитуваного артефакту передачі контексту між сесіями та спринтами (ADR-007).
 - **Шлях:** `~/.agents/skills/handoff`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, handoff.drakon.json`
@@ -228,7 +228,7 @@
 - **Назва:** grill-with-docs
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
+- **Опис:** Інтенсивне структуроване інтерв'ю для виявлення прихованих припущень та паралельного формування ADR і глосарію домену.
 - **Шлях:** `~/.agents/skills/grill-with-docs`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, grill-with-docs.drakon.json`
@@ -241,7 +241,7 @@
 - **Назва:** safe-refactor
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits.
+- **Опис:** Безпечний рефакторинг коду під захистом автоматизованих тестів зі збереженням поведінкових інваріантів.
 - **Шлях:** `~/.agents/skills/safe-refactor`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, safe-refactor.drakon.json, agents/openai.yaml`
@@ -250,7 +250,7 @@
 - **Назва:** surgical-patch
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests matter.
+- **Опис:** Точкове, мінімально інвазивне внесення виправлень без супутнього руйнування сусіднього коду та структури.
 - **Шлях:** `~/.agents/skills/surgical-patch`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, surgical-patch.drakon.json, agents/openai.yaml`
@@ -259,7 +259,7 @@
 - **Назва:** codebase-design
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening opportunities, decide where a seam goes, make code more testable or AI-navigable, or when another skill needs the deep-module vocabulary.
+- **Опис:** Формування архітектурної чистоти та структури кодової бази, розділення модулів, дотримання слабкої зв'язності (loose coupling).
 - **Шлях:** `~/.agents/skills/codebase-design`
 - **Кількість файлів коду/конфігів:** 4
 - **Ключові файли:** `DEEPENING.md, DESIGN-IT-TWICE.md, SKILL.md, codebase-design.drakon.json`
@@ -268,7 +268,7 @@
 - **Назва:** improve-codebase-architecture
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
+- **Опис:** Поглиблення неглибоких модулів, реструктуризація коду за принципами Джона Оустерхаута та оптимізація інтерфейсів.
 - **Шлях:** `~/.agents/skills/improve-codebase-architecture`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `HTML-REPORT.md, SKILL.md, improve-codebase-architecture.drakon.json`
@@ -277,7 +277,7 @@
 - **Назва:** code-reviewer
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Analyzes code diffs and files to identify bugs, security vulnerabilities (SQL injection, XSS, insecure deserialization), code smells, N+1 queries, naming issues, and architectural concerns, then produces a structured review report with prioritized, actionable feedback. Use when reviewing pull requests, conducting code quality audits, identifying refactoring opportunities, or checking for security issues. Invoke for PR reviews, code quality checks, refactoring suggestions, review code, code quality. Complements specialized skills (security-reviewer, test-master) by providing broad-scope review across correctness, performance, maintainability, and test coverage in a single pass.
+- **Опис:** Аналіз код-дифів (PR/MR), виявлення архітектурних запахів, вразливостей безпеки, дефектів продуктивності та надання конструктивного рев'ю.
 - **Шлях:** `~/.agents/skills/code-reviewer`
 - **Кількість файлів коду/конфігів:** 8
 - **Ключові файли:** `SKILL.md, code-reviewer.drakon.json, references/common-issues.md, references/feedback-examples.md, references/receiving-feedback.md, references/report-template.md, references/review-checklist.md, references/spec-compliance-review.md`
@@ -286,7 +286,7 @@
 - **Назва:** code-documenter
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Generates, formats, and validates technical documentation — including docstrings, OpenAPI/Swagger specs, JSDoc annotations, doc portals, and user guides. Use when adding docstrings to functions or classes, creating API documentation, building documentation sites, or writing tutorials and user guides. Invoke for OpenAPI/Swagger specs, JSDoc, doc portals, getting started guides.
+- **Опис:** Генерація, структурування та валідація технічної документації, коментарів JSDoc/docstrings та OpenAPI специфікацій.
 - **Шлях:** `~/.agents/skills/code-documenter`
 - **Кількість файлів коду/конфігів:** 10
 - **Ключові файли:** `SKILL.md, code-documenter.drakon.json, references/api-docs-fastapi-django.md, references/api-docs-nestjs-express.md, references/coverage-reports.md, references/documentation-systems.md, references/interactive-api-docs.md, references/python-docstrings.md` (+ 2 more...)
@@ -304,7 +304,7 @@
 - **Назва:** verification-before-completion
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always
+- **Опис:** Обов'язковий попередній аудит та запуск перевірочних скриптів перед декларуванням успішного завершення задачі.
 - **Шлях:** `~/.agents/skills/verification-before-completion`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, verification-before-completion.drakon.json`
@@ -313,7 +313,7 @@
 - **Назва:** using-git-worktrees
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification
+- **Опис:** Ізоляція робочих контекстів та паралельних завдань за допомогою механізму git worktree без перемикання поточної гілки.
 - **Шлях:** `~/.agents/skills/using-git-worktrees`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, using-git-worktrees.drakon.json`
@@ -326,7 +326,7 @@
 - **Назва:** test-driven-development
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures tests actually verify behavior by requiring failure first
+- **Опис:** Розробка через тестування (TDD): цикл Red-Green-Refactor, де жоден рядок коду не пишеться без попередньо падаючого тесту.
 - **Шлях:** `~/.agents/skills/test-driven-development`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, test-driven-development.drakon.json`
@@ -335,7 +335,7 @@
 - **Назва:** testing-anti-patterns
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when writing or changing tests, adding mocks, or tempted to add test-only methods to production code - prevents testing mock behavior, production pollution with test-only methods, and mocking without understanding dependencies
+- **Опис:** Виявлення та виправлення антипатернів тестування (надлишковий мокінг, тестування реалізації замість поведінки, tautological tests).
 - **Шлях:** `~/.agents/skills/testing-anti-patterns`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, testing-anti-patterns.drakon.json`
@@ -344,7 +344,7 @@
 - **Назва:** condition-based-waiting
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when tests have race conditions, timing dependencies, or inconsistent pass/fail behavior - replaces arbitrary timeouts with condition polling to wait for actual state changes, eliminating flaky tests from timing guesses
+- **Опис:** Ліквідація ненадійних тестів (flaky tests) через заміну фіксованих таймаутів на детерміноване очікування настання умов.
 - **Шлях:** `~/.agents/skills/condition-based-waiting`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, condition-based-waiting.drakon.json, example.ts`
@@ -353,7 +353,7 @@
 - **Назва:** defense-in-depth
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when invalid data causes failures deep in execution, requiring validation at multiple system layers - validates at every layer data passes through to make bugs structurally impossible
+- **Опис:** Ешелонована багаторівнева валідація даних на межах API, бізнес-логіки та системних викликів для запобігання дефектам.
 - **Шлях:** `~/.agents/skills/defense-in-depth`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, defense-in-depth.drakon.json`
@@ -362,7 +362,7 @@
 - **Назва:** webapp-testing
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.
+- **Опис:** Комплексне тестування веб-додатків через Playwright/Vitest, перевірка користувацьких сценаріїв та API-інтеграцій.
 - **Шлях:** `~/.agents/skills/webapp-testing`
 - **Кількість файлів коду/конфігів:** 7
 - **Ключові файли:** `LICENSE.txt, SKILL.md, webapp-testing.drakon.json, examples/console_logging.py, examples/element_discovery.py, examples/static_html_automation.py, scripts/with_server.py`
@@ -375,7 +375,7 @@
 - **Назва:** investigate-first
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked hypotheses.
+- **Опис:** Обов'язкове попереднє дослідження фактичного стану системи та коду перед будь-якими змінами чи гіпотезами.
 - **Шлях:** `~/.agents/skills/investigate-first`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, investigate-first.drakon.json, agents/openai.yaml`
@@ -384,7 +384,7 @@
 - **Назва:** systematic-debugging
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes - four-phase framework (root cause investigation, pattern analysis, hypothesis testing, implementation) that ensures understanding before attempting solutions
+- **Опис:** Методичне усунення дефектів: формулювання гіпотез, ізоляція причин, перевірка експериментами та закріплення тестами.
 - **Шлях:** `~/.agents/skills/systematic-debugging`
 - **Кількість файлів коду/конфігів:** 7
 - **Ключові файли:** `CREATION-LOG.md, SKILL.md, systematic-debugging.drakon.json, test-academic.md, test-pressure-1.md, test-pressure-2.md, test-pressure-3.md`
@@ -393,7 +393,7 @@
 - **Назва:** root-cause-tracing
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, adding instrumentation when needed, to identify source of invalid data or incorrect behavior
+- **Опис:** Глибинне трасування першопричин збоїв через граф залежностей та стек викликів до вихідного джерела помилки.
 - **Шлях:** `~/.agents/skills/root-cause-tracing`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, find-polluter.sh, root-cause-tracing.drakon.json`
@@ -402,7 +402,7 @@
 - **Назва:** diagnosing-bugs
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
+- **Опис:** Систематична петля діагностики критичних багів, регресій продуктивності та побудова відтворюваного детермінованого тест-кейсу.
 - **Шлях:** `~/.agents/skills/diagnosing-bugs`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `SKILL.md, diagnosing-bugs.drakon.json, scripts/hitl-loop.template.sh`
@@ -415,7 +415,7 @@
 - **Назва:** frontend-design
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, or applications. Generates creative, polished code that avoids generic AI aesthetics.
+- **Опис:** Створення виразних, ергономічних та високоякісних користувацьких вебінтерфейсів з униканням шаблонного дизайну.
 - **Шлях:** `~/.agents/skills/frontend-design`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `LICENSE.txt, SKILL.md, frontend-design.drakon.json`
@@ -433,7 +433,7 @@
 - **Назва:** cloudflare-pages-expert
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages через Wrangler CLI.
+- **Опис:** Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler CLI.
 - **Шлях:** `~/.agents/skills/cloudflare-pages-expert`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, cloudflare-pages-expert.drakon.json`
@@ -442,7 +442,7 @@
 - **Назва:** make-interfaces-feel-better
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover states, shadows, borders, typography, micro-interactions, enter/exit animations, or any visual detail work. Triggers on UI polish, design details, "make it feel better", "feels off", stagger animations, border radius, optical alignment, font smoothing, tabular numbers, image outlines, box shadows.
+- **Опис:** Полірування мікроінтеракцій, реактивності інтерфейсу, оптимістичних оновлень та сприйняття швидкодії UI.
 - **Шлях:** `~/.agents/skills/make-interfaces-feel-better`
 - **Кількість файлів коду/конфігів:** 6
 - **Ключові файли:** `SKILL.md, animations.md, make-interfaces-feel-better.drakon.json, performance.md, surfaces.md, typography.md`
@@ -451,7 +451,7 @@
 - **Назва:** web-design-guidelines
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".
+- **Опис:** Дотримання стандартів доступності (a11y), семантичної верстки, контрастності та адаптивності веб-інтерфейсів.
 - **Шлях:** `~/.agents/skills/web-design-guidelines`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, web-design-guidelines.drakon.json`
@@ -460,7 +460,7 @@
 - **Назва:** vercel-react-best-practices
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.
+- **Опис:** Інженерні стандарти продуктивності React та Next.js від Vercel: мінімізація ререндерів, бандлу та затримок.
 - **Шлях:** `~/.agents/skills/vercel-react-best-practices`
 - **Кількість файлів коду/конфігів:** 74
 - **Ключові файли:** `AGENTS.md, README.md, SKILL.md, vercel-react-best-practices.drakon.json, rules/advanced-effect-event-deps.md, rules/advanced-event-handler-refs.md, rules/advanced-init-once.md, rules/advanced-use-latest.md` (+ 66 more...)
@@ -469,7 +469,7 @@
 - **Назва:** vercel-composition-patterns
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.
+- **Опис:** Архітектурні патерни компонування сучасних React-додатків, серверні компоненти (RSC) та оптимізація рендерингу.
 - **Шлях:** `~/.agents/skills/vercel-composition-patterns`
 - **Кількість файлів коду/конфігів:** 12
 - **Ключові файли:** `AGENTS.md, README.md, SKILL.md, vercel-composition-patterns.drakon.json, rules/architecture-avoid-boolean-props.md, rules/architecture-compound-components.md, rules/patterns-children-over-render-props.md, rules/patterns-explicit-variants.md` (+ 4 more...)
@@ -478,7 +478,7 @@
 - **Назва:** web-artifacts-builder
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.
+- **Опис:** Автономна генерація односторінкових HTML/JS/CSS веб-артефактів, інтерактивних демонстрацій та візуалізаторів.
 - **Шлях:** `~/.agents/skills/web-artifacts-builder`
 - **Кількість файлів коду/конфігів:** 5
 - **Ключові файли:** `LICENSE.txt, SKILL.md, web-artifacts-builder.drakon.json, scripts/bundle-artifact.sh, scripts/init-artifact.sh`
@@ -487,7 +487,7 @@
 - **Назва:** theme-factory
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.
+- **Опис:** Проектування та гармонізація палітр кольорів, темної та світлої теми, токенів дизайну та типографіки.
 - **Шлях:** `~/.agents/skills/theme-factory`
 - **Кількість файлів коду/конфігів:** 13
 - **Ключові файли:** `LICENSE.txt, SKILL.md, theme-factory.drakon.json, themes/arctic-frost.md, themes/botanical-garden.md, themes/desert-rose.md, themes/forest-canopy.md, themes/golden-hour.md` (+ 5 more...)
@@ -500,7 +500,7 @@
 - **Назва:** kindle-release-pipeline
 - **Таксономія (ADR-015):** `SYSTEM_SKILL` 🔒 [IMMUTABLE]
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Autonomous pipeline for compiling B-SDD architecture documentation, ADRs, and sprint summaries into standard EPUB 3.0 ebooks and dispatching them directly to Amazon Kindle (tukroschu@kindle.com) via verified Gmail API / n8n Kindle Dispatcher without CC.
+- **Опис:** Повний релізний конвеєр компіляції дайджестів, оновлень архітектури та книг для мобільних рідерів Kindle.
 - **Шлях:** `~/.agents/skills/kindle-release-pipeline`
 - **Кількість файлів коду/конфігів:** 9
 - **Ключові файли:** `SKILL.md, kindle-release-pipeline.drakon.json, scripts/bsdd_to_kindle.py, scripts/dispatch_kindle_book.sh, scripts/dispatch_on_184.sh, scripts/dossier_to_kindle.py, scripts/kindle_digest.py, scripts/md_to_epub.py` (+ 1 more...)
@@ -518,7 +518,7 @@
 - **Назва:** notebooklm
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Complete API for Google NotebookLM - full programmatic access including features not in the web UI. Create notebooks, add sources, generate all artifact types, download in multiple formats. Activates on explicit /notebooklm or intent like "create a podcast about X
+- **Опис:** Взаємодія з Google NotebookLM API та MCP для організації досліджень, синтезу знань та аудіо-оглядів.
 - **Шлях:** `~/.agents/skills/notebooklm`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, notebooklm.drakon.json`
@@ -527,7 +527,7 @@
 - **Назва:** notebooklm-gitnexus-copilot
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Token-efficient AI pair programming methodology using Full-Code PDF aggregation, GitNexus code intelligence graph, and Google NotebookLM MCP. Supports atomic work packet execution where NotebookLM drafts exact code snippets from 100% full-code context. Use for refactoring, feature implementation, and architectural reviews.
+- **Опис:** Спільний аналітичний міст між графом знань GitNexus AST на хості .184 та блокнотом NotebookLM SSoT.
 - **Шлях:** `~/.agents/skills/notebooklm-gitnexus-copilot`
 - **Кількість файлів коду/конфігів:** 2
 - **Ключові файли:** `SKILL.md, notebooklm-gitnexus-copilot.drakon.json`
@@ -554,7 +554,7 @@
 - **Назва:** mcp-builder
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).
+- **Опис:** Проектування, реалізація та тестування серверів Model Context Protocol (MCP) для підключення зовнішніх інструментів.
 - **Шлях:** `~/.agents/skills/mcp-builder`
 - **Кількість файлів коду/конфігів:** 11
 - **Ключові файли:** `LICENSE.txt, SKILL.md, mcp-builder.drakon.json, reference/evaluation.md, reference/mcp_best_practices.md, reference/node_mcp_server.md, reference/python_mcp_server.md, scripts/connections.py` (+ 3 more...)
@@ -572,7 +572,7 @@
 - **Назва:** cli-developer
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars and spinners, generating bash/zsh/fish completion scripts, CLI design, shell completions, and cross-platform terminal applications using commander, click, typer, or cobra.
+- **Опис:** Проектування та розробка високопродуктивних консольних утиліт (CLI), парсинг прапорців, інтерактивні підказки та автодоповнення.
 - **Шлях:** `~/.agents/skills/cli-developer`
 - **Кількість файлів коду/конфігів:** 7
 - **Ключові файли:** `SKILL.md, cli-developer.drakon.json, references/design-patterns.md, references/go-cli.md, references/node-cli.md, references/python-cli.md, references/ux-patterns.md`
@@ -581,7 +581,7 @@
 - **Назва:** caveman
 - **Таксономія (ADR-015):** `PROJECT_SKILL`
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
-- **Опис:** Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity levels: lite, full (default), ultra, wenyan-lite, wenyan-full, wenyan-ultra. Use when user says "caveman mode", "talk like caveman", "use caveman", "less tokens", "be brief", or invokes /caveman. Also auto-triggers when token efficiency is requested.
+- **Опис:** Ультрастислий режим комунікації для економії токенів без втрати технічного змісту та строгості.
 - **Шлях:** `~/.agents/skills/caveman`
 - **Кількість файлів коду/конфігів:** 3
 - **Ключові файли:** `README.md, SKILL.md, caveman.drakon.json`

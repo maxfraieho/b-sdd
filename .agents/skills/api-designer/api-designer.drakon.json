@@ -3,14 +3,14 @@
   "name": "api-designer",
   "category": "bssd_project_skill",
   "description": "Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів.",
-  "params": "domain_requirements: dict, api_style: str",
+  "params": "context: dict, options: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Проектування API та OpenAPI специфікації",
+      "label": "Початок: Виконання api-designer",
       "edges": {
-        "down": "step_1",
+        "down": "step_init",
         "right": null
       },
       "semantic_binding": {
@@ -21,11 +21,11 @@
       "y": 0.0
     },
     {
-      "node_id": "step_1",
+      "node_id": "step_init",
       "node_type": "action",
-      "label": "Крок 1: Аналіз домену та моделювання сутностей",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
       "edges": {
-        "down": "step_2",
+        "down": "check_precond",
         "right": null
       },
       "semantic_binding": {
@@ -35,12 +35,12 @@
       "y": 2.0
     },
     {
-      "node_id": "step_2",
-      "node_type": "action",
-      "label": "Крок 2: Опис ендпоінтів та схем запитів/відповідей",
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
       "edges": {
-        "down": "check_lint",
-        "right": null
+        "down": "step_verify",
+        "right": "err_precond"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -49,23 +49,23 @@
       "y": 4.0
     },
     {
-      "node_id": "check_lint",
-      "node_type": "question",
-      "label": "Крок 3: Специфікація OpenAPI валідна (linting pass)?",
+      "node_id": "err_precond",
+      "node_type": "action",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
       "edges": {
-        "down": "step_mock",
-        "right": "err_lint"
+        "down": "end_failed",
+        "right": null
       },
       "semantic_binding": {
-        "severity": "normal"
+        "severity": "critical"
       },
-      "x": 0.0,
-      "y": 6.0
+      "x": 4.0,
+      "y": 4.0
     },
     {
-      "node_id": "err_lint",
+      "node_id": "end_failed",
       "node_type": "end",
-      "label": "Аварійне завершення: Помилка валідації схеми API",
+      "label": "Аварійне завершення: Зупинка виконання",
       "edges": {
         "down": null,
         "right": null
@@ -77,9 +77,9 @@
       "y": 6.0
     },
     {
-      "node_id": "step_mock",
+      "node_id": "step_verify",
       "node_type": "action",
-      "label": "Крок 4: Запуск мок-сервера та валідація контрактів",
+      "label": "Крок 3: Фінальна верифікація та телеметрія",
       "edges": {
         "down": "end_success",
         "right": null
@@ -88,12 +88,12 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0
+      "y": 6.0
     },
     {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Специфікацію API узгоджено та верифіковано",
+      "label": "Успішне завершення: Процедуру api-designer виконано",
       "edges": {
         "down": null,
         "right": null
@@ -102,7 +102,7 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0
+      "y": 8.0
     }
   ],
   "meta": {

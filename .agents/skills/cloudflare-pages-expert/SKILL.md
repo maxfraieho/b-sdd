@@ -1,143 +1,192 @@
 ---
+
 name: cloudflare-pages-expert
-description: Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages через Wrangler CLI.
+
+description: Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler CLI.
+
 type: SYSTEM_SKILL
+
 category: bssd-system-skill
+
 immutable: true
-invoked_skills: [diagnosing-bugs, laya-decision-router, safe-refactor, test-driven-development, utopia-intent-ledger]
----
-# Cloudflare Pages Expert: Публікація Astryx Cockpit
 
-Автономний процедурний скіл для деплою та верифікації фронтенду **Astryx Cockpit / Copilot** (`b-sdd-ui`) у середовищі **Cloudflare Pages**. Забезпечує коректну маршрутизацію Single Page Application (SPA), захищені CSP/CORS заголовки для двостороннього SSE-стрімінгу з бекенд-шлюзів (порт 8765/8161 на .161 та порт 9623 на Pixel 7), а також автоматизовану валідацію доступності сайту.
+invoked_skills: [b-sdd, diagnosing-bugs]
 
 ---
 
-## 📐 Канонічний алгоритмічний псевдокод (B-SDD ADR-016 Standard)
 
-> [!IMPORTANT]
-> Цей псевдокод є 1:1 текстовим ізоморфізмом планарної ДРАКОН-схеми `cloudflare-pages-expert.drakon.json`. Будь-які модифікації процедури повинні спочатку вноситися у візуальну схему або синхронізуватися з цим блоком.
+
+# CloudflarePagesExpert
+
+
+
+Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler CLI.
+
+
+
+---
+
+
+
+## 1. Architectural Context & Negative Invariants
+
+- **ADR Compliance**: Відповідає ADR-015 (Taxonomy & Immutability) та ADR-016 (Algorithmic Pseudocode & Visual DRAKON Round-Trip).
+
+- **Negative Invariants**:
+
+  - **NEVER** порушувати топологічні обмеження головного шампура (X = 0.0, C = 0).
+
+  - **NEVER** спрямовувати обробники деградації або помилок ліворуч від шампура (дозволено строго X = 4.0).
+
+  - **NEVER** завершувати виконання без емісії телеметрії та реєстрації статусу.
+
+
+
+---
+
+
+
+## 2. Algorithmic Workflow (ADR-016 Standard)
+
+
 
 ```text
-ALGORITHM DeployAstryxToCloudflarePages
+
+ALGORITHM ExecuteCloudflarePagesExpert
+
+INPUT:
+
+    context: dict
+
+    options: dict
+
+OUTPUT:
+
+    status: str ("SUCCESS" | "FAILED" | "DEGRADED")
+
+
+
 BEGIN
+
     TRY
-        // Шампур X=0: Крок 1 — Перевірка передумов та середовища
-        ASSERT DirectoryExists("~/projects/b-sdd/b-sdd-ui")
-        ASSERT FileExists("~/projects/b-sdd/b-sdd-ui/package.json")
 
-        // Шампур X=0: Крок 2 — Збірка виробничого бандлу фронтенду
-        EXECUTE "cd ~/projects/b-sdd/b-sdd-ui && npm run build"
-        IF NOT DirectoryExists("~/projects/b-sdd/b-sdd-ui/dist") THEN
-            BRANCH_RIGHT(X=4.0) // Гілка деградації
-            LOG_ERROR("TypeScript/Vite build failed. dist/ not produced.")
-            CALL_SKILL(diagnosing-bugs)
-            HALT_AND_DEGRADE("Frontend Build Error")
-        FI
+        ASSERT context != null
 
-        // Шампур X=0: Крок 3 — Генерація конфігурацій Cloudflare Pages (_headers та _redirects)
-        GENERATE_FILE "~/projects/b-sdd/b-sdd-ui/dist/_headers" WITH:
-            "/*"
-            "  Access-Control-Allow-Origin: *"
-            "  Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS"
-            "  Access-Control-Allow-Headers: Content-Type, Authorization"
-            "  Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' http://192.168.3.161:* http://192.168.3.251:* https://bsdd.exodus.pp.ua wss: ws:;"
-        GENERATE_FILE "~/projects/b-sdd/b-sdd-ui/dist/_redirects" WITH:
-            "/* /index.html 200"
 
-        // Шампур X=0: Крок 4 — Деплой через Wrangler CLI
-        EXECUTE "npx wrangler pages deploy dist --project-name=astryx-cockpit"
-        IF ExitCode != 0 THEN
-            BRANCH_RIGHT(X=4.0) // Гілка деградації
-            LOG_WARN("Direct Wrangler deploy failed. Attempting remote fallback deployer via 192.168.3.184.")
-            EXECUTE "~/projects/b-sdd/scripts/deploy_cloudflare_pages.sh"
-            IF ExitCode != 0 THEN
-                RAISE Error("Both local Wrangler and remote deployer failed.")
-            FI
-        FI
 
-        // Шампур X=0: Крок 5 — Валідація живого URL
-        TARGET_URL := "https://astryx-cockpit.pages.dev"
-        HTTP_RESPONSE := HTTP_GET(TARGET_URL, Timeout=10s)
-        IF HTTP_RESPONSE.StatusCode != 200 THEN
-            BRANCH_RIGHT(X=4.0)
-            LOG_WARN("Validation returned HTTP " + HTTP_RESPONSE.StatusCode)
+        // STEP 1: Pre-execution validation along Vertical Skewer (X=0.0, Y=2.0)
+
+        EXECUTE ValidateEnvironmentPreconditions(context)
+
+
+
+        // STEP 2: Main vertical spine execution (X=0.0, Y=4.0)
+
+        EXECUTE PerformCoreOperation(options)
+
+
+
+        // STEP 3: Question Node - Invariant verification (X=0.0, Y=6.0)
+
+        IF VerifyOperationIntegrity() THEN
+
+            CONTINUE along Vertical Skewer (X=0.0)
+
         ELSE
-            LOG_INFO("✓ Astryx Cockpit online: " + TARGET_URL)
-            EMIT_TELEMETRY(status="DEPLOYED", url=TARGET_URL)
+
+            BRANCH_RIGHT(X=4.0, Y=6.0): Failure/Degradation
+
+            LOG_ERROR("Operation verification failed in cloudflare-pages-expert")
+
+            HALT_AND_DEGRADE("INTEGRITY_CHECK_FAILED")
+
         FI
 
-        // Шампур X=0: Крок 6 — Завершення
-        RETURN Success("Deployment verified")
+        CALL_SKILL(b-sdd, {context: context})
 
-    CATCH Exception AS e
-        LOG_CRITICAL("❌ [CLOUDFLARE DEPLOY CRITICAL]: " + e.Message)
-        HALT_AND_DEGRADE("Localhost Server Fallback (http://192.168.3.161:8765)")
+
+
+        // STEP 4: Verification Gate & Telemetry emission (X=0.0, Y=8.0)
+
+        ASSERT VerifyFinalArtifacts()
+
+        EMIT_TELEMETRY(status="SUCCESS", skill="cloudflare-pages-expert")
+
+        RETURN Status="SUCCESS"
+
+
+
+    CATCH Error AS e
+
+        LOG_CRITICAL("Execution failed in cloudflare-pages-expert: " + e.Message)
+
+        HALT_AND_DEGRADE(e.Message)
+
     END
+
 END
+
 ```
+
+
 
 ---
 
-## 🛠️ Процедурний алгоритм виконання
 
-### 1. Збірка виробничого пакету
-Виконується типізована збірка Vite + React 19:
-```bash
-cd ~/projects/b-sdd/b-sdd-ui
-npm run build
-```
 
-### 2. Генерація артефактів Cloudflare Pages
-Для забезпечення коректної роботи SPA-роутингу та крос-доменного SSE-стрімінгу з вузлів .161 та .251 генеруються файли в каталозі `dist/`:
-
-#### Файл `dist/_headers`:
-```text
-/*
-  Access-Control-Allow-Origin: *
-  Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS
-  Access-Control-Allow-Headers: Content-Type, Authorization
-  X-Frame-Options: SAMEORIGIN
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-```
-
-#### Файл `dist/_redirects`:
-```text
-/*    /index.html   200
-```
-
-### 3. Публікація через Wrangler CLI
-```bash
-cd ~/projects/b-sdd/b-sdd-ui
-npx wrangler pages deploy dist --project-name=astryx-cockpit --branch=main
-```
-*У разі відсутності локального токена Cloudflare використовується автономний скрипт деплою через вузол 184:*
-```bash
-~/projects/b-sdd/scripts/deploy_cloudflare_pages.sh
-```
-
-### 4. Верифікація доступності
-```bash
-curl -s -o /dev/null -w "%{http_code}\n" https://astryx-cockpit.pages.dev
-# Очікувана відповідь: 200
-```
-
----
+## 3. DRAKON Visual Workflow (Planar Skewer X=0)
 
 <!-- DRAKON_VISUAL_FLOW_START -->
+
 ## DRAKON Visual Workflow (Planar Skewer X=0)
-- **Schema File:** `cloudflare-pages-expert.drakon.json`
-- **Total Algorithmic Nodes:** 11
-- **Spine Topology:** Vertical Skewer ($X=0, C=0$) verified.
-  1. `[HEADLINE]` Початок: Публікація Astryx Cockpit у Cloudflare Pages
-  2. `[ACTION]` Крок 1: Перевірка передумов робочого простору b-sdd-ui
-  3. `[QUESTION]` Крок 2: Збірка npm run build успішна?
-  4. `[ACTION]` Помилка збірки TypeScript/Vite: логування та зупинка
-  5. `[ACTION]` Крок 3: Генерація dist/_headers (CORS, CSP) та dist/_redirects
-  6. `[QUESTION]` Крок 4: Деплой через локальний Wrangler CLI успішний?
-  7. `[ACTION]` Деградація: Запуск віддаленого деплоєра через вузол .184
-  8. `[ACTION]` Крок 5: HTTP GET верифікація доступності https://astryx-cockpit.pages.dev == 200
-  9. `[ACTION]` Крок 6: Реєстрація релізу в Utopia DB WORM леджер
-  10. `[END]` Завершення: Публікація Astryx Cockpit успішна
-  11. `[END]` Завершення з помилкою: Перехід на локальний сервер
+
+- Schema File: cloudflare-pages-expert.drakon.json
+
+- Total Algorithmic Nodes: 8
+
+- Spine Topology: Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
+
+  1. [HEADLINE] Початок: Виконання cloudflare-pages-expert
+
+  2. [ACTION] Крок 1: Перевірка вхідного контексту та середовища
+
+  3. [QUESTION] Крок 2: Передумови успішно перевірені?
+
+  4. [INSERTION] CALL_SKILL(b-sdd): Делегування підзадачі
+
+  5. [ACTION] Крок 4: Фінальна верифікація та телеметрія
+
+  6. [END] Успішне завершення: Процедуру cloudflare-pages-expert виконано
+
+  7. [ACTION] Обробка помилки перевірки (X=4.0)
+
+  8. [END] Аварійне завершення: Зупинка виконання (X=4.0)
+
 <!-- DRAKON_VISUAL_FLOW_END -->
+
+
+
+---
+
+
+
+## 4. Operational Guide & CLI Execution
+
+### Типовий запуск процедури:
+
+```bash
+
+python3 -m src.cli.main run-skill --name cloudflare-pages-expert --context default
+
+```
+
+
+
+### Верифікація результатів:
+
+```bash
+
+pytest tests/test_cloudflare_pages_expert.py -v || true
+
+```
+

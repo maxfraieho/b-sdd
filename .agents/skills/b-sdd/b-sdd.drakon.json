@@ -3,14 +3,14 @@
   "name": "b-sdd",
   "category": "bssd_system_skill",
   "description": "Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.",
-  "params": "context: dict, task_scope: str",
+  "params": "context: dict, options: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Контроль архітектурних інваріантів B-SDD",
+      "label": "Початок: Виконання b-sdd",
       "edges": {
-        "down": "step_find_skills",
+        "down": "step_init",
         "right": null
       },
       "semantic_binding": {
@@ -21,27 +21,26 @@
       "y": 0.0
     },
     {
-      "node_id": "step_find_skills",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(find-skills): Крок 1: Префлайт пошук активних скілів",
+      "node_id": "step_init",
+      "node_type": "action",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
       "edges": {
-        "down": "step_compile_rules",
+        "down": "check_precond",
         "right": null
       },
       "semantic_binding": {
-        "call_skill": "find-skills",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 2.0
     },
     {
-      "node_id": "step_compile_rules",
-      "node_type": "action",
-      "label": "Крок 2: Перевірка та компіляція .context/active_rules.md",
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
       "edges": {
-        "down": "check_preflight",
-        "right": null
+        "down": "step_sub",
+        "right": "err_precond"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -50,23 +49,23 @@
       "y": 4.0
     },
     {
-      "node_id": "check_preflight",
-      "node_type": "question",
-      "label": "Крок 3: Префлайт інваріанти задоволені?",
+      "node_id": "err_precond",
+      "node_type": "action",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
       "edges": {
-        "down": "step_skill_creator",
-        "right": "err_preflight"
+        "down": "end_failed",
+        "right": null
       },
       "semantic_binding": {
-        "severity": "normal"
+        "severity": "critical"
       },
-      "x": 0.0,
-      "y": 6.0
+      "x": 4.0,
+      "y": 4.0
     },
     {
-      "node_id": "err_preflight",
+      "node_id": "end_failed",
       "node_type": "end",
-      "label": "Аварійне завершення: Порушення інваріантів B-SDD",
+      "label": "Аварійне завершення: Зупинка виконання",
       "edges": {
         "down": null,
         "right": null
@@ -78,24 +77,24 @@
       "y": 6.0
     },
     {
-      "node_id": "step_skill_creator",
+      "node_id": "step_sub",
       "node_type": "insertion",
-      "label": "CALL_SKILL(skill-creator): Крок 4: Кристалізація за Правилом 2-х повторень",
+      "label": "CALL_SKILL(find-skills): Делегування підзадачі",
       "edges": {
-        "down": "step_fitness",
+        "down": "step_verify",
         "right": null
       },
       "semantic_binding": {
-        "call_skill": "skill-creator",
+        "call_skill": "find-skills",
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0
+      "y": 6.0
     },
     {
-      "node_id": "step_fitness",
+      "node_id": "step_verify",
       "node_type": "action",
-      "label": "Крок 5: Запуск тестового набору фітнесу архітектури",
+      "label": "Крок 4: Фінальна верифікація та телеметрія",
       "edges": {
         "down": "end_success",
         "right": null
@@ -104,12 +103,12 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0
+      "y": 8.0
     },
     {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Архітектурну відповідність підтверджено",
+      "label": "Успішне завершення: Процедуру b-sdd виконано",
       "edges": {
         "down": null,
         "right": null
@@ -118,7 +117,7 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0
+      "y": 10.0
     }
   ],
   "meta": {

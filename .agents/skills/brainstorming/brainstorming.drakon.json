@@ -3,14 +3,14 @@
   "name": "brainstorming",
   "category": "bssd_project_skill",
   "description": "Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду.",
-  "params": "initial_idea: str, problem_context: dict",
+  "params": "context: dict, options: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Концептуальне брейнштормінг-дослідження",
+      "label": "Початок: Виконання brainstorming",
       "edges": {
-        "down": "step_explore",
+        "down": "step_init",
         "right": null
       },
       "semantic_binding": {
@@ -21,11 +21,11 @@
       "y": 0.0
     },
     {
-      "node_id": "step_explore",
+      "node_id": "step_init",
       "node_type": "action",
-      "label": "Крок 1: Дослідження простору проблеми та цілей",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
       "edges": {
-        "down": "step_alternatives",
+        "down": "check_precond",
         "right": null
       },
       "semantic_binding": {
@@ -35,12 +35,12 @@
       "y": 2.0
     },
     {
-      "node_id": "step_alternatives",
-      "node_type": "action",
-      "label": "Крок 2: Формування дивергентних альтернативних рішень",
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
       "edges": {
-        "down": "check_feasibility",
-        "right": null
+        "down": "step_sub",
+        "right": "err_precond"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -49,23 +49,23 @@
       "y": 4.0
     },
     {
-      "node_id": "check_feasibility",
-      "node_type": "question",
-      "label": "Крок 3: Знайдено хоча б одну життєздатну альтернативу?",
+      "node_id": "err_precond",
+      "node_type": "action",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
       "edges": {
-        "down": "step_call_worktree",
-        "right": "err_alternatives"
+        "down": "end_failed",
+        "right": null
       },
       "semantic_binding": {
-        "severity": "normal"
+        "severity": "critical"
       },
-      "x": 0.0,
-      "y": 6.0
+      "x": 4.0,
+      "y": 4.0
     },
     {
-      "node_id": "err_alternatives",
+      "node_id": "end_failed",
       "node_type": "end",
-      "label": "Аварійне завершення: Відсутність життєздатних альтернатив",
+      "label": "Аварійне завершення: Зупинка виконання",
       "edges": {
         "down": null,
         "right": null
@@ -77,11 +77,11 @@
       "y": 6.0
     },
     {
-      "node_id": "step_call_worktree",
+      "node_id": "step_sub",
       "node_type": "insertion",
-      "label": "CALL_SKILL(using-git-worktrees): Крок 4: Створення ізольованого робочого дерева для прототипу",
+      "label": "CALL_SKILL(using-git-worktrees): Делегування підзадачі",
       "edges": {
-        "down": "step_doc_synth",
+        "down": "step_verify",
         "right": null
       },
       "semantic_binding": {
@@ -89,12 +89,12 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0
+      "y": 6.0
     },
     {
-      "node_id": "step_doc_synth",
+      "node_id": "step_verify",
       "node_type": "action",
-      "label": "Крок 5: Синтез концептуального документа дизайну",
+      "label": "Крок 4: Фінальна верифікація та телеметрія",
       "edges": {
         "down": "end_success",
         "right": null
@@ -103,12 +103,12 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0
+      "y": 8.0
     },
     {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Концепцію сформовано та узгоджено",
+      "label": "Успішне завершення: Процедуру brainstorming виконано",
       "edges": {
         "down": null,
         "right": null
@@ -117,7 +117,7 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0
+      "y": 10.0
     }
   ],
   "meta": {

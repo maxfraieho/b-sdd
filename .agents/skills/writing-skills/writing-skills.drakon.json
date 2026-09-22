@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0",
+  "name": "writing-skills",
+  "category": "bssd_system_skill",
+  "description": "Базові стандарти синтаксису, метаданих та формулювання процедурних правил для каталогу скілів.",
+  "params": "context: dict, options: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Виконання writing-skills",
+      "edges": {
+        "down": "step_init",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_init",
+      "node_type": "action",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
+      "edges": {
+        "down": "check_precond",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
+      "edges": {
+        "down": "step_sub",
+        "right": "err_precond"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "err_precond",
+      "node_type": "action",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "end_failed",
+      "node_type": "end",
+      "label": "Аварійне завершення: Зупинка виконання",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_sub",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(writing-great-skills): Делегування підзадачі",
+      "edges": {
+        "down": "step_verify",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "writing-great-skills",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 4: Фінальна верифікація та телеметрія",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Процедуру writing-skills виконано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    }
+  ],
+  "meta": {
+    "skill_name": "writing-skills",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

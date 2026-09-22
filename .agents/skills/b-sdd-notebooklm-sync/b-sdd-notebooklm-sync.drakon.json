@@ -3,14 +3,14 @@
   "name": "b-sdd-notebooklm-sync",
   "category": "bssd_system_skill",
   "description": "Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google NotebookLM.",
-  "params": "notebook_id: str, force_audio: bool",
+  "params": "context: dict, options: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Синхронізація артефактів B-SDD у NotebookLM",
+      "label": "Початок: Виконання b-sdd-notebooklm-sync",
       "edges": {
-        "down": "step_call_bsdd",
+        "down": "step_init",
         "right": null
       },
       "semantic_binding": {
@@ -21,27 +21,26 @@
       "y": 0.0
     },
     {
-      "node_id": "step_call_bsdd",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Крок 1: Верифікація стану кластера",
+      "node_id": "step_init",
+      "node_type": "action",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
       "edges": {
-        "down": "step_code_dump",
+        "down": "check_precond",
         "right": null
       },
       "semantic_binding": {
-        "call_skill": "b-sdd",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 2.0
     },
     {
-      "node_id": "step_code_dump",
-      "node_type": "action",
-      "label": "Крок 2: Генерація чистого текстового дампа кодової бази (--code-only)",
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
       "edges": {
-        "down": "step_utopia_adrs",
-        "right": null
+        "down": "step_sub",
+        "right": "err_precond"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -50,37 +49,23 @@
       "y": 4.0
     },
     {
-      "node_id": "step_utopia_adrs",
+      "node_id": "err_precond",
       "node_type": "action",
-      "label": "Крок 3: Вивантаження активних бітемпоральних ADR з Utopia DB (.251)",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
       "edges": {
-        "down": "check_staged",
+        "down": "end_failed",
         "right": null
       },
       "semantic_binding": {
-        "severity": "normal"
+        "severity": "critical"
       },
-      "x": 0.0,
-      "y": 6.0
+      "x": 4.0,
+      "y": 4.0
     },
     {
-      "node_id": "check_staged",
-      "node_type": "question",
-      "label": "Крок 4: Сформовані файли-джерела валідні?",
-      "edges": {
-        "down": "step_mcp_ingest",
-        "right": "err_staged"
-      },
-      "semantic_binding": {
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 8.0
-    },
-    {
-      "node_id": "err_staged",
+      "node_id": "end_failed",
       "node_type": "end",
-      "label": "Аварійне завершення: Помилка формування джерел",
+      "label": "Аварійне завершення: Зупинка виконання",
       "edges": {
         "down": null,
         "right": null
@@ -89,12 +74,27 @@
         "severity": "critical"
       },
       "x": 4.0,
-      "y": 8.0
+      "y": 6.0
     },
     {
-      "node_id": "step_mcp_ingest",
+      "node_id": "step_sub",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Делегування підзадачі",
+      "edges": {
+        "down": "step_verify",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_verify",
       "node_type": "action",
-      "label": "Крок 5: Очищення застарілих та завантаження нових джерел через MCP",
+      "label": "Крок 4: Фінальна верифікація та телеметрія",
       "edges": {
         "down": "end_success",
         "right": null
@@ -103,12 +103,12 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0
+      "y": 8.0
     },
     {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Синхронізацію знань у NotebookLM виконано",
+      "label": "Успішне завершення: Процедуру b-sdd-notebooklm-sync виконано",
       "edges": {
         "down": null,
         "right": null
@@ -117,7 +117,7 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0
+      "y": 10.0
     }
   ],
   "meta": {

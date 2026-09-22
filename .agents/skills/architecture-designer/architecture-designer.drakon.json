@@ -3,14 +3,14 @@
   "name": "architecture-designer",
   "category": "bssd_system_skill",
   "description": "Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабованості.",
-  "params": "system_intent: str, target_constraints: dict",
+  "params": "context: dict, options: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Проектування архітектури та оформлення ADR",
+      "label": "Початок: Виконання architecture-designer",
       "edges": {
-        "down": "step_1",
+        "down": "step_init",
         "right": null
       },
       "semantic_binding": {
@@ -21,11 +21,11 @@
       "y": 0.0
     },
     {
-      "node_id": "step_1",
+      "node_id": "step_init",
       "node_type": "action",
-      "label": "Крок 1: Аналіз функціональних та нефункціональних вимог",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
       "edges": {
-        "down": "step_2",
+        "down": "check_precond",
         "right": null
       },
       "semantic_binding": {
@@ -35,12 +35,12 @@
       "y": 2.0
     },
     {
-      "node_id": "step_2",
-      "node_type": "action",
-      "label": "Крок 2: Оцінка архітектурних альтернатив та компромісів",
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
       "edges": {
-        "down": "check_constraints",
-        "right": null
+        "down": "step_sub",
+        "right": "err_precond"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -49,23 +49,23 @@
       "y": 4.0
     },
     {
-      "node_id": "check_constraints",
-      "node_type": "question",
-      "label": "Крок 3: Архітектурні обмеження задовільні?",
+      "node_id": "err_precond",
+      "node_type": "action",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
       "edges": {
-        "down": "step_call_bsdd",
-        "right": "err_constraints"
+        "down": "end_failed",
+        "right": null
       },
       "semantic_binding": {
-        "severity": "normal"
+        "severity": "critical"
       },
-      "x": 0.0,
-      "y": 6.0
+      "x": 4.0,
+      "y": 4.0
     },
     {
-      "node_id": "err_constraints",
+      "node_id": "end_failed",
       "node_type": "end",
-      "label": "Аварійне завершення: Невідповідність системних обмежень",
+      "label": "Аварійне завершення: Зупинка виконання",
       "edges": {
         "down": null,
         "right": null
@@ -77,11 +77,11 @@
       "y": 6.0
     },
     {
-      "node_id": "step_call_bsdd",
+      "node_id": "step_sub",
       "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Крок 4: Перевірка стандартів B-SDD та реєстру ADR",
+      "label": "CALL_SKILL(b-sdd): Делегування підзадачі",
       "edges": {
-        "down": "step_gen",
+        "down": "step_verify",
         "right": null
       },
       "semantic_binding": {
@@ -89,12 +89,12 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0
+      "y": 6.0
     },
     {
-      "node_id": "step_gen",
+      "node_id": "step_verify",
       "node_type": "action",
-      "label": "Крок 5: Генерація документа ADR та структурних моделей",
+      "label": "Крок 4: Фінальна верифікація та телеметрія",
       "edges": {
         "down": "end_success",
         "right": null
@@ -103,12 +103,12 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0
+      "y": 8.0
     },
     {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Архітектурне рішення зафіксовано",
+      "label": "Успішне завершення: Процедуру architecture-designer виконано",
       "edges": {
         "down": null,
         "right": null
@@ -117,7 +117,7 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0
+      "y": 10.0
     }
   ],
   "meta": {

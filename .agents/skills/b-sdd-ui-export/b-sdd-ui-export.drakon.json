@@ -3,14 +3,14 @@
   "name": "b-sdd-ui-export",
   "category": "bssd_system_skill",
   "description": "Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM.",
-  "params": "ui_source_dir: str, target_host: str",
+  "params": "context: dict, options: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Експорт кодової бази Astryx UI (b-sdd-ui)",
+      "label": "Початок: Виконання b-sdd-ui-export",
       "edges": {
-        "down": "step_call_bsdd",
+        "down": "step_init",
         "right": null
       },
       "semantic_binding": {
@@ -21,27 +21,26 @@
       "y": 0.0
     },
     {
-      "node_id": "step_call_bsdd",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(b-sdd): Крок 1: Перевірка стану робочого простору",
+      "node_id": "step_init",
+      "node_type": "action",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
       "edges": {
-        "down": "step_aggregate",
+        "down": "check_precond",
         "right": null
       },
       "semantic_binding": {
-        "call_skill": "b-sdd",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 2.0
     },
     {
-      "node_id": "step_aggregate",
-      "node_type": "action",
-      "label": "Крок 2: Синтез текстового дампа кодової бази b-sdd-ui",
+      "node_id": "check_precond",
+      "node_type": "question",
+      "label": "Крок 2: Передумови успішно перевірені?",
       "edges": {
-        "down": "check_dump",
-        "right": null
+        "down": "step_sub",
+        "right": "err_precond"
       },
       "semantic_binding": {
         "severity": "normal"
@@ -50,23 +49,23 @@
       "y": 4.0
     },
     {
-      "node_id": "check_dump",
-      "node_type": "question",
-      "label": "Крок 3: Сформований текстовий дамп валідний та не порожній?",
+      "node_id": "err_precond",
+      "node_type": "action",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
       "edges": {
-        "down": "step_stage",
-        "right": "err_dump"
+        "down": "end_failed",
+        "right": null
       },
       "semantic_binding": {
-        "severity": "normal"
+        "severity": "critical"
       },
-      "x": 0.0,
-      "y": 6.0
+      "x": 4.0,
+      "y": 4.0
     },
     {
-      "node_id": "err_dump",
+      "node_id": "end_failed",
       "node_type": "end",
-      "label": "Аварійне завершення: Помилка генерації дампа UI",
+      "label": "Аварійне завершення: Зупинка виконання",
       "edges": {
         "down": null,
         "right": null
@@ -78,11 +77,26 @@
       "y": 6.0
     },
     {
-      "node_id": "step_stage",
-      "node_type": "action",
-      "label": "Крок 4: Стейджинг дампа на вузол-агрегатор 192.168.3.184",
+      "node_id": "step_sub",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Делегування підзадачі",
       "edges": {
-        "down": "step_call_nb",
+        "down": "step_verify",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 4: Фінальна верифікація та телеметрія",
+      "edges": {
+        "down": "end_success",
         "right": null
       },
       "semantic_binding": {
@@ -92,24 +106,9 @@
       "y": 8.0
     },
     {
-      "node_id": "step_call_nb",
-      "node_type": "insertion",
-      "label": "CALL_SKILL(notebooklm): Крок 5: Завантаження дампа в SSoT блокнот",
-      "edges": {
-        "down": "end_success",
-        "right": null
-      },
-      "semantic_binding": {
-        "call_skill": "notebooklm",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 10.0
-    },
-    {
       "node_id": "end_success",
       "node_type": "end",
-      "label": "Успішне завершення: Дамп Astryx UI успішно синхронізовано",
+      "label": "Успішне завершення: Процедуру b-sdd-ui-export виконано",
       "edges": {
         "down": null,
         "right": null
@@ -118,7 +117,7 @@
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0
+      "y": 10.0
     }
   ],
   "meta": {

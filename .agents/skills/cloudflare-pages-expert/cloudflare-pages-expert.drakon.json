@@ -1,16 +1,16 @@
 {
   "schema_version": "1.0",
-  "name": "Cloudflare Pages Expert Pipeline",
+  "name": "cloudflare-pages-expert",
   "category": "bssd_system_skill",
-  "description": "Автономна збірка, конфігурація (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit (b-sdd-ui) у Cloudflare Pages через Wrangler CLI.",
-  "params": "project_name: str = 'astryx-cockpit', dry_run: bool = False",
+  "description": "Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler CLI.",
+  "params": "context: dict, options: dict",
   "nodes": [
     {
       "node_id": "start",
       "node_type": "headline",
-      "label": "Початок: Публікація Astryx Cockpit у Cloudflare Pages",
+      "label": "Початок: Виконання cloudflare-pages-expert",
       "edges": {
-        "down": "step_verify",
+        "down": "step_init",
         "right": null
       },
       "semantic_binding": {
@@ -21,156 +21,103 @@
       "y": 0.0
     },
     {
-      "node_id": "step_verify",
+      "node_id": "step_init",
       "node_type": "action",
-      "label": "Крок 1: Перевірка передумов робочого простору b-sdd-ui",
+      "label": "Крок 1: Перевірка вхідного контексту та середовища",
       "edges": {
-        "down": "cond_build",
+        "down": "check_precond",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 2.0
     },
     {
-      "node_id": "cond_build",
+      "node_id": "check_precond",
       "node_type": "question",
-      "label": "Крок 2: Збірка npm run build успішна?",
+      "label": "Крок 2: Передумови успішно перевірені?",
       "edges": {
-        "down": "step_gen_configs",
-        "right": "step_err_build"
+        "down": "step_sub",
+        "right": "err_precond"
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-008-INV-02",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 4.0
     },
     {
-      "node_id": "step_err_build",
+      "node_id": "err_precond",
       "node_type": "action",
-      "label": "Помилка збірки TypeScript/Vite: логування та зупинка",
+      "label": "Обробка помилки перевірки: фіксація в журналі",
       "edges": {
         "down": "end_failed",
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "severe",
-        "call_skill": "diagnosing-bugs"
+        "severity": "critical"
       },
       "x": 4.0,
       "y": 4.0
     },
     {
-      "node_id": "step_gen_configs",
-      "node_type": "action",
-      "label": "Крок 3: Генерація dist/_headers (CORS, CSP) та dist/_redirects",
+      "node_id": "end_failed",
+      "node_type": "end",
+      "label": "Аварійне завершення: Зупинка виконання",
       "edges": {
-        "down": "cond_wrangler",
+        "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_sub",
+      "node_type": "insertion",
+      "label": "CALL_SKILL(b-sdd): Делегування підзадачі",
+      "edges": {
+        "down": "step_verify",
+        "right": null
+      },
+      "semantic_binding": {
+        "call_skill": "b-sdd",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 6.0
     },
     {
-      "node_id": "cond_wrangler",
-      "node_type": "question",
-      "label": "Крок 4: Деплой через локальний Wrangler CLI успішний?",
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 4: Фінальна верифікація та телеметрія",
       "edges": {
-        "down": "step_validate_url",
-        "right": "step_fallback_184"
+        "down": "end_success",
+        "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-008-INV-02",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 8.0
     },
     {
-      "node_id": "step_fallback_184",
-      "node_type": "action",
-      "label": "Деградація: Запуск віддаленого деплоєра через вузол .184",
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Процедуру cloudflare-pages-expert виконано",
       "edges": {
-        "down": "step_validate_url",
+        "down": null,
         "right": null
       },
       "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "mild"
-      },
-      "x": 4.0,
-      "y": 8.0
-    },
-    {
-      "node_id": "step_validate_url",
-      "node_type": "action",
-      "label": "Крок 5: HTTP GET верифікація доступності https://astryx-cockpit.pages.dev == 200",
-      "edges": {
-        "down": "step_telemetry",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
         "severity": "normal"
       },
       "x": 0.0,
       "y": 10.0
-    },
-    {
-      "node_id": "step_telemetry",
-      "node_type": "action",
-      "label": "Крок 6: Реєстрація релізу в Utopia DB WORM леджер",
-      "edges": {
-        "down": "end",
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-04",
-        "severity": "normal",
-        "call_skill": "utopia-intent-ledger"
-      },
-      "x": 0.0,
-      "y": 12.0
-    },
-    {
-      "node_id": "end",
-      "node_type": "end",
-      "label": "Завершення: Публікація Astryx Cockpit успішна",
-      "edges": {
-        "down": null,
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
-        "severity": "normal"
-      },
-      "x": 0.0,
-      "y": 14.0
-    },
-    {
-      "node_id": "end_failed",
-      "node_type": "end",
-      "label": "Завершення з помилкою: Перехід на локальний сервер",
-      "edges": {
-        "down": null,
-        "right": null
-      },
-      "semantic_binding": {
-        "adr_invariant_id": "ADR-015-INV-03",
-        "severity": "severe"
-      },
-      "x": 4.0,
-      "y": 14.0
     }
   ],
   "meta": {
