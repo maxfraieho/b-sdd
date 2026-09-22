@@ -297,7 +297,7 @@ $LAYA_CAPSULE"
                 fi
                 if [[ -n "$FINAL_PROMPT" ]]; then
                     if [[ "$PRINT_MODE" = true ]]; then
-                        AGY_CMD+=("-p" "$FINAL_PROMPT")
+                        AGY_CMD+=("-p" "$FINAL_PROMPT" "--dangerously-skip-permissions")
                     else
                         AGY_CMD+=("-i" "$FINAL_PROMPT")
                     fi
@@ -354,7 +354,7 @@ $LAYA_CAPSULE"
             fi
             if [[ -n "$FINAL_PROMPT" ]]; then
                 if [[ "$PRINT_MODE" = true ]]; then
-                    AGY_CMD+=("-p" "$FINAL_PROMPT")
+                    AGY_CMD+=("-p" "$FINAL_PROMPT" "--dangerously-skip-permissions")
                 else
                     AGY_CMD+=("-i" "$FINAL_PROMPT")
                 fi

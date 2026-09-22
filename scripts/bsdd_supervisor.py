@@ -886,8 +886,8 @@ def execute_task_core(
         explicit_commands = find_sprint_commands(sprint_id)
 
         if os.path.exists(run_b_sdd_script) and os.access(run_b_sdd_script, os.X_OK):
-            b_sdd_cmd = ["./run_b_sdd.sh", "--agent", "agy", "--prompt", prompt_arg]
-            logging.info(f"Запуск канонічного B-SDD агента: {' '.join(b_sdd_cmd[:3])}...")
+            b_sdd_cmd = ["./run_b_sdd.sh", "--agent", "agy", "--print", "--prompt", prompt_arg]
+            logging.info(f"Запуск канонічного B-SDD агента: {' '.join(b_sdd_cmd[:4])}...")
             p = subprocess.run(
                 b_sdd_cmd,
                 cwd=repo_dir,
