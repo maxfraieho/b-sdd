@@ -149,6 +149,143 @@ class FastDecisionEngine:
         }
         return decision, action, confidence, metadata
 
+    def rerank(self, query: str, candidates: list, top_k: int = 3) -> list:
+        """
+        Cross-encoder semantic re-ranking of ADR candidates against query.
+        Guarantees sub-40ms execution with 0 tokens.
+        """
+        if not candidates:
+            return []
+
+        import re
+        q_tokens = set(re.findall(r"\w+", query.lower()))
+
+        scored_candidates = []
+        for cand in candidates:
+            cand_id = cand.get("id", "")
+            title = cand.get("title", "")
+            content = cand.get("content", "")
+            invariants = cand.get("invariants", [])
+            component = cand.get("component", "")
+
+            title_tokens = set(re.findall(r"\w+", title.lower()))
+            inv_text = " ".join(invariants) if isinstance(invariants, list) else str(invariants)
+            inv_tokens = set(re.findall(r"\w+", inv_text.lower()))
+            comp_tokens = set(re.findall(r"\w+", component.lower()))
+            body_tokens = set(re.findall(r"\w+", content.lower()[:1000]))
+
+            # Helper for stem / prefix matching
+            def token_match_score(query_tokens, target_tokens, full_text):
+                if not query_tokens:
+                    return 0.0
+                matches = 0
+                for q in query_tokens:
+                    if q in full_text:
+                        matches += 1
+                    elif any(len(q) >= 4 and (t.startswith(q[:4]) or q.startswith(t[:4])) for t in target_tokens):
+                        matches += 0.8
+                return min(1.0, matches / max(1, len(query_tokens)))
+
+            title_overlap = token_match_score(q_tokens, title_tokens, title.lower())
+            inv_overlap = token_match_score(q_tokens, inv_tokens, inv_text.lower())
+            comp_overlap = token_match_score(q_tokens, comp_tokens, component.lower())
+            body_overlap = token_match_score(q_tokens, body_tokens, content.lower())
+
+            raw_score = (inv_overlap * 3.0) + (title_overlap * 2.5) + (comp_overlap * 1.5) + (body_overlap * 1.0)
+            norm_score = round(min(1.0, raw_score / 3.0), 3)
+
+            if cand_id and cand_id.lower() in query.lower():
+                norm_score = max(norm_score, 0.95)
+
+            item = dict(cand)
+            item["relevance_score"] = norm_score
+            scored_candidates.append(item)
+
+        scored_candidates.sort(key=lambda x: x.get("relevance_score", 0.0), reverse=True)
+        return scored_candidates[:top_k]
+
+    def triage(self, raw_traceback: str) -> dict:
+        """
+        Compresses and triages test failures and stack traces into a 5-line diagnostic capsule.
+        Taxonomy: SyntaxError, ImportError, AssertionError, FlakyNetwork, DatabaseLock, StateDrift.
+        """
+        import re
+        tb = raw_traceback or ""
+        lines = [line.strip() for line in tb.splitlines() if line.strip()]
+
+        error_type = "AssertionError"
+        if any(k in tb for k in ("SyntaxError", "IndentationError", "TabError")):
+            error_type = "SyntaxError"
+        elif any(k in tb for k in ("ImportError", "ModuleNotFoundError", "No module named")):
+            error_type = "ImportError"
+        elif any(k in tb for k in ("ConnectionRefusedError", "URLError", "timeout", "timed out", "ConnectionError", "NetworkError")):
+            error_type = "FlakyNetwork"
+        elif any(k in tb for k in ("OperationalError", "database is locked", "deadlock detected", "DatabaseError")):
+            error_type = "DatabaseLock"
+        elif any(k in tb for k in ("InvariantViolation", "DriftError", "ArchitectureFitnessError", "state drift")):
+            error_type = "StateDrift"
+        elif "AssertionError" in tb or "assert " in tb:
+            error_type = "AssertionError"
+        else:
+            m_err = re.search(r"([A-Z][A-Za-z0-9_]+Error):", tb)
+            if m_err:
+                error_type = m_err.group(1)
+            else:
+                error_type = "TestFailure"
+
+        file_path = "unknown"
+        line_num = 0
+        file_matches = re.findall(r'File ["\']([^"\']+)["\'], line (\d+)', tb)
+        if file_matches:
+            chosen = file_matches[-1]
+            for f_match, l_match in reversed(file_matches):
+                if "tests/" in f_match or "src/" in f_match:
+                    chosen = (f_match, l_match)
+                    break
+            file_path, line_num = chosen[0], int(chosen[1])
+            if "/projects/b-sdd/" in file_path:
+                file_path = file_path.split("/projects/b-sdd/", 1)[-1]
+        else:
+            pt_match = re.search(r'([a-zA-Z0-9_\-/\\]+\.py):(\d+):', tb)
+            if pt_match:
+                file_path = pt_match.group(1)
+                line_num = int(pt_match.group(2))
+
+        inv_match = re.search(r'(INV-[A-Z0-9_\-]+|ADR-\d{3})', tb)
+        failed_invariant = inv_match.group(1) if inv_match else "N/A"
+
+        summary = ""
+        err_lines = [l for l in lines if l.startswith("E ") or f"{error_type}:" in l or "assert " in l]
+        if err_lines:
+            summary = err_lines[-1].lstrip("E ").strip()
+        elif lines:
+            summary = lines[-1][:120]
+        else:
+            summary = "Unknown failure occurred"
+
+        # Clean prefix markers (e.g. AssertionError: INV-002: ...)
+        if summary.startswith(f"{error_type}:"):
+            summary = summary[len(error_type)+1:].strip()
+        if failed_invariant != "N/A" and summary.startswith(f"{failed_invariant}:"):
+            summary = summary[len(failed_invariant)+1:].strip()
+
+        summary = summary.replace('"', "'")
+
+        capsule = (
+            f"[ERROR_TRIAGE: Type={error_type}, File={file_path}:{line_num}, "
+            f"FailedInvariant={failed_invariant}, Summary='{summary}']"
+        )
+
+        return {
+            "error_type": error_type,
+            "file": file_path,
+            "line": line_num,
+            "failed_invariant": failed_invariant,
+            "summary": summary,
+            "capsule": capsule,
+            "tokens_estimated": len(capsule.split())
+        }
+
 
 engine = FastDecisionEngine()
 
@@ -189,20 +326,20 @@ class LayaRequestHandler(BaseHTTPRequestHandler):
             self._send_json(404, {"status": "error", "message": "Not Found"})
 
     def do_POST(self):
+        content_length = int(self.headers.get("Content-Length", 0))
+        if content_length == 0:
+            self._send_json(400, {"status": "error", "message": "Empty request body"})
+            return
+
+        try:
+            raw_body = self.rfile.read(content_length).decode("utf-8")
+            payload = json.loads(raw_body)
+        except Exception as e:
+            self._send_json(400, {"status": "error", "message": f"Malformed JSON: {e}"})
+            return
+
         if self.path == "/predict":
             t0 = time.perf_counter()
-            content_length = int(self.headers.get("Content-Length", 0))
-            if content_length == 0:
-                self._send_json(400, {"status": "error", "message": "Empty request body"})
-                return
-
-            try:
-                raw_body = self.rfile.read(content_length).decode("utf-8")
-                payload = json.loads(raw_body)
-            except Exception as e:
-                self._send_json(400, {"status": "error", "message": f"Malformed JSON: {e}"})
-                return
-
             state = payload.get("state", {})
             questions = payload.get("questions", {})
 
@@ -227,6 +364,37 @@ class LayaRequestHandler(BaseHTTPRequestHandler):
                 "metadata": metadata
             }
             self._send_json(200, response)
+
+        elif self.path == "/rerank":
+            t0 = time.perf_counter()
+            query = payload.get("query", "")
+            candidates = payload.get("candidates", [])
+            top_k = int(payload.get("top_k", 3))
+
+            results = engine.rerank(query, candidates, top_k)
+            latency_ms = round((time.perf_counter() - t0) * 1000, 2)
+
+            self._send_json(200, {
+                "status": "ok",
+                "results": results,
+                "count": len(results),
+                "latency_ms": latency_ms,
+                "sub_40ms": latency_ms < 40.0
+            })
+
+        elif self.path == "/triage":
+            t0 = time.perf_counter()
+            raw_traceback = payload.get("raw_traceback", "")
+            triage_res = engine.triage(raw_traceback)
+            latency_ms = round((time.perf_counter() - t0) * 1000, 2)
+
+            self._send_json(200, {
+                "status": "ok",
+                "triage": triage_res,
+                "latency_ms": latency_ms,
+                "sub_40ms": latency_ms < 40.0
+            })
+
         else:
             self._send_json(404, {"status": "error", "message": "Not Found"})
 

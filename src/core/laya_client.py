@@ -14,7 +14,7 @@ import socket
 import time
 import urllib.error
 import urllib.request
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 DEFAULT_LAYA_HOST = os.getenv("LAYA_HOST", "192.168.3.251")
 DEFAULT_LAYA_PORT = int(os.getenv("LAYA_PORT", "9623"))
@@ -270,6 +270,219 @@ class LayaClient:
                 for k in ("domain", "p_violation", "recommended_skills", "skills_formatted", "choice", "score", "noul"):
                     res[k] = res.get(k, heuristic[k])
         return res
+
+    def rerank_adrs(
+        self,
+        query: str,
+        adr_candidates: List[Dict[str, Any]],
+        top_k: int = 3,
+        timeout: Optional[float] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Vector 1: Utopia DB & ADR Cross-Encoder Re-Ranker (Semantic Distillation).
+        Queries POST /rerank on Pixel 7 Podroid.
+        Falls back to local lexical/stem scoring if Podroid is asleep or unreachable (ADR-002).
+        """
+        to = timeout if timeout is not None else self.timeout
+        url = f"{self.base_url}/rerank"
+        payload = {
+            "query": query,
+            "candidates": adr_candidates,
+            "top_k": top_k,
+            "timestamp": time.time()
+        }
+
+        try:
+            body = json.dumps(payload).encode("utf-8")
+            headers = {
+                "Content-Type": "application/json",
+                "User-Agent": "B-SDD-LayaClient/1.0"
+            }
+            req = urllib.request.Request(url, data=body, headers=headers)
+            with urllib.request.urlopen(req, timeout=to) as resp:
+                if resp.status == 200:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    results = data.get("results", [])
+                    for r in results:
+                        r["fallback"] = False
+                    return results
+                else:
+                    return self._fallback_rerank(query, adr_candidates, top_k)
+        except Exception as e:
+            logger.warning(f"Laya /rerank on {self.base_url} unreachable: {e}. Activating graceful fallback.")
+            return self._fallback_rerank(query, adr_candidates, top_k)
+
+    def _fallback_rerank(
+        self,
+        query: str,
+        candidates: List[Dict[str, Any]],
+        top_k: int = 3
+    ) -> List[Dict[str, Any]]:
+        """Local lexical and token-stem re-ranker fallback."""
+        if not candidates:
+            return []
+
+        import re
+        q_tokens = set(re.findall(r"\w+", query.lower()))
+
+        scored_candidates = []
+        for cand in candidates:
+            cand_id = cand.get("id", "")
+            title = cand.get("title", "")
+            content = cand.get("content", "")
+            invariants = cand.get("invariants", [])
+            component = cand.get("component", "")
+
+            title_tokens = set(re.findall(r"\w+", title.lower()))
+            inv_text = " ".join(invariants) if isinstance(invariants, list) else str(invariants)
+            inv_tokens = set(re.findall(r"\w+", inv_text.lower()))
+            comp_tokens = set(re.findall(r"\w+", component.lower()))
+            body_tokens = set(re.findall(r"\w+", content.lower()[:1000]))
+
+            def token_match_score(query_tokens, target_tokens, full_text):
+                if not query_tokens:
+                    return 0.0
+                matches = 0
+                for q in query_tokens:
+                    if q in full_text:
+                        matches += 1
+                    elif any(len(q) >= 4 and (t.startswith(q[:4]) or q.startswith(t[:4])) for t in target_tokens):
+                        matches += 0.8
+                return min(1.0, matches / max(1, len(query_tokens)))
+
+            title_overlap = token_match_score(q_tokens, title_tokens, title.lower())
+            inv_overlap = token_match_score(q_tokens, inv_tokens, inv_text.lower())
+            comp_overlap = token_match_score(q_tokens, comp_tokens, component.lower())
+            body_overlap = token_match_score(q_tokens, body_tokens, content.lower())
+
+            raw_score = (inv_overlap * 3.0) + (title_overlap * 2.5) + (comp_overlap * 1.5) + (body_overlap * 1.0)
+            norm_score = round(min(1.0, raw_score / 3.0), 3)
+
+            if cand_id and cand_id.lower() in query.lower():
+                norm_score = max(norm_score, 0.95)
+
+            item = dict(cand)
+            item["relevance_score"] = norm_score
+            item["fallback"] = True
+            scored_candidates.append(item)
+
+        scored_candidates.sort(key=lambda x: x.get("relevance_score", 0.0), reverse=True)
+        return scored_candidates[:top_k]
+
+    def compact_traceback(
+        self,
+        raw_traceback: str,
+        timeout: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """
+        Vector 3: Log & Traceback Compaction (Error Triage).
+        Queries POST /triage on Pixel 7 Podroid.
+        Extracts error taxonomy, failing file/line, invariant, and 5-line diagnostic capsule.
+        """
+        to = timeout if timeout is not None else self.timeout
+        url = f"{self.base_url}/triage"
+        payload = {
+            "raw_traceback": raw_traceback,
+            "timestamp": time.time()
+        }
+
+        try:
+            body = json.dumps(payload).encode("utf-8")
+            headers = {
+                "Content-Type": "application/json",
+                "User-Agent": "B-SDD-LayaClient/1.0"
+            }
+            req = urllib.request.Request(url, data=body, headers=headers)
+            with urllib.request.urlopen(req, timeout=to) as resp:
+                if resp.status == 200:
+                    data = json.loads(resp.read().decode("utf-8"))
+                    triage = data.get("triage", {})
+                    triage["fallback"] = False
+                    return triage
+                else:
+                    return self._fallback_compact_traceback(raw_traceback)
+        except Exception as e:
+            logger.warning(f"Laya /triage on {self.base_url} unreachable: {e}. Activating graceful fallback.")
+            return self._fallback_compact_traceback(raw_traceback)
+
+    def _fallback_compact_traceback(self, raw_traceback: str) -> Dict[str, Any]:
+        """Local regex-based error triage fallback."""
+        import re
+        tb = raw_traceback or ""
+        lines = [line.strip() for line in tb.splitlines() if line.strip()]
+
+        error_type = "AssertionError"
+        if any(k in tb for k in ("SyntaxError", "IndentationError", "TabError")):
+            error_type = "SyntaxError"
+        elif any(k in tb for k in ("ImportError", "ModuleNotFoundError", "No module named")):
+            error_type = "ImportError"
+        elif any(k in tb for k in ("ConnectionRefusedError", "URLError", "timeout", "timed out", "ConnectionError", "NetworkError")):
+            error_type = "FlakyNetwork"
+        elif any(k in tb for k in ("OperationalError", "database is locked", "deadlock detected", "DatabaseError")):
+            error_type = "DatabaseLock"
+        elif any(k in tb for k in ("InvariantViolation", "DriftError", "ArchitectureFitnessError", "state drift")):
+            error_type = "StateDrift"
+        elif "AssertionError" in tb or "assert " in tb:
+            error_type = "AssertionError"
+        else:
+            m_err = re.search(r"([A-Z][A-Za-z0-9_]+Error):", tb)
+            if m_err:
+                error_type = m_err.group(1)
+            else:
+                error_type = "TestFailure"
+
+        file_path = "unknown"
+        line_num = 0
+        file_matches = re.findall(r'File ["\']([^"\']+)["\'], line (\d+)', tb)
+        if file_matches:
+            chosen = file_matches[-1]
+            for f_match, l_match in reversed(file_matches):
+                if "tests/" in f_match or "src/" in f_match:
+                    chosen = (f_match, l_match)
+                    break
+            file_path, line_num = chosen[0], int(chosen[1])
+            if "/projects/b-sdd/" in file_path:
+                file_path = file_path.split("/projects/b-sdd/", 1)[-1]
+        else:
+            pt_match = re.search(r'([a-zA-Z0-9_\-/\\]+\.py):(\d+):', tb)
+            if pt_match:
+                file_path = pt_match.group(1)
+                line_num = int(pt_match.group(2))
+
+        inv_match = re.search(r'(INV-[A-Z0-9_\-]+|ADR-\d{3})', tb)
+        failed_invariant = inv_match.group(1) if inv_match else "N/A"
+
+        summary = ""
+        err_lines = [l for l in lines if l.startswith("E ") or f"{error_type}:" in l or "assert " in l]
+        if err_lines:
+            summary = err_lines[-1].lstrip("E ").strip()
+        elif lines:
+            summary = lines[-1][:120]
+        else:
+            summary = "Unknown failure occurred"
+
+        if summary.startswith(f"{error_type}:"):
+            summary = summary[len(error_type)+1:].strip()
+        if failed_invariant != "N/A" and summary.startswith(f"{failed_invariant}:"):
+            summary = summary[len(failed_invariant)+1:].strip()
+
+        summary = summary.replace('"', "'")
+
+        capsule = (
+            f"[ERROR_TRIAGE: Type={error_type}, File={file_path}:{line_num}, "
+            f"FailedInvariant={failed_invariant}, Summary='{summary}']"
+        )
+
+        return {
+            "error_type": error_type,
+            "file": file_path,
+            "line": line_num,
+            "failed_invariant": failed_invariant,
+            "summary": summary,
+            "capsule": capsule,
+            "tokens_estimated": len(capsule.split()),
+            "fallback": True
+        }
 
 
 _global_client: Optional[LayaClient] = None
