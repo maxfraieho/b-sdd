@@ -511,7 +511,7 @@ def main():
     parser.add_argument("--host", default=None, help="Host override")
     parser.add_argument("--port", type=int, default=None, help="Port override")
     parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT, help="Timeout in seconds")
-    parser.add_argument("--check-health", action="store_true", help="Check daemon health")
+    parser.add_argument("--check-health", "--health", dest="check_health", action="store_true", help="Check daemon health")
     parser.add_argument("--stdin", action="store_true", help="Read directive from standard input")
     args = parser.parse_args()
 
