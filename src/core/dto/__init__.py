@@ -13,6 +13,11 @@ from src.core.dto.distillation import (
     WormPayloadDTO,
     SprintDistillationDTO
 )
+from src.core.dto.cluster_health import (
+    ServiceHealthDTO,
+    ClusterHealthReportDTO,
+    WatchdogStateDTO
+)
 
 __all__ = [
     "SkillDTO",
@@ -24,4 +29,7 @@ __all__ = [
     "IntentVerdict",
     "WormPayloadDTO",
     "SprintDistillationDTO",
+    "ServiceHealthDTO",
+    "ClusterHealthReportDTO",
+    "WatchdogStateDTO",
 ]

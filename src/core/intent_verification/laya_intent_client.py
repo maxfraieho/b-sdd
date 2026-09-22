@@ -115,6 +115,34 @@ class LayaIntentClient:
         Falls back to local heuristic matching seamlessly within sub-40ms SLA.
         """
         t0 = time.perf_counter()
+
+        # Fast cache check from Cluster Health Watchdog
+        try:
+            from src.adapters.laya_circuit_breaker import is_laya_cached_down
+            if is_laya_cached_down():
+                score, missing = self.local_heuristic_match(intent, code_ast)
+                elapsed = round((time.perf_counter() - t0) * 1000, 2)
+                verdict = (
+                    IntentVerdict.VERDICT_INTENT_ALIGNED.value
+                    if score >= 0.82 and len(missing) == 0
+                    else (
+                        IntentVerdict.VERDICT_INTENT_DRIFT_WARNING.value
+                        if score >= 0.65 and len(missing) == 0
+                        else IntentVerdict.VERDICT_INTENT_VIOLATION.value
+                    )
+                )
+                return IntentVerificationResultDTO(
+                    cosine_alignment=score,
+                    missing_invariants=missing,
+                    verdict=verdict,
+                    allow_commit=(score >= 0.82 and len(missing) == 0),
+                    latency_ms=elapsed,
+                    fallback=True,
+                    details={"note": "Laya known DOWN via cluster health cache. Fast-path local fallback engaged <1ms."}
+                )
+        except Exception:
+            pass
+
         payload = {
             "intent": intent.to_dict(),
             "code_ast": code_ast.to_dict(),

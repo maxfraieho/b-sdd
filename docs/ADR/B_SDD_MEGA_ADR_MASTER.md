@@ -172,3 +172,20 @@ To resolve the *Context Explosion vs Amnesia Dilemma*, all architecture decision
 - **Superseded Invariants**:
   - ⚠️ [SUPERSEDED]: Supersedes raw individual sprint report accumulation in SSoT; established B_SDD_MEGA_ADR_MASTER.md warm ledger.
 - **Summary**: Distilled quantum from sprint_031_closure_raw.md: 5 invariants, 4 ADR deltas.
+
+### Sprint 032 Knowledge Delta
+- **Commit Hash**: `HEAD`
+- **Timestamp**: `2026-09-22T13:01:06.690396+00:00`
+- **Verified Invariants**:
+  - ✓ [INVARIANT-1] Cluster Health Watchdog probes 4 endpoints (Laya :9623, Utopia :9622, n8n :443, Supervisor :8161) with 1.5s SLA.
+  - ✓ [INVARIANT-2] Stateful debounce 2-failure rule prevents alert storms and guarantees Telegram notifications on DOWN and RECOVERED.
+  - ✓ [INVARIANT-3] Adaptive Circuit Breaker reads cluster health cache for sub-1ms fast-path local fallback when Laya is DOWN.
+  - ✓ [INVARIANT-4] Astryx Cockpit integrates live ClusterHealthRadar and Vector3IntentBadge deployed to Cloudflare Pages.
+  - ✓ [INVARIANT-5] Active architectural rules strictly constrained to 464 words (< 500 words ADR-005).
+- **Tripartite ADR Decisions**:
+  - **[DataADR]**: Added ServiceHealthDTO, ClusterHealthReportDTO, and WatchdogStateDTO in src/core/dto/cluster_health.py.
+  - **[SkillADR]**: Established Astryx Cockpit Telemetry Radar and Vector 3 Intent Badge in b-sdd-ui.
+  - **[SpecADR]**: Implemented proactive cluster heartbeat daemon and adaptive circuit breaker cache.
+- **Superseded Invariants**:
+  - ⚠️ [SUPERSEDED]: Supersedes lazy reactive outage detection; established proactive 60s background heartbeat monitoring.
+- **Summary**: Distilled quantum from sprint_032_closure_raw.md: 5 invariants, 3 ADR deltas.

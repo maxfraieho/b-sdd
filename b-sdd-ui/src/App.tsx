@@ -25,6 +25,9 @@ import { TelemetryDrawer } from '@/components/TelemetryDrawer';
 import { useTelemetryRealtime } from '@/hooks/useTelemetryRealtime';
 import { AppShell } from '@/components/astryx/primitives';
 import { AstryxZoneBoundary } from '@/components/boundaries/AstryxZoneBoundary';
+import { ClusterHealthRadar } from '@/components/telemetry/ClusterHealthRadar';
+import { Vector3IntentBadge } from '@/components/telemetry/Vector3IntentBadge';
+import { Activity } from 'lucide-react';
 
 import { MOCK_ADRS } from '@/data/mockAdrs';
 import { CANONICAL_DRAKON_DIAGRAM, CANONICAL_HITL_DRAKON_IR } from '@/data/mockDrakonSchema';
@@ -219,6 +222,7 @@ export const App: React.FC = () => {
   const [schemaMode, setSchemaMode] = useState<'logic' | 'structure'>('logic');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
+  const [isRadarOpen, setIsRadarOpen] = useState(false);
   const [drakonNodes, setDrakonNodes] = useState<DrakonNodeIR[]>(CANONICAL_HITL_DRAKON_IR.nodes);
   const [activeSocketType, setActiveSocketType] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('idle');
@@ -639,6 +643,36 @@ export const App: React.FC = () => {
               onSelectPhase={handlePhaseSelect}
               onOpenReviewGate={() => setIsReviewGateOpen(true)}
             />
+          )}
+
+          {/* CLUSTER HEALTH & INTENT RADAR STRIP */}
+          {!isCanvasFullscreen && (
+            <div className="bg-[#0b101b] border-b border-[#1e293b] px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <Vector3IntentBadge />
+                <button
+                  onClick={() => setIsRadarOpen(!isRadarOpen)}
+                  className="text-xs flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#162035] hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 transition-colors"
+                >
+                  <Activity className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Cluster Health Radar</span>
+                  <span className="text-[10px] text-slate-400 font-mono">({isRadarOpen ? 'Hide' : 'Show'})</span>
+                </button>
+              </div>
+              <div className="hidden md:flex items-center gap-2 text-[11px] font-mono text-slate-400">
+                <span>Node .161 (Supervisor)</span>
+                <span>•</span>
+                <span>Node .251 (Pixel 7)</span>
+                <span>•</span>
+                <span>Edge Cloud</span>
+              </div>
+            </div>
+          )}
+
+          {isRadarOpen && !isCanvasFullscreen && (
+            <div className="p-3 bg-slate-950/90 border-b border-slate-800">
+              <ClusterHealthRadar />
+            </div>
           )}
 
           {/* 3. MAIN WORKBENCH BODY */}

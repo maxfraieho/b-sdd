@@ -1,0 +1,15 @@
+[Unit]
+Description=B-SDD Cluster Health Watchdog & Proactive Telemetry Daemon
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/vokov/projects/b-sdd
+ExecStart=/usr/bin/python3 /home/vokov/projects/b-sdd/daemon/cluster_health_watchdog.py --interval 60
+Restart=always
+RestartSec=10
+Environment=PYTHONUNBUFFERED=1
+Environment=CLUSTER_HEALTH_PATH=/tmp/b_sdd_cluster_health.json
+
+[Install]
+WantedBy=default.target
