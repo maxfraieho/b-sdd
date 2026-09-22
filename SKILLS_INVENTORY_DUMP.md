@@ -1,10 +1,10 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP
 
-**Згенеровано:** 2026-09-22 05:52:06Z  
+**Згенеровано:** 2026-09-22 07:27:31Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
 **Загальна кількість скілів:** **55**  
-**Загальна кількість файлів коду/конфігів:** **236**  
+**Загальна кількість файлів коду/конфігів:** **237**  
 **Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR)  
 
 > [!NOTE]
@@ -23,7 +23,7 @@
 | 3 | [**ast-grep**](#skill-ast-grep) | Guide for writing ast-grep rules to perform structural code search and analysis. Use when users need to search codebases using Abstract Syntax Tree (AST) pat... | `SKILL.md`, `README.md` +1 |
 | 4 | [**astryx-scaffolder**](#skill-astryx-scaffolder) | Scaffolds Astryx Cockpit UI components, interactive DRAKON canvas widgets, real-time telemetry panels, and multi-tenant operator workbench interfaces. | `SKILL.md`, `scripts/scaffold_component.py` |
 | 5 | [**b-sdd**](#skill-b-sdd) | Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation under the B-SDD framework. | `SKILL.md` (1 файл) |
-| 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump... | `SKILL.md` (1 файл) |
+| 6 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump... | `SKILL.md`, `scripts/sprint_closure.py` |
 | 7 | [**brainstorming**](#skill-brainstorming) | Use when creating or developing, before writing code or implementation plans - refines rough ideas into fully-formed designs through collaborative questionin... | `SKILL.md` (1 файл) |
 | 8 | [**caveman**](#skill-caveman) | Ultra-compressed communication mode. Cuts output tokens 65% (measured) by speaking like caveman while keeping full technical accuracy. Supports intensity lev... | `SKILL.md`, `README.md` |
 | 9 | [**cli-developer**](#skill-cli-developer) | Use when building CLI tools, implementing argument parsing, or adding interactive prompts. Invoke for parsing flags and subcommands, displaying progress bars... | `SKILL.md`, `references/design-patterns.md` +4 |
@@ -4680,94 +4680,121 @@ Before committing or completing a task:
 ### [6/55] Скіл: `b-sdd-sprint-closure`
 
 **Каталог:** `~/.agents/skills/b-sdd-sprint-closure`  
-**Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), NotebookLM source cleanup and upload, and supervisor callback notification.  
-**Файлів у складі:** 1  
+**Опис:** Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.  
+**Файлів у складі:** 2  
 
-#### Файл: `b-sdd-sprint-closure/SKILL.md` (4,727 байт)
+#### Файл: `b-sdd-sprint-closure/SKILL.md` (7,100 байт)
 ````markdown
 ---
 name: b-sdd-sprint-closure
-description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), NotebookLM source cleanup and upload, and supervisor callback notification.
+description: Autonomous skill for B-SDD discrete sprint closure, distillation (Phi_6 -> Phi_7), release tagging, active rules compilation (<500 words), codebase text dump synthesis (b-sdd_code_dump.txt), GitNexus AST re-indexing (.184), Utopia DB Tripartite sync and WORM ledger commitment (.251), NotebookLM source cleanup and upload, and supervisor callback notification.
 ---
 
 # B-SDD Sprint Closure & Distillation Skill
 
-The **B-SDD Sprint Closure Skill** provides an end-to-end, automated protocol for finalizing discrete sprints under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, NotebookLM synchronization as the Single Source of Truth (SSoT), and telemetric callback to the orchestrating supervisor.
+The **B-SDD Sprint Closure Skill** enforces an end-to-end, automated 10-stage protocol for finalizing discrete sprints under the B-SDD framework. It governs the transition from Implementation ($\Phi_6$) to Distillation & Handoff ($\Phi_7$), ensuring absolute architectural integrity, context compaction, AST knowledge graph currency in GitNexus, bitemporal Tripartite ontology and WORM ledger synchronization in Utopia DB, and telemetric callback to the orchestrating supervisor.
 
 ---
 
 ## 1. When to Use
-- When all sprint tasks, implementation specs, and test suites are 100% completed.
+- When all sprint implementation tasks, specifications, and test suites are 100% completed.
 - At the formal sprint closure phase ($\Phi_6 \to \Phi_7$).
-- When sealing release tags, compiling active rules into `.context/active_rules.md`, and synchronizing the codebase dump into NotebookLM.
+- When sealing release tags, compiling active rules into `.context/active_rules.md`, updating GitNexus AST graph, and committing WORM audit snapshots into Utopia DB.
 
 ---
 
-## 2. Standard Sprint Closure Workflow
+## 2. The 10-Stage Discrete Sprint Closure Protocol
 
-### Step 1: Pre-flight Verification & Architecture Fitness
-Ensure all tests and architecture fitness gates pass with zero regressions:
-```bash
-/home/vokov/.local/bin/pytest tests/ -q
-python3 -m src.cli.main fitness
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        B-SDD SPRINT CLOSURE LIFECYCLE (Φ6 ──► Φ7)                      │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+  [1. Cleaner]           python3 scripts/gitnexus_cleaner.py (cleans lbug.shadow on .184)
+       │
+  [2. GitNexus Sync]     docker exec gitnexus-server gitnexus analyze /projects/b-sdd (.184)
+       │
+  [3. Code Dump]         python3 scripts/dump_codebase.py (b-sdd_code_dump.txt)
+       │
+  [4. Skills Dump]       python3 scripts/dump_skills.py (ACTIVE_SKILLS_CATALOG.md)
+       │
+  [5. NotebookLM Sync]   Rotates codebase dump in Notebook 205ee2ec-e0d2-4ba6-badf-44f2de02c7e2
+       │
+  [6. Utopia DB Sync]    Tripartite (ADR + Spec + Skill) sync & WORM ledger commit on .251
+       │
+  [7. Rules Compile]     python3 -m src.cli.main compile (<500 words, ADR-005)
+       │
+  [8. Handoff]           ./run_b_sdd.sh --handoff --prompt "<Next Sprint Directive>" (ADR-007)
+       │
+  [9. Git Sealing]       git tag -a sprint_XXX_done & git push origin main sprint_XXX_done
+       │
+  [10. Callback]         POST http://100.66.97.93:5678/webhook/bsdd-supervisor-result
 ```
 
-### Step 2: Release Tagging & Code Freeze
-Tag the current verified commit with an annotated release tag and push to remote:
+### Stage 1: GitNexus Lock & Shadow Cleaner
+Removes orphaned locks and shadow files (`lbug.shadow`, `lbug.wal.checkpoint`, `*.lock`) locally and on remote AST host `192.168.3.184`:
 ```bash
-git tag -a sprint_<XXX>_done -m "sprint_<XXX>: <Sprint Title> sealed"
-git push origin sprint_<XXX>_done
+python3 scripts/gitnexus_cleaner.py
 ```
 
-### Step 3: Rule Distillation & Context Compaction (ADR-005)
-Update relevant ADRs in `docs/adr/` with any new permanent invariants (e.g., `INV-014-06`).
-Recompile the active rules snapshot:
+### Stage 2: GitNexus AST Code Intelligence Graph Re-indexing (Host .184)
+Triggers full AST re-indexing inside the `gitnexus-server` container on host `192.168.3.184`:
 ```bash
-python3 -m src.cli.main compile
-```
-Verify word count budget:
-```bash
-wc -w .context/active_rules.md
-# Invariant: Must strictly be < 500 words
+ssh -o StrictHostKeyChecking=no vokov@192.168.3.184 "docker exec -t gitnexus-server gitnexus analyze /projects/b-sdd"
+# Verify health
+curl -s http://192.168.3.184:4747/api/health
 ```
 
-### Step 4: Core Skills Audit
-Audit `~/.agents/skills/` to ensure presence and validity of required B-SDD skills:
-- `b-sdd`
-- `session-distiller`
-- `kindle-release-pipeline`
-- `laya-decision-router`
-- `safe-refactor`
-- `code-reviewer`
-- `b-sdd-sprint-closure`
-
-### Step 5: Codebase Text Dump Generation (`b-sdd_code_dump.txt`)
-Generate a fresh, unified Plain Text codebase dump containing only code (`.py`, `.sh`, `.json`, `.ts`, `.tsx`, etc.), excluding binaries, virtualenvs, and git caches:
+### Stage 3: Codebase Text Dump Generation (`b-sdd_code_dump.txt`)
+Synthesizes a unified Plain Text dump of the repository (code only, no binaries/caches/markdown):
 ```bash
-# Option A: Via remote compilation node 184 batch service
-ssh -o BatchMode=yes vokov@192.168.3.184 "cd /home/vokov/projects/resume && ./run_md_service.sh --batch --source /home/vokov/projects/b-sdd --output /home/vokov/projects/b-sdd/b-sdd_code_dump.txt --code-only"
-scp vokov@192.168.3.184:/home/vokov/projects/b-sdd/b-sdd_code_dump.txt /home/vokov/projects/b-sdd/b-sdd_code_dump.txt
-
-# Option B: Via local pure stdlib script
 python3 scripts/dump_codebase.py --source . --output b-sdd_code_dump.txt
 ```
 
-### Step 6: NotebookLM SSoT Pruning & Synchronization
-Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`.
-Using the NotebookLM MCP:
-1. List sources: `sources_list(notebook_id="205ee2ec-e0d2-4ba6-badf-44f2de02c7e2")`.
-2. Delete stale code dump (`sources_delete`).
-3. Prune transient test step reports and duplicate sources.
-4. Upload fresh `b-sdd_code_dump.txt` (`sources_add_file` with `mime_type="text/plain"`).
+### Stage 4: Active Skills Inventory Dump
+Refreshes `docs/skills_dump/ACTIVE_SKILLS_CATALOG.md` and root `SKILLS_INVENTORY_DUMP.md`:
+```bash
+python3 scripts/dump_skills.py
+```
 
-### Step 7: Discrete Sprint Handoff Generation (ADR-007)
-Generate the atomic handoff artifact and update `.context/next_sprint.md` and `.context/sprint_handoff.json`:
+### Stage 5: NotebookLM SSoT Pruning & Synchronization
+Target Project Notebook: `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2`.
+1. Prune stale code dump (`sources_delete`).
+2. Prune transient test step reports and duplicate documents.
+3. Upload new `b-sdd_code_dump.txt` (`sources_add_file` with `mime_type="text/plain"`).
+
+### Stage 6: Utopia DB Tripartite Ontology Sync & WORM Ledger Commit (Host .251)
+Synchronizes the 3-tier ontological model into Utopia DB (`192.168.3.251`):
+1. **SPEC/ADR Layer:** All active ADRs (`ADR-001`..`ADR-014`, `ADR-FE-001`) with bitemporal coordinates $(T_v, T_t)$.
+2. **DATA Layer:** Functional specifications (`SPEC-001`..`SPEC-020`) and system constitution (`CONST-001`).
+3. **SKILL Layer:** All 55 active skills in `~/.agents/skills/`.
+4. **WORM Ledger Record:** Writes immutable record into `intent_store.worm_ledger` with commit hash, release tag, phase, word count, and GitNexus metadata.
+```bash
+python3 scripts/sync_utopia.py
+```
+
+### Stage 7: Rules Compilation & Budget Enforcement (ADR-005)
+Recompiles active rules snapshot and verifies word budget:
+```bash
+python3 -m src.cli.main compile
+# Strictly < 500 words
+test $(wc -w < .context/active_rules.md) -lt 500
+```
+
+### Stage 8: Discrete Sprint Handoff Synthesis (ADR-007)
+Generates the atomic handoff artifact, updating `.context/sprint_handoff.json` and `.context/next_sprint.md`:
 ```bash
 ./run_b_sdd.sh --handoff --prompt "Prepare Sprint <XXX+1>: <Next Sprint Title>"
 ```
 
-### Step 8: Telemetric Callback Dispatch
-Send the sealed completion callback to the n8n supervisor webhook:
+### Stage 9: Git Sealing & Release Tagging
+Tags the exact commit and pushes to origin:
+```bash
+git tag -f -a sprint_<XXX>_done -m "sprint_<XXX>: sealed and distilled"
+git push origin main -f sprint_<XXX>_done
+```
+
+### Stage 10: Telemetric Callback Dispatch
+Emits completion signal to n8n supervisor webhook:
 ```bash
 curl -s -X POST http://100.66.97.93:5678/webhook/bsdd-supervisor-result \
   -H "Content-Type: application/json" \
@@ -4784,12 +4811,46 @@ curl -s -X POST http://100.66.97.93:5678/webhook/bsdd-supervisor-result \
 
 ---
 
-## 3. Core Architectural Invariants
-- **INV-CLOSURE-01:** Never close a sprint without a passing test suite (`pytest tests/`).
+## 3. Automated Execution
+
+To execute the entire 10-stage lifecycle autonomously:
+```bash
+python3 scripts/b_sdd_sprint_closure.py --sprint sprint_<XXX> --prompt "<Next Sprint Directive>"
+```
+Or via the skill runner:
+```bash
+~/.agents/skills/b-sdd-sprint-closure/scripts/sprint_closure.py --sprint sprint_<XXX> --prompt "<Next Sprint Directive>"
+```
+
+---
+
+## 4. Architectural Invariants
+- **INV-CLOSURE-01:** Never close a sprint without a 100% passing test suite (`pytest tests/`).
 - **INV-CLOSURE-02:** Active rules snapshot in `.context/active_rules.md` must never exceed 500 words (ADR-005).
-- **INV-CLOSURE-03:** Codebase text dump in NotebookLM must be updated with the exact release commit state.
-- **INV-CLOSURE-04:** Supervisor callback must be sent synchronously at the completion of Phase $\Phi_7$.
+- **INV-CLOSURE-03:** AST graph on host 184 must be re-indexed to match the exact sealed commit hash.
+- **INV-CLOSURE-04:** Utopia DB on host 251 must record an immutable WORM ledger snapshot for the sprint.
 - **INV-CLOSURE-05:** Zero external pip dependencies in core runtime or closure scripts (ADR-002 Pure Stdlib).
+
+````
+
+#### Файл: `b-sdd-sprint-closure/scripts/sprint_closure.py` (376 байт)
+````python
+#!/usr/bin/env python3
+"""
+B-SDD Discrete Sprint Closure & Distillation Lifecycle Engine.
+Executable runner for the @skill: b-sdd-sprint-closure.
+"""
+import sys
+from pathlib import Path
+
+# Locate b-sdd repository root
+ROOT = Path("/home/vokov/projects/b-sdd")
+sys.path.insert(0, str(ROOT))
+
+from scripts.b_sdd_sprint_closure import main
+
+if __name__ == "__main__":
+    main()
 
 ````
 

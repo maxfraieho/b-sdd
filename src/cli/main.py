@@ -47,11 +47,25 @@ def cmd_sync(args):
     # Sync to Knowledge Graph
     kg_res = adapter.sync_to_knowledge_graph(intents)
 
-    print(f"✓ Utopia DB Synchronization Complete:")
+    print(f"✓ Utopia DB Tripartite Synchronization Complete:")
     print(f"  - Ingested Intents : {intent_res.get('registered', 0)} / {intent_res.get('total', 0)}")
     print(f"  - Supersessions    : {intent_res.get('supersessions', 0)}")
-    print(f"  - KG Entities      : {kg_res.get('entities', 0)}")
-    print(f"  - KG Facts         : {kg_res.get('facts', 0)}")
+    print(f"  - Tripartite Entities: {kg_res.get('entities', 0)} ({kg_res.get('adrs', 0)} ADRs, {kg_res.get('specs', 0)} Specs, {kg_res.get('skills', 0)} Skills)")
+    print(f"  - Knowledge Facts  : {kg_res.get('facts', 0)}")
+
+    if getattr(args, "sprint", None):
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+        rules_path = Path.cwd() / ".context" / "active_rules.md"
+        rules_wc = len(rules_path.read_text(encoding="utf-8").split()) if rules_path.exists() else 0
+        worm_id = adapter.record_worm_ledger(
+            sprint_id=args.sprint,
+            commit_hash=commit,
+            release_tag=f"{args.sprint}_done",
+            phase="PHI_7_DISTILLED",
+            active_rules_word_count=rules_wc,
+            tripartite_summary=kg_res
+        )
+        print(f"  - WORM Ledger Rec  : {worm_id}")
 
 
 def cmd_fitness(args):
@@ -258,6 +272,7 @@ def main():
     # sync
     p_sync = subparsers.add_parser("sync", help="Sync active intents to Utopia DB")
     p_sync.add_argument("--kb", help="Custom Utopia Knowledge Base UUID")
+    p_sync.add_argument("--sprint", help="Sprint ID to record in immutable WORM ledger")
 
     # fitness
     subparsers.add_parser("fitness", help="Run architectural fitness tests")

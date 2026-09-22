@@ -137,6 +137,22 @@ class UtopiaDBAdapter:
             PRIMARY KEY (superseding_id, superseded_id)
         );
 
+        CREATE TABLE IF NOT EXISTS intent_store.worm_ledger (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            sprint_id TEXT NOT NULL,
+            commit_hash TEXT NOT NULL,
+            release_tag TEXT NOT NULL,
+            phase TEXT NOT NULL,
+            active_rules_word_count INT NOT NULL,
+            gitnexus_status JSONB DEFAULT '{}'::jsonb,
+            tripartite_summary JSONB DEFAULT '{}'::jsonb,
+            metadata JSONB DEFAULT '{}'::jsonb,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_worm_ledger_sprint
+            ON intent_store.worm_ledger (sprint_id, created_at DESC);
+
         CREATE OR REPLACE FUNCTION intent_store.register_and_supersede_intent(
             p_intent_key TEXT,
             p_component TEXT,
@@ -226,6 +242,48 @@ class UtopiaDBAdapter:
             return out.strip()
         except Exception as ex:
             logger.error(f"Failed to register intent {intent_key}: {ex}")
+            return None
+
+    def record_worm_ledger(
+        self,
+        sprint_id: str,
+        commit_hash: str,
+        release_tag: str,
+        phase: str,
+        active_rules_word_count: int,
+        gitnexus_status: Optional[Dict[str, Any]] = None,
+        tripartite_summary: Optional[Dict[str, Any]] = None,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Optional[str]:
+        """
+        Records an immutable sprint snapshot into the bitemporal WORM ledger.
+        Conforms to ADR-001, ADR-007, and ADR-010.
+        """
+        self.init_schema()
+        gitnexus_json = json.dumps(gitnexus_status or {}, ensure_ascii=False)
+        tripartite_json = json.dumps(tripartite_summary or {}, ensure_ascii=False)
+        meta_json = json.dumps(metadata or {}, ensure_ascii=False)
+
+        sql = f"""
+        INSERT INTO intent_store.worm_ledger (
+            sprint_id, commit_hash, release_tag, phase,
+            active_rules_word_count, gitnexus_status, tripartite_summary, metadata
+        ) VALUES (
+            {self._sql_esc(sprint_id)},
+            {self._sql_esc(commit_hash)},
+            {self._sql_esc(release_tag)},
+            {self._sql_esc(phase)},
+            {int(active_rules_word_count)},
+            {self._sql_esc(gitnexus_json)}::jsonb,
+            {self._sql_esc(tripartite_json)}::jsonb,
+            {self._sql_esc(meta_json)}::jsonb
+        ) RETURNING id;
+        """
+        try:
+            out = self.execute_sql(sql)
+            return out.strip()
+        except Exception as ex:
+            logger.error(f"Failed to record WORM ledger entry for {sprint_id}: {ex}")
             return None
 
     def sync_all_intents(self, intents: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -332,11 +390,21 @@ class UtopiaDBAdapter:
         # Ensure required entity_types exist
         skill_type_uuid = str(uuid.uuid5(NS_BSDD, "entity_type:agent_skill"))
         adr_type_uuid = "ce1c9748-e163-5a41-86f0-fe6daaf53d6a"
+        spec_type_uuid = str(uuid.uuid5(NS_BSDD, "entity_type:specification"))
+        const_type_uuid = str(uuid.uuid5(NS_BSDD, "entity_type:constitution"))
         comp_type_uuid = "88b63c02-dfae-5609-9341-eaac1f210c52"
 
         statements.append(f"""
         INSERT INTO entity_types (id, kb_id, key, label, description)
         VALUES ('{skill_type_uuid}', '{self.kb_id}', 'agent_skill', 'Agent Procedural Skill', 'Specialized procedural agent skill or playbook')
+        ON CONFLICT (kb_id, key) DO UPDATE SET label = EXCLUDED.label;
+
+        INSERT INTO entity_types (id, kb_id, key, label, description)
+        VALUES ('{spec_type_uuid}', '{self.kb_id}', 'specification', 'B-SDD Specification', 'Functional specification and SSD contracts')
+        ON CONFLICT (kb_id, key) DO UPDATE SET label = EXCLUDED.label;
+
+        INSERT INTO entity_types (id, kb_id, key, label, description)
+        VALUES ('{const_type_uuid}', '{self.kb_id}', 'constitution', 'System Constitution', 'Fundamental system axioms and invariants')
         ON CONFLICT (kb_id, key) DO UPDATE SET label = EXCLUDED.label;
         """)
 
@@ -356,16 +424,28 @@ class UtopiaDBAdapter:
         """)
 
         adr_count = 0
+        spec_count = 0
         facts_count = 0
 
         for it in intents:
             doc_id = it["id"]
-            adr_count += 1
+            if doc_id.startswith("SPEC-"):
+                spec_count += 1
+                e_type = "specification"
+                type_uuid = spec_type_uuid
+            elif doc_id.startswith("CONST-"):
+                e_type = "constitution"
+                type_uuid = const_type_uuid
+            else:
+                adr_count += 1
+                e_type = "architecture_decision"
+                type_uuid = adr_type_uuid
+
             a_uuid = str(uuid.uuid5(NS_BSDD, doc_id))
             name = f"{doc_id}: {it.get('title', doc_id)}"
-            summary = ("; ".join(it.get("invariants", []))[:300] or "Architecture decision")
+            summary = ("; ".join(it.get("invariants", []))[:300] or "Architecture intent")
             component = it.get("component", "core")
-            adr_attrs = json.dumps({
+            attrs = json.dumps({
                 "code": doc_id,
                 "title": it.get("title", doc_id),
                 "summary": summary,
@@ -374,7 +454,7 @@ class UtopiaDBAdapter:
 
             statements.append(f"""
             INSERT INTO entities (id, kb_id, canonical_name, specific_type, type_id, attrs, type_source)
-            VALUES ('{a_uuid}', '{self.kb_id}', {self._sql_esc(name)}, 'architecture_decision', '{adr_type_uuid}', {self._sql_esc(adr_attrs)}::jsonb, 'human')
+            VALUES ('{a_uuid}', '{self.kb_id}', {self._sql_esc(name)}, '{e_type}', '{type_uuid}', {self._sql_esc(attrs)}::jsonb, 'human')
             ON CONFLICT (id) DO UPDATE SET canonical_name = EXCLUDED.canonical_name, attrs = EXCLUDED.attrs;
             """)
 
@@ -404,14 +484,36 @@ class UtopiaDBAdapter:
                 """)
                 facts_count += 1
 
-        # Register Core B-SDD Procedural Skills
-        skills_meta = [
-            ("skill:b-sdd", "B-SDD Architecture Skill", "Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation."),
-            ("skill:architecture-designer", "Architecture Designer Skill", "System design, ADR authoring, trade-off evaluation, and scalability planning."),
-            ("skill:safe-refactor", "Safe Refactor Skill", "Restructures code while strictly preserving verified behavior and invariants."),
-            ("skill:skill-creator", "Skill Creator Wizard", "Self-authoring wizard for crystallizing repeatable processes into agent skills."),
-            ("skill:find-skills", "Skill Discovery Skill", "Discovery engine for locating and connecting installable agent capabilities.")
-        ]
+        # Register Dynamic B-SDD Procedural Skills from ~/.agents/skills
+        import re
+        skills_meta = []
+        skills_dir = Path.home() / ".agents" / "skills"
+        if skills_dir.exists():
+            for s_path in sorted(skills_dir.iterdir()):
+                if s_path.is_dir():
+                    s_file = s_path / "SKILL.md"
+                    if s_file.exists():
+                        try:
+                            txt = s_file.read_text(encoding="utf-8")
+                            s_name = s_path.name
+                            s_desc = f"Procedural skill {s_name}"
+                            m_desc = re.search(r"^description:\s*([^\n\r]+)", txt, re.M)
+                            if m_desc:
+                                s_desc = m_desc.group(1).strip()
+                            s_title = s_name.replace("-", " ").title() + " Skill"
+                            skills_meta.append((f"skill:{s_name}", s_title, s_desc))
+                        except Exception:
+                            pass
+
+        if not skills_meta:
+            skills_meta = [
+                ("skill:b-sdd", "B-SDD Architecture Skill", "Enforces bitemporal architectural invariants, ADR compliance, and pre-flight compilation."),
+                ("skill:b-sdd-sprint-closure", "B-SDD Sprint Closure Skill", "Autonomous skill for discrete sprint closure, distillation, and release tagging."),
+                ("skill:session-distiller", "Session Distiller Skill", "Distills and compacts multi-turn session transcripts."),
+                ("skill:safe-refactor", "Safe Refactor Skill", "Restructures code while strictly preserving verified behavior and invariants."),
+                ("skill:laya-decision-router", "Laya Decision Router Skill", "Sub-40ms System 1 non-autoregressive decision engine.")
+            ]
+
         for s_id, s_name, s_summary in skills_meta:
             s_uuid = str(uuid.uuid5(NS_BSDD, s_id))
             s_attrs = json.dumps({"skill_id": s_id, "summary": s_summary})
@@ -423,10 +525,13 @@ class UtopiaDBAdapter:
 
         statements.append("COMMIT;")
         sql_batch = "\n".join(statements)
-        self.execute_sql(sql_batch, timeout=30.0)
+        self.execute_sql(sql_batch, timeout=60.0)
 
         return {
-            "entities": adr_count + len(skills_meta),
+            "adrs": adr_count,
+            "specs": spec_count,
+            "skills": len(skills_meta),
+            "entities": adr_count + spec_count + len(skills_meta),
             "facts": facts_count
         }
 
