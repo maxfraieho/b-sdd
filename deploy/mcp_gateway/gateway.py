@@ -47,7 +47,9 @@ def load_config() -> Dict[str, Any]:
         "server": {
             "host": "0.0.0.0",
             "port": 8765,
-            "bearer_token": "bsdd-sovereign-mcp-key-sprint-036"
+            "bearer_token": "bsdd-sovereign-mcp-key-sprint-036",
+            "auth_enabled": False,
+            "require_auth": False
         },
         "cors": {
             "allow_origins": ["*"],
@@ -70,6 +72,25 @@ CONFIG = load_config()
 SERVER_HOST = os.environ.get("MCP_GATEWAY_HOST", CONFIG.get("server", {}).get("host", "0.0.0.0"))
 SERVER_PORT = int(os.environ.get("MCP_GATEWAY_PORT", CONFIG.get("server", {}).get("port", 8765)))
 CONFIGURED_BEARER_TOKEN = os.environ.get("MCP_BEARER_TOKEN", CONFIG.get("server", {}).get("bearer_token", ""))
+
+
+def is_auth_required() -> bool:
+    """Check if authentication is enabled and enforced."""
+    server_cfg = CONFIG.get("server", {})
+    env_auth = os.environ.get("MCP_AUTH_ENABLED")
+    if env_auth is not None:
+        if env_auth.lower() in ("0", "false", "no", "off"):
+            return False
+        if env_auth.lower() in ("1", "true", "yes", "on"):
+            return bool(CONFIGURED_BEARER_TOKEN)
+
+    auth_enabled = server_cfg.get("auth_enabled", True)
+    require_auth = server_cfg.get("require_auth", True)
+    if not auth_enabled or not require_auth:
+        return False
+
+    return bool(CONFIGURED_BEARER_TOKEN)
+
 
 app = FastAPI(
     title="B-SDD Universal Remote MCP Gateway",
@@ -96,6 +117,9 @@ def verify_bearer_auth(
     authorization: Optional[str] = Header(None),
     token: Optional[str] = Query(None)
 ):
+    if not is_auth_required():
+        return True  # Open access / No Authentication mode for Gemini Spark and sovereign clients
+
     if not CONFIGURED_BEARER_TOKEN:
         return True  # No token configured, open access
 
@@ -415,6 +439,20 @@ def process_jsonrpc_request(req_data: Dict[str, Any]) -> Optional[Dict[str, Any]
 # HTTP & SSE Endpoints
 # ------------------------------------------------------------------------------
 
+@app.get("/")
+def root_info():
+    """Information endpoint for clients probing root."""
+    return {
+        "service": "b-sdd-mcp-gateway",
+        "protocol": "mcp",
+        "version": "1.0.0",
+        "auth_enabled": is_auth_required(),
+        "sse_endpoint": "/sse",
+        "mcp_endpoint": "/mcp",
+        "tools_count": len(get_all_tool_specs())
+    }
+
+
 @app.get("/health")
 def health_check():
     """Health status and registered tools inventory."""
@@ -422,6 +460,7 @@ def health_check():
         "status": "UP",
         "service": "b-sdd-mcp-gateway",
         "version": "1.0.0",
+        "auth_enabled": is_auth_required(),
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "tools_count": len(get_all_tool_specs()),
         "upstreams": CONFIG.get("upstreams", {})
@@ -429,12 +468,14 @@ def health_check():
 
 
 @app.get("/sse")
+@app.get("/mcp")
 async def sse_transport(
     request: Request
 ):
     """
     Standard MCP SSE Transport Endpoint.
     Opens persistent SSE connection, yields the message endpoint, and keeps alive.
+    Supports /sse and /mcp aliases.
     """
     verify_bearer_auth(
         authorization=request.headers.get("authorization"),
@@ -444,10 +485,12 @@ async def sse_transport(
     queue: asyncio.Queue = asyncio.Queue()
     ACTIVE_SESSIONS[session_id] = queue
 
+    endpoint_path = "/mcp/messages" if request.url.path.startswith("/mcp") else "/messages"
+
     async def sse_generator():
         try:
             # Yield initial endpoint event compliant with MCP SSE spec
-            yield f"event: endpoint\ndata: /messages?session_id={session_id}\n\n"
+            yield f"event: endpoint\ndata: {endpoint_path}?session_id={session_id}\n\n"
             while True:
                 # Check for outgoing messages or yield keep-alive ping
                 try:
@@ -472,12 +515,14 @@ async def sse_transport(
 
 
 @app.post("/messages")
+@app.post("/mcp/messages")
 async def sse_messages(
     request: Request,
     session_id: Optional[str] = Query(None)
 ):
     """
     Handles incoming JSON-RPC 2.0 requests over SSE transport.
+    Supports /messages and /mcp/messages aliases.
     """
     verify_bearer_auth(
         authorization=request.headers.get("authorization"),
@@ -495,6 +540,8 @@ async def sse_messages(
 
 @app.post("/rpc")
 @app.post("/")
+@app.post("/mcp")
+@app.post("/mcp/rpc")
 async def direct_rpc(request: Request):
     """
     Direct HTTP POST JSON-RPC 2.0 handler.

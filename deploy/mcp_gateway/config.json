@@ -2,13 +2,21 @@
   "server": {
     "host": "0.0.0.0",
     "port": 8765,
-    "bearer_token": "bsdd-sovereign-mcp-key-sprint-036"
+    "bearer_token": "bsdd-sovereign-mcp-key-sprint-036",
+    "auth_enabled": false,
+    "require_auth": false
   },
   "cors": {
-    "allow_origins": ["*"],
+    "allow_origins": [
+      "*"
+    ],
     "allow_credentials": true,
-    "allow_methods": ["*"],
-    "allow_headers": ["*"]
+    "allow_methods": [
+      "*"
+    ],
+    "allow_headers": [
+      "*"
+    ]
   },
   "upstreams": {
     "utopia_db": "http://192.168.3.251:9622",
