@@ -364,14 +364,17 @@ def process_jsonrpc_request(req_data: Dict[str, Any]) -> Optional[Dict[str, Any]
 
     # Standard MCP Methods
     if method == "initialize":
+        client_version = params.get("protocolVersion", "2024-11-05")
         return {
             "jsonrpc": "2.0",
             "id": rpc_id,
             "result": {
-                "protocolVersion": "2024-11-05",
+                "protocolVersion": client_version,
                 "capabilities": {
                     "tools": {"listChanged": False},
-                    "logging": {}
+                    "logging": {},
+                    "resources": {"subscribe": False, "listChanged": False},
+                    "prompts": {"listChanged": False}
                 },
                 "serverInfo": {
                     "name": "b-sdd-mcp-gateway",
@@ -386,6 +389,20 @@ def process_jsonrpc_request(req_data: Dict[str, Any]) -> Optional[Dict[str, Any]
 
     elif method == "ping":
         return {"jsonrpc": "2.0", "id": rpc_id, "result": {}}
+
+    elif method == "resources/list":
+        return {
+            "jsonrpc": "2.0",
+            "id": rpc_id,
+            "result": {"resources": []}
+        }
+
+    elif method == "prompts/list":
+        return {
+            "jsonrpc": "2.0",
+            "id": rpc_id,
+            "result": {"prompts": []}
+        }
 
     elif method == "tools/list":
         return {
@@ -439,6 +456,38 @@ def process_jsonrpc_request(req_data: Dict[str, Any]) -> Optional[Dict[str, Any]
 # HTTP & SSE Endpoints
 # ------------------------------------------------------------------------------
 
+# HEAD probe handlers to satisfy Gemini Spark and webhook validation
+@app.head("/")
+def root_head():
+    return Response(status_code=200, media_type="application/json")
+
+
+@app.head("/health")
+def health_head():
+    return Response(status_code=200, media_type="application/json")
+
+
+@app.head("/sse")
+@app.head("/mcp")
+def sse_head():
+    return Response(
+        status_code=200,
+        media_type="text/event-stream; charset=utf-8",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
+
+@app.head("/messages")
+@app.head("/mcp/messages")
+@app.head("/rpc")
+def rpc_head():
+    return Response(status_code=200, media_type="application/json")
+
+
 @app.get("/")
 def root_info():
     """Information endpoint for clients probing root."""
@@ -489,8 +538,8 @@ async def sse_transport(
 
     async def sse_generator():
         try:
-            # Yield initial endpoint event compliant with MCP SSE spec
-            yield f"event: endpoint\ndata: {endpoint_path}?session_id={session_id}\n\n"
+            # Yield initial endpoint event compliant with MCP SSE spec (supporting both sessionId and session_id)
+            yield f"event: endpoint\ndata: {endpoint_path}?sessionId={session_id}&session_id={session_id}\n\n"
             while True:
                 # Check for outgoing messages or yield keep-alive ping
                 try:
@@ -518,33 +567,44 @@ async def sse_transport(
 @app.post("/mcp/messages")
 async def sse_messages(
     request: Request,
-    session_id: Optional[str] = Query(None)
+    session_id: Optional[str] = Query(None),
+    sessionId: Optional[str] = Query(None)
 ):
     """
     Handles incoming JSON-RPC 2.0 requests over SSE transport.
-    Supports /messages and /mcp/messages aliases.
+    Supports /messages and /mcp/messages aliases, accepting both sessionId and session_id.
     """
     verify_bearer_auth(
         authorization=request.headers.get("authorization"),
         token=request.query_params.get("token")
     )
+    actual_session_id = sessionId or session_id or request.headers.get("mcp-session-id")
     req_json = await request.json()
     resp = process_jsonrpc_request(req_json)
 
-    if session_id and session_id in ACTIVE_SESSIONS and resp is not None:
-        await ACTIVE_SESSIONS[session_id].put(resp)
-        return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content={"status": "QUEUED_TO_SSE"})
+    headers = {}
+    if actual_session_id:
+        headers["Mcp-Session-Id"] = actual_session_id
 
-    return JSONResponse(content=resp or {})
+    if actual_session_id and actual_session_id in ACTIVE_SESSIONS and resp is not None:
+        await ACTIVE_SESSIONS[actual_session_id].put(resp)
+        return JSONResponse(status_code=status.HTTP_202_ACCEPTED, content={"status": "QUEUED_TO_SSE"}, headers=headers)
+
+    return JSONResponse(content=resp or {}, headers=headers)
 
 
 @app.post("/rpc")
 @app.post("/")
 @app.post("/mcp")
 @app.post("/mcp/rpc")
-async def direct_rpc(request: Request):
+async def direct_rpc(
+    request: Request,
+    session_id: Optional[str] = Query(None),
+    sessionId: Optional[str] = Query(None)
+):
     """
     Direct HTTP POST JSON-RPC 2.0 handler.
+    Also acts as Streamable HTTP transport on /mcp, supporting Mcp-Session-Id headers and dual delivery.
     """
     verify_bearer_auth(
         authorization=request.headers.get("authorization"),
@@ -558,12 +618,23 @@ async def direct_rpc(request: Request):
             content={"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": "Parse error"}}
         )
 
+    actual_session_id = sessionId or session_id or request.headers.get("mcp-session-id")
+
     if isinstance(body, list):
         responses = [process_jsonrpc_request(item) for item in body]
-        return JSONResponse(content=[r for r in responses if r is not None])
+        resp_content = [r for r in responses if r is not None]
     else:
-        resp = process_jsonrpc_request(body)
-        return JSONResponse(content=resp or {})
+        resp_content = process_jsonrpc_request(body)
+
+    # If associated with an active SSE session, route response to SSE stream as well
+    if actual_session_id and actual_session_id in ACTIVE_SESSIONS and resp_content:
+        await ACTIVE_SESSIONS[actual_session_id].put(resp_content)
+
+    headers = {}
+    if actual_session_id:
+        headers["Mcp-Session-Id"] = actual_session_id
+
+    return JSONResponse(content=resp_content or {}, headers=headers)
 
 
 @app.get("/api/tools")
