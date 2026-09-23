@@ -1,0 +1,21 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8765,
+    "bearer_token": "bsdd-sovereign-mcp-key-sprint-036"
+  },
+  "cors": {
+    "allow_origins": ["*"],
+    "allow_credentials": true,
+    "allow_methods": ["*"],
+    "allow_headers": ["*"]
+  },
+  "upstreams": {
+    "utopia_db": "http://192.168.3.251:9622",
+    "laya_engine": "http://192.168.3.251:9623",
+    "gitnexus": "http://192.168.3.184:4747",
+    "sovereign_llm": "http://192.168.3.184:18880",
+    "astryx_ui": "http://127.0.0.1:5173",
+    "supervisor": "http://127.0.0.1:8161"
+  }
+}

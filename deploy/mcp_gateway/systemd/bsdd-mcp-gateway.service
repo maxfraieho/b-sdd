@@ -1,0 +1,29 @@
+[Unit]
+Description=B-SDD Universal Remote MCP Gateway
+Documentation=https://github.com/maxfraieho/b-sdd
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=vokov
+Group=vokov
+WorkingDirectory=/home/vokov/projects/b-sdd
+Environment=PYTHONPATH=/home/vokov/projects/b-sdd
+Environment=MCP_GATEWAY_PORT=8765
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 deploy/mcp_gateway/gateway.py
+Restart=always
+RestartSec=3
+KillMode=mixed
+TimeoutStopSec=10
+LimitNOFILE=65536
+
+# Sandboxing & Security
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/vokov/projects/b-sdd/.context /home/vokov/projects/b-sdd/docs /home/vokov/projects/b-sdd/specs /home/vokov/projects/b-sdd/deploy/mcp_gateway
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target

@@ -256,7 +256,7 @@ def stage_10_callback(sprint_id: str, commit_hash: str, release_tag: str, rules_
 def main():
     parser = argparse.ArgumentParser(description="B-SDD Sprint Closure Protocol Lifecycle Engine")
     parser.add_argument("--sprint", required=True, help="Sprint ID (e.g. sprint_030)")
-    parser.add_argument("--prompt", required=True, help="Next sprint dispatch prompt")
+    parser.add_argument("--prompt", required=False, default="Sprint 037 dispatch: Sovereign remote gateway and operations", help="Next sprint dispatch prompt")
     parser.add_argument("--skip-gitnexus", action="store_true", help="Skip remote GitNexus re-indexing")
     parser.add_argument("--skip-deploy", action="store_true", help="Skip Cloudflare Pages production deployment")
     parser.add_argument("--no-push", action="store_true", help="Do not push git tags/commits to remote")
