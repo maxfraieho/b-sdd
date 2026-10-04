@@ -1,6 +1,6 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP (ADR-015 TAXONOMY)
 
-**Згенеровано:** 2026-09-22 20:51:03Z  
+**Згенеровано:** 2026-09-23 05:29:18Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
 **Загальна кількість скілів:** **61** (🌟 **36** System Skills, 🛠️ **25** Project Skills)  

@@ -1,0 +1,23 @@
+{
+  "plan_id": "PLAN-SPARK-BSDD-2026-001",
+  "title": "B-SDD Sovereign Remote Architecture & Documentation Integration",
+  "objective": "Enable seamless bi-directional documentation updates and strategic plan synchronization for Google Gemini Spark and autonomous LLM agents.",
+  "status": "APPROVED",
+  "tags": [
+    "b-sdd",
+    "architecture",
+    "spark",
+    "mcp"
+  ],
+  "author": "Gemini Spark Architect",
+  "project": "bsdd",
+  "created_at": "2026-09-24T05:32:56.893402+00:00",
+  "updated_at": "2026-09-24T05:32:56.893402+00:00",
+  "steps": [
+    "Verify MCP Gateway SSE and JSON-RPC 2.0 endpoints",
+    "Expose sovereign documentation tools (bsdd_docs_list, bsdd_docs_read, bsdd_docs_write)",
+    "Enable persistent architectural plan storage in docs/plans/",
+    "Audit cross-repository compatibility with b-sdd-legal cockpit"
+  ],
+  "content": "This architectural plan establishes full documentation parity across B-SDD engine (:8765) and Legal Cockpit (:8766). AI architects can now inspect ADRs, write technical RFCs, and track milestones directly."
+}

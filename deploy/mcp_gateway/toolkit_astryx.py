@@ -123,7 +123,8 @@ def get_canvas_state(canvas_id: str = "main") -> Dict[str, Any]:
 def deploy_trigger(
     environment: str = "production",
     skip_tests: bool = False,
-    dry_run: bool = False
+    dry_run: bool = False,
+    **kwargs
 ) -> Dict[str, Any]:
     """
     Triggers production deployment of the Astryx Cockpit frontend to Cloudflare Pages.

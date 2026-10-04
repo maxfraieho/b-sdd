@@ -166,22 +166,37 @@ export const Topbar: React.FC<TopbarProps> = ({
         )}
       </div>
 
-      {/* Middle: Sovereign Infrastructure Status - System Pulse Popover */}
-      <div className="relative">
-        <button
-          onClick={() => setIsPulseOpen(!isPulseOpen)}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border transition-colors ${
-            allHealthy
-              ? 'bg-[#141b27] hover:bg-[#1a2233] text-slate-200 border-[#1e293b] hover:border-emerald/50'
-              : 'bg-[#1f1618] hover:bg-[#2a1d20] text-rose-200 border-rose-900/60'
-          }`}
-          title="Статус суверенної інфраструктури (Utopia DB, LLM Gateway, Appwrite RT, GitHub Sync)"
-        >
-          <Activity className={`w-3.5 h-3.5 ${allHealthy ? 'text-emerald' : 'text-rose-400 animate-pulse'}`} />
-          <span className="font-semibold text-[11px] hidden md:inline">System Pulse</span>
-          <Dot tone={allHealthy ? 'emerald' : 'rose'} pulse={!allHealthy} />
-          <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isPulseOpen ? 'rotate-180' : ''}`} />
-        </button>
+      {/* Middle: Sovereign Infrastructure Status & Quick Actions */}
+      <div className="flex items-center gap-2">
+        {onSyncUtopia && (
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => void onSyncUtopia()}
+            disabled={isSyncingUtopia}
+            icon={isSyncingUtopia ? <Loader2 className="w-3.5 h-3.5 animate-spin text-amber" /> : <RefreshCw className="w-3.5 h-3.5 text-amber" />}
+            className="hidden sm:inline-flex border-[#1e293b] text-slate-200 hover:text-white hover:border-amber/50 font-mono"
+            title="Синхронізувати активні бітемпоральні інваріанти з Utopia DB (.251)"
+          >
+            <span>Sync Utopia</span>
+          </Button>
+        )}
+
+        <div className="relative">
+          <button
+            onClick={() => setIsPulseOpen(!isPulseOpen)}
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs border transition-colors ${
+              allHealthy
+                ? 'bg-[#141b27] hover:bg-[#1a2233] text-slate-200 border-[#1e293b] hover:border-emerald/50'
+                : 'bg-[#1f1618] hover:bg-[#2a1d20] text-rose-200 border-rose-900/60'
+            }`}
+            title="Статус суверенної інфраструктури (Utopia DB, LLM Gateway, Appwrite RT, GitHub Sync)"
+          >
+            <Activity className={`w-3.5 h-3.5 ${allHealthy ? 'text-emerald' : 'text-rose-400 animate-pulse'}`} />
+            <span className="font-semibold text-[11px] hidden md:inline">System Pulse</span>
+            <Dot tone={allHealthy ? 'emerald' : 'rose'} pulse={!allHealthy} />
+            <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${isPulseOpen ? 'rotate-180' : ''}`} />
+          </button>
 
         {isPulseOpen && (
           <>
@@ -292,6 +307,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             </div>
           </>
         )}
+        </div>
       </div>
 
       {/* Right: Actions, Responsive Mode Switcher, Drawers */}

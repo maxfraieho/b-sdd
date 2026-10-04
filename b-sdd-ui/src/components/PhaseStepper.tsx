@@ -102,16 +102,25 @@ export const PhaseStepper: React.FC<PhaseStepperProps> = ({
 
       {/* Action shortcuts */}
       <div className="flex items-center gap-2 ml-4 shrink-0">
-        {currentPhaseId === 'phi_6' && (
-          <Button
-            variant="primary"
-            size="sm"
-            icon={<ShieldAlert className="w-3.5 h-3.5" />}
-            onClick={onOpenReviewGate}
-          >
-            Human Review Gate
-          </Button>
-        )}
+        <Button
+          variant="primary"
+          size="md"
+          icon={<ShieldAlert className={`w-4 h-4 ${currentPhaseId === 'phi_6' ? 'text-amber animate-pulse' : 'text-slate-400'}`} />}
+          onClick={onOpenReviewGate}
+          className={
+            currentPhaseId === 'phi_6'
+              ? 'bg-violet-600 hover:bg-violet-500 text-white font-bold border-violet-400 ring-2 ring-violet-500/50 shadow-lg shadow-violet-900/40 px-3.5 py-1.5'
+              : 'border-[#1e293b] text-slate-300 hover:text-white'
+          }
+          title="Відкрити інтерфейс Human Review Gate (підписання або відхилення спрінта)"
+        >
+          <span>Human Review Gate</span>
+          {currentPhaseId === 'phi_6' && (
+            <span className="ml-1.5 px-1.5 py-0.5 text-[9px] uppercase font-bold bg-amber text-slate-950 rounded">
+              HITL Активний
+            </span>
+          )}
+        </Button>
       </div>
     </div>
   );

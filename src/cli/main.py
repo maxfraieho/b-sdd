@@ -28,6 +28,41 @@ def cmd_compile(args):
     print(f"✓ B-SDD active rules compiled successfully ({words} words) -> {compiler.output_path}")
 
 
+def cmd_status(args):
+    """Checks and displays B-SDD supervisor and harness status."""
+    import urllib.request
+    import urllib.error
+    print("=== B-SDD Autonomous Supervisor Status (Node 192.168.3.161) ===")
+    
+    # 1. Query supervisor HTTP daemon (:8161)
+    sup_url = "http://127.0.0.1:8161/status"
+    try:
+        req = urllib.request.Request(sup_url)
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            active_tasks = data.get("active_tasks", [])
+            state_label = "IDLE" if not active_tasks else f"RUNNING ({', '.join(active_tasks)})"
+            print(f"✓ Daemon Status: {data.get('status', 'UNKNOWN')} | Supervisor State: {state_label}")
+            print(f"  - Version: {data.get('version')}")
+            print(f"  - Laya Circuit: {data.get('laya_circuit_state')}")
+            print(f"  - Active Tasks: {active_tasks if active_tasks else 'None (IDLE)'}")
+            print(f"  - Recent Completed: {data.get('recent_completed_tasks', [])}")
+    except Exception as e:
+        print(f"❌ Daemon :8161 unreachable: {e}")
+
+    # 2. Check cluster health file
+    health_file = Path("/tmp/b_sdd_cluster_health.json")
+    if health_file.exists():
+        try:
+            hdata = json.loads(health_file.read_text(encoding="utf-8"))
+            print(f"✓ Cluster Health: {hdata.get('overall_status', 'UNKNOWN')}")
+            for s in hdata.get("services", []):
+                st = "UP" if s.get("is_up") else "DOWN"
+                print(f"  - {s.get('service_id')}: {st} ({s.get('latency_ms')} ms)")
+        except Exception:
+            pass
+
+
 def cmd_sync(args):
     """Synchronizes active intents and graph entities to Utopia DB."""
     compiler = BSDDCompiler()
@@ -410,8 +445,13 @@ def main():
     p_serve.add_argument("--port", type=int, default=8765, help="Port to listen on (default: 8765)")
     p_serve.add_argument("--host", default="0.0.0.0", help="Host to bind (default: 0.0.0.0)")
 
+    # status
+    p_status = subparsers.add_parser("status", help="Check B-SDD supervisor and harness status")
+
     args = parser.parse_args()
-    if args.command == "compile":
+    if args.command == "status":
+        cmd_status(args)
+    elif args.command == "compile":
         cmd_compile(args)
     elif args.command == "serve":
         from src.server.workbench_server import WorkbenchServer

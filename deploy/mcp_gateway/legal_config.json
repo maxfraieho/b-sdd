@@ -1,0 +1,30 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8766,
+    "public_base_url": "https://legal-mcp.exodus.pp.ua",
+    "bearer_token": "",
+    "auth_enabled": false,
+    "require_auth": false
+  },
+  "cors": {
+    "allow_origins": [
+      "*"
+    ],
+    "allow_credentials": false,
+    "allow_methods": [
+      "*"
+    ],
+    "allow_headers": [
+      "*"
+    ]
+  },
+  "upstreams": {
+    "legal_node": "http://192.168.3.234:8766",
+    "utopia_db": "http://192.168.3.251:9622",
+    "laya_engine": "http://192.168.3.251:9623",
+    "gitnexus": "http://192.168.3.184:4747",
+    "sovereign_llm": "http://192.168.3.184:18880",
+    "b_sdd_core": "http://127.0.0.1:8765"
+  }
+}

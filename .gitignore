@@ -22,3 +22,5 @@ b-sdd-ui/node_modules
 *.log
 .gitnexus/
 
+*.bak*
+docs/legal

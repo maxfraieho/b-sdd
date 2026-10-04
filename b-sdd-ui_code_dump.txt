@@ -2,7 +2,7 @@
 ===============================================================================
 Source Directory : /home/vokov/projects/b-sdd/b-sdd-ui
 Target Consumer  : Gemini Spark / Gemini Pro 1.5/2.0 in Google NotebookLM
-Generated At     : 2026-09-22 10:16:30 UTC
+Generated At     : 2026-09-23 05:25:45 UTC
 Project Role     : Astryx Cockpit Frontend & B-SDD Operator Workbench
 Application URL  : https://b-sdd-ui.pages.dev (Cloudflare Pages)
 Topology Link    : Local Engine (.161:8765, :8161) | Utopia DB / Laya (.251) | Aggregator (.184)
@@ -92,6 +92,9 @@ b-sdd-ui/
         ├── primitives.tsx
       ├── boundaries/
         ├── AstryxZoneBoundary.tsx
+      ├── telemetry/
+        ├── ClusterHealthRadar.tsx
+        ├── Vector3IntentBadge.tsx
     ├── data/
       ├── mockAdrs.ts
       ├── mockDrakonSchema.ts
@@ -118,6 +121,7 @@ b-sdd-ui/
     ├── main.tsx
     ├── types/
       ├── adr.ts
+      ├── cluster-health.ts
       ├── copilot.ts
       ├── drakon.ts
       ├── drakonwidget.d.ts
@@ -4354,7 +4358,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 
 
 ===========================================================================
-FILE: src/App.tsx (31924 characters, 831 lines)
+FILE: src/App.tsx (33634 characters, 865 lines)
 ===========================================================================
 // src/App.tsx
 import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
@@ -4383,6 +4387,9 @@ import { TelemetryDrawer } from '@/components/TelemetryDrawer';
 import { useTelemetryRealtime } from '@/hooks/useTelemetryRealtime';
 import { AppShell } from '@/components/astryx/primitives';
 import { AstryxZoneBoundary } from '@/components/boundaries/AstryxZoneBoundary';
+import { ClusterHealthRadar } from '@/components/telemetry/ClusterHealthRadar';
+import { Vector3IntentBadge } from '@/components/telemetry/Vector3IntentBadge';
+import { Activity } from 'lucide-react';
 
 import { MOCK_ADRS } from '@/data/mockAdrs';
 import { CANONICAL_DRAKON_DIAGRAM, CANONICAL_HITL_DRAKON_IR } from '@/data/mockDrakonSchema';
@@ -4577,6 +4584,7 @@ export const App: React.FC = () => {
   const [schemaMode, setSchemaMode] = useState<'logic' | 'structure'>('logic');
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isCanvasFullscreen, setIsCanvasFullscreen] = useState(false);
+  const [isRadarOpen, setIsRadarOpen] = useState(false);
   const [drakonNodes, setDrakonNodes] = useState<DrakonNodeIR[]>(CANONICAL_HITL_DRAKON_IR.nodes);
   const [activeSocketType, setActiveSocketType] = useState<string | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('idle');
@@ -4997,6 +5005,36 @@ export const App: React.FC = () => {
               onSelectPhase={handlePhaseSelect}
               onOpenReviewGate={() => setIsReviewGateOpen(true)}
             />
+          )}
+
+          {/* CLUSTER HEALTH & INTENT RADAR STRIP */}
+          {!isCanvasFullscreen && (
+            <div className="bg-[#0b101b] border-b border-[#1e293b] px-3 sm:px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <Vector3IntentBadge />
+                <button
+                  onClick={() => setIsRadarOpen(!isRadarOpen)}
+                  className="text-xs flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#162035] hover:bg-[#1e293b] border border-[#1e293b] text-slate-300 transition-colors"
+                >
+                  <Activity className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Cluster Health Radar</span>
+                  <span className="text-[10px] text-slate-400 font-mono">({isRadarOpen ? 'Hide' : 'Show'})</span>
+                </button>
+              </div>
+              <div className="hidden md:flex items-center gap-2 text-[11px] font-mono text-slate-400">
+                <span>Node .161 (Supervisor)</span>
+                <span>•</span>
+                <span>Node .251 (Pixel 7)</span>
+                <span>•</span>
+                <span>Edge Cloud</span>
+              </div>
+            </div>
+          )}
+
+          {isRadarOpen && !isCanvasFullscreen && (
+            <div className="p-3 bg-slate-950/90 border-b border-slate-800">
+              <ClusterHealthRadar />
+            </div>
           )}
 
           {/* 3. MAIN WORKBENCH BODY */}
@@ -12306,6 +12344,245 @@ npm run dev  # http://localhost:5173
 
 
 ===========================================================================
+FILE: src/components/telemetry/ClusterHealthRadar.tsx (7142 characters, 186 lines)
+===========================================================================
+import React, { useState, useEffect } from 'react';
+import { Activity, Server, ShieldCheck, AlertTriangle, RefreshCw, Cpu, Database, Workflow } from 'lucide-react';
+import { ClusterHealthReport, ServiceHealth } from '../../types/cluster-health';
+
+const INITIAL_REPORT: ClusterHealthReport = {
+  timestamp: new Date().toISOString(),
+  overall_status: 'DEGRADED',
+  services: [
+    {
+      service_id: 'local_supervisor',
+      host: '127.0.0.1',
+      port: 8161,
+      is_up: true,
+      latency_ms: 1.2,
+      error_message: null
+    },
+    {
+      service_id: 'laya_decision_engine',
+      host: '192.168.3.251',
+      port: 9623,
+      is_up: true,
+      latency_ms: 38.5,
+      error_message: null
+    },
+    {
+      service_id: 'utopia_db_worm',
+      host: '192.168.3.251',
+      port: 9622,
+      is_up: false,
+      latency_ms: 2.1,
+      error_message: 'Connection refused (Daemon offline)'
+    },
+    {
+      service_id: 'n8n_orchestrator',
+      host: 'n8n.exodus.pp.ua',
+      port: 443,
+      is_up: true,
+      latency_ms: 84.0,
+      error_message: null
+    }
+  ]
+};
+
+const SERVICE_META: Record<string, { name: string; node: string; icon: React.ComponentType<{ className?: string }> }> = {
+  local_supervisor: { name: 'B-SDD Supervisor', node: 'Node .161', icon: Server },
+  laya_decision_engine: { name: 'Laya System 1', node: 'Pixel 7 (.251)', icon: Cpu },
+  utopia_db_worm: { name: 'Utopia DB WORM', node: 'Pixel 7 (.251)', icon: Database },
+  n8n_orchestrator: { name: 'n8n Orchestrator', node: 'Edge Cloud', icon: Workflow }
+};
+
+export const ClusterHealthRadar: React.FC = () => {
+  const [report, setReport] = useState<ClusterHealthReport>(INITIAL_REPORT);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+
+  const fetchHealth = async () => {
+    setIsRefreshing(true);
+    try {
+      // In production, poll health gateway or supervisor endpoint
+      const res = await fetch('/api/cluster/health').catch(() => null);
+      if (res && res.ok) {
+        const data = await res.json();
+        setReport(data);
+      } else {
+        // Fallback live timestamp update
+        setReport(prev => ({
+          ...prev,
+          timestamp: new Date().toISOString()
+        }));
+      }
+    } catch {
+      // Retain state gracefully
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(fetchHealth, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="bg-slate-900/90 border border-slate-800 rounded-xl p-4 shadow-xl backdrop-blur-md">
+      <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
+        <div className="flex items-center space-x-2.5">
+          <div className="p-1.5 bg-blue-500/10 rounded-lg text-blue-400">
+            <Activity className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
+              Astryx Cluster Health Radar
+              <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border ${
+                report.overall_status === 'UP'
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                  : report.overall_status === 'DEGRADED'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                  : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+              }`}>
+                {report.overall_status}
+              </span>
+            </h3>
+            <p className="text-xs text-slate-400">
+              Proactive telemetry heartbeat • SLA 1.5s • Last poll: {new Date(report.timestamp).toLocaleTimeString()}
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={fetchHealth}
+          disabled={isRefreshing}
+          className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 text-slate-400 hover:text-slate-200 transition-colors"
+          title="Refresh cluster telemetry"
+        >
+          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-blue-400' : ''}`} />
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {report.services.map((svc: ServiceHealth) => {
+          const meta = SERVICE_META[svc.service_id] || {
+            name: svc.service_id,
+            node: `${svc.host}:${svc.port}`,
+            icon: Server
+          };
+          const Icon = meta.icon;
+
+          return (
+            <div
+              key={svc.service_id}
+              className={`relative overflow-hidden rounded-lg p-3 border transition-all ${
+                svc.is_up
+                  ? 'bg-slate-800/40 border-slate-700/60 hover:border-emerald-500/40'
+                  : 'bg-rose-950/20 border-rose-800/40 hover:border-rose-700/60'
+              }`}
+            >
+              {/* Pulsing indicator */}
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-2">
+                  <div className="p-1.5 rounded-md bg-slate-800 text-slate-300">
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-medium text-slate-200">{meta.name}</div>
+                    <div className="text-[10px] text-slate-400">{meta.node}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-1.5">
+                  <span className="relative flex h-2.5 w-2.5">
+                    {svc.is_up ? (
+                      <>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+                      </>
+                    )}
+                  </span>
+                </div>
+              </div>
+
+              {/* Telemetry info */}
+              <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-800/60">
+                <span className="text-slate-400">Latency</span>
+                <span className={`font-mono font-medium ${
+                  svc.is_up ? (svc.latency_ms < 50 ? 'text-emerald-400' : 'text-amber-400') : 'text-slate-500'
+                }`}>
+                  {svc.is_up ? `${svc.latency_ms} ms` : 'TIMEOUT'}
+                </span>
+              </div>
+
+              {svc.error_message && (
+                <div className="mt-1 text-[10px] text-rose-400 truncate" title={svc.error_message}>
+                  {svc.error_message}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+
+
+===========================================================================
+FILE: src/components/telemetry/Vector3IntentBadge.tsx (1523 characters, 41 lines)
+===========================================================================
+import React from 'react';
+import { CheckCircle2, AlertTriangle, XCircle, ShieldCheck } from 'lucide-react';
+import { Vector3IntentState } from '../../types/cluster-health';
+
+interface Vector3IntentBadgeProps {
+  state?: Partial<Vector3IntentState>;
+}
+
+const DEFAULT_STATE: Vector3IntentState = {
+  cosine_alignment: 0.98,
+  threshold: 0.82,
+  verdict: 'VERDICT_INTENT_ALIGNED',
+  allow_commit: true,
+  latency_ms: 38.4,
+  missing_invariants: []
+};
+
+export const Vector3IntentBadge: React.FC<Vector3IntentBadgeProps> = ({ state = {} }) => {
+  const current: Vector3IntentState = { ...DEFAULT_STATE, ...state };
+  const isAligned = current.verdict === 'VERDICT_INTENT_ALIGNED';
+  const isWarning = current.verdict === 'VERDICT_INTENT_DRIFT_WARNING';
+
+  const badgeColor = isAligned
+    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+    : isWarning
+    ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+    : 'bg-rose-500/10 border-rose-500/30 text-rose-400';
+
+  const Icon = isAligned ? CheckCircle2 : isWarning ? AlertTriangle : XCircle;
+
+  return (
+    <div className={`inline-flex items-center space-x-2 px-2.5 py-1 rounded-lg border text-xs font-medium ${badgeColor}`}>
+      <ShieldCheck className="w-3.5 h-3.5" />
+      <div className="flex items-center space-x-1.5">
+        <span className="font-semibold">Dual-Gate Vector 3:</span>
+        <span className="font-mono">S_intent = {current.cosine_alignment.toFixed(2)}</span>
+      </div>
+      <Icon className="w-3.5 h-3.5" />
+    </div>
+  );
+};
+
+
+
+===========================================================================
 FILE: src/lib/utils.ts (197 characters, 7 lines)
 ===========================================================================
 // src/lib/utils.ts
@@ -12319,6 +12596,42 @@ export function cn(...inputs: ClassValue[]): string {
 
 
 ===========================================================================
+FILE: src/types/cluster-health.ts (721 characters, 30 lines)
+===========================================================================
+/**
+ * B-SDD Cluster Health & Proactive Telemetry Types.
+ * Sprint 032 - Astryx Cockpit UI.
+ */
+
+export type ServiceHealthStatus = "UP" | "DOWN" | "DEGRADED";
+
+export interface ServiceHealth {
+  service_id: string;
+  host: string;
+  port: number;
+  is_up: boolean;
+  latency_ms: number;
+  error_message?: string | null;
+}
+
+export interface ClusterHealthReport {
+  timestamp: string;
+  services: ServiceHealth[];
+  overall_status: ServiceHealthStatus;
+}
+
+export interface Vector3IntentState {
+  cosine_alignment: number;
+  threshold: number;
+  verdict: "VERDICT_INTENT_ALIGNED" | "VERDICT_INTENT_DRIFT_WARNING" | "VERDICT_INTENT_VIOLATION";
+  allow_commit: boolean;
+  latency_ms: number;
+  missing_invariants: string[];
+}
+
+
+
+===========================================================================
 FILE: src/vite-env.d.ts (38 characters, 1 lines)
 ===========================================================================
 /// <reference types="vite/client" />
@@ -12327,7 +12640,7 @@ FILE: src/vite-env.d.ts (38 characters, 1 lines)
 
 ################################################################################
 ## SUMMARY STATISTICS
-Total UI Files Dumped: 64
-Generated At: 2026-09-22T10:16:30.999882+00:00
+Total UI Files Dumped: 67
+Generated At: 2026-09-23T05:25:45.983467+00:00
 Target Architecture: Gemini Spark / Gemini Pro 1.5 Context Window
 ################################################################################

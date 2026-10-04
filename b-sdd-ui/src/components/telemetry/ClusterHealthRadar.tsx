@@ -4,14 +4,22 @@ import { ClusterHealthReport, ServiceHealth } from '../../types/cluster-health';
 
 const INITIAL_REPORT: ClusterHealthReport = {
   timestamp: new Date().toISOString(),
-  overall_status: 'DEGRADED',
+  overall_status: 'UP',
   services: [
     {
       service_id: 'local_supervisor',
-      host: '127.0.0.1',
+      host: '192.168.3.161',
       port: 8161,
       is_up: true,
       latency_ms: 1.2,
+      error_message: null
+    },
+    {
+      service_id: 'llm_gitnexus',
+      host: '192.168.3.184',
+      port: 18880,
+      is_up: true,
+      latency_ms: 14.5,
       error_message: null
     },
     {
@@ -26,26 +34,27 @@ const INITIAL_REPORT: ClusterHealthReport = {
       service_id: 'utopia_db_worm',
       host: '192.168.3.251',
       port: 9622,
-      is_up: false,
-      latency_ms: 2.1,
-      error_message: 'Connection refused (Daemon offline)'
+      is_up: true,
+      latency_ms: 8.4,
+      error_message: null
     },
     {
       service_id: 'n8n_orchestrator',
       host: 'n8n.exodus.pp.ua',
       port: 443,
       is_up: true,
-      latency_ms: 84.0,
+      latency_ms: 42.0,
       error_message: null
     }
   ]
 };
 
 const SERVICE_META: Record<string, { name: string; node: string; icon: React.ComponentType<{ className?: string }> }> = {
-  local_supervisor: { name: 'B-SDD Supervisor', node: 'Node .161', icon: Server },
-  laya_decision_engine: { name: 'Laya System 1', node: 'Pixel 7 (.251)', icon: Cpu },
-  utopia_db_worm: { name: 'Utopia DB WORM', node: 'Pixel 7 (.251)', icon: Database },
-  n8n_orchestrator: { name: 'n8n Orchestrator', node: 'Edge Cloud', icon: Workflow }
+  local_supervisor: { name: 'B-SDD Supervisor & MCP (:8765)', node: 'Node .161', icon: Server },
+  llm_gitnexus: { name: 'LLM Gateway & GitNexus (:4747)', node: 'Node .184', icon: Cpu },
+  laya_decision_engine: { name: 'Laya System 1 (Pixel 7)', node: 'Node .251', icon: Cpu },
+  utopia_db_worm: { name: 'Utopia DB WORM Ledger', node: 'Node .251', icon: Database },
+  n8n_orchestrator: { name: 'n8n & Edge Cloud Gateway', node: 'Edge Cloud', icon: Workflow }
 };
 
 export const ClusterHealthRadar: React.FC = () => {

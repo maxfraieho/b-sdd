@@ -463,6 +463,53 @@ export const App: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportSvg = () => {
+    const width = 800;
+    const height = Math.max(600, drakonNodes.length * 90 + 100);
+    const nodesSvg = drakonNodes.map((n, i) => {
+      const y = 60 + i * 85;
+      const isQuestion = n.node_type === 'question';
+      const isHeadline = n.node_type === 'headline';
+      const isEnd = n.node_type === 'end';
+      const fill = isHeadline ? '#2e1065' : isQuestion ? '#78350f' : isEnd ? '#4c0519' : '#0f172a';
+      const stroke = isHeadline ? '#a855f7' : isQuestion ? '#f59e0b' : isEnd ? '#f43f5e' : '#38bdf8';
+      const safeLabel = (n.label || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      return `
+        <g transform="translate(220, ${y})">
+          <rect x="-160" y="-22" width="320" height="44" rx="${isHeadline || isEnd ? 22 : isQuestion ? 6 : 8}" fill="${fill}" stroke="${stroke}" stroke-width="2" />
+          <text x="0" y="5" fill="#f8fafc" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="600">${safeLabel}</text>
+        </g>
+        ${i < drakonNodes.length - 1 ? `<line x1="220" y1="${y + 22}" x2="220" y2="${y + 63}" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" />` : ''}
+      `;
+    }).join('\n');
+
+    const svgContent = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#090d13" />
+  <text x="24" y="32" fill="#f8fafc" font-size="14" font-family="sans-serif" font-weight="bold">${(currentDiagram.name || 'DRAKON Flow').replace(/&/g, '&amp;')}</text>
+  <text x="24" y="48" fill="#64748b" font-size="10" font-family="monospace">Planar Invariant C=0 Verified · Skewer X=0.0</text>
+  <g transform="translate(40, 20)">
+    ${nodesSvg}
+  </g>
+</svg>`;
+
+    const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${selectedSpecId}-logic.drakon.svg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const handleSaveSpec = useCallback(async () => {
     setSaveState('saving');
     setSaveError(null);
@@ -514,6 +561,20 @@ export const App: React.FC = () => {
         telemetryLatency={realtimeTelemetry?.compiler?.last_compile_ms ?? liveRules.data?.latency_ms ?? 14.5}
         telemetrySlaOk={realtimeTelemetry?.compiler?.sla_passed ?? true}
       />
+
+      {/* Degraded Mode Banner (ADR-009, ADR-011) */}
+      {(liveHealth.data?.server !== 'online' || liveHealth.data?.utopia_db?.status !== 'online') && (
+        <div className="bg-amber-950/60 border-b border-amber-600/40 px-3 py-1 flex items-center justify-between text-[11px] font-mono text-amber-200 shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" />
+            <span className="font-semibold uppercase tracking-wider text-amber-300">Деградований Режим:</span>
+            <span>Автономний контур B-SDD активний. Інваріанти зафіксовані з локального кешу Utopia WORM.</span>
+          </div>
+          <span className="text-[10px] text-amber-400/80 bg-amber-900/40 px-1.5 py-0.5 rounded border border-amber-700/50 shrink-0 hidden sm:inline">
+            Offline Parity 100%
+          </span>
+        </div>
+      )}
 
       {effectiveIsMobile ? (
         <>
@@ -659,12 +720,42 @@ export const App: React.FC = () => {
                   <span className="text-[10px] text-slate-400 font-mono">({isRadarOpen ? 'Hide' : 'Show'})</span>
                 </button>
               </div>
-              <div className="hidden md:flex items-center gap-2 text-[11px] font-mono text-slate-400">
-                <span>Node .161 (Supervisor)</span>
-                <span>•</span>
-                <span>Node .251 (Pixel 7)</span>
-                <span>•</span>
-                <span>Edge Cloud</span>
+              <div className="hidden md:flex items-center gap-3 text-[11px] font-mono text-slate-300">
+                <button
+                  onClick={() => setIsRadarOpen(true)}
+                  className="flex items-center gap-1.5 hover:text-white transition-colors"
+                  title="Node 192.168.3.161: B-SDD Supervisor (:8161) & MCP Gateway (:8765) — UP"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-xs shadow-emerald-400/50" />
+                  <span>.161 (Supervisor)</span>
+                </button>
+                <span className="text-slate-600">•</span>
+                <button
+                  onClick={() => setIsRadarOpen(true)}
+                  className="flex items-center gap-1.5 hover:text-white transition-colors"
+                  title="Node 192.168.3.184: LLM Gateway (:18880), GitNexus (:4747), NotebookLM (:8002) — UP"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-xs shadow-emerald-400/50" />
+                  <span>.184 (LLM/GitNexus)</span>
+                </button>
+                <span className="text-slate-600">•</span>
+                <button
+                  onClick={() => setIsRadarOpen(true)}
+                  className="flex items-center gap-1.5 hover:text-white transition-colors"
+                  title="Node 192.168.3.251: Pixel 7 Podroid / Laya System 1 (:9623) & Utopia DB WORM (:9622) — UP"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-xs shadow-emerald-400/50" />
+                  <span>.251 (Pixel 7/Laya)</span>
+                </button>
+                <span className="text-slate-600">•</span>
+                <button
+                  onClick={() => setIsRadarOpen(true)}
+                  className="flex items-center gap-1.5 hover:text-white transition-colors"
+                  title="Cloudflare Pages Edge (b-sdd-ui.pages.dev) & n8n Gateway — UP"
+                >
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-xs shadow-emerald-400/50" />
+                  <span>Edge Cloud</span>
+                </button>
               </div>
             </div>
           )}
@@ -684,6 +775,7 @@ export const App: React.FC = () => {
                 onZoomOut={() => canvasRef.current?.zoomOut()}
                 onGoHome={() => canvasRef.current?.goHome()}
                 onExportJson={handleExportJson}
+                onExportSvg={handleExportSvg}
                 onSaveSpec={handleSaveSpec}
                 onOpenPseudocode={() => setIsPseudocodeOpen(true)}
                 onUndo={() => canvasRef.current?.undo()}

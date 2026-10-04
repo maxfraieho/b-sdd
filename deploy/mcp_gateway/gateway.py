@@ -31,6 +31,7 @@ from deploy.mcp_gateway import (
     toolkit_gitnexus,
     toolkit_skills,
     toolkit_utopia,
+    toolkit_docs,
 )
 
 # Load configuration
@@ -281,6 +282,7 @@ def get_all_tool_specs() -> List[Dict[str, Any]]:
     tools.extend(toolkit_gitnexus.get_tools_spec())
     tools.extend(toolkit_skills.get_tools_spec())
     tools.extend(toolkit_utopia.get_tools_spec())
+    tools.extend(toolkit_docs.get_tools_spec(prefix="bsdd_"))
     return tools
 
 
@@ -299,7 +301,11 @@ def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
     elif name == "astryx_canvas_get":
         return toolkit_astryx.get_canvas_state(canvas_id=args.get("canvas_id", "main"))
     elif name == "astryx_deploy_trigger":
-        return toolkit_astryx.deploy_trigger(environment=args.get("environment", "production"), run_build=args.get("run_build", True))
+        return toolkit_astryx.deploy_trigger(
+            environment=args.get("environment", "production"),
+            skip_tests=args.get("skip_tests", False),
+            dry_run=args.get("dry_run", False)
+        )
 
     # 3. DRAKON tools
     elif name == "drakon_planar_validate":
@@ -323,7 +329,13 @@ def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
     elif name == "skills_catalog_inspect":
         return toolkit_skills.inspect_skills_catalog(category=args.get("category"), search=args.get("search"), include_drakon=args.get("include_drakon", False))
     elif name == "skills_rule_of_two_crystallize":
-        return toolkit_skills.crystallize_rule_of_two(skill_name=args.get("skill_name", ""), session_id=args.get("session_id"), user_prompt=args.get("user_prompt"), dry_run=args.get("dry_run", False))
+        return toolkit_skills.crystallize_rule_of_two(
+            pattern_id=args.get("pattern_id") or args.get("skill_name") or "pattern_unnamed",
+            title=args.get("title") or args.get("skill_name") or "Unnamed Pattern",
+            description=args.get("description") or "",
+            instructions=args.get("instructions") or args.get("user_prompt") or "",
+            metadata=args.get("metadata")
+        )
     elif name == "skills_verify_immutability":
         return toolkit_skills.verify_immutability()
 
@@ -341,6 +353,37 @@ def dispatch_tool_call(name: str, args: Dict[str, Any]) -> Any:
         )
     elif name == "utopia_check_invariants":
         return toolkit_utopia.check_invariants(component=args.get("component"))
+
+    # 7. Documentation & Architecture Planning tools (B-SDD & Gemini Spark)
+    elif name in ("bsdd_docs_list", "docs_list", "legal_docs_list"):
+        return toolkit_docs.docs_list(category=args.get("category", "all"), project=args.get("project", "bsdd"))
+    elif name in ("bsdd_docs_read", "docs_read", "legal_docs_read"):
+        return toolkit_docs.docs_read(doc_path=args.get("doc_path", ""), max_chars=args.get("max_chars"), project=args.get("project", "bsdd"))
+    elif name in ("bsdd_docs_write", "docs_write", "legal_docs_write"):
+        return toolkit_docs.docs_write(
+            doc_path=args.get("doc_path", ""),
+            content=args.get("content", ""),
+            mode=args.get("mode", "overwrite"),
+            author=args.get("author", "Gemini Spark Architect"),
+            comment=args.get("comment"),
+            project=args.get("project", "bsdd")
+        )
+    elif name in ("bsdd_plan_save", "plan_save", "legal_plan_save"):
+        return toolkit_docs.plan_save(
+            plan_id=args.get("plan_id", ""),
+            title=args.get("title", ""),
+            objective=args.get("objective", ""),
+            content=args.get("content", ""),
+            steps=args.get("steps"),
+            status=args.get("status", "DRAFT"),
+            tags=args.get("tags"),
+            author=args.get("author", "Gemini Spark Architect"),
+            project=args.get("project", "bsdd")
+        )
+    elif name in ("bsdd_plans_list", "plans_list", "legal_plans_list"):
+        return toolkit_docs.plans_list(status=args.get("status"), tag=args.get("tag"), project=args.get("project", "bsdd"))
+    elif name in ("bsdd_plan_get", "plan_get", "legal_plan_get"):
+        return toolkit_docs.plan_get(plan_id=args.get("plan_id", ""), project=args.get("project", "bsdd"))
 
     else:
         raise ValueError(f"Unknown MCP tool: {name}")

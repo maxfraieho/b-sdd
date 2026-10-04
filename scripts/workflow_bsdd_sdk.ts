@@ -5,7 +5,7 @@ const gmailTrigger = trigger({
   version: 1.2,
   config: {
     name: 'Gmail Trigger (B-SDD)',
-    position: [-480, -100],
+    position: [-580, -100],
     parameters: {
       pollTimes: {
         item: [
@@ -19,7 +19,7 @@ const gmailTrigger = trigger({
       simple: true,
       filters: {
         readStatus: 'unread',
-        q: 'from:tukroschu@gmail.com subject:B-SDD-DISPATCH'
+        q: 'from:tukroschu@gmail.com (subject:B-SDD-DISPATCH OR subject:B-SDD-LEGAL)'
       }
     },
     credentials: {
@@ -40,20 +40,38 @@ const extractParams = node({
   version: 3.4,
   config: {
     name: 'Extract Params',
-    position: [-260, -100],
+    position: [-360, -100],
     parameters: {
       assignments: {
         assignments: [
           {
             id: 'instruction-name',
             name: 'instruction_name',
-            value: expr("={{ ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i)[0] : 'OUTBOX_AGI_SPRINT_023_EXTRACT_FEEDBACK_LOOP_REPO' }}"),
+            value: expr("={{ ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/OUTBOX_AGI_[A-Za-z0-9_]+/i)[0] : ($json.subject || 'TASK_UNNAMED') }}"),
             type: 'string'
           },
           {
             id: 'sprint-id',
             name: 'sprint_id',
-            value: expr("={{ ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i)[0].toLowerCase() : 'sprint_023' }}"),
+            value: expr("={{ ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i) ? ($json.subject || $json.snippet || $json.text || '').match(/SPRINT_\\d+/i)[0].toLowerCase() : 'sprint_009' }}"),
+            type: 'string'
+          },
+          {
+            id: 'prompt',
+            name: 'prompt',
+            value: expr("={{ $json.text || $json.snippet || $json.body || '' }}"),
+            type: 'string'
+          },
+          {
+            id: 'subject',
+            name: 'subject',
+            value: expr("={{ $json.subject || '' }}"),
+            type: 'string'
+          },
+          {
+            id: 'correlation-id',
+            name: 'correlation_id',
+            value: expr("={{ 'DSP-' + Math.floor(Date.now() / 1000) }}"),
             type: 'string'
           }
         ]
@@ -63,7 +81,90 @@ const extractParams = node({
   output: [
     {
       instruction_name: 'OUTBOX_AGI_SPRINT_023_EXTRACT_FEEDBACK_LOOP_REPO',
-      sprint_id: 'sprint_023'
+      sprint_id: 'sprint_023',
+      prompt: 'Task prompt',
+      subject: '[B-SDD-DISPATCH: SPRINT_023] Task',
+      correlation_id: 'DSP-1790275896'
+    }
+  ]
+});
+
+const routeTask = ifElse({
+  version: 2.2,
+  config: {
+    name: 'Route by Domain (Legal vs Engineering)',
+    position: [-160, -100],
+    parameters: {
+      conditions: {
+        options: {
+          caseSensitive: true,
+          leftValue: '',
+          typeValidation: 'loose',
+          version: 2
+        },
+        conditions: [
+          {
+            id: 'cond-is-legal',
+            leftValue: expr("={{ (($json.subject || '').includes('B-SDD-LEGAL') || ($json.prompt || '').includes('B-SDD Autonomous Legal Dispatch Trigger') || ($json.instruction_name || '').includes('LEGAL')) ? 'LEGAL' : 'ENGINEERING' }}"),
+            rightValue: 'LEGAL',
+            operator: {
+              type: 'string',
+              operation: 'equals',
+              singleValue: true
+            }
+          }
+        ],
+        combinator: 'and'
+      },
+      looseTypeValidation: true
+    }
+  }
+});
+
+const dispatchHost234 = node({
+  type: 'n8n-nodes-base.httpRequest',
+  version: 4.2,
+  config: {
+    name: 'Dispatch to Host 234 (Legal)',
+    position: [100, -200],
+    parameters: {
+      method: 'POST',
+      url: 'http://100.80.16.33:8162/dispatch',
+      sendBody: true,
+      specifyBody: 'keypair',
+      bodyParameters: {
+        parameters: [
+          {
+            name: 'instruction_name',
+            value: expr('={{ $json.instruction_name }}')
+          },
+          {
+            name: 'sprint_id',
+            value: expr('={{ $json.sprint_id }}')
+          },
+          {
+            name: 'target_repo',
+            value: '/home/vokov/projects/b-sdd-legal'
+          },
+          {
+            name: 'prompt',
+            value: expr('={{ $json.prompt }}')
+          },
+          {
+            name: 'correlation_id',
+            value: expr("={{ $json.correlation_id || '' }}")
+          }
+        ]
+      },
+      options: {
+        timeout: 15000,
+        allowUnauthorizedCerts: true
+      }
+    }
+  },
+  output: [
+    {
+      status: 'QUEUED'
     }
   ]
 });
@@ -73,7 +174,7 @@ const dispatchHost161 = node({
   version: 4.2,
   config: {
     name: 'Dispatch to Host 161',
-    position: [-40, -100],
+    position: [100, -20],
     parameters: {
       method: 'POST',
       url: 'http://100.65.225.122:8161/dispatch',
@@ -335,7 +436,11 @@ const sendEmailGmail = node({
 export default workflow('6FzcypHVkvqrxf9o', 'B-SDD Autonomous Supervisor Harness')
   .add(gmailTrigger)
   .to(extractParams)
-  .to(dispatchHost161)
+  .to(
+    routeTask
+      .onTrue(dispatchHost234)
+      .onFalse(dispatchHost161)
+  )
   .add(supervisorCallbackWebhook)
   .to(processTelemetry)
   .to(

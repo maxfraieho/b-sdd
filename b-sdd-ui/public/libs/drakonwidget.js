@@ -36541,3 +36541,10 @@ function createDrakonWidget() {
     widget.init()
     return widget
 }
+
+if (typeof window !== 'undefined') {
+    window.createDrakonWidget = createDrakonWidget;
+}
+if (typeof globalThis !== 'undefined') {
+    globalThis.createDrakonWidget = createDrakonWidget;
+}

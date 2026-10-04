@@ -1,0 +1,28 @@
+{
+  "plan_id": "PLAN-SPARK-LEGAL-2026-008-CALIBRATION-AND-CONSOLIDATION",
+  "title": "Sprint 008 Legal: Fact Calibration, Settings View, Kindle Pipeline & Monorepo Consolidation",
+  "objective": "Implement FactCalibrationModal, SettingsView, stdlib /api/v1/facts/calibrate backend, reliable Kindle dispatch, and monorepo consolidation on node .234",
+  "status": "ACTIVE",
+  "tags": [
+    "legal",
+    "sprint_008",
+    "calibration",
+    "monorepo",
+    "kindle",
+    "utopia"
+  ],
+  "author": "Gemini Spark Architect",
+  "project": "bsdd",
+  "created_at": "2026-09-24T15:55:56.849760+00:00",
+  "updated_at": "2026-09-24T15:55:56.849760+00:00",
+  "steps": [
+    "Consolidate scattered modules from .161 and .184 into ~/projects/b-sdd-legal on node .234",
+    "Run codebase dump script and upload consolidated dump to NotebookLM SSOT (c816473e-6fec-4689-90b7-98843f10bf91)",
+    "Implement FactCalibrationModal.tsx and backend /api/v1/facts/calibrate with WORM supersession logic",
+    "Implement SettingsView.tsx with PE24.014624-SBA parameters, Kindle email, and Appwrite OAuth hooks",
+    "Remediate Kindle dispatch pipeline in kindle_dispatch.py and verify delivery of dossier_legal_vaud_ed10.epub",
+    "Execute full pytest suite (100% green) and frontend build verification",
+    "Commit to git and record WORM ledger entry"
+  ],
+  "content": "# PLAN-SPARK-LEGAL-2026-008: FACT CALIBRATION, SETTINGS VIEW & MONOREPO CONSOLIDATION\n\n## 1. Context & Business Intent\nCase PE24.014624-SBA (Ministère public du canton de Vaud).\nObjective: Build a battle-tested Advocate Cockpit for Swiss/French attorneys, incorporating interactive fact calibration, dynamic blast radius recalculation, settings configuration with Appwrite OAuth readiness, and robust Send-to-Kindle book delivery.\n\n## 2. Strict Invariants\n- Invariant L-01: WORM Bitemporal Ledger (Every edit produces supersession with valid_to = NOW).\n- Invariant L-02: Pure Stdlib Core Runtime (100% Python stdlib for legal core).\n- Invariant L-03: Bona Fide Shield for Adriano Milli (Art. 933 CC, protégé status).\n- Invariant L-04: Adult Victim Protection for Arsen Kovalenko (b. 05.11.1999, 26 ans, CPP 115/118/122).\n- Invariant L-05: Cryptographic Evidence Seal (SHA-256 for all 41 items and 61 transcripts).\n\n## 3. Actionable Checklist\n1. Phase 1: Monorepo Consolidation on Node .234 (import legal_gateway.py from .161, unify pyproject/make).\n2. Phase 2: Codebase Text Dump generation via b-sdd dump tool and sync to NotebookLM (c816473e-6fec-4689-90b7-98843f10bf91).\n3. Phase 3: Deliverable B - Fact Calibration Modal (FactCalibrationModal.tsx) and backend endpoint /api/v1/facts/calibrate.\n4. Phase 4: Deliverable A - Settings View (SettingsView.tsx) with localStorage and Appwrite connector.\n5. Phase 5: Deliverable C - Advocate Action Center & fix Kindle dispatch pipeline (dossier_legal_vaud_ed10.epub -> tukroschu@kindle.com).\n6. Phase 6: WORM ledger recording and n8n webhook notification."
+}

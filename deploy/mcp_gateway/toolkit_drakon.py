@@ -55,13 +55,14 @@ def planar_validate(schema_input: Union[Dict[str, Any], str]) -> Dict[str, Any]:
         # Run planar solver to accurately count any topological edge crossings
         solver = DrakonPlanarSolver()
         layout_res = solver.solve(schema)
+        crossings = getattr(layout_res, "crossings_count", getattr(layout_res, "crossing_count", 0))
 
-        is_planar = res.is_valid and (layout_res.crossing_count == 0) and (abs(root_x) < 1e-4)
+        is_planar = res.is_valid and (crossings == 0) and (abs(root_x) < 1e-4)
 
         return {
             "is_valid": is_planar,
             "planar_compliant": is_planar,
-            "crossing_count": layout_res.crossing_count,
+            "crossing_count": crossings,
             "root_x": root_x,
             "node_count": len(schema.nodes),
             "errors": [e.to_dict() if hasattr(e, "to_dict") else str(e) for e in res.errors],

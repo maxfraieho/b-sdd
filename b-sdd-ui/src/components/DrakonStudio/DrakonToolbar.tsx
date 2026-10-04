@@ -49,6 +49,7 @@ interface DrakonToolbarProps {
   onSchemaModeChange?: (mode: DrakonSchemaMode) => void;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;
+  onExportSvg?: () => void;
 }
 
 export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
@@ -73,6 +74,7 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
   onSchemaModeChange,
   isFullscreen,
   onToggleFullscreen,
+  onExportSvg,
 }) => {
   const saveIcon =
     saveState === 'saving' ? (
@@ -274,6 +276,18 @@ export const DrakonToolbar: React.FC<DrakonToolbarProps> = ({
         >
           JSON
         </Button>
+
+        {onExportSvg && (
+          <Button
+            variant="secondary"
+            size="sm"
+            icon={<Download className="w-3 h-3 text-cyan" />}
+            onClick={onExportSvg}
+            title="Експортувати ізоморфну векторну SVG-діаграму"
+          >
+            SVG
+          </Button>
+        )}
 
         {onSaveSpec && (
           <Button

@@ -1174,6 +1174,25 @@ class DispatchHandler(BaseHTTPRequestHandler):
 
             logging.info(f"Отримано POST /dispatch: {instruction_name} (sprint: {sprint_id}, corr: {correlation_id}, repo: {target_repo})")
 
+            # Strict Legal Isolation Guard: Reject tasks meant for sovereign legal node .234
+            legal_markers = [
+                "[B-SDD-LEGAL]", "B-SDD-LEGAL",
+                "B-SDD Autonomous Legal Dispatch Trigger",
+                "Autonomous Legal Dispatch",
+                "LEGAL_KINDLE", "b-sdd-legal"
+            ]
+            check_str = f"{instruction_name} {sprint_id} {prompt_text} {body.get('subject', '')}".lower()
+            if any(m.lower() in check_str for m in legal_markers):
+                logging.warning(
+                    f"[LEGAL ISOLATION GUARD] Ігнорування завдання '{instruction_name}' ({sprint_id}): "
+                    f"призначено виключно для b-sdd-legal на суверенному вузлі 192.168.3.234."
+                )
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.end_headers()
+                self.wfile.write(b'{"status": "IGNORED_LEGAL_DISPATCH_FOR_NODE_234", "message": "Ignored: Task is designated for b-sdd-legal on node 192.168.3.234"}\n')
+                return
+
             # Mutex / Cooldown Deduplication Gate
             if is_duplicate_task(instruction_name, sprint_id):
                 logging.warning(
