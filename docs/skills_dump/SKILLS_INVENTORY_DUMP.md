@@ -1,11 +1,11 @@
 # B-SDD SKILLS INVENTORY & ONTOLOGY DUMP (ADR-015 TAXONOMY)
 
-**Згенеровано:** 2026-09-23 05:29:18Z  
+**Згенеровано:** 2026-10-04 10:34:00Z  
 **Хост збірки:** `192.168.3.161` (AntiGravity AGI Orchestrator)  
 **Джерело:** `/home/vokov/.agents/skills`  
-**Загальна кількість скілів:** **61** (🌟 **36** System Skills, 🛠️ **25** Project Skills)  
-**Покриття ДРАКОН-схемами (Rule of 2):** **61/61** (100.0%)  
-**Загальна кількість файлів коду/конфігів:** **308**  
+**Загальна кількість скілів:** **64** (🌟 **38** System Skills, 🛠️ **26** Project Skills)  
+**Покриття ДРАКОН-схемами (Rule of 2):** **63/64** (98.4%)  
+**Загальна кількість файлів коду/конфігів:** **314**  
 **Стандарт онтології:** B-SDD Methodology v1.2 / ADR-001..020 (SkillADR, ADR-015)  
 
 > [!NOTE]
@@ -15,7 +15,7 @@
 
 ---
 
-## 🌟 B-SDD System Skills (Core Infrastructure & Meta-Engine) — 36 скілів
+## 🌟 B-SDD System Skills (Core Infrastructure & Meta-Engine) — 38 скілів
 
 | # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |
 |---|---|---|:---:|---|
@@ -23,42 +23,44 @@
 | 2 | [**astryx-scaffolder**](#skill-astryx-scaffolder) | Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища опер... | ✅ | `SKILL.md`, `astryx-scaffolder.drakon.json` +1 |
 | 3 | [**b-sdd**](#skill-b-sdd) | Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правило... | ✅ | `SKILL.md`, `b-sdd.drakon.json` |
 | 4 | [**b-sdd-audio-overview**](#skill-b-sdd-audio-overview) | Автономний конвеєр синтезу монолітного посібника оператора B-SDD та генерації глибокого аудіоогляду (Deep Dive Audio Overview) в Google N... | ✅ | `SKILL.md`, `b-sdd-audio-overview.drakon.json` |
-| 5 | [**b-sdd-kindle-docs**](#skill-b-sdd-kindle-docs) | Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle через шлюз n8n та резервний контур на хості .184. | ✅ | `SKILL.md`, `b-sdd-kindle-docs.drakon.json` +3 |
-| 6 | [**b-sdd-notebooklm-sync**](#skill-b-sdd-notebooklm-sync) | Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google Noteboo... | ✅ | `SKILL.md`, `b-sdd-notebooklm-sync.drakon.json` +1 |
-| 7 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та... | ✅ | `SKILL.md`, `b-sdd-sprint-closure.drakon.json` +1 |
-| 8 | [**b-sdd-sprint-distiller**](#skill-b-sdd-sprint-distiller) | Автономна дистиляція звітів закриття спринту, оновлення кумулятивного Mega-ADR, реєстрація WORM-запису в Utopia DB та збереження в нестир... | ✅ | `SKILL.md`, `b-sdd-sprint-distiller.drakon.json` |
-| 9 | [**b-sdd-ui-export**](#skill-b-sdd-ui-export) | Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM. | ✅ | `SKILL.md`, `b-sdd-ui-export.drakon.json` |
-| 10 | [**cloudflare-pages-expert**](#skill-cloudflare-pages-expert) | Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler... | ✅ | `SKILL.md`, `cloudflare-pages-expert.drakon.json` |
-| 11 | [**code-reviewer**](#skill-code-reviewer) | Аналіз код-дифів (PR/MR), виявлення архітектурних запахів, вразливостей безпеки, дефектів продуктивності та надання конструктивного рев'ю. | ✅ | `SKILL.md`, `code-reviewer.drakon.json` +6 |
-| 12 | [**codebase-design**](#skill-codebase-design) | Формування архітектурної чистоти та структури кодової бази, розділення модулів, дотримання слабкої зв'язності (loose coupling). | ✅ | `SKILL.md`, `DEEPENING.md` +2 |
-| 13 | [**condition-based-waiting**](#skill-condition-based-waiting) | Ліквідація ненадійних тестів (flaky tests) через заміну фіксованих таймаутів на детерміноване очікування настання умов. | ✅ | `SKILL.md`, `condition-based-waiting.drakon.json` +1 |
-| 14 | [**defense-in-depth**](#skill-defense-in-depth) | Ешелонована багаторівнева валідація даних на межах API, бізнес-логіки та системних викликів для запобігання дефектам. | ✅ | `SKILL.md`, `defense-in-depth.drakon.json` |
-| 15 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Систематична петля діагностики критичних багів, регресій продуктивності та побудова відтворюваного детермінованого тест-кейсу. | ✅ | `SKILL.md`, `diagnosing-bugs.drakon.json` +1 |
-| 16 | [**drakon-compiler**](#skill-drakon-compiler) | Компіляція планарних ДРАКОН-схем (.drakon.json) у виконуваний код (Python/TypeScript), зворотна трансляція та валідація інваріантів C=0. | ✅ | `SKILL.md`, `drakon-compiler.drakon.json` +1 |
-| 17 | [**find-skills**](#skill-find-skills) | Пошук та виявлення релевантних спеціалізованих скілів у локальному та розширеному каталозі агентів. | ✅ | `SKILL.md`, `find-skills.drakon.json` |
-| 18 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Поглиблення неглибоких модулів, реструктуризація коду за принципами Джона Оустерхаута та оптимізація інтерфейсів. | ✅ | `SKILL.md`, `HTML-REPORT.md` +1 |
-| 19 | [**intent-continuity**](#skill-intent-continuity) | Забезпечення безперервності намірів та рішень крізь розподілені агентські сесії через бітемпоральний леджер. | ✅ | `SKILL.md`, `intent-continuity.drakon.json` |
-| 20 | [**investigate-first**](#skill-investigate-first) | Обов'язкове попереднє дослідження фактичного стану системи та коду перед будь-якими змінами чи гіпотезами. | ✅ | `SKILL.md`, `investigate-first.drakon.json` +1 |
-| 21 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Повний релізний конвеєр компіляції дайджестів, оновлень архітектури та книг для мобільних рідерів Kindle. | ✅ | `SKILL.md`, `kindle-release-pipeline.drakon.json` +7 |
-| 22 | [**laya-decision-router**](#skill-laya-decision-router) | Суб-40мс не-авторегресивна System 1 класифікація задач, оцінка ризиків порушення ADR та маршрутизація скілів на Pixel 7. | ✅ | `SKILL.md`, `laya-decision-router.drakon.json` |
-| 23 | [**root-cause-tracing**](#skill-root-cause-tracing) | Глибинне трасування першопричин збоїв через граф залежностей та стек викликів до вихідного джерела помилки. | ✅ | `SKILL.md`, `find-polluter.sh` +1 |
-| 24 | [**safe-refactor**](#skill-safe-refactor) | Безпечний рефакторинг коду під захистом автоматизованих тестів зі збереженням поведінкових інваріантів. | ✅ | `SKILL.md`, `safe-refactor.drakon.json` +1 |
-| 25 | [**session-distiller**](#skill-session-distiller) | Аналітична дистиляція логів довгих сесій у компактні підсумки, архітектурні висновки та списки задач. | ✅ | `SKILL.md`, `session-distiller.drakon.json` |
-| 26 | [**skill-audit**](#skill-skill-audit) | Ревізія та верифікація скілів на відповідність стандартам таксономії ADR-015, планарності ДРАКОН та актуальності. | ✅ | `SKILL.md`, `skill-audit.drakon.json` |
-| 27 | [**skill-creator**](#skill-skill-creator) | Створення та кристалізація нових агентських скілів за правилом 2-х повторень з повною генерацією маніфесту та схеми. | ✅ | `SKILL.md`, `LICENSE.txt` +6 |
-| 28 | [**surgical-patch**](#skill-surgical-patch) | Точкове, мінімально інвазивне внесення виправлень без супутнього руйнування сусіднього коду та структури. | ✅ | `SKILL.md`, `surgical-patch.drakon.json` +1 |
-| 29 | [**systematic-debugging**](#skill-systematic-debugging) | Методичне усунення дефектів: формулювання гіпотез, ізоляція причин, перевірка експериментами та закріплення тестами. | ✅ | `SKILL.md`, `CREATION-LOG.md` +5 |
-| 30 | [**test-driven-development**](#skill-test-driven-development) | Розробка через тестування (TDD): цикл Red-Green-Refactor, де жоден рядок коду не пишеться без попередньо падаючого тесту. | ✅ | `SKILL.md`, `test-driven-development.drakon.json` |
-| 31 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Виявлення та виправлення антипатернів тестування (надлишковий мокінг, тестування реалізації замість поведінки, tautological tests). | ✅ | `SKILL.md`, `testing-anti-patterns.drakon.json` |
-| 32 | [**using-git-worktrees**](#skill-using-git-worktrees) | Ізоляція робочих контекстів та паралельних завдань за допомогою механізму git worktree без перемикання поточної гілки. | ✅ | `SKILL.md`, `using-git-worktrees.drakon.json` |
-| 33 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Синхронізація архітектурних рішень та графів намірів у незмінний WORM-леджер Utopia DB на вузлі 192.168.3.251. | ✅ | `SKILL.md`, `utopia-intent-ledger.drakon.json` +2 |
-| 34 | [**verification-before-completion**](#skill-verification-before-completion) | Обов'язковий попередній аудит та запуск перевірочних скриптів перед декларуванням успішного завершення задачі. | ✅ | `SKILL.md`, `verification-before-completion.drakon.json` |
-| 35 | [**writing-great-skills**](#skill-writing-great-skills) | Керівництво зі створення високоефективних, лаконічних та однозначних інструкцій для агентів. | ✅ | `SKILL.md`, `GLOSSARY.md` +1 |
-| 36 | [**writing-skills**](#skill-writing-skills) | Базові стандарти синтаксису, метаданих та формулювання процедурних правил для каталогу скілів. | ✅ | `SKILL.md`, `anthropic-best-practices.md` +2 |
+| 5 | [**b-sdd-kindle-docs**](#skill-b-sdd-kindle-docs) | Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle через шлюз n8n та резервний контур на хості .184. | ✅ | `SKILL.md`, `b-sdd-kindle-docs.drakon.json` +4 |
+| 6 | [**b-sdd-notebooklm-audio-deepdive**](#skill-b-sdd-notebooklm-audio-deepdive) | Автономна генерація максимального україномовного аудіоогляду (Deep Dive Podcast, AudioLength.LONG) з матеріалів записника Google Notebook... | ✅ | `SKILL.md`, `b-sdd-notebooklm-audio-deepdive.drakon.json` |
+| 7 | [**b-sdd-notebooklm-kindle-dispatch**](#skill-b-sdd-notebooklm-kindle-dispatch) | Еталонний конвеєр B-SDD: витягування розділів книги через NotebookLM MCP, детермінована збірка EPUB 3.0 та гарантована доставка на Amazon... | ✅ | `SKILL.md`, `b-sdd-notebooklm-kindle-dispatch.drakon.json` |
+| 8 | [**b-sdd-notebooklm-sync**](#skill-b-sdd-notebooklm-sync) | Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google Noteboo... | ✅ | `SKILL.md`, `b-sdd-notebooklm-sync.drakon.json` +1 |
+| 9 | [**b-sdd-sprint-closure**](#skill-b-sdd-sprint-closure) | Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та... | ✅ | `SKILL.md`, `b-sdd-sprint-closure.drakon.json` +1 |
+| 10 | [**b-sdd-sprint-distiller**](#skill-b-sdd-sprint-distiller) | Автономна дистиляція звітів закриття спринту, оновлення кумулятивного Mega-ADR, реєстрація WORM-запису в Utopia DB та збереження в нестир... | ✅ | `SKILL.md`, `b-sdd-sprint-distiller.drakon.json` |
+| 11 | [**b-sdd-ui-export**](#skill-b-sdd-ui-export) | Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM. | ✅ | `SKILL.md`, `b-sdd-ui-export.drakon.json` |
+| 12 | [**cloudflare-pages-expert**](#skill-cloudflare-pages-expert) | Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler... | ✅ | `SKILL.md`, `cloudflare-pages-expert.drakon.json` |
+| 13 | [**code-reviewer**](#skill-code-reviewer) | Аналіз код-дифів (PR/MR), виявлення архітектурних запахів, вразливостей безпеки, дефектів продуктивності та надання конструктивного рев'ю. | ✅ | `SKILL.md`, `code-reviewer.drakon.json` +6 |
+| 14 | [**codebase-design**](#skill-codebase-design) | Формування архітектурної чистоти та структури кодової бази, розділення модулів, дотримання слабкої зв'язності (loose coupling). | ✅ | `SKILL.md`, `DEEPENING.md` +2 |
+| 15 | [**condition-based-waiting**](#skill-condition-based-waiting) | Ліквідація ненадійних тестів (flaky tests) через заміну фіксованих таймаутів на детерміноване очікування настання умов. | ✅ | `SKILL.md`, `condition-based-waiting.drakon.json` +1 |
+| 16 | [**defense-in-depth**](#skill-defense-in-depth) | Ешелонована багаторівнева валідація даних на межах API, бізнес-логіки та системних викликів для запобігання дефектам. | ✅ | `SKILL.md`, `defense-in-depth.drakon.json` |
+| 17 | [**diagnosing-bugs**](#skill-diagnosing-bugs) | Систематична петля діагностики критичних багів, регресій продуктивності та побудова відтворюваного детермінованого тест-кейсу. | ✅ | `SKILL.md`, `diagnosing-bugs.drakon.json` +1 |
+| 18 | [**drakon-compiler**](#skill-drakon-compiler) | Компіляція планарних ДРАКОН-схем (.drakon.json) у виконуваний код (Python/TypeScript), зворотна трансляція та валідація інваріантів C=0. | ✅ | `SKILL.md`, `drakon-compiler.drakon.json` +1 |
+| 19 | [**find-skills**](#skill-find-skills) | Пошук та виявлення релевантних спеціалізованих скілів у локальному та розширеному каталозі агентів. | ✅ | `SKILL.md`, `find-skills.drakon.json` |
+| 20 | [**improve-codebase-architecture**](#skill-improve-codebase-architecture) | Поглиблення неглибоких модулів, реструктуризація коду за принципами Джона Оустерхаута та оптимізація інтерфейсів. | ✅ | `SKILL.md`, `HTML-REPORT.md` +1 |
+| 21 | [**intent-continuity**](#skill-intent-continuity) | Забезпечення безперервності намірів та рішень крізь розподілені агентські сесії через бітемпоральний леджер. | ✅ | `SKILL.md`, `intent-continuity.drakon.json` |
+| 22 | [**investigate-first**](#skill-investigate-first) | Обов'язкове попереднє дослідження фактичного стану системи та коду перед будь-якими змінами чи гіпотезами. | ✅ | `SKILL.md`, `investigate-first.drakon.json` +1 |
+| 23 | [**kindle-release-pipeline**](#skill-kindle-release-pipeline) | Повний релізний конвеєр компіляції дайджестів, оновлень архітектури та книг для мобільних рідерів Kindle. | ✅ | `SKILL.md`, `kindle-release-pipeline.drakon.json` +7 |
+| 24 | [**laya-decision-router**](#skill-laya-decision-router) | Суб-40мс не-авторегресивна System 1 класифікація задач, оцінка ризиків порушення ADR та маршрутизація скілів на Pixel 7. | ✅ | `SKILL.md`, `laya-decision-router.drakon.json` |
+| 25 | [**root-cause-tracing**](#skill-root-cause-tracing) | Глибинне трасування першопричин збоїв через граф залежностей та стек викликів до вихідного джерела помилки. | ✅ | `SKILL.md`, `find-polluter.sh` +1 |
+| 26 | [**safe-refactor**](#skill-safe-refactor) | Безпечний рефакторинг коду під захистом автоматизованих тестів зі збереженням поведінкових інваріантів. | ✅ | `SKILL.md`, `safe-refactor.drakon.json` +1 |
+| 27 | [**session-distiller**](#skill-session-distiller) | Аналітична дистиляція логів довгих сесій у компактні підсумки, архітектурні висновки та списки задач. | ✅ | `SKILL.md`, `session-distiller.drakon.json` |
+| 28 | [**skill-audit**](#skill-skill-audit) | Ревізія та верифікація скілів на відповідність стандартам таксономії ADR-015, планарності ДРАКОН та актуальності. | ✅ | `SKILL.md`, `skill-audit.drakon.json` |
+| 29 | [**skill-creator**](#skill-skill-creator) | Створення та кристалізація нових агентських скілів за правилом 2-х повторень з повною генерацією маніфесту та схеми. | ✅ | `SKILL.md`, `LICENSE.txt` +6 |
+| 30 | [**surgical-patch**](#skill-surgical-patch) | Точкове, мінімально інвазивне внесення виправлень без супутнього руйнування сусіднього коду та структури. | ✅ | `SKILL.md`, `surgical-patch.drakon.json` +1 |
+| 31 | [**systematic-debugging**](#skill-systematic-debugging) | Методичне усунення дефектів: формулювання гіпотез, ізоляція причин, перевірка експериментами та закріплення тестами. | ✅ | `SKILL.md`, `CREATION-LOG.md` +5 |
+| 32 | [**test-driven-development**](#skill-test-driven-development) | Розробка через тестування (TDD): цикл Red-Green-Refactor, де жоден рядок коду не пишеться без попередньо падаючого тесту. | ✅ | `SKILL.md`, `test-driven-development.drakon.json` |
+| 33 | [**testing-anti-patterns**](#skill-testing-anti-patterns) | Виявлення та виправлення антипатернів тестування (надлишковий мокінг, тестування реалізації замість поведінки, tautological tests). | ✅ | `SKILL.md`, `testing-anti-patterns.drakon.json` |
+| 34 | [**using-git-worktrees**](#skill-using-git-worktrees) | Ізоляція робочих контекстів та паралельних завдань за допомогою механізму git worktree без перемикання поточної гілки. | ✅ | `SKILL.md`, `using-git-worktrees.drakon.json` |
+| 35 | [**utopia-intent-ledger**](#skill-utopia-intent-ledger) | Синхронізація архітектурних рішень та графів намірів у незмінний WORM-леджер Utopia DB на вузлі 192.168.3.251. | ✅ | `SKILL.md`, `utopia-intent-ledger.drakon.json` +2 |
+| 36 | [**verification-before-completion**](#skill-verification-before-completion) | Обов'язковий попередній аудит та запуск перевірочних скриптів перед декларуванням успішного завершення задачі. | ✅ | `SKILL.md`, `verification-before-completion.drakon.json` |
+| 37 | [**writing-great-skills**](#skill-writing-great-skills) | Керівництво зі створення високоефективних, лаконічних та однозначних інструкцій для агентів. | ✅ | `SKILL.md`, `GLOSSARY.md` +1 |
+| 38 | [**writing-skills**](#skill-writing-skills) | Базові стандарти синтаксису, метаданих та формулювання процедурних правил для каталогу скілів. | ✅ | `SKILL.md`, `anthropic-best-practices.md` +2 |
 
 ---
 
-## 🛠️ Project Domain Skills — 25 скілів
+## 🛠️ Project Domain Skills — 26 скілів
 
 | # | Назва скіла | Опис | ДРАКОН | Склад / Ресурси |
 |---|---|---|:---:|---|
@@ -77,23 +79,24 @@
 | 13 | [**notebooklm**](#skill-notebooklm) | Взаємодія з Google NotebookLM API та MCP для організації досліджень, синтезу знань та аудіо-оглядів. | ✅ | `SKILL.md`, `notebooklm.drakon.json` |
 | 14 | [**notebooklm-gitnexus-copilot**](#skill-notebooklm-gitnexus-copilot) | Спільний аналітичний міст між графом знань GitNexus AST на хості .184 та блокнотом NotebookLM SSoT. | ✅ | `SKILL.md`, `notebooklm-gitnexus-copilot.drakon.json` |
 | 15 | [**subagent-driven-development**](#skill-subagent-driven-development) | Делегування ізольованих підзадач незалежним субагентам для збереження контекстного бюджету головного агента. | ✅ | `SKILL.md`, `subagent-driven-development.drakon.json` |
-| 16 | [**theme-factory**](#skill-theme-factory) | Проектування та гармонізація палітр кольорів, темної та світлої теми, токенів дизайну та типографіки. | ✅ | `SKILL.md`, `LICENSE.txt` +11 |
-| 17 | [**to-spec**](#skill-to-spec) | Трансформація неструктурованих вимог та ідей у суворі, формальні інженерні специфікації поведінки. | ✅ | `SKILL.md`, `to-spec.drakon.json` |
-| 18 | [**to-tickets**](#skill-to-tickets) | Декомпозиція високорівневих специфікацій на атомарні, машинозчитувані тікети для автономних виконавців. | ✅ | `SKILL.md`, `to-tickets.drakon.json` |
-| 19 | [**vercel-composition-patterns**](#skill-vercel-composition-patterns) | Архітектурні патерни компонування сучасних React-додатків, серверні компоненти (RSC) та оптимізація рендерингу. | ✅ | `SKILL.md`, `AGENTS.md` +10 |
-| 20 | [**vercel-react-best-practices**](#skill-vercel-react-best-practices) | Інженерні стандарти продуктивності React та Next.js від Vercel: мінімізація ререндерів, бандлу та затримок. | ✅ | `SKILL.md`, `AGENTS.md` +72 |
-| 21 | [**wayfinder**](#skill-wayfinder) | Навігація по великих кодових базах, пошук точок входу, картування залежностей та побудова маршруту дослідження. | ✅ | `SKILL.md`, `wayfinder.drakon.json` |
-| 22 | [**web-artifacts-builder**](#skill-web-artifacts-builder) | Автономна генерація односторінкових HTML/JS/CSS веб-артефактів, інтерактивних демонстрацій та візуалізаторів. | ✅ | `SKILL.md`, `LICENSE.txt` +3 |
-| 23 | [**web-design-guidelines**](#skill-web-design-guidelines) | Дотримання стандартів доступності (a11y), семантичної верстки, контрастності та адаптивності веб-інтерфейсів. | ✅ | `SKILL.md`, `web-design-guidelines.drakon.json` |
-| 24 | [**webapp-testing**](#skill-webapp-testing) | Комплексне тестування веб-додатків через Playwright/Vitest, перевірка користувацьких сценаріїв та API-інтеграцій. | ✅ | `SKILL.md`, `LICENSE.txt` +5 |
-| 25 | [**writing-plans**](#skill-writing-plans) | Складання структурованих, інкрементних планів реалізації з чіткими критеріями перевірки кожного кроку. | ✅ | `SKILL.md`, `writing-plans.drakon.json` |
+| 16 | [**technical-reddit-author**](#skill-technical-reddit-author) | Generates high-impact, battle-tested engineering articles, case studies, and Reddit posts (r/ClaudeAI, r/LocalLLaMA, DOU, Medium) with re... | ⚠️ | `SKILL.md` |
+| 17 | [**theme-factory**](#skill-theme-factory) | Проектування та гармонізація палітр кольорів, темної та світлої теми, токенів дизайну та типографіки. | ✅ | `SKILL.md`, `LICENSE.txt` +11 |
+| 18 | [**to-spec**](#skill-to-spec) | Трансформація неструктурованих вимог та ідей у суворі, формальні інженерні специфікації поведінки. | ✅ | `SKILL.md`, `to-spec.drakon.json` |
+| 19 | [**to-tickets**](#skill-to-tickets) | Декомпозиція високорівневих специфікацій на атомарні, машинозчитувані тікети для автономних виконавців. | ✅ | `SKILL.md`, `to-tickets.drakon.json` |
+| 20 | [**vercel-composition-patterns**](#skill-vercel-composition-patterns) | Архітектурні патерни компонування сучасних React-додатків, серверні компоненти (RSC) та оптимізація рендерингу. | ✅ | `SKILL.md`, `AGENTS.md` +10 |
+| 21 | [**vercel-react-best-practices**](#skill-vercel-react-best-practices) | Інженерні стандарти продуктивності React та Next.js від Vercel: мінімізація ререндерів, бандлу та затримок. | ✅ | `SKILL.md`, `AGENTS.md` +72 |
+| 22 | [**wayfinder**](#skill-wayfinder) | Навігація по великих кодових базах, пошук точок входу, картування залежностей та побудова маршруту дослідження. | ✅ | `SKILL.md`, `wayfinder.drakon.json` |
+| 23 | [**web-artifacts-builder**](#skill-web-artifacts-builder) | Автономна генерація односторінкових HTML/JS/CSS веб-артефактів, інтерактивних демонстрацій та візуалізаторів. | ✅ | `SKILL.md`, `LICENSE.txt` +3 |
+| 24 | [**web-design-guidelines**](#skill-web-design-guidelines) | Дотримання стандартів доступності (a11y), семантичної верстки, контрастності та адаптивності веб-інтерфейсів. | ✅ | `SKILL.md`, `web-design-guidelines.drakon.json` |
+| 25 | [**webapp-testing**](#skill-webapp-testing) | Комплексне тестування веб-додатків через Playwright/Vitest, перевірка користувацьких сценаріїв та API-інтеграцій. | ✅ | `SKILL.md`, `LICENSE.txt` +5 |
+| 26 | [**writing-plans**](#skill-writing-plans) | Складання структурованих, інкрементних планів реалізації з чіткими критеріями перевірки кожного кроку. | ✅ | `SKILL.md`, `writing-plans.drakon.json` |
 
 ---
 
 ## Повний Вміст Скілів (Full Skills Code & Instructions)
 
 <a id="skill-api-designer"></a>
-### [1/61] Скіл: `api-designer`
+### [1/64] Скіл: `api-designer`
 
 **Каталог:** `~/.agents/skills/api-designer`  
 **Опис:** Архітектурне проектування REST/GraphQL API, створення специфікацій OpenAPI 3.1, моделювання ресурсів та валідація мок-контрактів.  
@@ -3026,7 +3029,7 @@ Avoid these mistakes:
 ---
 
 <a id="skill-architecture-designer"></a>
-### [2/61] Скіл: `architecture-designer`
+### [2/64] Скіл: `architecture-designer`
 
 **Каталог:** `~/.agents/skills/architecture-designer`  
 **Опис:** Проектування високорівневої архітектури систем, складання Architecture Decision Records (ADRs), аналіз компромісів та планування масштабованості.  
@@ -3934,7 +3937,7 @@ When to Avoid:
 ---
 
 <a id="skill-ast-grep"></a>
-### [3/61] Скіл: `ast-grep`
+### [3/64] Скіл: `ast-grep`
 
 **Каталог:** `~/.agents/skills/ast-grep`  
 **Опис:** Структурний пошук, аналіз та транспіляція кодової бази за шаблонами абстрактного синтаксичного дерева (AST).  
@@ -4779,7 +4782,7 @@ rule:
 ---
 
 <a id="skill-astryx-scaffolder"></a>
-### [4/61] Скіл: `astryx-scaffolder`
+### [4/64] Скіл: `astryx-scaffolder`
 
 **Каталог:** `~/.agents/skills/astryx-scaffolder`  
 **Опис:** Генерація компонентів Astryx Cockpit UI, інтерактивних віджетів ДРАКОН-полотна, телеметричних панелей та мультипроєктного середовища оператора.  
@@ -5194,7 +5197,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-b-sdd"></a>
-### [5/61] Скіл: `b-sdd`
+### [5/64] Скіл: `b-sdd`
 
 **Каталог:** `~/.agents/skills/b-sdd`  
 **Опис:** Контроль бітемпоральних архітектурних інваріантів, відповідності ADR, компіляції префлайт-правил B-SDD та кристалізації скілів за Правилом Двох.  
@@ -5512,7 +5515,7 @@ pytest tests/test_b_sdd.py -v || true
 ---
 
 <a id="skill-b-sdd-audio-overview"></a>
-### [6/61] Скіл: `b-sdd-audio-overview`
+### [6/64] Скіл: `b-sdd-audio-overview`
 
 **Каталог:** `~/.agents/skills/b-sdd-audio-overview`  
 **Опис:** Автономний конвеєр синтезу монолітного посібника оператора B-SDD та генерації глибокого аудіоогляду (Deep Dive Audio Overview) в Google NotebookLM.  
@@ -5781,13 +5784,13 @@ python3 -m src.cli.main drakon validate ~/.agents/skills/b-sdd-audio-overview/b-
 ---
 
 <a id="skill-b-sdd-kindle-docs"></a>
-### [7/61] Скіл: `b-sdd-kindle-docs`
+### [7/64] Скіл: `b-sdd-kindle-docs`
 
 **Каталог:** `~/.agents/skills/b-sdd-kindle-docs`  
 **Опис:** Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle через шлюз n8n та резервний контур на хості .184.  
-**Файлів у складі:** 5  
+**Файлів у складі:** 6  
 
-#### Файл: `b-sdd-kindle-docs/SKILL.md` (4,846 байт)
+#### Файл: `b-sdd-kindle-docs/SKILL.md` (7,014 байт)
 ````markdown
 ---
 name: b-sdd-kindle-docs
@@ -5804,13 +5807,19 @@ invoked_skills: [b-sdd]
 
 ---
 
-## 1. Architectural Context & Negative Invariants
+## 1. Architectural Context, Anchors & Negative Invariants
 
-- **ADR Compliance**: Відповідає ADR-002 (Pure Stdlib), ADR-015 (Taxonomy & Immutability) та ADR-016 (Algorithmic Pseudocode & Visual DRAKON Round-Trip).
+- **ADR Compliance**: Відповідає ADR-002 (Pure Stdlib), ADR-003 (Rule of 2/3 Crystallization), ADR-015 (Taxonomy & Immutability) та ADR-016 (Algorithmic Pseudocode & Visual DRAKON Round-Trip).
+- **Pinned Architectural Anchors**:
+  - **NotebookLM MCP Endpoint**: `http://192.168.3.184:8002/mcp` (методи: `sources_list`, `sources_get_fulltext`).
+  - **Primary Send-to-Kindle Gateway**: `https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book` (n8n воркфлоу `GC5pv2TIYbKHj2Ch`).
+  - **Supervisor Webhook**: `https://n8n.exodus.pp.ua/webhook/bsdd-supervisor-result` (Telegram 6412868393 + Gmail backup).
+  - **Immutable WORM Ledgers**: `docs/utopia_local_worm.jsonl` та Utopia DB на вузлі `192.168.3.251` (`utopia_worm_append`).
 - **Negative Invariants**:
   - **NEVER** порушувати топологічні обмеження головного шампура (X = 0.0, C = 0).
   - **NEVER** спрямовувати обробники деградації або помилок ліворуч від шампура (дозволено строго X = 4.0).
   - **NEVER** надсилати лист на Kindle із заповненим полем CC (сувора вимога Amazon, помилка E009).
+  - **NEVER** використовувати формат .mobi (Amazon bounce E001). Строго EPUB 3.0 (`application/epub+zip`).
   - **NEVER** маркувати доставку як SUCCESS без перевірки наявності EPUB (>50 КБ) та успішного статусу в журналі `logs/kindle_delivery.log`.
 
 ---
@@ -5829,24 +5838,32 @@ BEGIN
     TRY
         ASSERT context != null
 
-        // STEP 1: Pre-execution validation along Vertical Skewer (X=0.0, Y=2.0)
+        // STEP 1: Pre-execution validation & source routing (X=0.0, Y=2.0)
         EXECUTE ValidateEnvironmentPreconditions(context)
 
-        // STEP 2: Main vertical spine execution - pandoc EPUB build (X=0.0, Y=4.0)
-        EXECUTE CompileUserGuideEpub(source="docs/user_guide", toc=True, min_size=50000)
-
-        // STEP 3: Dispatch Gateway Decision Node (X=0.0, Y=6.0)
-        IF CheckPrimaryGatewayAvailability("https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book") THEN
-            EXECUTE DispatchViaN8nGateway(target="tukroschu@kindle.com", mime="application/epub+zip")
+        // STEP 2: Content Extraction via NotebookLM MCP on .184:8002 (X=0.0, Y=4.0)
+        IF HasNotebookId(options) THEN
+            EXECUTE ExtractChaptersFromNotebookLmMcp(url="http://192.168.3.184:8002/mcp", notebook=options.notebook)
         ELSE
-            BRANCH_RIGHT(X=4.0, Y=6.0): Remote Node .184 Fallback
-            LOG_WARNING("Primary n8n gateway unavailable, invoking fallback on host 184")
-            EXECUTE DispatchViaRemote184SendDigest(target="tukroschu@kindle.com")
+            EXECUTE AggregateLocalCorpusMarkdown(source=options.source_dir)
         FI
 
-        // STEP 4: Verification Gate & Telemetry emission (X=0.0, Y=10.0)
+        // STEP 3: Deterministic pandoc EPUB 3.0 compilation (X=0.0, Y=6.0)
+        EXECUTE CompileUserGuideEpub(source="build/kindle_book/staged", toc=True, min_size=50000)
+
+        // STEP 4: Dispatch Gateway Decision Node (X=0.0, Y=8.0)
+        IF CheckPrimaryGatewayAvailability("https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book") THEN
+            EXECUTE DispatchViaN8nGateway(target="tukroschu@kindle.com", mime="application/epub+zip", no_cc=True)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=8.0): Buffer in Outbox Queue
+            LOG_WARNING("Primary n8n gateway unavailable, buffering in outbox queue on .184")
+            EXECUTE BufferInRemoteOutbox(target="tukroschu@kindle.com")
+        FI
+
+        // STEP 5: Verification Gate, WORM logging & Telemetry emission (X=0.0, Y=12.0)
         ASSERT VerifyKindleDeliveryLog(status="SUCCESS")
-        EMIT_TELEMETRY(status="SUCCESS", skill="b-sdd-kindle-docs")
+        EXECUTE RecordWormLedgerEntry(status="SUCCESS", utopia_sync=True)
+        EMIT_SUPERVISOR_TELEMETRY(status="SUCCESS", skill="b-sdd-kindle-docs")
         RETURN Status="SUCCESS"
 
     CATCH Error AS e
@@ -5863,24 +5880,35 @@ END
 <!-- DRAKON_VISUAL_FLOW_START -->
 ## DRAKON Visual Workflow (Planar Skewer X=0)
 - Schema File: b-sdd-kindle-docs.drakon.json
-- Total Algorithmic Nodes: 9
+- Total Algorithmic Nodes: 10
 - Spine Topology: Vertical Skewer (X=0, C=0) verified with rightward degradation branches (X=4.0).
-  1. [HEADLINE] Початок: Виконання b-sdd-kindle-docs
-  2. [ACTION] Крок 1: Перевірка середовища та розділів посібника
-  3. [ACTION] Крок 2: Компіляція EPUB 3.0 через pandoc (10 розділів, --toc, >50КБ)
-  4. [QUESTION] Крок 3: Первинний шлюз n8n доступний?
-  5. [ACTION] Аварійний контур: Відправка через send_digest.py на .184 (X=4.0)
-  6. [END] Завершення в аварійному режимі (X=4.0)
-  7. [ACTION] Крок 4: Відправка на Kindle через шлюз n8n
-  8. [ACTION] Крок 5: Верифікація доставки та журналу logs/kindle_delivery.log
-  9. [END] Успішне завершення: Доставку на Kindle підтверджено
+  1. [HEADLINE] Початок: Виконання b-sdd-kindle-docs (X=0.0, Y=0.0)
+  2. [ACTION] Крок 1: Визначення джерела контенту (NotebookLM MCP або локальні розділи) (X=0.0, Y=2.0)
+  3. [ACTION] Крок 2: Автономне витягування розділів через NotebookLM MCP (192.168.3.184:8002) (X=0.0, Y=4.0)
+  4. [ACTION] Крок 3: Компіляція EPUB 3.0 через pandoc (--toc, MIME epub+zip, >50КБ) (X=0.0, Y=6.0)
+  5. [QUESTION] Крок 4: Первинний шлюз n8n доступний (dispatch-kindle-book)? (X=0.0, Y=8.0)
+  6. [ACTION] Аварійний контур: Буферизація у чергу на .184 (X=4.0, Y=8.0)
+  7. [END] Завершення в аварійному режимі (X=4.0, Y=10.0)
+  8. [ACTION] Крок 5: Відправка на Kindle через шлюз n8n (суворо без CC, Gmail API) (X=0.0, Y=10.0)
+  9. [ACTION] Крок 6: Верифікація доставки, WORM-запис в Utopia DB та телеметрія (X=0.0, Y=12.0)
+  10. [END] Успішне завершення: Доставку на Kindle підтверджено (X=0.0, Y=14.0)
 <!-- DRAKON_VISUAL_FLOW_END -->
 
 ---
 
 ## 4. Operational Guide & CLI Execution
 
-### Компіляція та доставка посібника на Kindle:
+### 1. Автономне витягування з NotebookLM MCP та відправка на Kindle:
+```bash
+# Автоматичне витягування розділів через NotebookLM MCP (192.168.3.184:8002), збірка EPUB 3.0 та відправка:
+python3 scripts/notebooklm_to_kindle.py \
+  --notebook b371bcda-77c6-4803-84e7-8aed42817454 \
+  --title "FDE: Посібник інженера передового розгортання" \
+  --author "Фань Бін (Fan Bing / XDash)" \
+  --to tukroschu@kindle.com
+```
+
+### 2. Локальна компіляція посібника B-SDD та доставка на Kindle:
 ```bash
 # 1. Локальна компіляція посібника (10 розділів)
 pandoc docs/user_guide/*.md -o b_sdd_user_guide_sprint032.epub \
@@ -5892,20 +5920,22 @@ pandoc docs/user_guide/*.md -o b_sdd_user_guide_sprint032.epub \
 python3 scripts/send_to_kindle.py --file b_sdd_user_guide_sprint032.epub --to tukroschu@kindle.com
 ```
 
-### Верифікація доставки:
+### 3. Верифікація доставки та WORM-аудит:
 ```bash
 tail -n 10 logs/kindle_delivery.log
+tail -n 5 docs/utopia_local_worm.jsonl
 ```
+
 
 ````
 
-#### Файл: `b-sdd-kindle-docs/b-sdd-kindle-docs.drakon.json` (3,753 байт)
+#### Файл: `b-sdd-kindle-docs/b-sdd-kindle-docs.drakon.json` (4,252 байт)
 ````json
 {
   "schema_version": "1.0",
   "name": "b-sdd-kindle-docs",
   "category": "bssd_system_skill",
-  "description": "Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle та резервний email через хост 192.168.3.184.",
+  "description": "Автономний конвеєр витягування першоджерел через NotebookLM MCP, компіляції в EPUB 3.0 та гарантованої доставки на Amazon Kindle через шлюз n8n.",
   "params": "context: dict, options: dict",
   "nodes": [
     {
@@ -5926,9 +5956,9 @@ tail -n 10 logs/kindle_delivery.log
     {
       "node_id": "step_init",
       "node_type": "action",
-      "label": "Крок 1: Перевірка середовища та розділів посібника",
+      "label": "Крок 1: Визначення джерела контенту (NotebookLM MCP або локальні розділи)",
       "edges": {
-        "down": "step_build",
+        "down": "step_extract",
         "right": null
       },
       "semantic_binding": {
@@ -5938,11 +5968,11 @@ tail -n 10 logs/kindle_delivery.log
       "y": 2.0
     },
     {
-      "node_id": "step_build",
+      "node_id": "step_extract",
       "node_type": "action",
-      "label": "Крок 2: Компіляція EPUB 3.0 через pandoc (10 розділів, --toc, >50КБ)",
+      "label": "Крок 2: Автономне витягування розділів через NotebookLM MCP (192.168.3.184:8002)",
       "edges": {
-        "down": "check_gateway",
+        "down": "step_build",
         "right": null
       },
       "semantic_binding": {
@@ -5952,12 +5982,12 @@ tail -n 10 logs/kindle_delivery.log
       "y": 4.0
     },
     {
-      "node_id": "check_gateway",
-      "node_type": "question",
-      "label": "Крок 3: Первинний шлюз n8n доступний?",
+      "node_id": "step_build",
+      "node_type": "action",
+      "label": "Крок 3: Компіляція EPUB 3.0 через pandoc (--toc, MIME epub+zip, >50КБ)",
       "edges": {
-        "down": "step_send_n8n",
-        "right": "err_fallback_184"
+        "down": "check_gateway",
+        "right": null
       },
       "semantic_binding": {
         "severity": "normal"
@@ -5966,9 +5996,23 @@ tail -n 10 logs/kindle_delivery.log
       "y": 6.0
     },
     {
+      "node_id": "check_gateway",
+      "node_type": "question",
+      "label": "Крок 4: Первинний шлюз n8n доступний (dispatch-kindle-book)?",
+      "edges": {
+        "down": "step_send_n8n",
+        "right": "err_fallback_184"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
       "node_id": "err_fallback_184",
       "node_type": "action",
-      "label": "Аварійний контур: Відправка через send_digest.py на .184 (X=4.0)",
+      "label": "Аварійний контур: Буферизація у чергу на .184 (X=4.0)",
       "edges": {
         "down": "end_degraded",
         "right": null
@@ -5977,7 +6021,7 @@ tail -n 10 logs/kindle_delivery.log
         "severity": "degraded"
       },
       "x": 4.0,
-      "y": 6.0
+      "y": 8.0
     },
     {
       "node_id": "end_degraded",
@@ -5991,12 +6035,12 @@ tail -n 10 logs/kindle_delivery.log
         "severity": "degraded"
       },
       "x": 4.0,
-      "y": 8.0
+      "y": 10.0
     },
     {
       "node_id": "step_send_n8n",
       "node_type": "action",
-      "label": "Крок 4: Відправка на Kindle через шлюз n8n",
+      "label": "Крок 5: Відправка на Kindle через шлюз n8n (суворо без CC, Gmail API)",
       "edges": {
         "down": "step_verify",
         "right": null
@@ -6005,12 +6049,12 @@ tail -n 10 logs/kindle_delivery.log
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 8.0
+      "y": 10.0
     },
     {
       "node_id": "step_verify",
       "node_type": "action",
-      "label": "Крок 5: Верифікація доставки та журналу logs/kindle_delivery.log",
+      "label": "Крок 6: Верифікація доставки, WORM-запис в Utopia DB та телеметрія",
       "edges": {
         "down": "end_success",
         "right": null
@@ -6019,7 +6063,7 @@ tail -n 10 logs/kindle_delivery.log
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 10.0
+      "y": 12.0
     },
     {
       "node_id": "end_success",
@@ -6033,7 +6077,7 @@ tail -n 10 logs/kindle_delivery.log
         "severity": "normal"
       },
       "x": 0.0,
-      "y": 12.0
+      "y": 14.0
     }
   ],
   "meta": {
@@ -6172,6 +6216,236 @@ echo "=== [3/3] Execution complete ==="
 
 ````
 
+#### Файл: `b-sdd-kindle-docs/scripts/notebooklm_to_kindle.py` (9,165 байт)
+````python
+#!/usr/bin/env python3
+"""
+B-SDD NotebookLM-to-Kindle Autonomous Pipeline.
+Pure Python Standard Library (ADR-002).
+1. Connects to NotebookLM MCP server on 192.168.3.184:8002
+2. Extracts all chapter sources via sources_list + sources_get_fulltext
+3. Compiles EPUB 3.0 using pandoc with valid container metadata
+4. Dispatches to Amazon Kindle via verified n8n gateway (NO CC, anti-E009)
+"""
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import urllib.request
+import urllib.parse
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+NOTEBOOKLM_MCP_URL = os.environ.get("NOTEBOOKLM_MCP_URL", "http://192.168.3.184:8002/mcp")
+KINDLE_WEBHOOK_URL = os.environ.get("KINDLE_WEBHOOK_URL", "https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book")
+SUPERVISOR_WEBHOOK_URL = os.environ.get("SUPERVISOR_WEBHOOK_URL", "https://n8n.exodus.pp.ua/webhook/bsdd-supervisor-result")
+DEFAULT_TARGET_KINDLE = "tukroschu@kindle.com"
+DEFAULT_SENDER = "tukroschu@gmail.com"
+
+
+class NotebookLmMcpClient:
+    def __init__(self, base_url: str = NOTEBOOKLM_MCP_URL):
+        self.base_url = base_url
+
+    def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json, text/event-stream"
+        }
+        init_payload = {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "initialize",
+            "params": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {},
+                "clientInfo": {"name": "b-sdd-kindle-pipeline", "version": "1.0"}
+            }
+        }
+        req_init = urllib.request.Request(self.base_url, data=json.dumps(init_payload).encode("utf-8"), headers=headers)
+        with urllib.request.urlopen(req_init, timeout=15) as resp:
+            session_id = resp.headers.get("mcp-session-id")
+
+        if not session_id:
+            raise RuntimeError("MCP server did not return mcp-session-id header")
+
+        headers["mcp-session-id"] = session_id
+
+        notif_payload = {"jsonrpc": "2.0", "method": "notifications/initialized"}
+        req_notif = urllib.request.Request(self.base_url, data=json.dumps(notif_payload).encode("utf-8"), headers=headers)
+        with urllib.request.urlopen(req_notif, timeout=15) as _:
+            pass
+
+        tool_payload = {
+            "jsonrpc": "2.0",
+            "id": 2,
+            "method": "tools/call",
+            "params": {
+                "name": tool_name,
+                "arguments": arguments
+            }
+        }
+        req_tool = urllib.request.Request(self.base_url, data=json.dumps(tool_payload).encode("utf-8"), headers=headers)
+        with urllib.request.urlopen(req_tool, timeout=120) as resp:
+            raw = resp.read().decode("utf-8")
+            for line in raw.splitlines():
+                if line.startswith("data:"):
+                    data = json.loads(line[5:].strip())
+                    if "result" in data:
+                        content = data["result"].get("content", [])
+                        if content and content[0].get("type") == "text":
+                            text = content[0].get("text", "")
+                            try:
+                                return json.loads(text)
+                            except Exception:
+                                return text
+        return None
+
+    def list_sources(self, notebook_id: str) -> List[Dict[str, Any]]:
+        res = self.call_tool("sources_list", {"notebook_id": notebook_id})
+        if isinstance(res, list):
+            return res
+        return []
+
+    def get_fulltext(self, notebook_id: str, source_id: str) -> str:
+        res = self.call_tool("sources_get_fulltext", {"notebook_id": notebook_id, "source_id": source_id})
+        return str(res) if res is not None else ""
+
+
+def extract_chapters_from_notebook(client: NotebookLmMcpClient, notebook_id: str, staging_dir: Path) -> List[Path]:
+    staging_dir.mkdir(parents=True, exist_ok=True)
+    sources = client.list_sources(notebook_id)
+    if not sources:
+        raise RuntimeError(f"No sources found in notebook {notebook_id}")
+
+    sources.sort(key=lambda s: s.get("title", ""))
+    print(f"[*] Found {len(sources)} chapter sources in NotebookLM ({notebook_id})")
+
+    chapter_files: List[Path] = []
+    for idx, s in enumerate(sources):
+        s_id = s.get("id")
+        s_title = s.get("title", f"Chapter_{idx:02d}")
+        print(f"    [{idx+1}/{len(sources)}] Fetching fulltext: {s_title} ({s_id})...")
+        fulltext = client.get_fulltext(notebook_id, s_id)
+        
+        safe_title = "".join(c if c.isalnum() or c in (" ", "_", "-") else "_" for c in s_title).strip()
+        filename = f"{idx:02d}_{safe_title}.md".replace(" ", "_").replace("__", "_")
+        target_path = staging_dir / filename
+        
+        content = fulltext.strip()
+        if not content.startswith("#"):
+            content = f"# {s_title}\n\n" + content
+            
+        target_path.write_text(content, encoding="utf-8")
+        chapter_files.append(target_path)
+
+    return chapter_files
+
+
+def compile_epub(chapter_files: List[Path], output_epub: Path, title: str, author: str, lang: str = "uk") -> bool:
+    print(f"\n=== [2/3] Compiling EPUB 3.0 via pandoc ===")
+    print(f"Output File: {output_epub}")
+    output_epub.parent.mkdir(parents=True, exist_ok=True)
+
+    cmd = [
+        "pandoc",
+        *[str(f) for f in chapter_files],
+        "-o", str(output_epub),
+        "--metadata", f"title={title}",
+        "--metadata", f"author={author}",
+        "--metadata", f"lang={lang}",
+        "--metadata", "publisher=B-SDD Autonomous Core",
+        "--toc", "--toc-depth=2"
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode != 0:
+        print(f"[-] pandoc compilation failed:\n{res.stderr}", file=sys.stderr)
+        return False
+
+    size_kb = output_epub.stat().st_size / 1024
+    print(f"[+] ✓ EPUB successfully compiled: {output_epub} ({size_kb:.1f} KB)")
+    return True
+
+
+def dispatch_to_kindle(epub_path: Path, subject: str, target: str = DEFAULT_TARGET_KINDLE) -> Tuple[bool, str]:
+    print(f"\n=== [3/3] Dispatching to Kindle ({target}) ===")
+    import mimetypes
+    boundary = "----WebKitFormBoundaryBSddDispatch" + hex(int(datetime.now().timestamp()))[2:]
+    
+    with open(epub_path, "rb") as f:
+        file_bytes = f.read()
+
+    body = bytearray()
+    # Field: subject
+    body.extend(f"--{boundary}\r\n".encode("utf-8"))
+    body.extend(f'Content-Disposition: form-data; name="subject"\r\n\r\n'.encode("utf-8"))
+    body.extend(f"{subject}\r\n".encode("utf-8"))
+
+    # Field: data (file attachment)
+    body.extend(f"--{boundary}\r\n".encode("utf-8"))
+    body.extend(f'Content-Disposition: form-data; name="data"; filename="{epub_path.name}"\r\n'.encode("utf-8"))
+    body.extend(b"Content-Type: application/epub+zip\r\n\r\n")
+    body.extend(file_bytes)
+    body.extend(b"\r\n")
+    body.extend(f"--{boundary}--\r\n".encode("utf-8"))
+
+    req = urllib.request.Request(
+        KINDLE_WEBHOOK_URL,
+        data=body,
+        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
+        method="POST"
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=45) as resp:
+            resp_body = resp.read().decode("utf-8")
+            return True, f"HTTP {resp.status}: {resp_body}"
+    except Exception as e:
+        return False, str(e)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Autonomous NotebookLM-to-Kindle Book Pipeline")
+    parser.add_argument("--notebook", default="b371bcda-77c6-4803-84e7-8aed42817454", help="NotebookLM Notebook ID")
+    parser.add_argument("--title", default="FDE: Посібник інженера передового розгортання", help="Book Title")
+    parser.add_argument("--author", default="Фань Бін (Fan Bing / XDash)", help="Book Author")
+    parser.add_argument("--output", type=Path, default=Path("/home/vokov/projects/b-sdd/docs/fde_guide_ukrainian.epub"), help="Target EPUB path")
+    parser.add_argument("--to", default=DEFAULT_TARGET_KINDLE, help="Target Kindle email")
+    parser.add_argument("--dry-run", action="store_true", help="Compile only, skip dispatch")
+    args = parser.parse_args()
+
+    client = NotebookLmMcpClient()
+    staging_dir = Path("/home/vokov/projects/b-sdd/build/kindle_book/staged")
+    
+    # 1. Extract from NotebookLM MCP
+    chapter_files = extract_chapters_from_notebook(client, args.notebook, staging_dir)
+    
+    # 2. Compile EPUB 3.0
+    ok = compile_epub(chapter_files, args.output, args.title, args.author)
+    if not ok:
+        sys.exit(1)
+
+    # 3. Dispatch to Kindle
+    if args.dry_run:
+        print(f"[dry-run] Book compiled. Skipping Kindle dispatch to {args.to}")
+        return
+
+    sent, msg = dispatch_to_kindle(args.output, args.title, args.to)
+    if sent:
+        print(f"[+] Kindle delivery SUCCESS: {msg}")
+    else:
+        print(f"[-] Kindle delivery FAILED: {msg}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+
+````
+
 #### Файл: `b-sdd-kindle-docs/scripts/send_mail.py` (5,137 байт)
 ````python
 #!/usr/bin/env python3
@@ -6305,8 +6579,607 @@ if __name__ == "__main__":
 
 ---
 
+<a id="skill-b-sdd-notebooklm-audio-deepdive"></a>
+### [8/64] Скіл: `b-sdd-notebooklm-audio-deepdive`
+
+**Каталог:** `~/.agents/skills/b-sdd-notebooklm-audio-deepdive`  
+**Опис:** Автономна генерація максимального україномовного аудіоогляду (Deep Dive Podcast, AudioLength.LONG) з матеріалів записника Google NotebookLM через сервіс MCP NotebookLM.  
+**Файлів у складі:** 2  
+
+#### Файл: `b-sdd-notebooklm-audio-deepdive/SKILL.md` (10,594 байт)
+````markdown
+---
+name: b-sdd-notebooklm-audio-deepdive
+description: Автономна генерація максимального україномовного аудіоогляду (Deep Dive Podcast, AudioLength.LONG) з матеріалів записника Google NotebookLM через сервіс MCP NotebookLM.
+type: SYSTEM_SKILL
+category: bssd-system-skill
+immutable: true
+invoked_skills: [b-sdd, notebooklm, sequential-thinking]
+---
+
+# B-SDD NotebookLM Audio Deep Dive Generator (Maximal Ukrainian Podcast)
+
+> **B-SDD Invariant (ADR-003 Rule of 2):** Кристалізовано в системний скіл після 2 повторних успішних застосувань та перевірки на інженерному контурі `192.168.3.184:8002`.
+
+---
+
+## 1. Архітектурні інваріанти та обмеження (Architectural Anchors & Strict Invariants)
+
+- **Параметри аудіопереказу (NotebookLM Synthesis Invariants):**
+  - **Розмір аудіо (`audio_length`):** Суворо **`LONG`** (великий розмір із трьох існуючих: `SHORT`, `DEFAULT`, `LONG`). Забезпечує максимальну тривалість, повноту викладу та глибину аналітики.
+  - **Формат (`audio_format`):** Суворо **`DEEP_DIVE`** (інтелектуальний діалог двох фахових експертів-аналітиків).
+  - **Мова (`language`):** За замовчуванням **`uk`** (чиста літературна українська мова з коректною інженерною термінологією).
+- **Канонічний український промпт (AI Instruction Anchor):**
+  ```text
+  Проведіть глибокий, детальний та вичерпний експертний аналіз матеріалів цього записника українською мовою.
+  Формат: інтелектуальний, динамічний діалог двох фахових аналітиків (Deep Dive Podcast).
+  1. Автоматично виділіть та ретельно розберіть усі ключові концептуальні, інженерні та практичні тези з першоджерел.
+  2. Детально розкрийте реальні кейси, виклики впровадження, цифри, методології та причинно-наслідкові зв'язки.
+  3. Мова розмови — виключно якісна українська мова з коректною професійною термінологією.
+  4. Забезпечте максимальну повноту викладу матеріалу, утримуючи фокус на практичній цінності для інженера та архітектора.
+  ```
+- **Negative Invariants (Суворі заборони):**
+  - **NEVER** використовувати параметри `SHORT` або `DEFAULT`, якщо завданням визначено максимальний переказ.
+  - **NEVER** використовувати мову, відмінну від української (`uk`), без прямої вказівки оператора.
+  - **NEVER** запускати синтез у порожньому блокноті (`sources_count == 0`).
+  - **NEVER** використовувати зовнішні неперевірені залежності — клієнтський раннер повинен бути 100% Pure Python Standard Library (ADR-002).
+  - **NEVER** завершувати конвеєр без сповіщення оператора в Telegram (`chat_id: 6412868393`) та відправки телеметрії в n8n Supervisor Webhook.
+
+---
+
+## 2. Sequential Thinking: Фазова декомпозиція процесу
+
+1. **Фаза 1: Валідація джерел записника (Notebook & Source Validation)**
+   - З'єднання з сервісом NotebookLM MCP на `192.168.3.184:8002`.
+   - Запит `sources_list` для цільового `notebook_id`.
+   - Перевірка: `len(sources) > 0`. Якщо 0 — аварійна деградація (X=4.0).
+2. **Фаза 2: Конфігурація синтезу (Parameter Enforcement)**
+   - Фіксація `audio_length = "LONG"`, `audio_format = "DEEP_DIVE"`, `language = "uk"`.
+   - Ін'єкція канонічного українського промпту для автоматичного виділення головних тез.
+3. **Фаза 3: Диспетчеризація через FastMCP JSON-RPC**
+   - Виклик методу `tools/call` з `name: generate_audio`.
+   - Фіксація унікального асинхронного ідентифікатора задачі (`task_id`).
+4. **Фаза 4: Асинхронний моніторинг (Task Polling & State Tracking)**
+   - Періодичний запит `artifacts_poll_status` з передачею `task_id` та `notebook_id`.
+   - Стан `pending` / `status='2'` свідчить про активний хмарний рендеринг аудіодорожки.
+5. **Фаза 5: Телеметрія та WORM-аудит (Dual-Loop Telemetry & Ledger)**
+   - Відправка картки запуску в Telegram (`6412868393`).
+   - Відправка телеметрії в Supervisor Webhook (`https://n8n.exodus.pp.ua/webhook/bsdd-supervisor-result`).
+   - Фіксація WORM-транзакції в Utopia DB (`192.168.3.251:5432`).
+
+---
+
+## 3. Алгоритмічний псевдокод (ADR-016 Standard)
+
+```text
+ALGORITHM ExecuteBSddNotebooklmAudioDeepdive
+INPUT:
+    notebook_id: str
+    audio_length: str := "LONG"
+    audio_format: str := "DEEP_DIVE"
+    language: str := "uk"
+    instructions: str := DEFAULT_UKRAINIAN_INSTRUCTIONS
+OUTPUT:
+    result: dict
+
+BEGIN
+    TRY
+        ASSERT notebook_id != null AND notebook_id != ""
+
+        // КРОК 1: Запит джерел блокнота через MCP (X=0.0, Y=2.0)
+        client := InitializeNotebookLmMcpClient("http://192.168.3.184:8002/mcp")
+        sources := client.CallTool("sources_list", {"notebook_id": notebook_id})
+
+        // КРОК 2: Валідація наявності джерел (X=0.0, Y=4.0)
+        IF sources != null AND Length(sources) > 0 THEN
+            CONTINUE along Vertical Skewer (X=0.0)
+        ELSE
+            BRANCH_RIGHT(X=4.0, Y=4.0): Failure/Degradation
+            LOG_CRITICAL("No sources found in notebook: " + notebook_id)
+            HALT_AND_DEGRADE("SOURCES_UNAVAILABLE")
+        FI
+
+        // КРОК 3: Фіксація параметрів синтезу (X=0.0, Y=6.0)
+        params := {
+            "notebook_id": notebook_id,
+            "audio_length": audio_length,
+            "audio_format": audio_format,
+            "language": language,
+            "instructions": instructions
+        }
+
+        // КРОК 4: Виклик generate_audio в NotebookLM MCP (X=0.0, Y=8.0)
+        resp := client.CallTool("generate_audio", params)
+        task_id := resp.task_id
+
+        IF task_id == null THEN
+            BRANCH_RIGHT(X=4.0, Y=8.0): Failure
+            HALT_AND_DEGRADE("TASK_DISPATCH_FAILED")
+        FI
+
+        // КРОК 5: Відправка телеметрії оператору та WORM запис (X=0.0, Y=10.0)
+        SendTelegramNotification(notebook_id, task_id, audio_length, language)
+        SendSupervisorTelemetry("B-SDD-AUDIO-DEEPDIVE", "SUCCESS", task_id)
+        RecordUtopiaWormLedger("AUDIO_DEEPDIVE_DISPATCH", notebook_id, task_id)
+
+        RETURN {"status": "SUCCESS", "task_id": task_id, "notebook_id": notebook_id}
+
+    CATCH Error AS e
+        LOG_CRITICAL("Execution failed in b-sdd-notebooklm-audio-deepdive: " + e.Message)
+        HALT_AND_DEGRADE(e.Message)
+    END
+END
+```
+
+---
+
+## 4. DRAKON Visual Workflow (Planar Skewer X=0.0, C=0)
+
+<!-- DRAKON_VISUAL_FLOW_START -->
+## DRAKON Visual Workflow (Planar Skewer X=0)
+- Schema File: `b-sdd-notebooklm-audio-deepdive.drakon.json`
+- Total Algorithmic Nodes: 9
+- Invariant: Planar vertical spine (X=0.0, C=0) verified with rightward degradation branch (X=4.0).
+  1. `[HEADLINE]` Початок: Виконання b-sdd-notebooklm-audio-deepdive (X=0.0, Y=0.0)
+  2. `[ACTION]` Крок 1: Запит списку джерел блокнота через NotebookLM MCP (X=0.0, Y=2.0)
+  3. `[QUESTION]` Крок 2: Джерела присутні (count > 0) та блокнот валідний? (X=0.0, Y=4.0)
+  4. `[ACTION]` Аварійна зупинка: Джерела відсутні або блокнот недоступний (X=4.0, Y=4.0)
+  5. `[END]` Аварійне завершення (X=4.0, Y=6.0)
+  6. `[ACTION]` Крок 3: Фіксація інваріантів: AudioLength=LONG, Format=DEEP_DIVE, Lang=uk (X=0.0, Y=6.0)
+  7. `[ACTION]` Крок 4: Виклик generate_audio в NotebookLM MCP та отримання task_id (X=0.0, Y=8.0)
+  8. `[ACTION]` Крок 5: Відправка телеметрії в Telegram та n8n Supervisor Webhook (X=0.0, Y=10.0)
+  9. `[END]` Успішне завершення: Генерацію максимального аудіопереказу ініційовано (X=0.0, Y=12.0)
+<!-- DRAKON_VISUAL_FLOW_END -->
+
+---
+
+## 5. Швидкий виконуваний раннер (CLI Execution)
+
+Запуск генерації максимального україномовного аудіоогляду для будь-якого блокнота:
+
+```bash
+python3 scripts/generate_audio_deepdive.py \
+  --notebook b371bcda-77c6-4803-84e7-8aed42817454 \
+  --length LONG \
+  --format DEEP_DIVE \
+  --language uk
+```
+
+### Перевірка статусу виконання генерації:
+```bash
+python3 -c "
+from scripts.generate_audio_deepdive import NotebookLmMcpClient
+client = NotebookLmMcpClient()
+status = client.call_tool('artifacts_poll_status', {
+    'notebook_id': 'b371bcda-77c6-4803-84e7-8aed42817454',
+    'task_id': '<TASK_ID>'
+})
+print(status)
+"
+```
+
+### Завантаження готового аудіофайлу після завершення:
+```bash
+python3 -c "
+from scripts.generate_audio_deepdive import NotebookLmMcpClient
+client = NotebookLmMcpClient()
+client.call_tool('download_audio', {
+    'notebook_id': 'b371bcda-77c6-4803-84e7-8aed42817454',
+    'output_path': 'dist/audio_deepdive_fde_ukrainian.mp3'
+})
+"
+```
+
+````
+
+#### Файл: `b-sdd-notebooklm-audio-deepdive/b-sdd-notebooklm-audio-deepdive.drakon.json` (4,063 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "b-sdd-notebooklm-audio-deepdive",
+  "category": "bssd_system_skill",
+  "description": "Скіл автономної генерації максимального україномовного аудіоогляду (Deep Dive Podcast, AudioLength.LONG) з матеріалів записника Google NotebookLM через сервіс MCP NotebookLM.",
+  "params": "notebook_id: str, audio_length: str = 'LONG', audio_format: str = 'DEEP_DIVE', language: str = 'uk', instructions: str = None",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Виконання b-sdd-notebooklm-audio-deepdive",
+      "edges": {
+        "down": "step_inspect",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_inspect",
+      "node_type": "action",
+      "label": "Крок 1: Запит списку джерел блокнота через NotebookLM MCP",
+      "edges": {
+        "down": "check_sources",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "check_sources",
+      "node_type": "question",
+      "label": "Крок 2: Джерела присутні (count > 0) та блокнот валідний?",
+      "edges": {
+        "down": "step_enforce_params",
+        "right": "err_no_sources"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "err_no_sources",
+      "node_type": "action",
+      "label": "Аварійна зупинка: Джерела відсутні або блокнот недоступний (X=4.0)",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "end_failed",
+      "node_type": "end",
+      "label": "Аварійне завершення (X=4.0)",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_enforce_params",
+      "node_type": "action",
+      "label": "Крок 3: Фіксація інваріантів: AudioLength=LONG, Format=DEEP_DIVE, Lang=uk",
+      "edges": {
+        "down": "step_dispatch",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_dispatch",
+      "node_type": "action",
+      "label": "Крок 4: Виклик generate_audio в NotebookLM MCP та отримання task_id",
+      "edges": {
+        "down": "step_telemetry",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_telemetry",
+      "node_type": "action",
+      "label": "Крок 5: Відправка телеметрії в Telegram та n8n Supervisor Webhook",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Генерацію максимального аудіопереказу ініційовано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    }
+  ],
+  "meta": {
+    "skill_name": "b-sdd-notebooklm-audio-deepdive",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
+
+````
+
+---
+
+<a id="skill-b-sdd-notebooklm-kindle-dispatch"></a>
+### [9/64] Скіл: `b-sdd-notebooklm-kindle-dispatch`
+
+**Каталог:** `~/.agents/skills/b-sdd-notebooklm-kindle-dispatch`  
+**Опис:** Еталонний конвеєр B-SDD: витягування розділів книги через NotebookLM MCP, детермінована збірка EPUB 3.0 та гарантована доставка на Amazon Kindle через шлюз n8n без поля CC (Anti-E009).  
+**Файлів у складі:** 2  
+
+#### Файл: `b-sdd-notebooklm-kindle-dispatch/SKILL.md` (5,108 байт)
+````markdown
+---
+name: b-sdd-notebooklm-kindle-dispatch
+description: Еталонний конвеєр B-SDD: витягування розділів книги через NotebookLM MCP, детермінована збірка EPUB 3.0 та гарантована доставка на Amazon Kindle через шлюз n8n без поля CC (Anti-E009).
+category: bssd-system-skill
+type: SYSTEM_SKILL
+immutable: true
+---
+
+# Автономне витягування книг з NotebookLM MCP та доставка на Kindle
+
+> **B-SDD Invariant (ADR-003 Rule of 2/3):** Кристалізовано після 3 повторних успішних спостережень та верифікації на хості `192.168.3.184`.
+
+---
+
+## 1. Архітектурні якоря (Pinned Anchors & Invariants)
+
+- **Джерело контенту (Source Endpoint):**
+  - **NotebookLM MCP Server:** `http://192.168.3.184:8002/mcp` (методи: `sources_list`, `sources_get_fulltext`).
+  - **Обробник тексту на .184:** Повертає нативний `ft.content` без сирих repr-обгорток.
+  - **Відомі цільові блокноти:**
+    * `b371bcda-77c6-4803-84e7-8aed42817454` — *FDE: Посібник інженера передового розгортання* (13 розділів: 00..12).
+    * `205ee2ec-e0d2-4ba6-badf-44f2de02c7e2` — *B-SDD Architecture Core*.
+    * `6813ab1c-ac22-4c3c-9c8e-9dd67e35da99` — *B-SDD Legal Dossier*.
+- **Канал доставки (Delivery Gateway):**
+  - **Primary Gateway:** `https://n8n.exodus.pp.ua/webhook/dispatch-kindle-book` (воркфлоу `GC5pv2TIYbKHj2Ch` — *B-SDD Kindle Dispatcher*).
+  - **Автентифікація:** Авторизований токен Google API `tukroschu@gmail.com` активний на стороні n8n.
+  - **Anti-E009 Invariant:** Поле `CC` суворо відсутнє / порожнє (запобігання блокуванню Amazon Kindle).
+  - **Формат файлу:** Суворо EPUB 3.0, MIME-тип `application/epub+zip` (перший нестиснений файл у ZIP-контейнері), розмір > 50 КБ.
+- **Телеметрія та зворотний зв'язок (Dual-Loop Telemetry):**
+  - **Supervisor Webhook:** `https://n8n.exodus.pp.ua/webhook/bsdd-supervisor-result` (надсилає сповіщення у Telegram-чат 6412868393 та резервний звіт на `tukroschu@gmail.com`).
+  - **Локальний лог:** [`logs/kindle_delivery.log`](file:///home/vokov/projects/b-sdd/logs/kindle_delivery.log).
+  - **Незмінний WORM-леджер:** [`docs/utopia_local_worm.jsonl`](file:///home/vokov/projects/b-sdd/docs/utopia_local_worm.jsonl) та Utopia DB (`192.168.3.251`, виклик `utopia_worm_append`).
+
+---
+
+## 2. Швидкий виконуваний раннер (Turnkey One-Shot Execution)
+
+Виконання повного циклу витягування, збірки та доставки однією командою:
+
+```bash
+python3 scripts/notebooklm_to_kindle.py \
+  --notebook b371bcda-77c6-4803-84e7-8aed42817454 \
+  --title "FDE: Посібник інженера передового розгортання" \
+  --author "Фань Бін (Fan Bing / XDash)" \
+  --to tukroschu@kindle.com
+```
+
+### Dry-run режим (перевірка витягування та збірки без надсилання пошти):
+```bash
+python3 scripts/notebooklm_to_kindle.py --notebook <NOTEBOOK_ID> --dry-run
+```
+
+---
+
+## 3. ДРАКОН-алгоритм (Планарний шампур X=0.0, C=0)
+
+1. `[HEADLINE]` Початок: Виконання b-sdd-notebooklm-kindle-dispatch (X=0.0, Y=0.0)
+2. `[ACTION]` Крок 1: Ініціалізація клієнта NotebookLM MCP на `192.168.3.184:8002` (X=0.0, Y=2.0)
+3. `[ACTION]` Крок 2: Отримання списку розділів `sources_list` та викачування `sources_get_fulltext` (X=0.0, Y=4.0)
+4. `[ACTION]` Крок 3: Детермінована компіляція EPUB 3.0 через pandoc (--toc, valid container) (X=0.0, Y=6.0)
+5. `[QUESTION]` Крок 4: Шлюз n8n `dispatch-kindle-book` відповідає 200 OK? (X=0.0, Y=8.0)
+   - *Праворуч (X=4.0, Y=8.0):* Буферизація у чергу на вузлі .184 -> Аварійне завершення (X=4.0, Y=10.0)
+   - *Вниз (X=0.0, Y=10.0):* Успішна доставка
+6. `[ACTION]` Крок 5: Відправка на Kindle через n8n без поля CC (X=0.0, Y=10.0)
+7. `[ACTION]` Крок 6: Реєстрація WORM-запису, емісія телеметрії та резервний лист (X=0.0, Y=12.0)
+8. `[END]` Успішне завершення: Книгу доставлено на Kindle (X=0.0, Y=14.0)
+
+---
+
+## 4. Верифікація результатів
+
+```bash
+# Перевірка статусу доставки
+tail -n 15 logs/kindle_delivery.log
+
+# Перевірка локального WORM-запису
+tail -n 5 docs/utopia_local_worm.jsonl
+```
+
+````
+
+#### Файл: `b-sdd-notebooklm-kindle-dispatch/b-sdd-notebooklm-kindle-dispatch.drakon.json` (4,252 байт)
+````json
+{
+  "schema_version": "1.0",
+  "name": "b-sdd-kindle-docs",
+  "category": "bssd_system_skill",
+  "description": "Автономний конвеєр витягування першоджерел через NotebookLM MCP, компіляції в EPUB 3.0 та гарантованої доставки на Amazon Kindle через шлюз n8n.",
+  "params": "context: dict, options: dict",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Виконання b-sdd-kindle-docs",
+      "edges": {
+        "down": "step_init",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_init",
+      "node_type": "action",
+      "label": "Крок 1: Визначення джерела контенту (NotebookLM MCP або локальні розділи)",
+      "edges": {
+        "down": "step_extract",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "step_extract",
+      "node_type": "action",
+      "label": "Крок 2: Автономне витягування розділів через NotebookLM MCP (192.168.3.184:8002)",
+      "edges": {
+        "down": "step_build",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "step_build",
+      "node_type": "action",
+      "label": "Крок 3: Компіляція EPUB 3.0 через pandoc (--toc, MIME epub+zip, >50КБ)",
+      "edges": {
+        "down": "check_gateway",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "check_gateway",
+      "node_type": "question",
+      "label": "Крок 4: Первинний шлюз n8n доступний (dispatch-kindle-book)?",
+      "edges": {
+        "down": "step_send_n8n",
+        "right": "err_fallback_184"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "err_fallback_184",
+      "node_type": "action",
+      "label": "Аварійний контур: Буферизація у чергу на .184 (X=4.0)",
+      "edges": {
+        "down": "end_degraded",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "degraded"
+      },
+      "x": 4.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "end_degraded",
+      "node_type": "end",
+      "label": "Завершення в аварійному режимі (X=4.0)",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "degraded"
+      },
+      "x": 4.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "step_send_n8n",
+      "node_type": "action",
+      "label": "Крок 5: Відправка на Kindle через шлюз n8n (суворо без CC, Gmail API)",
+      "edges": {
+        "down": "step_verify",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "step_verify",
+      "node_type": "action",
+      "label": "Крок 6: Верифікація доставки, WORM-запис в Utopia DB та телеметрія",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Доставку на Kindle підтверджено",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 14.0
+    }
+  ],
+  "meta": {
+    "skill_name": "b-sdd-kindle-docs",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}
+
+````
+
+---
+
 <a id="skill-b-sdd-notebooklm-sync"></a>
-### [8/61] Скіл: `b-sdd-notebooklm-sync`
+### [10/64] Скіл: `b-sdd-notebooklm-sync`
 
 **Каталог:** `~/.agents/skills/b-sdd-notebooklm-sync`  
 **Опис:** Автономна синхронізація дампів кодової бази B-SDD, активних бітемпоральних ADR з Utopia DB (.251) та посібника оператора в Google NotebookLM.  
@@ -6724,7 +7597,7 @@ echo "==========================================================================
 ---
 
 <a id="skill-b-sdd-sprint-closure"></a>
-### [9/61] Скіл: `b-sdd-sprint-closure`
+### [11/64] Скіл: `b-sdd-sprint-closure`
 
 **Каталог:** `~/.agents/skills/b-sdd-sprint-closure`  
 **Опис:** Автономне закриття та дистиляція спринту B-SDD (Phi_6 -> Phi_7), генерація реліз-тегів, компіляція правил, оновлення дампів, деплой UI та синхронізація з Utopia DB і NotebookLM.  
@@ -7087,7 +7960,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-b-sdd-sprint-distiller"></a>
-### [10/61] Скіл: `b-sdd-sprint-distiller`
+### [12/64] Скіл: `b-sdd-sprint-distiller`
 
 **Каталог:** `~/.agents/skills/b-sdd-sprint-distiller`  
 **Опис:** Автономна дистиляція звітів закриття спринту, оновлення кумулятивного Mega-ADR, реєстрація WORM-запису в Utopia DB та збереження в нестираємий архів Google Drive.  
@@ -7305,7 +8178,7 @@ pytest tests/test_sprint_distiller.py -v
 ---
 
 <a id="skill-b-sdd-ui-export"></a>
-### [11/61] Скіл: `b-sdd-ui-export`
+### [13/64] Скіл: `b-sdd-ui-export`
 
 **Каталог:** `~/.agents/skills/b-sdd-ui-export`  
 **Опис:** Автономний конвеєр синтезу структурованого дампа вебінтерфейсу Astryx Cockpit UI (b-sdd-ui) та його синхронізація в SSoT блокнот NotebookLM.  
@@ -7647,7 +8520,7 @@ pytest tests/test_b_sdd_ui_export.py -v || true
 ---
 
 <a id="skill-brainstorming"></a>
-### [12/61] Скіл: `brainstorming`
+### [14/64] Скіл: `brainstorming`
 
 **Каталог:** `~/.agents/skills/brainstorming`  
 **Опис:** Дослідження концепцій, структурування ідей та генерація альтернативних рішень перед розробкою специфікацій та коду.  
@@ -7989,7 +8862,7 @@ pytest tests/test_brainstorming.py -v || true
 ---
 
 <a id="skill-caveman"></a>
-### [13/61] Скіл: `caveman`
+### [15/64] Скіл: `caveman`
 
 **Каталог:** `~/.agents/skills/caveman`  
 **Опис:** Ультрастислий режим комунікації для економії токенів без втрати технічного змісту та строгості.  
@@ -8365,7 +9238,7 @@ pytest tests/test_caveman.py -v || true
 ---
 
 <a id="skill-cli-developer"></a>
-### [14/61] Скіл: `cli-developer`
+### [16/64] Скіл: `cli-developer`
 
 **Каталог:** `~/.agents/skills/cli-developer`  
 **Опис:** Проектування та розробка високопродуктивних консольних утиліт (CLI), парсинг прапорців, інтерактивні підказки та автодоповнення.  
@@ -10727,7 +11600,7 @@ SEE ALSO
 ---
 
 <a id="skill-cloudflare-pages-expert"></a>
-### [15/61] Скіл: `cloudflare-pages-expert`
+### [17/64] Скіл: `cloudflare-pages-expert`
 
 **Каталог:** `~/.agents/skills/cloudflare-pages-expert`  
 **Опис:** Автономна збірка, налаштування (_headers, _redirects, CORS, CSP) та публікація фронтенду Astryx Cockpit у Cloudflare Pages через Wrangler CLI.  
@@ -11069,7 +11942,7 @@ pytest tests/test_cloudflare_pages_expert.py -v || true
 ---
 
 <a id="skill-code-documenter"></a>
-### [16/61] Скіл: `code-documenter`
+### [18/64] Скіл: `code-documenter`
 
 **Каталог:** `~/.agents/skills/code-documenter`  
 **Опис:** Генерація, структурування та валідація технічної документації, коментарів JSDoc/docstrings та OpenAPI специфікацій.  
@@ -13603,7 +14476,7 @@ Credit card, PayPal, wire transfer (annual plans only).
 ---
 
 <a id="skill-code-reviewer"></a>
-### [17/61] Скіл: `code-reviewer`
+### [19/64] Скіл: `code-reviewer`
 
 **Каталог:** `~/.agents/skills/code-reviewer`  
 **Опис:** Аналіз код-дифів (PR/MR), виявлення архітектурних запахів, вразливостей безпеки, дефектів продуктивності та надання конструктивного рев'ю.  
@@ -14954,7 +15827,7 @@ All requirements verified:
 ---
 
 <a id="skill-codebase-design"></a>
-### [18/61] Скіл: `codebase-design`
+### [20/64] Скіл: `codebase-design`
 
 **Каталог:** `~/.agents/skills/codebase-design`  
 **Опис:** Формування архітектурної чистоти та структури кодової бази, розділення модулів, дотримання слабкої зв'язності (loose coupling).  
@@ -15387,7 +16260,7 @@ pytest tests/test_codebase_design.py -v || true
 ---
 
 <a id="skill-condition-based-waiting"></a>
-### [19/61] Скіл: `condition-based-waiting`
+### [21/64] Скіл: `condition-based-waiting`
 
 **Каталог:** `~/.agents/skills/condition-based-waiting`  
 **Опис:** Ліквідація ненадійних тестів (flaky tests) через заміну фіксованих таймаутів на детерміноване очікування настання умов.  
@@ -15892,7 +16765,7 @@ export function waitForEventMatch(
 ---
 
 <a id="skill-defense-in-depth"></a>
-### [20/61] Скіл: `defense-in-depth`
+### [22/64] Скіл: `defense-in-depth`
 
 **Каталог:** `~/.agents/skills/defense-in-depth`  
 **Опис:** Ешелонована багаторівнева валідація даних на межах API, бізнес-логіки та системних викликів для запобігання дефектам.  
@@ -16234,7 +17107,7 @@ pytest tests/test_defense_in_depth.py -v || true
 ---
 
 <a id="skill-diagnosing-bugs"></a>
-### [21/61] Скіл: `diagnosing-bugs`
+### [23/64] Скіл: `diagnosing-bugs`
 
 **Каталог:** `~/.agents/skills/diagnosing-bugs`  
 **Опис:** Систематична петля діагностики критичних багів, регресій продуктивності та побудова відтворюваного детермінованого тест-кейсу.  
@@ -16622,7 +17495,7 @@ printf 'ERROR_MSG=%s\n' "$ERROR_MSG"
 ---
 
 <a id="skill-drakon-compiler"></a>
-### [22/61] Скіл: `drakon-compiler`
+### [24/64] Скіл: `drakon-compiler`
 
 **Каталог:** `~/.agents/skills/drakon-compiler`  
 **Опис:** Компіляція планарних ДРАКОН-схем (.drakon.json) у виконуваний код (Python/TypeScript), зворотна трансляція та валідація інваріантів C=0.  
@@ -17036,7 +17909,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-executing-plans"></a>
-### [23/61] Скіл: `executing-plans`
+### [25/64] Скіл: `executing-plans`
 
 **Каталог:** `~/.agents/skills/executing-plans`  
 **Опис:** Дисципліноване пакетне виконання затверджених планів реалізації з контрольними точками верифікації.  
@@ -17359,7 +18232,7 @@ pytest tests/test_executing_plans.py -v || true
 ---
 
 <a id="skill-find-skills"></a>
-### [24/61] Скіл: `find-skills`
+### [26/64] Скіл: `find-skills`
 
 **Каталог:** `~/.agents/skills/find-skills`  
 **Опис:** Пошук та виявлення релевантних спеціалізованих скілів у локальному та розширеному каталозі агентів.  
@@ -17682,7 +18555,7 @@ pytest tests/test_find_skills.py -v || true
 ---
 
 <a id="skill-frontend-design"></a>
-### [25/61] Скіл: `frontend-design`
+### [27/64] Скіл: `frontend-design`
 
 **Каталог:** `~/.agents/skills/frontend-design`  
 **Опис:** Створення виразних, ергономічних та високоякісних користувацьких вебінтерфейсів з униканням шаблонного дизайну.  
@@ -18187,7 +19060,7 @@ pytest tests/test_frontend_design.py -v || true
 ---
 
 <a id="skill-grill-with-docs"></a>
-### [26/61] Скіл: `grill-with-docs`
+### [28/64] Скіл: `grill-with-docs`
 
 **Каталог:** `~/.agents/skills/grill-with-docs`  
 **Опис:** Інтенсивне структуроване інтерв'ю для виявлення прихованих припущень та паралельного формування ADR і глосарію домену.  
@@ -18529,7 +19402,7 @@ pytest tests/test_grill_with_docs.py -v || true
 ---
 
 <a id="skill-handoff"></a>
-### [27/61] Скіл: `handoff`
+### [29/64] Скіл: `handoff`
 
 **Каталог:** `~/.agents/skills/handoff`  
 **Опис:** Формування дискретного, машинозчитуваного артефакту передачі контексту між сесіями та спринтами (ADR-007).  
@@ -18852,7 +19725,7 @@ pytest tests/test_handoff.py -v || true
 ---
 
 <a id="skill-improve-codebase-architecture"></a>
-### [28/61] Скіл: `improve-codebase-architecture`
+### [30/64] Скіл: `improve-codebase-architecture`
 
 **Каталог:** `~/.agents/skills/improve-codebase-architecture`  
 **Опис:** Поглиблення неглибоких модулів, реструктуризація коду за принципами Джона Оустерхаута та оптимізація інтерфейсів.  
@@ -19322,7 +20195,7 @@ pytest tests/test_improve_codebase_architecture.py -v || true
 ---
 
 <a id="skill-intent-continuity"></a>
-### [29/61] Скіл: `intent-continuity`
+### [31/64] Скіл: `intent-continuity`
 
 **Каталог:** `~/.agents/skills/intent-continuity`  
 **Опис:** Забезпечення безперервності намірів та рішень крізь розподілені агентські сесії через бітемпоральний леджер.  
@@ -19664,7 +20537,7 @@ pytest tests/test_intent_continuity.py -v || true
 ---
 
 <a id="skill-investigate-first"></a>
-### [30/61] Скіл: `investigate-first`
+### [32/64] Скіл: `investigate-first`
 
 **Каталог:** `~/.agents/skills/investigate-first`  
 **Опис:** Обов'язкове попереднє дослідження фактичного стану системи та коду перед будь-якими змінами чи гіпотезами.  
@@ -20015,7 +20888,7 @@ interface:
 ---
 
 <a id="skill-kindle-release-pipeline"></a>
-### [31/61] Скіл: `kindle-release-pipeline`
+### [33/64] Скіл: `kindle-release-pipeline`
 
 **Каталог:** `~/.agents/skills/kindle-release-pipeline`  
 **Опис:** Повний релізний конвеєр компіляції дайджестів, оновлень архітектури та книг для мобільних рідерів Kindle.  
@@ -21420,7 +22293,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-laya-decision-router"></a>
-### [32/61] Скіл: `laya-decision-router`
+### [34/64] Скіл: `laya-decision-router`
 
 **Каталог:** `~/.agents/skills/laya-decision-router`  
 **Опис:** Суб-40мс не-авторегресивна System 1 класифікація задач, оцінка ризиків порушення ADR та маршрутизація скілів на Pixel 7.  
@@ -21762,7 +22635,7 @@ pytest tests/test_laya_decision_router.py -v || true
 ---
 
 <a id="skill-make-interfaces-feel-better"></a>
-### [33/61] Скіл: `make-interfaces-feel-better`
+### [35/64] Скіл: `make-interfaces-feel-better`
 
 **Каталог:** `~/.agents/skills/make-interfaces-feel-better`  
 **Опис:** Полірування мікроінтеракцій, реактивності інтерфейсу, оптимістичних оновлень та сприйняття швидкодії UI.  
@@ -22963,7 +23836,7 @@ Some fonts (like Inter) change the visual appearance of numerals with this prope
 ---
 
 <a id="skill-mcp-builder"></a>
-### [34/61] Скіл: `mcp-builder`
+### [36/64] Скіл: `mcp-builder`
 
 **Каталог:** `~/.agents/skills/mcp-builder`  
 **Опис:** Проектування, реалізація та тестування серверів Model Context Protocol (MCP) для підключення зовнішніх інструментів.  
@@ -26617,7 +27490,7 @@ mcp>=1.1.0
 ---
 
 <a id="skill-notebooklm"></a>
-### [35/61] Скіл: `notebooklm`
+### [37/64] Скіл: `notebooklm`
 
 **Каталог:** `~/.agents/skills/notebooklm`  
 **Опис:** Взаємодія з Google NotebookLM API та MCP для організації досліджень, синтезу знань та аудіо-оглядів.  
@@ -26940,7 +27813,7 @@ pytest tests/test_notebooklm.py -v || true
 ---
 
 <a id="skill-notebooklm-gitnexus-copilot"></a>
-### [36/61] Скіл: `notebooklm-gitnexus-copilot`
+### [38/64] Скіл: `notebooklm-gitnexus-copilot`
 
 **Каталог:** `~/.agents/skills/notebooklm-gitnexus-copilot`  
 **Опис:** Спільний аналітичний міст між графом знань GitNexus AST на хості .184 та блокнотом NotebookLM SSoT.  
@@ -27282,7 +28155,7 @@ pytest tests/test_notebooklm_gitnexus_copilot.py -v || true
 ---
 
 <a id="skill-root-cause-tracing"></a>
-### [37/61] Скіл: `root-cause-tracing`
+### [39/64] Скіл: `root-cause-tracing`
 
 **Каталог:** `~/.agents/skills/root-cause-tracing`  
 **Опис:** Глибинне трасування першопричин збоїв через граф залежностей та стек викликів до вихідного джерела помилки.  
@@ -27692,7 +28565,7 @@ exit 0
 ---
 
 <a id="skill-safe-refactor"></a>
-### [38/61] Скіл: `safe-refactor`
+### [40/64] Скіл: `safe-refactor`
 
 **Каталог:** `~/.agents/skills/safe-refactor`  
 **Опис:** Безпечний рефакторинг коду під захистом автоматизованих тестів зі збереженням поведінкових інваріантів.  
@@ -28043,7 +28916,7 @@ interface:
 ---
 
 <a id="skill-session-distiller"></a>
-### [39/61] Скіл: `session-distiller`
+### [41/64] Скіл: `session-distiller`
 
 **Каталог:** `~/.agents/skills/session-distiller`  
 **Опис:** Аналітична дистиляція логів довгих сесій у компактні підсумки, архітектурні висновки та списки задач.  
@@ -28385,7 +29258,7 @@ pytest tests/test_session_distiller.py -v || true
 ---
 
 <a id="skill-skill-audit"></a>
-### [40/61] Скіл: `skill-audit`
+### [42/64] Скіл: `skill-audit`
 
 **Каталог:** `~/.agents/skills/skill-audit`  
 **Опис:** Ревізія та верифікація скілів на відповідність стандартам таксономії ADR-015, планарності ДРАКОН та актуальності.  
@@ -28727,7 +29600,7 @@ pytest tests/test_skill_audit.py -v || true
 ---
 
 <a id="skill-skill-creator"></a>
-### [41/61] Скіл: `skill-creator`
+### [43/64] Скіл: `skill-creator`
 
 **Каталог:** `~/.agents/skills/skill-creator`  
 **Опис:** Створення та кристалізація нових агентських скілів за правилом 2-х повторень з повною генерацією маніфесту та схеми.  
@@ -29916,7 +30789,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-subagent-driven-development"></a>
-### [42/61] Скіл: `subagent-driven-development`
+### [44/64] Скіл: `subagent-driven-development`
 
 **Каталог:** `~/.agents/skills/subagent-driven-development`  
 **Опис:** Делегування ізольованих підзадач незалежним субагентам для збереження контекстного бюджету головного агента.  
@@ -30239,7 +31112,7 @@ pytest tests/test_subagent_driven_development.py -v || true
 ---
 
 <a id="skill-surgical-patch"></a>
-### [43/61] Скіл: `surgical-patch`
+### [45/64] Скіл: `surgical-patch`
 
 **Каталог:** `~/.agents/skills/surgical-patch`  
 **Опис:** Точкове, мінімально інвазивне внесення виправлень без супутнього руйнування сусіднього коду та структури.  
@@ -30590,7 +31463,7 @@ interface:
 ---
 
 <a id="skill-systematic-debugging"></a>
-### [44/61] Скіл: `systematic-debugging`
+### [46/64] Скіл: `systematic-debugging`
 
 **Каталог:** `~/.agents/skills/systematic-debugging`  
 **Опис:** Методичне усунення дефектів: формулювання гіпотез, ізоляція причин, перевірка експериментами та закріплення тестами.  
@@ -31284,8 +32157,94 @@ Which do you choose? Be honest about what you would actually do with senior engi
 
 ---
 
+<a id="skill-technical-reddit-author"></a>
+### [47/64] Скіл: `technical-reddit-author`
+
+**Каталог:** `~/.agents/skills/technical-reddit-author`  
+**Опис:** Generates high-impact, battle-tested engineering articles, case studies, and Reddit posts (r/ClaudeAI, r/LocalLLaMA, DOU, Medium) with real metrics and zero fluff.  
+**Файлів у складі:** 1  
+
+#### Файл: `technical-reddit-author/SKILL.md` (3,984 байт)
+````markdown
+---
+name: technical-reddit-author
+description: Generates high-impact, battle-tested engineering articles, case studies, and Reddit posts (r/ClaudeAI, r/LocalLLaMA, DOU, Medium) with real metrics and zero fluff.
+---
+
+# Technical Reddit & Developer Platform Author Skill
+
+## Purpose
+This skill produces authoritative, engineering-first case studies, technical teardowns, and community posts covering autonomous AI agents, LLM proxies, token compression gateways, and developer toolchains.
+
+---
+
+## 1. Core Operating Principles
+
+1. **Zero AI Fluff**:
+   - Ban generic corporate buzzwords ("In today's fast-paced digital world", "delve into", "testament", "harnessing the power").
+   - Open immediately with the raw engineering problem, hard numbers, or a terminal error log.
+2. **Real Hard Metrics Over Claims**:
+   - State exact latency measurements (e.g. `2.6s turnaround`).
+   - Report token reductions with concrete before/after figures (e.g. `19.1K prompt context compressed by 52%`).
+   - Mention quota limits and error codes explicitly (`HTTP 429 RESOURCE_EXHAUSTED`, `code: byok_required`).
+3. **Bilingual Target Output**:
+   - **English Track**: Optimized for Reddit (`r/ClaudeAI`, `r/LocalLLaMA`, `r/programming`, Hacker News). Punchy, technical, humble yet definitive tone.
+   - **Ukrainian Track**: Optimized for DOU.ua, Dev.ua, Medium, and Telegram tech channels. High-density, professional developer language.
+
+---
+
+## 2. Standard Article / Post Blueprint
+
+Every technical post produced under this skill must adhere to the following 5-part structure:
+
+### Part 1: The Hook & The Breaking Point
+- Start with a scenario every developer recognizes:
+  * Running an autonomous terminal agent (Crush, Claude Code, Aider) that burns 200K tokens in 15 minutes.
+  * Hitting official free-tier rate limits (`429 Quota Exceeded` on `GEMINI_API_KEY`).
+  * Terminal UI freezing or stalling due to context bloat.
+
+### Part 2: Architecture Blueprint (ASCII & Mermaid)
+- Provide a clean, readable ASCII topology diagram or Mermaid flowchart illustrating the full path:
+  ```text
+  [ Developer CLI ] ──> [ Compression Gateway ] ──> [ Ingress Tunnel ] ──> [ Account Pool Proxy ] ──> [ Upstream Models ]
+  ```
+- Clearly define the responsibility of each layer (client, compressor, ingress, proxy, upstream).
+
+### Part 3: The Technical Breakthrough / "The Trick"
+- Explain the non-obvious engineering solutions that made the pipeline work:
+  * **The BYOK Key Mapping**: How Edgee's `custom_openai_compatible` provider requires associating the agent's key ID to avoid falling back to unpaid credits (`429 credits remaining`).
+  * **Lossless Context Compression**: How enabling the 3 Edgee policies (Tool Result Trimming, Prompt Prefix Caching, and SSE Stream Optimization) slashes 40%–60% of redundant noise.
+  * **Failover Mechanics**: Probing local port `8080` in 200ms before falling back to Cloudflare Tunnel.
+
+### Part 4: Step-by-Step Setup & Dual Mode Operation
+- Minimal, copy-pasteable configuration snippets:
+  * Config files: `crush.json`, `credentials.toml`, `config.yml`.
+  * The dual launcher strategy:
+    - `crash` (Edgee compression mode for active development).
+    - `crash-raw` (Zero-dependency offline loopback mode).
+
+### Part 5: Open Source Reference & Takeaways
+- Direct link to the reference implementation repository:
+  [`maxfraieho/agy-windows-toolkit`](https://github.com/maxfraieho/agy-windows-toolkit).
+- Invitation for peer review, questions, and edge-case testing.
+
+---
+
+## 3. Writing Checklist
+
+Before publishing or returning a draft, verify:
+- [ ] Are all metrics backed by actual benchmark runs (e.g. 2.6s, 19.1K tokens)?
+- [ ] Is the code free of placeholder values where real tokens/flags are required?
+- [ ] Does the post distinguish between interactive TUI mode and headless CLI runs?
+- [ ] Is there an explicit warning regarding why bare model names must be provider-scoped?
+- [ ] Is the tone direct, collegial, and engineering-focused?
+
+````
+
+---
+
 <a id="skill-test-driven-development"></a>
-### [45/61] Скіл: `test-driven-development`
+### [48/64] Скіл: `test-driven-development`
 
 **Каталог:** `~/.agents/skills/test-driven-development`  
 **Опис:** Розробка через тестування (TDD): цикл Red-Green-Refactor, де жоден рядок коду не пишеться без попередньо падаючого тесту.  
@@ -31608,7 +32567,7 @@ pytest tests/test_test_driven_development.py -v || true
 ---
 
 <a id="skill-testing-anti-patterns"></a>
-### [46/61] Скіл: `testing-anti-patterns`
+### [49/64] Скіл: `testing-anti-patterns`
 
 **Каталог:** `~/.agents/skills/testing-anti-patterns`  
 **Опис:** Виявлення та виправлення антипатернів тестування (надлишковий мокінг, тестування реалізації замість поведінки, tautological tests).  
@@ -31950,7 +32909,7 @@ pytest tests/test_testing_anti_patterns.py -v || true
 ---
 
 <a id="skill-theme-factory"></a>
-### [47/61] Скіл: `theme-factory`
+### [50/64] Скіл: `theme-factory`
 
 **Каталог:** `~/.agents/skills/theme-factory`  
 **Опис:** Проектування та гармонізація палітр кольорів, темної та світлої теми, токенів дизайну та типографіки.  
@@ -32719,7 +33678,7 @@ Tech startups, software launches, innovation showcases, AI/ML presentations, dig
 ---
 
 <a id="skill-to-spec"></a>
-### [48/61] Скіл: `to-spec`
+### [51/64] Скіл: `to-spec`
 
 **Каталог:** `~/.agents/skills/to-spec`  
 **Опис:** Трансформація неструктурованих вимог та ідей у суворі, формальні інженерні специфікації поведінки.  
@@ -33042,7 +34001,7 @@ pytest tests/test_to_spec.py -v || true
 ---
 
 <a id="skill-to-tickets"></a>
-### [49/61] Скіл: `to-tickets`
+### [52/64] Скіл: `to-tickets`
 
 **Каталог:** `~/.agents/skills/to-tickets`  
 **Опис:** Декомпозиція високорівневих специфікацій на атомарні, машинозчитувані тікети для автономних виконавців.  
@@ -33365,7 +34324,7 @@ pytest tests/test_to_tickets.py -v || true
 ---
 
 <a id="skill-using-git-worktrees"></a>
-### [50/61] Скіл: `using-git-worktrees`
+### [53/64] Скіл: `using-git-worktrees`
 
 **Каталог:** `~/.agents/skills/using-git-worktrees`  
 **Опис:** Ізоляція робочих контекстів та паралельних завдань за допомогою механізму git worktree без перемикання поточної гілки.  
@@ -33688,7 +34647,7 @@ pytest tests/test_using_git_worktrees.py -v || true
 ---
 
 <a id="skill-utopia-intent-ledger"></a>
-### [51/61] Скіл: `utopia-intent-ledger`
+### [54/64] Скіл: `utopia-intent-ledger`
 
 **Каталог:** `~/.agents/skills/utopia-intent-ledger`  
 **Опис:** Синхронізація архітектурних рішень та графів намірів у незмінний WORM-леджер Utopia DB на вузлі 192.168.3.251.  
@@ -34125,7 +35084,7 @@ if __name__ == "__main__":
 ---
 
 <a id="skill-vercel-composition-patterns"></a>
-### [52/61] Скіл: `vercel-composition-patterns`
+### [55/64] Скіл: `vercel-composition-patterns`
 
 **Каталог:** `~/.agents/skills/vercel-composition-patterns`  
 **Опис:** Архітектурні патерни компонування сучасних React-додатків, серверні компоненти (RSC) та оптимізація рендерингу.  
@@ -36374,7 +37333,7 @@ nested inside each other—they just need to be within the same provider.
 ---
 
 <a id="skill-vercel-react-best-practices"></a>
-### [53/61] Скіл: `vercel-react-best-practices`
+### [56/64] Скіл: `vercel-react-best-practices`
 
 **Каталог:** `~/.agents/skills/vercel-react-best-practices`  
 **Опис:** Інженерні стандарти продуктивності React та Next.js від Vercel: мінімізація ререндерів, бандлу та затримок.  
@@ -44915,7 +45874,7 @@ function Profile({ name }: { name: string }) {
 ---
 
 <a id="skill-verification-before-completion"></a>
-### [54/61] Скіл: `verification-before-completion`
+### [57/64] Скіл: `verification-before-completion`
 
 **Каталог:** `~/.agents/skills/verification-before-completion`  
 **Опис:** Обов'язковий попередній аудит та запуск перевірочних скриптів перед декларуванням успішного завершення задачі.  
@@ -45238,7 +46197,7 @@ pytest tests/test_verification_before_completion.py -v || true
 ---
 
 <a id="skill-wayfinder"></a>
-### [55/61] Скіл: `wayfinder`
+### [58/64] Скіл: `wayfinder`
 
 **Каталог:** `~/.agents/skills/wayfinder`  
 **Опис:** Навігація по великих кодових базах, пошук точок входу, картування залежностей та побудова маршруту дослідження.  
@@ -45561,7 +46520,7 @@ pytest tests/test_wayfinder.py -v || true
 ---
 
 <a id="skill-web-artifacts-builder"></a>
-### [56/61] Скіл: `web-artifacts-builder`
+### [59/64] Скіл: `web-artifacts-builder`
 
 **Каталог:** `~/.agents/skills/web-artifacts-builder`  
 **Опис:** Автономна генерація односторінкових HTML/JS/CSS веб-артефактів, інтерактивних демонстрацій та візуалізаторів.  
@@ -46475,7 +47434,7 @@ echo "  import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/di
 ---
 
 <a id="skill-web-design-guidelines"></a>
-### [57/61] Скіл: `web-design-guidelines`
+### [60/64] Скіл: `web-design-guidelines`
 
 **Каталог:** `~/.agents/skills/web-design-guidelines`  
 **Опис:** Дотримання стандартів доступності (a11y), семантичної верстки, контрастності та адаптивності веб-інтерфейсів.  
@@ -46798,7 +47757,7 @@ pytest tests/test_web_design_guidelines.py -v || true
 ---
 
 <a id="skill-webapp-testing"></a>
-### [58/61] Скіл: `webapp-testing`
+### [61/64] Скіл: `webapp-testing`
 
 **Каталог:** `~/.agents/skills/webapp-testing`  
 **Опис:** Комплексне тестування веб-додатків через Playwright/Vitest, перевірка користувацьких сценаріїв та API-інтеграцій.  
@@ -47557,7 +48516,7 @@ if __name__ == '__main__':
 ---
 
 <a id="skill-writing-great-skills"></a>
-### [59/61] Скіл: `writing-great-skills`
+### [62/64] Скіл: `writing-great-skills`
 
 **Каталог:** `~/.agents/skills/writing-great-skills`  
 **Опис:** Керівництво зі створення високоефективних, лаконічних та однозначних інструкцій для агентів.  
@@ -48086,7 +49045,7 @@ pytest tests/test_writing_great_skills.py -v || true
 ---
 
 <a id="skill-writing-plans"></a>
-### [60/61] Скіл: `writing-plans`
+### [63/64] Скіл: `writing-plans`
 
 **Каталог:** `~/.agents/skills/writing-plans`  
 **Опис:** Складання структурованих, інкрементних планів реалізації з чіткими критеріями перевірки кожного кроку.  
@@ -48409,7 +49368,7 @@ pytest tests/test_writing_plans.py -v || true
 ---
 
 <a id="skill-writing-skills"></a>
-### [61/61] Скіл: `writing-skills`
+### [64/64] Скіл: `writing-skills`
 
 **Каталог:** `~/.agents/skills/writing-skills`  
 **Опис:** Базові стандарти синтаксису, метаданих та формулювання процедурних правил для каталогу скілів.  

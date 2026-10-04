@@ -1,0 +1,144 @@
+{
+  "schema_version": "1.0",
+  "name": "b-sdd-notebooklm-audio-deepdive",
+  "category": "bssd_system_skill",
+  "description": "Скіл автономної генерації максимального україномовного аудіоогляду (Deep Dive Podcast, AudioLength.LONG) з матеріалів записника Google NotebookLM через сервіс MCP NotebookLM.",
+  "params": "notebook_id: str, audio_length: str = 'LONG', audio_format: str = 'DEEP_DIVE', language: str = 'uk', instructions: str = None",
+  "nodes": [
+    {
+      "node_id": "start",
+      "node_type": "headline",
+      "label": "Початок: Виконання b-sdd-notebooklm-audio-deepdive",
+      "edges": {
+        "down": "step_inspect",
+        "right": null
+      },
+      "semantic_binding": {
+        "adr_invariant_id": "ADR-015-INV-03",
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "node_id": "step_inspect",
+      "node_type": "action",
+      "label": "Крок 1: Запит списку джерел блокнота через NotebookLM MCP",
+      "edges": {
+        "down": "check_sources",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 2.0
+    },
+    {
+      "node_id": "check_sources",
+      "node_type": "question",
+      "label": "Крок 2: Джерела присутні (count > 0) та блокнот валідний?",
+      "edges": {
+        "down": "step_enforce_params",
+        "right": "err_no_sources"
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "err_no_sources",
+      "node_type": "action",
+      "label": "Аварійна зупинка: Джерела відсутні або блокнот недоступний (X=4.0)",
+      "edges": {
+        "down": "end_failed",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 4.0
+    },
+    {
+      "node_id": "end_failed",
+      "node_type": "end",
+      "label": "Аварійне завершення (X=4.0)",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "critical"
+      },
+      "x": 4.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_enforce_params",
+      "node_type": "action",
+      "label": "Крок 3: Фіксація інваріантів: AudioLength=LONG, Format=DEEP_DIVE, Lang=uk",
+      "edges": {
+        "down": "step_dispatch",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 6.0
+    },
+    {
+      "node_id": "step_dispatch",
+      "node_type": "action",
+      "label": "Крок 4: Виклик generate_audio в NotebookLM MCP та отримання task_id",
+      "edges": {
+        "down": "step_telemetry",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 8.0
+    },
+    {
+      "node_id": "step_telemetry",
+      "node_type": "action",
+      "label": "Крок 5: Відправка телеметрії в Telegram та n8n Supervisor Webhook",
+      "edges": {
+        "down": "end_success",
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 10.0
+    },
+    {
+      "node_id": "end_success",
+      "node_type": "end",
+      "label": "Успішне завершення: Генерацію максимального аудіопереказу ініційовано",
+      "edges": {
+        "down": null,
+        "right": null
+      },
+      "semantic_binding": {
+        "severity": "normal"
+      },
+      "x": 0.0,
+      "y": 12.0
+    }
+  ],
+  "meta": {
+    "skill_name": "b-sdd-notebooklm-audio-deepdive",
+    "skill_type": "SYSTEM_SKILL",
+    "immutable": true,
+    "skewer_x": 0.0,
+    "is_planar": true,
+    "crossings_count": 0
+  }
+}

@@ -1,6 +1,6 @@
 # B-SDD ACTIVE CORE SKILLS CATALOG (59 ACTIVE SKILLS)
 
-**Дата генерації:** 2026-09-23 05:29:19Z  
+**Дата генерації:** 2026-10-04 10:34:01Z  
 **Хост оркестрації:** `100.65.225.122` (`192.168.3.161`)  
 **Каталог активних скілів:** `/home/vokov/.agents/skills`  
 **Каталог розширених скілів:** `/home/vokov/.agents/skills/_extended`  
@@ -511,8 +511,8 @@
 - **ДРАКОН-схема (Rule of 2):** ✅ Присутня
 - **Опис:** Автономний конвеєр компіляції документації B-SDD в EPUB 3.0 та відправка на Amazon Kindle через шлюз n8n та резервний контур на хості .184.
 - **Шлях:** `~/.agents/skills/b-sdd-kindle-docs`
-- **Кількість файлів коду/конфігів:** 5
-- **Ключові файли:** `SKILL.md, b-sdd-kindle-docs.drakon.json, scripts/bsdd_to_kindle.py, scripts/dispatch_on_184.sh, scripts/send_mail.py`
+- **Кількість файлів коду/конфігів:** 6
+- **Ключові файли:** `SKILL.md, b-sdd-kindle-docs.drakon.json, scripts/bsdd_to_kindle.py, scripts/dispatch_on_184.sh, scripts/notebooklm_to_kindle.py, scripts/send_mail.py`
 
 ### `notebooklm`
 - **Назва:** notebooklm
@@ -626,4 +626,4 @@
 | `verify-and-stop` | Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion ch... |
 
 ---
-**Всього активних файлів коду у 48 скілах ядра:** 304
+**Всього активних файлів коду у 48 скілах ядра:** 305
